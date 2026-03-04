@@ -1,4 +1,6 @@
-﻿using DeslandesApp.Infra.Data.Contexts;
+﻿using DeslandesApp.Domain.Interfaces.Repositories;
+using DeslandesApp.Infra.Data.Contexts;
+using DeslandesApp.Infra.Data.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -25,6 +27,8 @@ namespace DeslandesApp.Infra.Data.Extensions
             //injetar as configurações da classe DataContext 
             services.AddDbContext<DataContext>(options
                                                 => options.UseSqlServer(connectionString));
+            //Injeção de dependência do UnitOfWork 
+            services.AddTransient<IUnitOfWork, UnitOfWork>();
 
             return services;
         }

@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.14.37012.4 d17.14
+VisualStudioVersion = 17.14.37012.4
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DeslandesApp.API", "DeslandesApp.API\DeslandesApp.API.csproj", "{4E2946CF-87D6-42BC-9719-8B9B3DDE1323}"
 EndProject
@@ -11,6 +11,16 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Itens de Solução", "Itens
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "1 - API", "1 - API", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "2 - DOMAIN", "2 - DOMAIN", "{6C104B33-1A8D-4F38-83E8-C271EEBB3D54}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DeslandesApp.Domain", "DeslandesApp.Domain\DeslandesApp.Domain.csproj", "{E3208702-9830-4541-9A7C-D7B00D467BEC}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "3 - INFRASTRUCTURE", "3 - INFRASTRUCTURE", "{AE5604CB-874B-408C-883C-0EE3CEA636EC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DeslandesApp.Infra.Data", "DeslandesApp.Infra.Data\DeslandesApp.Infra.Data.csproj", "{2BF719BC-3A95-46E1-95C7-050380265D3C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Deslandes.Infra.Data.Tests", "Deslandes.Infra.Data.Tests\Deslandes.Infra.Data.Tests.csproj", "{3E0AEF60-ABA7-43DD-A405-EF9AAC61422D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -22,12 +32,27 @@ Global
 		{4E2946CF-87D6-42BC-9719-8B9B3DDE1323}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4E2946CF-87D6-42BC-9719-8B9B3DDE1323}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4E2946CF-87D6-42BC-9719-8B9B3DDE1323}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E3208702-9830-4541-9A7C-D7B00D467BEC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E3208702-9830-4541-9A7C-D7B00D467BEC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E3208702-9830-4541-9A7C-D7B00D467BEC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E3208702-9830-4541-9A7C-D7B00D467BEC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2BF719BC-3A95-46E1-95C7-050380265D3C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2BF719BC-3A95-46E1-95C7-050380265D3C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2BF719BC-3A95-46E1-95C7-050380265D3C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2BF719BC-3A95-46E1-95C7-050380265D3C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3E0AEF60-ABA7-43DD-A405-EF9AAC61422D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3E0AEF60-ABA7-43DD-A405-EF9AAC61422D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3E0AEF60-ABA7-43DD-A405-EF9AAC61422D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3E0AEF60-ABA7-43DD-A405-EF9AAC61422D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{4E2946CF-87D6-42BC-9719-8B9B3DDE1323} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{E3208702-9830-4541-9A7C-D7B00D467BEC} = {6C104B33-1A8D-4F38-83E8-C271EEBB3D54}
+		{2BF719BC-3A95-46E1-95C7-050380265D3C} = {AE5604CB-874B-408C-883C-0EE3CEA636EC}
+		{3E0AEF60-ABA7-43DD-A405-EF9AAC61422D} = {AE5604CB-874B-408C-883C-0EE3CEA636EC}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {B41DD147-31EF-4191-A9FE-D571176EB35C}
