@@ -1,13 +1,14 @@
-﻿using AutoMapper;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DeslandesApp.Domain.Mappings
+namespace DeslandesApp.Domain.Enum
 {
-    public class ProfileMap : Profile
+    public enum Email
     {
+        Pessoal = 1,
+        Comercial = 2,
     }
 }
