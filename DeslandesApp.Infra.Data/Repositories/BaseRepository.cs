@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -67,6 +68,15 @@ namespace DeslandesApp.Infra.Data.Repositories
             return await dataContext.Set<TEntity>().FindAsync(id);
         }
 
-       
+        public async Task<TEntity?> GetByAsync(Expression<Func<TEntity, bool>> where)
+        {
+            return await dataContext.Set<TEntity>()
+.FirstOrDefaultAsync(where);
+        }
+
+        public async Task<bool> AnyAsync(Expression<Func<TEntity, bool>> where)
+        {
+            return await dataContext.Set<TEntity>().AnyAsync(where);
+        }
     }
 }

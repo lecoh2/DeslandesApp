@@ -1,3 +1,4 @@
+using DeslandesApp.Domain.Extensions;
 using DeslandesApp.Infra.Data.Extensions;
 using Scalar.AspNetCore;
 
@@ -14,6 +15,7 @@ builder.Services.AddSwaggerGen();
 
 //Métodos de extensão 
 builder.Services.AddEntityFramework(builder.Configuration);
+builder.Services.AddDomainService();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

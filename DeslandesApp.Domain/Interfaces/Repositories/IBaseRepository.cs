@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -14,6 +15,8 @@ namespace DeslandesApp.Domain.Interfaces.Repositories
         Task<IEnumerable<TEntity>> GetAllAsync();
         Task<IEnumerable<TEntity>> GetAllAsync(int pageNumber, int pageSize);
         Task<TEntity> GetByIdAsync(TKey id);
+        Task<TEntity?> GetByAsync(Expression<Func<TEntity, bool>> where);
+        Task<bool> AnyAsync(Expression<Func<TEntity, bool>> where);
           
     }
 }
