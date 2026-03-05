@@ -1,7 +1,12 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
+<<<<<<< HEAD
 # Visual Studio Version 18
 VisualStudioVersion = 18.3.11520.95 d18.3
+=======
+# Visual Studio Version 17
+VisualStudioVersion = 17.14.37012.4 d17.14
+>>>>>>> 44897e21cdc013b5e19b44ddc2e8b6c6f07261fd
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DeslandesApp.API", "DeslandesApp.API\DeslandesApp.API.csproj", "{4E2946CF-87D6-42BC-9719-8B9B3DDE1323}"
 EndProject
