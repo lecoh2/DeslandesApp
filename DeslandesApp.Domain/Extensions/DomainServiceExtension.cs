@@ -1,4 +1,6 @@
-﻿using DeslandesApp.Domain.Mappings;
+﻿using DeslandesApp.Domain.Interfaces.Services;
+using DeslandesApp.Domain.Mappings;
+using DeslandesApp.Domain.Services;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
@@ -15,10 +17,8 @@ namespace DeslandesApp.Domain.Extensions
             services.AddAutoMapper(map => map.AddProfile
 (typeof(ProfileMap)));
 
-//            services.AddTransient
-//<ICategoriaService, CategoriaService>();
-//            services.AddTransient
-//<IMovimentacaoService, MovimentacaoService>();
+            services.AddTransient<IUsuarioService, UsuarioService>();
+            services.AddTransient<IPessoaService, PessoaService>();
 
             return services;
         }

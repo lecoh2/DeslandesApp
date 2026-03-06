@@ -11,7 +11,7 @@ namespace DeslandesApp.Domain.Models.Dtos.Requests.Usuarios
 {
     public record UsuariosRequest(
 
-        Guid Id,
+        
         string NomeUsuario,
         string Login,
         string Senha,

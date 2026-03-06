@@ -12,9 +12,7 @@ namespace DeslandesApp.Domain.Models.Entities
 {
     public abstract class Pessoa : BaseEntity
     {
-        public string Nome { get; set; } = string.Empty;
-     
- 
+        public string Nome { get; set; } = string.Empty;    
         public string Apelido { get; set; } = string.Empty; 
         public string Telefone { get; set; } = string.Empty;               
         public string Site { get; set; } = string.Empty;

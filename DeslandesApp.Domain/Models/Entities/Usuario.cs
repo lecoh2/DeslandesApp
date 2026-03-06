@@ -19,9 +19,7 @@ namespace DeslandesApp.Domain.Models.Entities
         public DateTime? DataCadastro { get; set; }
         public DateTime? DataAtualizacao { get; set; }
         public Guid IdPessoa { get; set; }
-
         #region
-
 
         public Pessoa? Pessoa { get; set; }
         public Status? Status { get; set; }

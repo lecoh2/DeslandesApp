@@ -40,5 +40,5 @@ namespace DeslandesApp.Domain.Models.Dtos.Responses.Pessoas
     #endregion
 
     );
-        );
+
 }
