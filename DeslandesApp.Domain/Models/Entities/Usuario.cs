@@ -28,7 +28,7 @@ namespace DeslandesApp.Domain.Models.Entities
         public ICollection<GrupoSetores> GrupoSetores { get; set; }
         public ICollection<GrupoNiveis> GrupoNiveis { get; set; }
         public virtual Fotos? Fotos { get; set; }
-        public Email? Email { get; set; }   
+        public ValorEmail? ValorEmail { get; set; }   
 
         #endregion
     }

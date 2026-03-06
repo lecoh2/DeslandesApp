@@ -17,13 +17,21 @@ namespace DeslandesApp.Infra.Data.Mappings
 
             builder.HasKey(u => u.Id);
    
-            builder.Property(u => u.Login).HasColumnName("LOGIN");
-            builder.Property(u => u.Senha).HasColumnName("SENHA");
-            builder.Property(u => u.DataCadastro).HasColumnName("DATACADASTRO");
-            builder.Property(u => u.DataAtualizacao).HasColumnName("DATAATUALIZACAO");
-            builder.Property(u => u.Status).HasColumnName("STATUS");
+            builder.Property(u => u.Login).HasColumnName("LOGIN").IsRequired(false);
+            builder.Property(u => u.Senha).HasColumnName("SENHA").IsRequired(false);
+            builder.Property(u => u.DataCadastro).HasColumnName("DATACADASTRO").IsRequired(false);
+            builder.Property(u => u.DataAtualizacao).HasColumnName("DATAATUALIZACAO").IsRequired(false);
+            builder.Property(u => u.Status).HasColumnName("STATUS").IsRequired(false);
             builder.Property(u => u.IdPessoa).HasColumnName("PESSOA_ID").IsRequired();
-
+            builder.OwnsOne(c => c.ValorEmail, e =>
+            {
+                e.Property(p => p.EnderecoEmail)
+                .HasColumnName("ValorEmail")
+                .HasMaxLength(150)
+                .IsRequired();
+                e.HasIndex(p => p.EnderecoEmail)
+                .IsUnique();
+            });
             #region Relacionamento com Pessoa
             builder.HasOne(u => u.Pessoa)
                    .WithOne(p => p.Usuario)

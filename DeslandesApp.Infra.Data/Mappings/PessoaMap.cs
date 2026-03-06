@@ -15,20 +15,29 @@ namespace DeslandesApp.Infra.Data.Mappings
         {
             builder.ToTable("PESSOA");
             builder.HasKey(p => p.Id);
-            builder.Property(p => p.Nome).HasColumnName("NOME").IsRequired();
-            builder.Property(p => p.DataCadastro).HasColumnName("DATACADASTRO").IsRequired();
-            builder.Property(p => p.DataAtualizacao).HasColumnName("DATATATUALIZACAO");
-            builder.Property(p => p.Email).HasColumnName("EMAIL").IsRequired();
-            builder.HasIndex(p => p.Email).IsUnique();
+            builder.Property(p => p.Nome).HasColumnName("NOME").IsRequired(false);
+            builder.Property(p => p.DataCadastro).HasColumnName("DATACADASTRO").IsRequired(false);
+            builder.Property(p => p.DataAtualizacao).HasColumnName("DATATATUALIZACAO").IsRequired(false);       
+           
             builder.Property(p => p.IdSexo).HasColumnName("SEXO_ID").IsRequired(false);
             builder.Ignore(p => p.UsuarioCadastro);
             builder.Property(p => p.IdUsuarioCadastro).HasColumnName("USUARIO_ID").IsRequired(false);
-            #region Relacionamentos
+            builder.OwnsOne(c => c.ValorEmail, e =>
+            {
+                e.Property(p => p.EnderecoEmail)
+                .HasColumnName("ValorEmail")
+                .HasMaxLength(150)
+                .IsRequired();
+                e.HasIndex(p => p.EnderecoEmail)
+                .IsUnique();
+            });
+     
+                #region Relacionamentos
 
 
 
-            // Relacionamento com Sexo
-            builder.HasOne(p => p.Sexo)
+                // Relacionamento com Sexo
+                builder.HasOne(p => p.Sexo)
                    .WithMany(s => s.Pessoa)
                    .HasForeignKey(p => p.IdSexo).IsRequired(false);
 

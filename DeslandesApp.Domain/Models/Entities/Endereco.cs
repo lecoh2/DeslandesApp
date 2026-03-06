@@ -1,4 +1,6 @@
-﻿using System;
+﻿using DeslandesApp.Domain.Commons;
+using DeslandesApp.Domain.Interfaces.Services;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace DeslandesApp.Domain.Models.Entities
 {
-    public class Endereco
+    public class Endereco : BaseEntity
     {
         
         public string? Logradouro { get; set; }

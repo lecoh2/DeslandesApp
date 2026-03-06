@@ -23,4 +23,8 @@
     <ProjectReference Include="..\DeslandesApp.Domain\DeslandesApp.Domain.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Migrations\" />
+  </ItemGroup>
+
 </Project>

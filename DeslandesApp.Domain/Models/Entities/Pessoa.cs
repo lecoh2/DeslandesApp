@@ -18,21 +18,20 @@ namespace DeslandesApp.Domain.Models.Entities
         //Enum Telefone
  
         public string Apelido { get; set; } = string.Empty; 
-        public string Telefone { get; set; } = string.Empty;
-        public string Operadora { get; set; } = string.Empty;        
+        public string Telefone { get; set; } = string.Empty;               
         public string Site { get; set; } = string.Empty;
         public DateTime? DataCadastro { get; set; }
         public DateTime? DataAtualizacao { get; set; }
         public Guid? IdUsuarioCadastro { get; set; }
         public Guid? IdSexo { get; set; }
-
+        public Guid? IdEtiqueta { get; set; }
         #region Relacionamento
         public Endereco? Endereco { get; set; }
         public InformacoesComplementares? InformacoesComplementares { get; set; }
         public Sexo? Sexo { get; set; }
         public Usuario? Usuario { get; set; }            // Usuário vinculado
         public Usuario? UsuarioCadastro { get; set; }    // Usuário que cadastrou
-        public Email? Email{ get; set; }              // Email principal vinculado
+        public ValorEmail? ValorEmail { get; set; }              // Email principal vinculado
         #endregion
 
         #region ENUMERADO STATUS
