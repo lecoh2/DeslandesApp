@@ -1,6 +1,6 @@
 ﻿using DeslandesApp.Domain.Interfaces.Services;
-using DeslandesApp.Domain.Models.Dtos.Requests.Pessoa;
-using DeslandesApp.Domain.Models.Dtos.Responses.Pessoa;
+using DeslandesApp.Domain.Models.Dtos.Requests.Pessoas;
+using DeslandesApp.Domain.Models.Dtos.Responses.Pessoas;
 using DeslandesApp.Domain.Models.Entities;
 using System;
 using System.Collections.Generic;

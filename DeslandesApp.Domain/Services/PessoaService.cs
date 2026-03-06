@@ -1,8 +1,8 @@
 ﻿using AutoMapper;
 using DeslandesApp.Domain.Interfaces.Repositories;
 using DeslandesApp.Domain.Interfaces.Services;
-using DeslandesApp.Domain.Models.Dtos.Requests.Pessoa;
-using DeslandesApp.Domain.Models.Dtos.Responses.Pessoa;
+using DeslandesApp.Domain.Models.Dtos.Requests.Pessoas;
+using DeslandesApp.Domain.Models.Dtos.Responses.Pessoas;
 using DeslandesApp.Domain.Utils;
 using System;
 using System.Collections.Generic;
@@ -14,12 +14,12 @@ namespace DeslandesApp.Domain.Services
 {
     public class PessoaService(IUnitOfWork unitOfWork, IMapper mapper) : IPessoaService
     {
-        public Task<PessoaResponse> AdicionarAsync(PessoaRequest request)
+        public Task<PessoaFisicaResponse> AdicionarAsync(PessoaFisicaRequest request)
         {
             throw new NotImplementedException();
         }
 
-        public Task<PageResult<PessoaResponse>> ConsultarAsync(int pageNumber, int pageSize)
+        public Task<PageResult<PessoaFisicaResponse>> ConsultarAsync(int pageNumber, int pageSize)
         {
             throw new NotImplementedException();
         }
@@ -29,17 +29,17 @@ namespace DeslandesApp.Domain.Services
             throw new NotImplementedException();
         }
 
-        public Task<PessoaResponse> Excluir(Guid id)
+        public Task<PessoaFisicaResponse> Excluir(Guid id)
         {
             throw new NotImplementedException();
         }
 
-        public Task<PessoaResponse> Modificar(Guid id, PessoaRequest request)
+        public Task<PessoaFisicaResponse> Modificar(Guid id, PessoaFisicaRequest request)
         {
             throw new NotImplementedException();
         }
 
-        public Task<PessoaResponse?> ObterPorIdAsync(Guid id)
+        public Task<PessoaFisicaResponse?> ObterPorIdAsync(Guid id)
         {
             throw new NotImplementedException();
         }
