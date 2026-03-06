@@ -9,8 +9,24 @@ using System.Threading.Tasks;
 
 namespace DeslandesApp.Infra.Data.Repositories
 {
-    public class UnitOfWork(DataContext dataContext) : IUnitOfWork
+    public class UnitOfWork : IUnitOfWork //(DataContext dataContext) : IUnitOfWork
     {
+        //atributo para armazenar o contexto 
+        private readonly DataContext dataContext;
+
+        //construtor para injeção de dependência 
+        public UnitOfWork(DataContext _dataContext)
+        {
+            dataContext = _dataContext;
+        }
+
+        #region Repositórios
+        public IUsuarioRepository UsuarioRepository => throw new NotImplementedException();
+
+        public IPessoaRepository PessoaRepository => throw new NotImplementedException();
+        #endregion
+        #region Transaçoes
+        //construtor para injeção de dependência 
         private IDbContextTransaction? transaction;
         public void BeginTransaction()
         {
@@ -36,7 +52,7 @@ namespace DeslandesApp.Infra.Data.Repositories
                 transaction.Dispose();
             dataContext.Dispose();
         }
+        #endregion
 
-      
     }
 }

@@ -16,6 +16,8 @@ namespace DeslandesApp.Domain.Interfaces.Repositories
         #endregion
 
         #region Acessos aos repositórios
+        IUsuarioRepository UsuarioRepository { get; }
+        IPessoaRepository PessoaRepository { get; }
         #endregion
     }
 }

@@ -11,72 +11,82 @@ using System.Threading.Tasks;
 
 namespace DeslandesApp.Infra.Data.Repositories
 {
-    public abstract class BaseRepository<TEntity, TKey>(DataContext dataContext)
-        : IBaseRepository<TEntity, TKey>
+    public abstract class BaseRepository<TEntity, TKey>
+        : IBaseRepository<TEntity, TKey>,IDisposable
      where TEntity : class
 
     {
-        //private readonly DataContext _dataContext;
-        //protected BaseRepository(DataContext dataContext)
-        //{
-        //    _dataContext = dataContext;
-        //}
+        private readonly DataContext _dataContext;
+
+        protected BaseRepository(DataContext dataContext)
+        {
+            _dataContext = dataContext;
+        }
         public virtual async Task AddAsync(TEntity entity)
         {
-            await dataContext.AddAsync(entity);
-            await dataContext.SaveChangesAsync();
+            await _dataContext.AddAsync(entity);
+            await _dataContext.SaveChangesAsync();
         }
-        public virtual async Task UpdateAsync(TEntity entity)
+
+
+
+        public virtual async Task DeleteAsync(TEntity entity)
         {
-            dataContext.Update(entity);
-            await dataContext.SaveChangesAsync();
-        }
-        public virtual async Task DeleteAsync(TKey id)
-        {
-            dataContext.Remove(id);
-            await dataContext.SaveChangesAsync();
+            _dataContext.Remove(entity);
+            await _dataContext.SaveChangesAsync();
         }
 
         public virtual async Task<IEnumerable<TEntity>> GetAllAsync()
         {
-            return await dataContext.Set<TEntity>().ToListAsync();
+            return await _dataContext.Set<TEntity>().ToListAsync();
+
         }
-        public virtual async Task<IEnumerable<TEntity>> GetAllAsync(int pageNumber, int pageSize)
+        public virtual async Task<PageResult<TEntity>> GetAllAsync(int pageNumber, int pageSize)
         {
             if (pageNumber <= 0) pageNumber = 1;
             if (pageSize <= 0) pageSize = 10;
 
-            var query = dataContext.Set<TEntity>();
-
+            var query = _dataContext.Set<TEntity>();
             var totalCount = await query.CountAsync();
-
             var items = await query
-                        .Skip((pageNumber - 1) * pageSize)
-                        .Take(pageSize)
-                        .ToListAsync();
-
-         return new PageResult<TEntity>
+                         .Skip((pageNumber - 1) * pageSize)
+                         .Take(pageSize)
+                         .ToListAsync();
+            return new PageResult<TEntity>
             {
                 Items = items,
                 PageNumber = pageNumber,
                 PageSize = pageSize,
                 TotalCount = totalCount
-            }.Items;
-        }
-        public virtual async Task<TEntity> GetByIdAsync(TKey id)
-        {
-            return await dataContext.Set<TEntity>().FindAsync(id);
+            };
         }
 
+
+        public virtual async Task<TEntity?> GetByIdAsync(TKey id)
+        {
+            return await _dataContext.Set<TEntity>().FindAsync(id);
+        }
+
+        public virtual async Task UpdateAsync(TEntity entity)
+        {
+            _dataContext.Update(entity);
+            await _dataContext.SaveChangesAsync();
+        }
         public async Task<TEntity?> GetByAsync(Expression<Func<TEntity, bool>> where)
         {
-            return await dataContext.Set<TEntity>()
-.FirstOrDefaultAsync(where);
+            return await _dataContext.Set<TEntity>().FirstOrDefaultAsync(where);
         }
 
         public async Task<bool> AnyAsync(Expression<Func<TEntity, bool>> where)
         {
-            return await dataContext.Set<TEntity>().AnyAsync(where);
+            return await _dataContext.Set<TEntity>().AnyAsync(where);
         }
+
+        public void Dispose()
+        {
+            _dataContext.Dispose();
+        }
+    
+        
     }
 }

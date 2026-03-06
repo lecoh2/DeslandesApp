@@ -7,5 +7,6 @@ namespace DeslandesApp.API.Controllers.V1
     [ApiController]
     public class UsuarioController : ControllerBase
     {
+
     }
 }
