@@ -33,15 +33,12 @@ namespace DeslandesApp.Infra.Data.Mappings
             builder.Property(e => e.Naturalidade).HasColumnName("NATURALIDADE").HasMaxLength(2).IsRequired();
             builder.Property(e => e.Nacionalidade).HasColumnName("NASCIONALIDADE").HasMaxLength(2).IsRequired();
             builder.Property(e => e.Comentario).HasColumnName("COMENTARIO").HasMaxLength(2).IsRequired();
-
-
-
-            builder.Property(e => e.IdPessoa).HasColumnName("PESSOA_ID").IsRequired();
+                        builder.Property(e => e.IdPessoa).HasColumnName("PESSOA_ID").IsRequired();
 
             #region Relacionamentos
             builder.HasOne(e => e.Pessoa)
                 .WithOne(p => p.InformacoesComplementares)
-                .HasForeignKey<Pessoa>(e => e.Id)
+                .HasForeignKey<InformacoesComplementares>(e => e.IdPessoa)
                 .OnDelete(DeleteBehavior.Restrict);
             #endregion
         }

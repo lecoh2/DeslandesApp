@@ -20,8 +20,7 @@ namespace DeslandesApp.Domain.Models.Entities
         public SimplesNacional? SimplesNacional { get; set; }
         #endregion
         #region Relacionamento     
-        public Guid IdPessoa { get; set; }
-        public virtual Pessoa? Pessoa { get; set; }
+ 
         #endregion
     }
 }

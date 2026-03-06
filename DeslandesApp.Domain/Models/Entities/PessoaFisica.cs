@@ -18,8 +18,7 @@ namespace DeslandesApp.Domain.Models.Entities
         public string CertidaoReservista { get; set; } = string.Empty;
 
         #region Relacionamento
-        public Guid IdPessoa { get; set; }
-        public virtual Pessoa? Pessoa { get; set; }
+     
         #endregion
     }
 }

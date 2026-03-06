@@ -25,6 +25,7 @@ namespace DeslandesApp.Domain.Models.Entities
         public Guid? IdUsuarioCadastro { get; set; }
         public Guid? IdSexo { get; set; }
         public Guid? IdEtiqueta { get; set; }
+        public Guid ? IdPessoa { get; set; }
         #region Relacionamento
         public Endereco? Endereco { get; set; }
         public InformacoesComplementares? InformacoesComplementares { get; set; }
