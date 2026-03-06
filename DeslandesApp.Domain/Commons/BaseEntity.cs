@@ -4,11 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DeslandesApp.Domain.Models.Enum
+namespace DeslandesApp.Domain.Commons
 {
-    public enum Email
+    public abstract class BaseEntity
     {
-        Pessoal = 1,
-        Comercial = 2,
+        public Guid Id { get; set; } = Guid.NewGuid();
     }
 }

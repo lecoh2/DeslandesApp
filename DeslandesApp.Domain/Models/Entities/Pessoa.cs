@@ -1,4 +1,6 @@
-﻿using DeslandesApp.Domain.Models.Enum;
+﻿using DeslandesApp.Domain.Commons;
+using DeslandesApp.Domain.Models.Enum;
+using DeslandesApp.Domain.ValueObjects;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -8,17 +10,17 @@ using System.Threading.Tasks;
 
 namespace DeslandesApp.Domain.Models.Entities
 {
-    public abstract class Pessoa
+    public abstract class Pessoa : BaseEntity
     {
         public string Nome { get; set; } = string.Empty;
         //Enum Etiqueta RELACIONAR
         //Enum Perfil
         //Enum Telefone
-        //Enum Email
+ 
         public string Apelido { get; set; } = string.Empty; 
         public string Telefone { get; set; } = string.Empty;
         public string Operadora { get; set; } = string.Empty;
-        public string Email { get; set; } = string.Empty;
+        
         public string Site { get; set; } = string.Empty;
         public DateTime? DataCadastro { get; set; }
         public DateTime? DataAtualizacao { get; set; }
@@ -30,13 +32,14 @@ namespace DeslandesApp.Domain.Models.Entities
         public Sexo? Sexo { get; set; }
         public Usuario? Usuario { get; set; }            // Usuário vinculado
         public Usuario? UsuarioCadastro { get; set; }    // Usuário que cadastrou
+        public Email? Email{ get; set; }              // Email principal vinculado
         #endregion
 
         #region ENUMERADO STATUS
         public Etiqueta? Etiqueta { get; set; }
         public Perfil? Perfil { get; set; }
         public Telefone? TipoTelefone { get; set; }
-        public Email? TipoEmail { get; set; }
+        public TipoConta? TipoEmail { get; set; }
 
         #endregion
 

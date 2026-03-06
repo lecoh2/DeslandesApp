@@ -15,8 +15,8 @@ namespace DeslandesApp.Infra.Data.Mappings
         {
             builder.ToTable("USUARIOS");
 
-            //builder.HasKey(u => u.IdUsuario);
-            //builder.Property(u => u.IdUsuario).HasColumnName("IDUSUARIO");
+            builder.HasKey(u => u.Id);
+   
             builder.Property(u => u.Login).HasColumnName("LOGIN");
             builder.Property(u => u.Senha).HasColumnName("SENHA");
             builder.Property(u => u.DataCadastro).HasColumnName("DATACADASTRO");
