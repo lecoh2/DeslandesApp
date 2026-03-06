@@ -14,7 +14,6 @@ namespace DeslandesApp.Infra.Data.Mappings
         public void Configure(EntityTypeBuilder<Pessoa> builder)
         {
             builder.ToTable("PESSOA");
-
             builder.HasKey(p => p.Id);
             builder.Property(p => p.Nome).HasColumnName("NOME").IsRequired();
             builder.Property(p => p.DataCadastro).HasColumnName("DATACADASTRO").IsRequired();

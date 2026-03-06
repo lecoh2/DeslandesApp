@@ -19,13 +19,13 @@ namespace DeslandesApp.Domain.Models.Entities
  
         public string Apelido { get; set; } = string.Empty; 
         public string Telefone { get; set; } = string.Empty;
-        public string Operadora { get; set; } = string.Empty;
-        
+        public string Operadora { get; set; } = string.Empty;        
         public string Site { get; set; } = string.Empty;
         public DateTime? DataCadastro { get; set; }
         public DateTime? DataAtualizacao { get; set; }
         public Guid? IdUsuarioCadastro { get; set; }
         public Guid? IdSexo { get; set; }
+
         #region Relacionamento
         public Endereco? Endereco { get; set; }
         public InformacoesComplementares? InformacoesComplementares { get; set; }

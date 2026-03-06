@@ -1,3 +1,4 @@
+using DeslandesApp.API.Middlewares;
 using DeslandesApp.Domain.Extensions;
 using DeslandesApp.Infra.Data.Extensions;
 using Scalar.AspNetCore;
@@ -17,7 +18,8 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddEntityFramework(builder.Configuration);
 builder.Services.AddDomainService();
 var app = builder.Build();
-
+//Middlewares 
+app.UseMiddleware<ExceptionMiddleware>();
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
