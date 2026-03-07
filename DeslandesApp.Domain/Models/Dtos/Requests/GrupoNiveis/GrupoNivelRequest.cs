@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace DeslandesApp.Domain.Models.Dtos.Requests.GrupoNiveis
 {
-    public class GrupoSetorRequest
+    public record GrupoNivelRequest
     (
-        Guid IdSetor,
+        Guid IdNivel,
         Guid IdUsuario
     );
 }

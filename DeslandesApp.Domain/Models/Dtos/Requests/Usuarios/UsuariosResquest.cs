@@ -1,4 +1,6 @@
-﻿using DeslandesApp.Domain.Models.Entities;
+﻿using DeslandesApp.Domain.Models.Dtos.Requests.GrupoNiveis;
+using DeslandesApp.Domain.Models.Dtos.Requests.GrupoSetores;
+using DeslandesApp.Domain.Models.Entities;
 using DeslandesApp.Domain.Models.Enum;
 using DeslandesApp.Domain.ValueObjects;
 using System;
@@ -18,8 +20,8 @@ namespace DeslandesApp.Domain.Models.Dtos.Requests.Usuarios
 
     Status? Status,
     string Email,
-   List<Guid> IdSetores,
-   List<Guid> IdNiveis
+    List<GrupoSetorRequest> GrupoSetor,
+    List<GrupoNivelRequest> GrupoNivel
 );
 
 }

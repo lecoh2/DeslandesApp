@@ -25,6 +25,8 @@ namespace DeslandesApp.Infra.Data.Repositories
         private IUsuarioRepository? _usuarioRepository;
         private INivelRepository? _nivelRepository;
         private ISetorRepository? _setorRepository;
+        private IGrupoNiveisRepository? _grupoNiveisRepository;
+        private IGrupoSetoresRepository? _grupoSetoresRepository;
         public IUsuarioRepository UsuarioRepository
         {
             get
@@ -53,6 +55,26 @@ namespace DeslandesApp.Infra.Data.Repositories
                     _setorRepository = new SetorRepository(dataContext);
 
                 return _setorRepository;
+            }
+        }
+        public IGrupoSetoresRepository GrupoSetoresRepository
+        {
+            get
+            {
+                if (_grupoSetoresRepository == null)
+                    _grupoSetoresRepository = new GrupoSetorRepository(dataContext);
+
+                return _grupoSetoresRepository;
+            }
+        }
+        public IGrupoNiveisRepository GrupoNivelsRepository
+        {
+            get
+            {
+                if (_grupoNiveisRepository == null)
+                    _grupoNiveisRepository = new GrupoNivelRepository(dataContext);
+
+                return _grupoNiveisRepository;
             }
         }
         public IPessoaRepository PessoaRepository => throw new NotImplementedException();

@@ -52,10 +52,7 @@ namespace DeslandesApp.Domain.Services
             throw new NotImplementedException();
         }
 
-        public void Dispose()
-        {
-            throw new NotImplementedException();
-        }
+       
 
         public Task<NivelResponse> Excluir(Guid id)
         {
@@ -70,6 +67,10 @@ namespace DeslandesApp.Domain.Services
         public Task<NivelResponse?> ObterPorIdAsync(Guid id)
         {
             throw new NotImplementedException();
+        }
+        public void Dispose()
+        {
+            unitOfWork.Dispose();
         }
     }
 }

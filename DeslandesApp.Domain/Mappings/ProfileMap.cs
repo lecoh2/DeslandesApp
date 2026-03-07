@@ -1,7 +1,11 @@
 ﻿using AutoMapper;
+using DeslandesApp.Domain.Models.Dtos.Requests.GrupoNiveis;
+using DeslandesApp.Domain.Models.Dtos.Requests.GrupoSetores;
 using DeslandesApp.Domain.Models.Dtos.Requests.Nivel;
 using DeslandesApp.Domain.Models.Dtos.Requests.Setor;
 using DeslandesApp.Domain.Models.Dtos.Requests.Usuarios;
+using DeslandesApp.Domain.Models.Dtos.Responses.GrupoNiveis;
+using DeslandesApp.Domain.Models.Dtos.Responses.GrupoSetores;
 using DeslandesApp.Domain.Models.Dtos.Responses.Nivel;
 using DeslandesApp.Domain.Models.Dtos.Responses.Setor;
 using DeslandesApp.Domain.Models.Dtos.Responses.Usuarios;
@@ -16,32 +20,46 @@ using System.Threading.Tasks;
 namespace DeslandesApp.Domain.Mappings
 {
     public class ProfileMap : Profile
-    {
-        public ProfileMap()
-        {
-            #region Usuarios
-            // Request → Entity
-            CreateMap<UsuariosRequest, Usuario>()
-                .ForMember(dest => dest.ValorEmail,
-                    opt => opt.MapFrom(src => new ValorEmail(src.Email)));
+    {       
+            public ProfileMap()
+            {
+                #region Usuarios
+                CreateMap<UsuariosRequest, Usuario>()
+                    .ForMember(dest => dest.ValorEmail,
+                        opt => opt.MapFrom(src => new ValorEmail(src.Email)));
 
-            // Entity → Response
-            CreateMap<Usuario, UsuariosResponse>()
-                .ForMember(dest => dest.Email,
-                    opt => opt.MapFrom(src => src.ValorEmail.EnderecoEmail));
+                CreateMap<Usuario, UsuariosResponse>()
+                    .ForMember(dest => dest.Email,
+                        opt => opt.MapFrom(src => src.ValorEmail.EnderecoEmail));
+                #endregion
+
+
+                #region Setor
+                CreateMap<SetorRequest, Setor>();
+
+                CreateMap<Setor, SetorResponse>()
+                    .ForCtorParam("IdSetor", opt => opt.MapFrom(src => src.Id))
+                    .ForCtorParam("NomeSetor", opt => opt.MapFrom(src => src.NomeSetor));
+                #endregion
+
+
+                #region Nivel
+                CreateMap<NivelRequest, Niveis>();
+
+                CreateMap<Niveis, NivelResponse>()
+                    .ForCtorParam("IdNivel", opt => opt.MapFrom(src => src.Id))
+                    .ForCtorParam("NomeNivel", opt => opt.MapFrom(src => src.NomeNivel));
             #endregion
-            #region Setor
-            // Request → Entity
-            CreateMap<SetorRequest, Setor>();
-            // Entity → Response
-            CreateMap<Setor, SetorResponse>();
+            #region GrupoNivel
+            CreateMap<GrupoNivelRequest, GrupoNiveis>();
+            CreateMap<GrupoNiveis, GrupoNivelResponse>();
             #endregion
-            #region Nivel
-            // Request → Entity
-            CreateMap<NivelRequest, Niveis>();
-            // Entity → Response
-            CreateMap<Niveis, NivelResponse>();
+            #region GrupoSetores
+            CreateMap<GrupoSetorRequest, GrupoSetores>();
+            CreateMap<GrupoSetores, GrupoSetorResponse>();
             #endregion
         }
     }
-}
+
+    }
+

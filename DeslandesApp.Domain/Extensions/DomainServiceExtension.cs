@@ -1,5 +1,6 @@
 ﻿using DeslandesApp.Domain.Interfaces.Services;
 using DeslandesApp.Domain.Mappings;
+using DeslandesApp.Domain.Models.Entities;
 using DeslandesApp.Domain.Services;
 using Microsoft.Extensions.DependencyInjection;
 using System;
@@ -20,6 +21,9 @@ namespace DeslandesApp.Domain.Extensions
             services.AddTransient<IUsuarioService, UsuarioService>();
             services.AddTransient<IPessoaService, PessoaService>();
             services.AddTransient<ISetorService, SetorService>();
+            services.AddTransient<INivelServices, NiveisService>();
+            services.AddTransient<IGrupoNiveisServices, GrupoNiveisService>();
+            services.AddTransient<IGrupoSetoresService, GrupoSetoresService>()
 
             return services;
         }

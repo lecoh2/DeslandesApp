@@ -37,7 +37,7 @@ namespace DeslandesApp.Domain.Services
             var any = await unitOfWork.SetorRepository.AnyAsync(n => n.NomeSetor.Equals(setor.NomeSetor));
 
             if (any)
-                throw new InvalidOperationException("O nome do Nível já está cadastrado.Tente outro.");
+                throw new InvalidOperationException("O nome do setor já está cadastrado.Tente outro.");
 
 
             await unitOfWork.SetorRepository.AddAsync(setor);

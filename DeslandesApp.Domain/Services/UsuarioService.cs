@@ -1,9 +1,11 @@
 ﻿using AutoMapper;
+using DeslandesApp.Domain.Helpers;
 using DeslandesApp.Domain.Interfaces.Repositories;
 using DeslandesApp.Domain.Interfaces.Services;
 using DeslandesApp.Domain.Models.Dtos.Requests.Usuarios;
 using DeslandesApp.Domain.Models.Dtos.Responses.Usuarios;
 using DeslandesApp.Domain.Models.Entities;
+using DeslandesApp.Domain.Models.Enum;
 using DeslandesApp.Domain.Utils;
 using DeslandesApp.Domain.Validators;
 using FluentValidation;
@@ -27,7 +29,9 @@ namespace DeslandesApp.Domain.Services
             usuario.Login = usuario.Login.Trim().ToLower();
             usuario.ValorEmail = usuario.ValorEmail;
             usuario.NomeUsuario = usuario.NomeUsuario.Trim();
-
+            usuario.Senha = CryptoHelper.SHA256Encrypt(usuario.Senha);
+            usuario.DataCadastro = DateTime.Now;
+            usuario.Status = Status.Ativo;
             // Validação
             var validator = new UsuarioValidator();
             var result = validator.Validate(usuario);
@@ -52,9 +56,35 @@ namespace DeslandesApp.Domain.Services
                 if (existente.ValorEmail == usuario.ValorEmail)
                     throw new InvalidOperationException("E-mail já utilizado.");
             }
-
-            // Adiciona usuário
             await unitOfWork.UsuarioRepository.AddAsync(usuario);
+            // salva para gerar o Id
+            await unitOfWork.CommitAsync();
+            // Adiciona usuário
+            #region 7. Adicionar vínculos de grupo de acesso e níveis
+            foreach (var grupos in request.GrupoSetor)
+            {
+                var grupoSetores = new GrupoSetores
+                {
+                    IdUsuario = usuario.Id,
+                    IdSetor = grupos.IdSetor,
+                   
+                };
+                await unitOfWork.GrupoSetoresRepository.AddAsync(grupoSetores);
+            }
+                ;
+            foreach (var grupos in request.GrupoNivel)
+            {
+                var grupoNiveis = new GrupoNiveis
+                {
+                    IdUsuario = usuario.Id,
+                    IdNivel = grupos.IdNivel,
+                 
+                };
+                await unitOfWork.GrupoNiveisRepository.AddAsync(grupoNiveis);
+            }
+                ;
+            #endregion
+         
 
             // Salva no banco
             await unitOfWork.CommitAsync();
@@ -72,7 +102,7 @@ namespace DeslandesApp.Domain.Services
 
         public void Dispose()
         {
-            throw new NotImplementedException();
+            unitOfWork.Dispose();
         }
 
         public Task<UsuariosResponse> Excluir(Guid id)
