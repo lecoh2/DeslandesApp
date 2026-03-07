@@ -22,8 +22,8 @@ namespace DeslandesApp.Domain.Extensions
             services.AddTransient<IPessoaService, PessoaService>();
             services.AddTransient<ISetorService, SetorService>();
             services.AddTransient<INivelServices, NiveisService>();
-            services.AddTransient<IGrupoNiveisServices, GrupoNiveisService>();
-            services.AddTransient<IGrupoSetoresService, GrupoSetoresService>()
+            //services.AddTransient<IGrupoNiveisServices, GrupoNiveisService>();
+            //services.AddTransient<IGrupoSetoresService, GrupoSetoresService>()
 
             return services;
         }

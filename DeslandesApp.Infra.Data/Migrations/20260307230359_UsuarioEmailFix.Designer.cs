@@ -4,6 +4,7 @@ using DeslandesApp.Infra.Data.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DeslandesApp.Infra.Data.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20260307230359_UsuarioEmailFix")]
+    partial class UsuarioEmailFix
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -337,11 +340,6 @@ namespace DeslandesApp.Infra.Data.Migrations
                     b.Property<int?>("TipoTelefone")
                         .HasColumnType("int");
 
-                    b.Property<string>("ValorEmail")
-                        .HasMaxLength(150)
-                        .HasColumnType("nvarchar(150)")
-                        .HasColumnName("EMAIL");
-
                     b.HasKey("Id");
 
                     b.HasIndex("IdSexo");
@@ -431,11 +429,6 @@ namespace DeslandesApp.Infra.Data.Migrations
                     b.Property<int?>("Status")
                         .HasColumnType("int")
                         .HasColumnName("STATUS");
-
-                    b.Property<string>("ValorEmail")
-                        .HasMaxLength(150)
-                        .HasColumnType("nvarchar(150)")
-                        .HasColumnName("EMAIL");
 
                     b.HasKey("Id");
 
@@ -612,9 +605,64 @@ namespace DeslandesApp.Infra.Data.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
+                    b.OwnsOne("DeslandesApp.Domain.ValueObjects.ValorEmail", "ValorEmail", b1 =>
+                        {
+                            b1.Property<Guid>("PessoaId")
+                                .HasColumnType("uniqueidentifier");
+
+                            b1.Property<string>("EnderecoEmail")
+                                .IsRequired()
+                                .HasMaxLength(250)
+                                .IsUnicode(false)
+                                .HasColumnType("varchar(250)")
+                                .HasColumnName("EMAIL");
+
+                            b1.HasKey("PessoaId");
+
+                            b1.HasIndex("EnderecoEmail")
+                                .IsUnique()
+                                .HasFilter("[EMAIL] IS NOT NULL");
+
+                            b1.ToTable("PESSOA");
+
+                            b1.WithOwner()
+                                .HasForeignKey("PessoaId");
+                        });
+
                     b.Navigation("Sexo");
 
                     b.Navigation("Usuario");
+
+                    b.Navigation("ValorEmail");
+                });
+
+            modelBuilder.Entity("DeslandesApp.Domain.Models.Entities.Usuario", b =>
+                {
+                    b.OwnsOne("DeslandesApp.Domain.ValueObjects.ValorEmail", "ValorEmail", b1 =>
+                        {
+                            b1.Property<Guid>("UsuarioId")
+                                .HasColumnType("uniqueidentifier");
+
+                            b1.Property<string>("EnderecoEmail")
+                                .IsRequired()
+                                .HasMaxLength(250)
+                                .IsUnicode(false)
+                                .HasColumnType("varchar(250)")
+                                .HasColumnName("EMAIL");
+
+                            b1.HasKey("UsuarioId");
+
+                            b1.HasIndex("EnderecoEmail")
+                                .IsUnique()
+                                .HasFilter("[EMAIL] IS NOT NULL");
+
+                            b1.ToTable("USUARIOS");
+
+                            b1.WithOwner()
+                                .HasForeignKey("UsuarioId");
+                        });
+
+                    b.Navigation("ValorEmail");
                 });
 
             modelBuilder.Entity("DeslandesApp.Domain.Models.Entities.Niveis", b =>

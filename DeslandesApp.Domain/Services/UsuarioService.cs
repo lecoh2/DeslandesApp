@@ -29,7 +29,7 @@ namespace DeslandesApp.Domain.Services
             usuario.Login = usuario.Login.Trim().ToLower();
             usuario.ValorEmail = usuario.ValorEmail;
             usuario.NomeUsuario = usuario.NomeUsuario.Trim();
-            usuario.Senha = CryptoHelper.SHA256Encrypt(usuario.Senha);
+          
             usuario.DataCadastro = DateTime.Now;
             usuario.Status = Status.Ativo;
             // Validação
@@ -38,7 +38,7 @@ namespace DeslandesApp.Domain.Services
 
             if (!result.IsValid)
                 throw new ValidationException(result.Errors);
-
+            usuario.Senha = CryptoHelper.SHA256Encrypt(usuario.Senha);
             // Consulta única para verificar duplicidade
             var existente = await unitOfWork.UsuarioRepository.GetByAsync(u =>
                 u.NomeUsuario == usuario.NomeUsuario ||

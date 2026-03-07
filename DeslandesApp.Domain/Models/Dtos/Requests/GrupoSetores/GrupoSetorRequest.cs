@@ -8,7 +8,7 @@ namespace DeslandesApp.Domain.Models.Dtos.Requests.GrupoSetores
 {
     public record GrupoSetorRequest
     (
-      Guid IdSetor,
-      Guid IdUsuario
+      Guid IdSetor
+     // Guid IdUsuario
     );
 }

@@ -67,7 +67,7 @@ namespace DeslandesApp.Infra.Data.Repositories
                 return _grupoSetoresRepository;
             }
         }
-        public IGrupoNiveisRepository GrupoNivelsRepository
+        public IGrupoNiveisRepository GrupoNiveisRepository
         {
             get
             {
@@ -80,6 +80,8 @@ namespace DeslandesApp.Infra.Data.Repositories
         public IPessoaRepository PessoaRepository => throw new NotImplementedException();
 
       
+
+
 
         #endregion
         #region Transaçoes

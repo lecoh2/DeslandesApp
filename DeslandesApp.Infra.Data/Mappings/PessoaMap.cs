@@ -1,4 +1,5 @@
 ﻿using DeslandesApp.Domain.Models.Entities;
+using DeslandesApp.Domain.ValueObjects;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using System;
@@ -37,16 +38,15 @@ namespace DeslandesApp.Infra.Data.Mappings
                 .HasColumnName("USUARIO_ID")
                 .IsRequired();
 
-            builder.OwnsOne(c => c.ValorEmail, e =>
-            {
-                e.Property(p => p.EnderecoEmail)
-                 .HasColumnName("EMAIL")
-                 .HasMaxLength(150)
-                 .IsRequired();
+            builder.Property(p => p.ValorEmail)
+       .HasConversion(
+           v => v == null ? null : v.EnderecoEmail,
+           v => v == null ? null : new ValorEmail(v))
+       .HasColumnName("EMAIL")
+       .HasMaxLength(150)
+       .IsRequired(false);
 
-                e.HasIndex(p => p.EnderecoEmail)
-                 .IsUnique();
-            });
+
 
             // RELACIONAMENTO SEXO
             builder.HasOne(s => s.Sexo)

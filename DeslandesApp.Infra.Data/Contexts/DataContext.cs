@@ -44,7 +44,7 @@ namespace DeslandesApp.Infra.Data.Contexts
                     else if (property.ClrType == typeof(decimal))
                     {
                         //definindo o tipo do campo no banco de dados 
-                        property.SetColumnType("decimal(1,2)");
+                        property.SetColumnType("decimal(18,2)");
                     }
                 }
             }

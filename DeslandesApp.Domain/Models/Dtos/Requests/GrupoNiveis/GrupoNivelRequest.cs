@@ -8,7 +8,7 @@ namespace DeslandesApp.Domain.Models.Dtos.Requests.GrupoNiveis
 {
     public record GrupoNivelRequest
     (
-        Guid IdNivel,
-        Guid IdUsuario
+        Guid IdNivel
+        //Guid IdUsuario
     );
 }
