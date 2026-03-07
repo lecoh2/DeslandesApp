@@ -1,4 +1,5 @@
 ﻿using DeslandesApp.Domain.Interfaces.Repositories;
+using DeslandesApp.Domain.Models.Entities;
 using DeslandesApp.Infra.Data.Contexts;
 using Microsoft.EntityFrameworkCore.Storage;
 using System;
@@ -21,36 +22,58 @@ namespace DeslandesApp.Infra.Data.Repositories
         }
 
         #region Repositórios
-        public IUsuarioRepository UsuarioRepository => throw new NotImplementedException();
+        private IUsuarioRepository? _usuarioRepository;
+
+        public IUsuarioRepository UsuarioRepository
+        {
+            get
+            {
+                if (_usuarioRepository == null)
+                    _usuarioRepository = new UsuarioRepository(dataContext);
+
+                return _usuarioRepository;
+            }
+        }
 
         public IPessoaRepository PessoaRepository => throw new NotImplementedException();
         #endregion
         #region Transaçoes
         //construtor para injeção de dependência 
         private IDbContextTransaction? transaction;
-        public void BeginTransaction()
+        public async Task BeginTransactionAsync()
         {
-            if (transaction != null)
-                return;
+            if (transaction == null)
 
-            transaction = dataContext.Database.BeginTransaction();
+                transaction = await dataContext.Database.BeginTransactionAsync();
         }
-
-        public void Commit()
+        public async Task CommitAsync()
         {
-            if (transaction != null)
-                transaction.Rollback();
+            try
+            {
+                await dataContext.SaveChangesAsync();
+
+                if (transaction != null)
+                    await transaction.CommitAsync();
+            }
+            catch
+            {
+                if (transaction != null)
+                    await transaction.RollbackAsync();
+
+                throw;
+            }
         }
-        public void Rollback()
+        public async Task RollbackAsync()
         {
             if(transaction !=null)
-                transaction.Rollback();
+                await transaction.RollbackAsync();
         }
         public void Dispose()
         {
+            dataContext.Dispose();
             if (transaction != null)
                 transaction.Dispose();
-            dataContext.Dispose();
+           
         }
         #endregion
 

@@ -3,7 +3,10 @@ using DeslandesApp.Domain.Interfaces.Repositories;
 using DeslandesApp.Domain.Interfaces.Services;
 using DeslandesApp.Domain.Models.Dtos.Requests.Usuarios;
 using DeslandesApp.Domain.Models.Dtos.Responses.Usuarios;
+using DeslandesApp.Domain.Models.Entities;
 using DeslandesApp.Domain.Utils;
+using DeslandesApp.Domain.Validators;
+using FluentValidation;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,10 +17,53 @@ namespace DeslandesApp.Domain.Services
 {
     public class UsuarioService(IUnitOfWork unitOfWork, IMapper mapper) : IUsuarioService
     {
-        public Task<UsuariosResponse> AdicionarAsync(UsuariosRequest request)
+
+        public async Task<UsuariosResponse> AdicionarAsync(UsuariosRequest request)
         {
-            throw new NotImplementedException();
+            // Mapeia DTO -> Entidade
+            var usuario = mapper.Map<Usuario>(request);
+
+            // Normalização de dados
+            usuario.Login = usuario.Login.Trim().ToLower();
+            usuario.ValorEmail = usuario.ValorEmail;
+            usuario.NomeUsuario = usuario.NomeUsuario.Trim();
+
+            // Validação
+            var validator = new UsuarioValidator();
+            var result = validator.Validate(usuario);
+
+            if (!result.IsValid)
+                throw new ValidationException(result.Errors);
+
+            // Consulta única para verificar duplicidade
+            var existente = await unitOfWork.UsuarioRepository.GetByAsync(u =>
+                u.NomeUsuario == usuario.NomeUsuario ||
+                u.Login == usuario.Login ||
+                u.ValorEmail == usuario.ValorEmail);
+
+            if (existente != null)
+            {
+                if (existente.NomeUsuario == usuario.NomeUsuario)
+                    throw new InvalidOperationException("Nome de usuário já utilizado.");
+
+                if (existente.Login == usuario.Login)
+                    throw new InvalidOperationException("Login já utilizado.");
+
+                if (existente.ValorEmail == usuario.ValorEmail)
+                    throw new InvalidOperationException("E-mail já utilizado.");
+            }
+
+            // Adiciona usuário
+            await unitOfWork.UsuarioRepository.AddAsync(usuario);
+
+            // Salva no banco
+            await unitOfWork.CommitAsync();
+
+            // Retorno
+            return mapper.Map<UsuariosResponse>(usuario);
         }
+    
+   
 
         public Task<PageResult<UsuariosResponse>> ConsultarAsync(int pageNumber, int pageSize)
         {

@@ -9,9 +9,9 @@ namespace DeslandesApp.Domain.Interfaces.Repositories
     public interface IUnitOfWork : IDisposable
     {
         #region Operações de transação
-        void BeginTransaction();
-        void Commit();
-        void Rollback();
+        Task BeginTransactionAsync();
+        Task CommitAsync();
+        Task RollbackAsync();
 
         #endregion
 
