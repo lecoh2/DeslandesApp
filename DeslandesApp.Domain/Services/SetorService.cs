@@ -1,4 +1,14 @@
-﻿using System;
+﻿using AutoMapper;
+using DeslandesApp.Domain.Interfaces.Repositories;
+using DeslandesApp.Domain.Interfaces.Services;
+using DeslandesApp.Domain.Models.Dtos.Requests.Setor;
+using DeslandesApp.Domain.Models.Dtos.Responses.Nivel;
+using DeslandesApp.Domain.Models.Dtos.Responses.Setor;
+using DeslandesApp.Domain.Models.Entities;
+using DeslandesApp.Domain.Utils;
+using DeslandesApp.Domain.Validators;
+using FluentValidation;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,7 +16,58 @@ using System.Threading.Tasks;
 
 namespace DeslandesApp.Domain.Services
 {
-    public class SetorService
+    public class SetorService(IUnitOfWork unitOfWork, IMapper mapper) : ISetorService
     {
+        public async  Task<SetorResponse> AdicionarAsync(SetorRequest request)
+        {
+            // Mapeia DTO -> Entidade
+            var setor = mapper.Map<Setor>(request);
+
+            // Normalização de dados
+            setor.NomeSetor = setor.NomeSetor.Trim().ToLower();
+
+            // Validação
+            var validator = new SetorValidator();
+            var result = validator.Validate(setor);
+
+            if (!result.IsValid)
+                throw new ValidationException(result.Errors);
+
+            // Consulta única para verificar duplicidade
+            var any = await unitOfWork.SetorRepository.AnyAsync(n => n.NomeSetor.Equals(setor.NomeSetor));
+
+            if (any)
+                throw new InvalidOperationException("O nome do Nível já está cadastrado.Tente outro.");
+
+
+            await unitOfWork.SetorRepository.AddAsync(setor);
+
+            return mapper.Map<SetorResponse>(setor);
+        }
+
+        public Task<PageResult<SetorResponse>> ConsultarAsync(int pageNumber, int pageSize)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Dispose()
+        {
+            unitOfWork.Dispose();
+        }
+
+        public Task<SetorResponse> Excluir(Guid id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<SetorResponse> Modificar(Guid id, SetorRequest request)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<SetorResponse?> ObterPorIdAsync(Guid id)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

@@ -19,6 +19,7 @@ namespace DeslandesApp.Domain.Interfaces.Repositories
         IUsuarioRepository UsuarioRepository { get; }
         IPessoaRepository PessoaRepository { get; }
         INivelRepository NivelRepository { get; }
+        ISetorRepository SetorRepository { get; }
         #endregion
     }
 }

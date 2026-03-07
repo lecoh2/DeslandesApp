@@ -24,6 +24,7 @@ namespace DeslandesApp.Infra.Data.Repositories
         #region Repositórios
         private IUsuarioRepository? _usuarioRepository;
         private INivelRepository? _nivelRepository;
+        private ISetorRepository? _setorRepository;
         public IUsuarioRepository UsuarioRepository
         {
             get
@@ -42,6 +43,16 @@ namespace DeslandesApp.Infra.Data.Repositories
                     _nivelRepository = new NivelRepository(dataContext);
 
                 return _nivelRepository;
+            }
+        }
+        public ISetorRepository SetorRepository
+        {
+            get
+            {
+                if (_setorRepository == null)
+                    _setorRepository = new SetorRepository(dataContext);
+
+                return _setorRepository;
             }
         }
         public IPessoaRepository PessoaRepository => throw new NotImplementedException();

@@ -19,6 +19,7 @@ namespace DeslandesApp.Domain.Extensions
 
             services.AddTransient<IUsuarioService, UsuarioService>();
             services.AddTransient<IPessoaService, PessoaService>();
+            services.AddTransient<ISetorService, SetorService>();
 
             return services;
         }
