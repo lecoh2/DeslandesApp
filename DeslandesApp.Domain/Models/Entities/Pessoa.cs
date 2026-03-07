@@ -18,16 +18,16 @@ namespace DeslandesApp.Domain.Models.Entities
         public string Site { get; set; } = string.Empty;
         public DateTime? DataCadastro { get; set; }
         public DateTime? DataAtualizacao { get; set; }
-        public Guid? IdUsuarioCadastro { get; set; }
+       
         public Guid? IdSexo { get; set; }
         public Guid? IdEtiqueta { get; set; }
-        public Guid ? IdPessoa { get; set; }
+        public Guid? IdUsuario { get; set; }
         #region Relacionamento
         public Endereco? Endereco { get; set; }
         public InformacoesComplementares? InformacoesComplementares { get; set; }
         public Sexo? Sexo { get; set; }
-        public Usuario? Usuario { get; set; }            // Usuário vinculado
-        public Usuario? UsuarioCadastro { get; set; }    // Usuário que cadastrou
+       public Usuario? Usuario { get; set; }            // Usuário vinculado
+       // public Usuario? UsuarioCadastro { get; set; }    // Usuário que cadastrou
         public ValorEmail? ValorEmail { get; set; }              // Email principal vinculado
         #endregion
 

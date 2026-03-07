@@ -10,19 +10,13 @@ using System.Threading.Tasks;
 namespace DeslandesApp.Domain.Models.Dtos.Responses.Usuarios
 {
     public record UsuariosResponse(
-        Guid Id,
-        string NomeUsuario,
-        string Login,
-        string Senha,
-        DateTime DataCadastro,
-        Guid IdPessoa,
-        PessoaFisica Pessoa,
-        Status? Status,
-        ICollection<GrupoSetores> GrupoSetores,
-        ICollection<GrupoNiveis> GrupoNiveis,
-        Fotos Fotos,
-        ValorEmail ValorEmail
-        );
+       Guid Id,
+       string NomeUsuario,
+       string Login,
+       DateTime DataCadastro,
+       Status? Status,
+       string Email
+   );
 
 
 }

@@ -18,10 +18,10 @@ namespace DeslandesApp.Domain.Models.Entities
         public string? Senha { get; set; }
         public DateTime? DataCadastro { get; set; }
         public DateTime? DataAtualizacao { get; set; }
-        public Guid IdPessoa { get; set; }
+
         #region
 
-        public Pessoa? Pessoa { get; set; }
+        public List<Pessoa>? Pessoa { get; set; }
         public Status? Status { get; set; }
         public ICollection<GrupoSetores> GrupoSetores { get; set; }
         public ICollection<GrupoNiveis> GrupoNiveis { get; set; }

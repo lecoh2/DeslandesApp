@@ -4,6 +4,7 @@ using DeslandesApp.Infra.Data.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DeslandesApp.Infra.Data.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20260307134226_Correcoes2")]
+    partial class Correcoes2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -283,7 +286,7 @@ namespace DeslandesApp.Infra.Data.Migrations
 
                     b.Property<DateTime?>("DataAtualizacao")
                         .HasColumnType("datetime2")
-                        .HasColumnName("DATAATUALIZACAO");
+                        .HasColumnName("DATATATUALIZACAO");
 
                     b.Property<DateTime>("DataCadastro")
                         .HasColumnType("datetime2")
@@ -399,7 +402,7 @@ namespace DeslandesApp.Infra.Data.Migrations
                         .HasColumnType("datetime2")
                         .HasColumnName("DATAATUALIZACAO");
 
-                    b.Property<DateTime>("DataCadastro")
+                    b.Property<DateTime?>("DataCadastro")
                         .HasColumnType("datetime2")
                         .HasColumnName("DATACADASTRO");
 
@@ -612,13 +615,13 @@ namespace DeslandesApp.Infra.Data.Migrations
                                 .HasMaxLength(250)
                                 .IsUnicode(false)
                                 .HasColumnType("varchar(250)")
-                                .HasColumnName("EMAIL");
+                                .HasColumnName("ValorEmail");
 
                             b1.HasKey("PessoaId");
 
                             b1.HasIndex("EnderecoEmail")
                                 .IsUnique()
-                                .HasFilter("[EMAIL] IS NOT NULL");
+                                .HasFilter("[ValorEmail] IS NOT NULL");
 
                             b1.ToTable("PESSOA");
 

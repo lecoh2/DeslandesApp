@@ -27,19 +27,14 @@ namespace DeslandesApp.Infra.Data.Repositories
             await _dataContext.AddAsync(entity);
             await _dataContext.SaveChangesAsync();
         }
-
-
-
         public virtual async Task DeleteAsync(TEntity entity)
         {
             _dataContext.Remove(entity);
             await _dataContext.SaveChangesAsync();
         }
-
         public virtual async Task<IEnumerable<TEntity>> GetAllAsync()
         {
             return await _dataContext.Set<TEntity>().ToListAsync();
-
         }
         public virtual async Task<PageResult<TEntity>> GetAllAsync(int pageNumber, int pageSize)
         {
@@ -60,7 +55,6 @@ namespace DeslandesApp.Infra.Data.Repositories
                 TotalCount = totalCount
             };
         }
-
 
         public virtual async Task<TEntity?> GetByIdAsync(TKey id)
         {

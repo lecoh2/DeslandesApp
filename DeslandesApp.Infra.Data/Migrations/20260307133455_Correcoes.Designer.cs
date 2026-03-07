@@ -4,6 +4,7 @@ using DeslandesApp.Infra.Data.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DeslandesApp.Infra.Data.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20260307133455_Correcoes")]
+    partial class Correcoes
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -283,9 +286,9 @@ namespace DeslandesApp.Infra.Data.Migrations
 
                     b.Property<DateTime?>("DataAtualizacao")
                         .HasColumnType("datetime2")
-                        .HasColumnName("DATAATUALIZACAO");
+                        .HasColumnName("DATATATUALIZACAO");
 
-                    b.Property<DateTime>("DataCadastro")
+                    b.Property<DateTime?>("DataCadastro")
                         .HasColumnType("datetime2")
                         .HasColumnName("DATACADASTRO");
 
@@ -295,11 +298,11 @@ namespace DeslandesApp.Infra.Data.Migrations
                     b.Property<Guid?>("IdEtiqueta")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("IdSexo")
+                    b.Property<Guid?>("IdSexo")
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("SEXO_ID");
 
-                    b.Property<Guid>("IdUsuario")
+                    b.Property<Guid?>("IdUsuario")
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("USUARIO_ID");
 
@@ -340,8 +343,6 @@ namespace DeslandesApp.Infra.Data.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("IdSexo");
-
-                    b.HasIndex("IdUsuario");
 
                     b.ToTable("PESSOA", (string)null);
 
@@ -392,14 +393,13 @@ namespace DeslandesApp.Infra.Data.Migrations
             modelBuilder.Entity("DeslandesApp.Domain.Models.Entities.Usuario", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime?>("DataAtualizacao")
                         .HasColumnType("datetime2")
                         .HasColumnName("DATAATUALIZACAO");
 
-                    b.Property<DateTime>("DataCadastro")
+                    b.Property<DateTime?>("DataCadastro")
                         .HasColumnType("datetime2")
                         .HasColumnName("DATACADASTRO");
 
@@ -596,12 +596,6 @@ namespace DeslandesApp.Infra.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("DeslandesApp.Domain.Models.Entities.Usuario", "Usuario")
-                        .WithMany("Pessoa")
-                        .HasForeignKey("IdUsuario")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
                     b.OwnsOne("DeslandesApp.Domain.ValueObjects.ValorEmail", "ValorEmail", b1 =>
                         {
                             b1.Property<Guid>("PessoaId")
@@ -612,13 +606,13 @@ namespace DeslandesApp.Infra.Data.Migrations
                                 .HasMaxLength(250)
                                 .IsUnicode(false)
                                 .HasColumnType("varchar(250)")
-                                .HasColumnName("EMAIL");
+                                .HasColumnName("ValorEmail");
 
                             b1.HasKey("PessoaId");
 
                             b1.HasIndex("EnderecoEmail")
                                 .IsUnique()
-                                .HasFilter("[EMAIL] IS NOT NULL");
+                                .HasFilter("[ValorEmail] IS NOT NULL");
 
                             b1.ToTable("PESSOA");
 
@@ -628,13 +622,17 @@ namespace DeslandesApp.Infra.Data.Migrations
 
                     b.Navigation("Sexo");
 
-                    b.Navigation("Usuario");
-
                     b.Navigation("ValorEmail");
                 });
 
             modelBuilder.Entity("DeslandesApp.Domain.Models.Entities.Usuario", b =>
                 {
+                    b.HasOne("DeslandesApp.Domain.Models.Entities.Pessoa", "Pessoa")
+                        .WithOne("Usuario")
+                        .HasForeignKey("DeslandesApp.Domain.Models.Entities.Usuario", "Id")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.OwnsOne("DeslandesApp.Domain.ValueObjects.ValorEmail", "ValorEmail", b1 =>
                         {
                             b1.Property<Guid>("UsuarioId")
@@ -659,6 +657,8 @@ namespace DeslandesApp.Infra.Data.Migrations
                                 .HasForeignKey("UsuarioId");
                         });
 
+                    b.Navigation("Pessoa");
+
                     b.Navigation("ValorEmail");
                 });
 
@@ -672,6 +672,8 @@ namespace DeslandesApp.Infra.Data.Migrations
                     b.Navigation("Endereco");
 
                     b.Navigation("InformacoesComplementares");
+
+                    b.Navigation("Usuario");
                 });
 
             modelBuilder.Entity("DeslandesApp.Domain.Models.Entities.Setor", b =>
@@ -691,8 +693,6 @@ namespace DeslandesApp.Infra.Data.Migrations
                     b.Navigation("GrupoNiveis");
 
                     b.Navigation("GrupoSetores");
-
-                    b.Navigation("Pessoa");
                 });
 #pragma warning restore 612, 618
         }

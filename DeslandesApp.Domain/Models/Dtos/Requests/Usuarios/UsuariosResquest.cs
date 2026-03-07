@@ -11,18 +11,15 @@ namespace DeslandesApp.Domain.Models.Dtos.Requests.Usuarios
 {
     public record UsuariosRequest(
 
-        
-        string NomeUsuario,
-        string Login,
-        string Senha,
-        DateTime DataCadastro,
-        Guid IdPessoa,
-        PessoaFisica Pessoa,
-        Status? Status,
-        ICollection<GrupoSetores> GrupoSetores,
-        ICollection<GrupoNiveis> GrupoNiveis,
-        Fotos Fotos,
-        ValorEmail ValorEmail
+    string NomeUsuario,
+    string Login,
+    string Senha,
+    DateTime DataCadastro,
 
-    );
+    Status? Status,
+    string Email,
+   List<Guid> IdSetores,
+   List<Guid> IdNiveis
+);
+
 }

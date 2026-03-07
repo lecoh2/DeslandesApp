@@ -14,46 +14,56 @@ namespace DeslandesApp.Infra.Data.Mappings
         public void Configure(EntityTypeBuilder<Pessoa> builder)
         {
             builder.ToTable("PESSOA");
+
             builder.HasKey(p => p.Id);
-            builder.Property(p => p.Nome).HasColumnName("NOME").IsRequired(false);
-            builder.Property(p => p.DataCadastro).HasColumnName("DATACADASTRO").IsRequired(false);
-            builder.Property(p => p.DataAtualizacao).HasColumnName("DATATATUALIZACAO").IsRequired(false);       
-           
-            builder.Property(p => p.IdSexo).HasColumnName("SEXO_ID").IsRequired(false);
-            builder.Ignore(p => p.UsuarioCadastro);
-            builder.Property(p => p.IdUsuarioCadastro).HasColumnName("USUARIO_ID").IsRequired(false);
+
+            builder.Property(p => p.Nome)
+                .HasColumnName("NOME")
+                .IsRequired();
+
+            builder.Property(p => p.DataCadastro)
+                .HasColumnName("DATACADASTRO")
+                .IsRequired();
+
+            builder.Property(p => p.DataAtualizacao)
+                .HasColumnName("DATAATUALIZACAO")
+                .IsRequired(false);
+
+            builder.Property(p => p.IdSexo)
+                .HasColumnName("SEXO_ID")
+                .IsRequired();
+
+            builder.Property(p => p.IdUsuario)
+                .HasColumnName("USUARIO_ID")
+                .IsRequired();
+
             builder.OwnsOne(c => c.ValorEmail, e =>
             {
                 e.Property(p => p.EnderecoEmail)
-                .HasColumnName("ValorEmail")
-                .HasMaxLength(150)
-                .IsRequired();
+                 .HasColumnName("EMAIL")
+                 .HasMaxLength(150)
+                 .IsRequired();
+
                 e.HasIndex(p => p.EnderecoEmail)
-                .IsUnique();
+                 .IsUnique();
             });
-     
-                #region Relacionamentos
 
+            // RELACIONAMENTO SEXO
+            builder.HasOne(s => s.Sexo)
+                   .WithMany(p => p.Pessoa)
+                   .HasForeignKey(s => s.IdSexo)
+                   .IsRequired();
 
-
-                // Relacionamento com Sexo
-                builder.HasOne(p => p.Sexo)
-                   .WithMany(s => s.Pessoa)
-                   .HasForeignKey(p => p.IdSexo).IsRequired(false);
-
-            // Relacionamento com Usuario (1:1)
+            // RELACIONAMENTO USUARIO
             builder.HasOne(p => p.Usuario)
-                   .WithOne(u => u.Pessoa)
-                   .HasForeignKey<Usuario>(u => u.IdPessoa)
+                   .WithMany(u => u.Pessoa)
+                   .HasForeignKey(p => p.IdUsuario)
                    .OnDelete(DeleteBehavior.Restrict);
 
-
-
-            // Herança (TPH)
+            // HERANÇA
             builder.HasDiscriminator<string>("TIPO")
                    .HasValue<PessoaFisica>("PESSOAFISICA")
                    .HasValue<PessoaJuridica>("PESSOAJURIDICA");
-            #endregion
         }
     }
 

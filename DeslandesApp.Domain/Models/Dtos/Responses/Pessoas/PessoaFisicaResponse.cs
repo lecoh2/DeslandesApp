@@ -26,8 +26,8 @@ namespace DeslandesApp.Domain.Models.Dtos.Responses.Pessoas
          Endereco Endereco,
          InformacoesComplementares InformacoesComplementares,
          Sexo Sexo,
-     Usuario Usuario,
-     Usuario UsuarioCadastro,
+    // Usuario Usuario,
+    // Usuario UsuarioCadastro,
      ValorEmail ValorEmail,
     #endregion
 

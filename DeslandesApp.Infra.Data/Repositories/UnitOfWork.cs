@@ -23,7 +23,7 @@ namespace DeslandesApp.Infra.Data.Repositories
 
         #region Repositórios
         private IUsuarioRepository? _usuarioRepository;
-
+        private INivelRepository? _nivelRepository;
         public IUsuarioRepository UsuarioRepository
         {
             get
@@ -34,8 +34,20 @@ namespace DeslandesApp.Infra.Data.Repositories
                 return _usuarioRepository;
             }
         }
+        public INivelRepository NivelRepository
+        {
+            get
+            {
+                if (_nivelRepository == null)
+                    _nivelRepository = new NivelRepository(dataContext);
 
+                return _nivelRepository;
+            }
+        }
         public IPessoaRepository PessoaRepository => throw new NotImplementedException();
+
+      
+
         #endregion
         #region Transaçoes
         //construtor para injeção de dependência 
