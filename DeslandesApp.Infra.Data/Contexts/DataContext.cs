@@ -38,7 +38,7 @@ namespace DeslandesApp.Infra.Data.Contexts
                         property.SetMaxLength(250);
 
                         //definindo como not null (obrigatório)
-                        property.IsNullable = false;
+                        //property.IsNullable = false;
                     }
                     //configurações default para campos do tipo decimal 
                     else if (property.ClrType == typeof(decimal))

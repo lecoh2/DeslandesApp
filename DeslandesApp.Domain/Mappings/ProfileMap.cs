@@ -28,14 +28,19 @@ namespace DeslandesApp.Domain.Mappings
                     .ForMember(dest => dest.ValorEmail,
                         opt => opt.MapFrom(src => new ValorEmail(src.Email)));
 
-                CreateMap<Usuario, UsuariosResponse>()
-                    .ForMember(dest => dest.Email,
-                        opt => opt.MapFrom(src => src.ValorEmail.EnderecoEmail));
-                #endregion
+               
+
+            CreateMap<Usuario, UsuariosResponse>()
+    .ForCtorParam(
+        "Email",
+        opt => opt.MapFrom(src => src.ValorEmail.EnderecoEmail)
+    );
+
+            #endregion
 
 
-                #region Setor
-                CreateMap<SetorRequest, Setor>();
+            #region Setor
+            CreateMap<SetorRequest, Setor>();
 
                 CreateMap<Setor, SetorResponse>()
                     .ForCtorParam("IdSetor", opt => opt.MapFrom(src => src.Id))

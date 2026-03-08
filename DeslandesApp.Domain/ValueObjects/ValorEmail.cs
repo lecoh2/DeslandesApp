@@ -7,26 +7,34 @@ using System.Threading.Tasks;
 
 namespace DeslandesApp.Domain.ValueObjects
 {
-    public sealed class ValorEmail
+    public sealed class ValorEmail : IEquatable<ValorEmail>
     {
         public string? EnderecoEmail { get; private set; }
-        //Construtor reservado para o ValueObject 
+
         protected ValorEmail() { }
-        //Construtor público para criar uma instância de Email 
+
         public ValorEmail(string endereco)
         {
             if (string.IsNullOrWhiteSpace(endereco))
-                throw new ArgumentNullException("Email é obrigatório.");
-            if (!IsValid(endereco))
-                throw new ArgumentNullException("Email inválido.");
+                throw new ArgumentException("Email é obrigatório.");
+
             EnderecoEmail = endereco.ToLower();
         }
-        private bool IsValid(string email)
+
+        public bool Equals(ValorEmail? other)
         {
-            var regex = new Regex(@"^[^@\s]+@[^@\s]+\.[^@\s]+$");
-            return regex.IsMatch(email);
+            if (other is null) return false;
+            return EnderecoEmail == other.EnderecoEmail;
         }
+
+        public override bool Equals(object? obj)
+            => Equals(obj as ValorEmail);
+
+        public override int GetHashCode()
+            => EnderecoEmail?.GetHashCode() ?? 0;
+
         public override string ToString() => EnderecoEmail ?? string.Empty;
     }
+
 }
 

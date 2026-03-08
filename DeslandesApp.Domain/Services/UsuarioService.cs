@@ -29,7 +29,7 @@ namespace DeslandesApp.Domain.Services
             usuario.Login = usuario.Login.Trim().ToLower();
             usuario.ValorEmail = usuario.ValorEmail;
             usuario.NomeUsuario = usuario.NomeUsuario.Trim();
-          
+
             usuario.DataCadastro = DateTime.Now;
             usuario.Status = Status.Ativo;
             // Validação
@@ -41,9 +41,11 @@ namespace DeslandesApp.Domain.Services
             usuario.Senha = CryptoHelper.SHA256Encrypt(usuario.Senha);
             // Consulta única para verificar duplicidade
             var existente = await unitOfWork.UsuarioRepository.GetByAsync(u =>
-                u.NomeUsuario == usuario.NomeUsuario ||
-                u.Login == usuario.Login ||
-                u.ValorEmail == usuario.ValorEmail);
+      u.NomeUsuario == usuario.NomeUsuario ||
+      u.Login == usuario.Login ||
+      u.ValorEmail == usuario.ValorEmail);
+
+
 
             if (existente != null)
             {
@@ -67,7 +69,7 @@ namespace DeslandesApp.Domain.Services
                 {
                     IdUsuario = usuario.Id,
                     IdSetor = grupos.IdSetor,
-                   
+
                 };
                 await unitOfWork.GrupoSetoresRepository.AddAsync(grupoSetores);
             }
@@ -78,13 +80,13 @@ namespace DeslandesApp.Domain.Services
                 {
                     IdUsuario = usuario.Id,
                     IdNivel = grupos.IdNivel,
-                 
+
                 };
                 await unitOfWork.GrupoNiveisRepository.AddAsync(grupoNiveis);
             }
                 ;
             #endregion
-         
+
 
             // Salva no banco
             await unitOfWork.CommitAsync();
@@ -92,12 +94,24 @@ namespace DeslandesApp.Domain.Services
             // Retorno
             return mapper.Map<UsuariosResponse>(usuario);
         }
-    
-   
 
-        public Task<PageResult<UsuariosResponse>> ConsultarAsync(int pageNumber, int pageSize)
+
+
+        public async Task<PageResult<UsuariosResponse>> ConsultarAsync(int pageNumber, int pageSize)
         {
-            throw new NotImplementedException();
+            if (pageNumber <= 0) pageNumber = 1;
+            if (pageSize <= 0 || pageSize > 25) pageSize = 25;
+
+            var pageResult = await unitOfWork.UsuarioRepository.GetAllAsync(pageNumber, pageSize);
+
+            var response = new PageResult<UsuariosResponse>
+            {
+                Items = mapper.Map<List<UsuariosResponse>>(pageResult.Items),
+                PageNumber = pageResult.PageNumber,
+                PageSize = pageResult.PageSize,
+                TotalCount = pageResult.TotalCount
+            };
+            return response;
         }
 
         public void Dispose()
@@ -115,9 +129,12 @@ namespace DeslandesApp.Domain.Services
             throw new NotImplementedException();
         }
 
-        public Task<UsuariosResponse?> ObterPorIdAsync(Guid id)
+        public async Task<UsuariosResponse?> ObterPorIdAsync(Guid id)
         {
-            throw new NotImplementedException();
+            var usuario = await unitOfWork.UsuarioRepository.GetByAsync(u => u.Id == id);
+            if (usuario == null)
+                return null;
+            return mapper.Map<UsuariosResponse>(usuario);
         }
     }
 }
