@@ -10,8 +10,15 @@ namespace DeslandesApp.API.Configurations
         public static void Configure(IServiceCollection services)
         {
             services.AddTransient<IJwtTokenService, JwtTokenService>();
-            services.AddTransient<IUsuarioRepository, UsuarioRepository>();
-           //ervices.AddTransient<IPessoaRepository, PessoaRepository>();
+
+            // Repositórios (Infra.Data)
+            services.AddScoped<IUsuarioRepository, UsuarioRepository>();
+            //services.AddScoped<IPessoaRepository,>();
+            services.AddScoped<ISetorRepository, SetorRepository>();
+            services.AddScoped<INivelRepository, NivelRepository>();
+
+            // UnitOfWork
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
         }
     }
 }

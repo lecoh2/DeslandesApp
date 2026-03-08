@@ -1,6 +1,9 @@
 ﻿using DeslandesApp.Domain.Interfaces.Services;
 using DeslandesApp.Domain.Models.Dtos.Requests.Nivel;
 using DeslandesApp.Domain.Models.Dtos.Responses.Nivel;
+using DeslandesApp.Domain.Models.Dtos.Responses.Usuarios;
+using DeslandesApp.Domain.Services;
+using DeslandesApp.Domain.Utils;
 using FluentValidation;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -56,10 +59,14 @@ namespace DeslandesApp.API.Controllers.V1
             throw new NotImplementedException();
         }
 
+     
         [HttpGet]
-        public async Task<IActionResult> GetAllAsync()
+        [ProducesResponseType(typeof(PageResult<NivelResponse>), 201)]
+        public async Task<IActionResult> GetAllAsync
+        ([FromQuery] int pageNumber, [FromQuery] int pageSize)
         {
-            throw new NotImplementedException();
+            var response = await nivelService.ConsultarAsync(pageNumber, pageSize);
+            return StatusCode(200, response);
         }
     }
 }

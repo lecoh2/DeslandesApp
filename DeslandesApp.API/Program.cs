@@ -6,39 +6,64 @@ using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+// ===== Carregar appsettings.json e appsettings.{Ambiente}.json =====
+builder.Configuration
+    .SetBasePath(Directory.GetCurrentDirectory())
+    .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+    .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: true, reloadOnChange: true)
+    .AddEnvironmentVariables();
 
+// Log pra confirmar qual ambiente está sendo usado
+Console.WriteLine($">>> Ambiente atual: {builder.Environment.EnvironmentName}");
+
+// ===== Add services =====
 builder.Services.AddControllers();
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-builder.Services.AddOpenApi();
-//Swagger 
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen(); builder.Services.AddEntityFramework(builder.Configuration);
-builder.Services.AddDomainService();
-// Configuração de segurança, Cors e outras dependências
-SwaggerConfiguration.Configure(builder.Services);
+builder.Services.AddSwaggerGen();
+builder.Services.AddOpenApi();
+
+// ===== Configurações de infraestrutura e banco =====
+builder.Services.AddEntityFramework(builder.Configuration);
+
+// ===== Serviços do Domain =====
+builder.Services.AddDomainService(); // Interfaces e serviços do Domain
+
+// ===== Serviços concretos e repositórios (Infra) =====
 DependencyInjectionConfiguration.Configure(builder.Services);
+
+// ===== JWT, CORS, Swagger extras =====
 JwtConfiguration.Configure(builder.Services);
 CorsConfiguration.Configure(builder.Services);
-//Métodos de extensão 
 
+// ===== Build app =====
 var app = builder.Build();
-//Middlewares 
+
+// ===== Middlewares =====
 app.UseMiddleware<ExceptionMiddleware>();
-// Configure the HTTP request pipeline.
+
+// ===== Swagger =====
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
 }
-//Swagger 
 app.UseSwagger();
-app.UseSwaggerUI();
+app.UseSwaggerUI(options =>
+{
+    options.SwaggerEndpoint("/swagger/v1/swagger.json", "ProconApp API V1");
+});
 
-//Scalar 
+// ===== Scalar API =====
 app.MapScalarApiReference(s => s.WithTheme(ScalarTheme.BluePlanet));
 
+// ===== Autorização e CORS =====
 app.UseAuthorization();
+app.UseCors(CorsConfiguration.PolicyName);
 
+// ===== Map Controllers =====
 app.MapControllers();
 
+// ===== Run app =====
 app.Run();
+
+// ===== Para testes e WebApplicationFactory =====
+public partial class Program { }

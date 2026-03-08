@@ -1,5 +1,7 @@
 ﻿using DeslandesApp.Domain.Interfaces.Repositories;
+using DeslandesApp.Domain.Models.Dtos.Responses.Usuarios;
 using DeslandesApp.Domain.Models.Entities;
+using DeslandesApp.Domain.Utils;
 using DeslandesApp.Infra.Data.Contexts;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -13,6 +15,11 @@ namespace DeslandesApp.Infra.Data.Repositories
     public class UsuarioRepository(DataContext dataContext)
         : BaseRepository<Usuario, Guid>(dataContext), IUsuarioRepository
     {
+        public Task<PageResult<UsuariosResponse>> GetAllPaginacao(int pageNumber, int pageSize, string? searchTerm = null)
+        {
+            throw new NotImplementedException();
+        }
+
         // Buscar usuário apenas pelo login
         public async Task<Usuario?> GetUsuarioByLoginAsync(string login)
         {

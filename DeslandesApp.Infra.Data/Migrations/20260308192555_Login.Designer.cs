@@ -4,6 +4,7 @@ using DeslandesApp.Infra.Data.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DeslandesApp.Infra.Data.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20260308192555_Login")]
+    partial class Login
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -87,47 +90,39 @@ namespace DeslandesApp.Infra.Data.Migrations
             modelBuilder.Entity("DeslandesApp.Domain.Models.Entities.FailedLoginAttempt", b =>
                 {
                     b.Property<Guid>("Id")
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnName("IDFAILEDLOGINATTEMPT");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("DataHora")
-                        .HasColumnType("datetime2")
-                        .HasColumnName("DATAHORA");
+                        .HasColumnType("datetime2");
 
                     b.Property<Guid?>("IdUsuario")
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnName("IDUSUARIO");
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("IpAcesso")
                         .HasMaxLength(250)
                         .IsUnicode(false)
-                        .HasColumnType("varchar(250)")
-                        .HasColumnName("IPACESSO");
+                        .HasColumnType("varchar(250)");
 
                     b.Property<string>("Login")
                         .IsRequired()
                         .HasMaxLength(250)
                         .IsUnicode(false)
-                        .HasColumnType("varchar(250)")
-                        .HasColumnName("LOGIN");
+                        .HasColumnType("varchar(250)");
 
                     b.Property<string>("Mensagem")
                         .HasMaxLength(250)
                         .IsUnicode(false)
-                        .HasColumnType("varchar(250)")
-                        .HasColumnName("MENSAGEM");
+                        .HasColumnType("varchar(250)");
 
                     b.Property<string>("UserAgent")
                         .HasMaxLength(250)
                         .IsUnicode(false)
-                        .HasColumnType("varchar(250)")
-                        .HasColumnName("USERAGENT");
+                        .HasColumnType("varchar(250)");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("IdUsuario");
-
-                    b.ToTable("FAILEDLOGINATTEMPTS", (string)null);
+                    b.ToTable("FAILEDLOGINATTEMPT");
                 });
 
             modelBuilder.Entity("DeslandesApp.Domain.Models.Entities.Fotos", b =>
@@ -304,14 +299,12 @@ namespace DeslandesApp.Infra.Data.Migrations
                     b.Property<string>("IpAcesso")
                         .HasMaxLength(250)
                         .IsUnicode(false)
-                        .HasColumnType("varchar(250)")
-                        .HasColumnName("IPACESSO");
+                        .HasColumnType("varchar(250)");
 
                     b.Property<string>("Mensagem")
                         .HasMaxLength(250)
                         .IsUnicode(false)
-                        .HasColumnType("varchar(250)")
-                        .HasColumnName("MENSAGEM");
+                        .HasColumnType("varchar(250)");
 
                     b.Property<bool>("Sucesso")
                         .HasColumnType("bit");
@@ -319,14 +312,16 @@ namespace DeslandesApp.Infra.Data.Migrations
                     b.Property<string>("UserAgent")
                         .HasMaxLength(250)
                         .IsUnicode(false)
-                        .HasColumnType("varchar(250)")
-                        .HasColumnName("USERAGENT");
+                        .HasColumnType("varchar(250)");
+
+                    b.Property<Guid?>("UsuarioId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("IdUsuario");
+                    b.HasIndex("UsuarioId");
 
-                    b.ToTable("LOGINHISTORY", (string)null);
+                    b.ToTable("LOGINHISTORY");
                 });
 
             modelBuilder.Entity("DeslandesApp.Domain.Models.Entities.Niveis", b =>
@@ -617,14 +612,6 @@ namespace DeslandesApp.Infra.Data.Migrations
                     b.Navigation("Pessoa");
                 });
 
-            modelBuilder.Entity("DeslandesApp.Domain.Models.Entities.FailedLoginAttempt", b =>
-                {
-                    b.HasOne("DeslandesApp.Domain.Models.Entities.Usuario", null)
-                        .WithMany()
-                        .HasForeignKey("IdUsuario")
-                        .OnDelete(DeleteBehavior.NoAction);
-                });
-
             modelBuilder.Entity("DeslandesApp.Domain.Models.Entities.Fotos", b =>
                 {
                     b.HasOne("DeslandesApp.Domain.Models.Entities.Usuario", "Usuario")
@@ -687,9 +674,7 @@ namespace DeslandesApp.Infra.Data.Migrations
                 {
                     b.HasOne("DeslandesApp.Domain.Models.Entities.Usuario", "Usuario")
                         .WithMany()
-                        .HasForeignKey("IdUsuario")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("UsuarioId");
 
                     b.Navigation("Usuario");
                 });

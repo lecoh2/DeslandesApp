@@ -48,9 +48,21 @@ namespace DeslandesApp.Domain.Services
         {
             throw new NotImplementedException();
         }
-        public Task<PageResult<SetorResponse>> ConsultarAsync(int pageNumber, int pageSize)
+        public async Task<PageResult<SetorResponse>> ConsultarAsync(int pageNumber, int pageSize, string? serchTerms = null)
         {
-            throw new NotImplementedException();
+            if (pageNumber <= 0) pageNumber = 1;
+            if (pageSize <= 0 || pageSize > 25) pageSize = 25;
+
+            var pageResult = await unitOfWork.SetorRepository.GetAllAsync(pageNumber, pageSize);
+
+            var response = new PageResult<SetorResponse>
+            {
+                Items = mapper.Map<List<SetorResponse>>(pageResult.Items),
+                PageNumber = pageResult.PageNumber,
+                PageSize = pageResult.PageSize,
+                TotalCount = pageResult.TotalCount
+            };
+            return response;
         }
         public Task<SetorResponse?> ObterPorIdAsync(Guid id)
         {
@@ -63,6 +75,16 @@ namespace DeslandesApp.Domain.Services
         public void Dispose()
         {
             unitOfWork.Dispose();
+        }
+
+        public Task<PageResult<SetorResponse>> ConsultarAsync(int pageNumber, int pageSize)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<PageResult<SetorResponse>> ConsultarPaginacaoAsync(int pageNumber, int pageSize, string? serchTerm = null)
+        {
+            throw new NotImplementedException();
         }
     }
 }

@@ -15,8 +15,8 @@ namespace DeslandesApp.Domain.Interfaces.Services
 
         Task<TResponse> ExcluirAsync(TKey id);
 
-        Task<PageResult<TResponse>> ConsultarAsync(int pageNumber, int pageSize);
-
+        Task<PageResult<TResponse>> ConsultarAsync(int pageNumber, int pageSize) ;
+        Task<PageResult<TResponse>> ConsultarPaginacaoAsync(int pageNumber, int pageSize, string? serchTerm = null);
         Task<TResponse?> ObterPorIdAsync(TKey id);
     }
 }

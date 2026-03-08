@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 
 namespace DeslandesApp.Domain.Models.Entities
 {
-    public class FailedLoginAttempt 
+    public class FailedLoginAttempt : BaseEntity
     {
-        public Guid IdFailedLoginAttempt { get; set; } = Guid.NewGuid();
+        //public Guid IdFailedLoginAttempt { get; set; } = Guid.NewGuid();
 
         // Não obrigamos FK aqui para não violar constraints quando o usuário não existir
         public Guid? IdUsuario { get; set; }    // se existir usuário, armazenamos; se não existir, null

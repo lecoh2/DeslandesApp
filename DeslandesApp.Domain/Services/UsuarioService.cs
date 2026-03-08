@@ -150,9 +150,6 @@ namespace DeslandesApp.Domain.Services
             await unitOfWork.UsuarioRepository.DeleteAsync(usuario);
             return mapper.Map<UsuariosResponse>(usuario);
         }
-
-
-
             public async Task<AutenticarUsuarioResponse> AutenticarUsuarioAsync(
     AutenticarUsuarioRequest request, string ip, string userAgent)
 
@@ -174,7 +171,7 @@ namespace DeslandesApp.Domain.Services
                 {
                     var failedAttempt = new FailedLoginAttempt
                     {
-                        IdFailedLoginAttempt = Guid.NewGuid(),
+                        Id = Guid.NewGuid(),
                         IdUsuario = null,
                         Login = request.Login ?? string.Empty,
                         IpAcesso = ip,
@@ -195,7 +192,7 @@ namespace DeslandesApp.Domain.Services
                     // opcional: registrar um failedAttempt sem FK para auditoria
                     var failedAttemptBlocked = new FailedLoginAttempt
                     {
-                        IdFailedLoginAttempt = Guid.NewGuid(),
+                        Id = Guid.NewGuid(),
                         IdUsuario = usuario.Id,
                         Login = request.Login ?? string.Empty,
                         IpAcesso = ip,
@@ -218,7 +215,7 @@ namespace DeslandesApp.Domain.Services
                     // registrar LoginHistory (com FK — usuário existe)
                     var historicoFalha = new LoginHistory
                     {
-                        IdLoginHistory = Guid.NewGuid(),
+                        Id = Guid.NewGuid(),
                         IdUsuario = usuario.Id,
                         DataHoraAcesso = DateTime.UtcNow,
                         IpAcesso = ip,
@@ -231,7 +228,7 @@ namespace DeslandesApp.Domain.Services
                     // registrar FailedLoginAttempt (sem dependência de FK para auditoria e contagem)
                     var failedAttempt = new FailedLoginAttempt
                     {
-                        IdFailedLoginAttempt = Guid.NewGuid(),
+                        Id = Guid.NewGuid(),
                         IdUsuario = usuario.Id,
                         Login = request.Login ?? string.Empty,
                         IpAcesso = ip,
@@ -256,7 +253,7 @@ namespace DeslandesApp.Domain.Services
 
                         var bloqueioHistory = new LoginHistory
                         {
-                            IdLoginHistory = Guid.NewGuid(),
+                            Id = Guid.NewGuid(),
                             IdUsuario = usuario.Id,
                             DataHoraAcesso = DateTime.UtcNow,
                             IpAcesso = ip,
@@ -295,7 +292,7 @@ namespace DeslandesApp.Domain.Services
                 // 8) Registrar LoginHistory (sucesso)
                 var loginSucesso = new LoginHistory
                 {
-                    IdLoginHistory = Guid.NewGuid(),
+                    Id = Guid.NewGuid(),
                     IdUsuario = usuario.Id,
                     IpAcesso = ip,
                     UserAgent = userAgent,
@@ -334,6 +331,18 @@ namespace DeslandesApp.Domain.Services
         }
 
         public Task<AutenticarUsuarioResponse> AutenticarUsuarioAsync(AutenticarUsuarioResponse request, string ip, string userAgent)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<PageResult<UsuariosResponse>> ConsultarPagincaoAsync(int pageNumber, int pageSize, string? serchTerm = null)
+        {
+            throw new NotImplementedException();
+        }
+
+      
+
+        public Task<PageResult<UsuariosResponse>> ConsultarPaginacaoAsync(int pageNumber, int pageSize, string? serchTerm = null)
         {
             throw new NotImplementedException();
         }

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DeslandesApp.Domain.Commons;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,9 +7,9 @@ using System.Threading.Tasks;
 
 namespace DeslandesApp.Domain.Models.Entities
 {
-    public class LoginHistory
+    public class LoginHistory : BaseEntity
     {
-        public Guid IdLoginHistory { get; set; } = Guid.NewGuid();
+      //  public Guid IdLoginHistory { get; set; } = Guid.NewGuid();
         public Guid IdUsuario { get; set; }
         public string? IpAcesso { get; set; }
         public string? UserAgent { get; set; }

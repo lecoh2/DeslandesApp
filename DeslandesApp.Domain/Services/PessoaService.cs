@@ -19,7 +19,17 @@ namespace DeslandesApp.Domain.Services
             throw new NotImplementedException();
         }
 
+        public Task<PageResult<PessoaFisicaResponse>> ConsultarAsync(int pageNumber, int pageSize , string? serchTerms = null)
+        {
+            throw new NotImplementedException();
+        }
+
         public Task<PageResult<PessoaFisicaResponse>> ConsultarAsync(int pageNumber, int pageSize)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<PageResult<PessoaFisicaResponse>> ConsultarPaginacaoAsync(int pageNumber, int pageSize, string? serchTerm = null)
         {
             throw new NotImplementedException();
         }

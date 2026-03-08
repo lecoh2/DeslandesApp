@@ -71,7 +71,7 @@ namespace DeslandesApp.API.Controllers.V1
             return StatusCode(200, response);
         }
 
-        [HttpGet]
+       [HttpGet("{id}")]
         [ProducesResponseType(typeof(UsuariosResponse),200)]
         public async Task<IActionResult>GetByIdAsync(Guid id)
         {
