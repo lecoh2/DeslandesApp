@@ -46,25 +46,21 @@ namespace DeslandesApp.Domain.Services
 
             return mapper.Map<NivelResponse>(nivel);
         }
-
+        public Task<NivelResponse> ModificarAsync(Guid id, NivelRequest request)
+        {
+            throw new NotImplementedException();
+        }
         public Task<PageResult<NivelResponse>> ConsultarAsync(int pageNumber, int pageSize)
         {
             throw new NotImplementedException();
-        }
-
-       
-
-        public Task<NivelResponse> Excluir(Guid id)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<NivelResponse> Modificar(Guid id, NivelRequest request)
-        {
-            throw new NotImplementedException();
-        }
+        }       
 
         public Task<NivelResponse?> ObterPorIdAsync(Guid id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<NivelResponse> ExcluirAsync(Guid id)
         {
             throw new NotImplementedException();
         }

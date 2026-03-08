@@ -26,9 +26,7 @@ namespace DeslandesApp.Domain.Mappings
                 #region Usuarios
                 CreateMap<UsuariosRequest, Usuario>()
                     .ForMember(dest => dest.ValorEmail,
-                        opt => opt.MapFrom(src => new ValorEmail(src.Email)));
-
-               
+                        opt => opt.MapFrom(src => new ValorEmail(src.Email)));               
 
             CreateMap<Usuario, UsuariosResponse>()
     .ForCtorParam(
@@ -54,6 +52,10 @@ namespace DeslandesApp.Domain.Mappings
                 CreateMap<Niveis, NivelResponse>()
                     .ForCtorParam("IdNivel", opt => opt.MapFrom(src => src.Id))
                     .ForCtorParam("NomeNivel", opt => opt.MapFrom(src => src.NomeNivel));
+            CreateMap<Niveis, NivelResponse>()
+    .ForCtorParam("IdNivel", opt => opt.MapFrom(src => src.Id))
+    .ForCtorParam("NomeNivel", opt => opt.MapFrom(src => src.NomeNivel));
+
             #endregion
             #region GrupoNivel
             CreateMap<GrupoNivelRequest, GrupoNiveis>();

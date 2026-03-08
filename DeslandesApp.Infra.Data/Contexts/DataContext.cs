@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using DeslandesApp.Domain.Models.Entities;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,6 +14,11 @@ namespace DeslandesApp.Infra.Data.Contexts
         //Método construtor para receber por meio de injeção de dependência 
         //as configurações do banco de dados, como conexão, tipo etc. 
         public DataContext(DbContextOptions<DataContext> options) : base(options) { }
+        public DbSet<Usuario> Usuario { get; set; }
+        public DbSet<LoginHistory> LoginHistory { get; set; }
+        public DbSet<FailedLoginAttempt> FailedLoginAttempt { get; set; }
+        public DbSet<Niveis> Niveis { get; set; }
+        public DbSet<GrupoNiveis> GrupoNiveis { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             //modelBuilder.ApplyConfiguration(new CategoriaMap());

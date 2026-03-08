@@ -27,6 +27,18 @@ namespace DeslandesApp.Infra.Data.Repositories
         private ISetorRepository? _setorRepository;
         private IGrupoNiveisRepository? _grupoNiveisRepository;
         private IGrupoSetoresRepository? _grupoSetoresRepository;
+        private IFailedLoginAttemptRepository? _failedLoginAttemptRepository;
+        private ILoginHistoryRepository _loginHistoryRepository;
+        public ILoginHistoryRepository LoginHistoryRepository
+        {
+            get
+            {
+                if (_loginHistoryRepository == null)
+                    _loginHistoryRepository = new LoginHistoryRepository(dataContext);
+
+                return _loginHistoryRepository;
+            }
+        }
         public IUsuarioRepository UsuarioRepository
         {
             get
@@ -67,6 +79,16 @@ namespace DeslandesApp.Infra.Data.Repositories
                 return _grupoSetoresRepository;
             }
         }
+        public IFailedLoginAttemptRepository FailedLoginAttemptRepository
+        {
+            get
+            {
+                if (_failedLoginAttemptRepository == null)
+                    _failedLoginAttemptRepository = new FailedLoginAttemptRepository(dataContext);
+
+                return _failedLoginAttemptRepository;
+            }
+        }
         public IGrupoNiveisRepository GrupoNiveisRepository
         {
             get
@@ -79,7 +101,9 @@ namespace DeslandesApp.Infra.Data.Repositories
         }
         public IPessoaRepository PessoaRepository => throw new NotImplementedException();
 
-      
+       
+
+
 
 
 

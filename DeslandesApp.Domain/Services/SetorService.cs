@@ -44,30 +44,25 @@ namespace DeslandesApp.Domain.Services
 
             return mapper.Map<SetorResponse>(setor);
         }
-
+        public Task<SetorResponse> ModificarAsync(Guid id, SetorRequest request)
+        {
+            throw new NotImplementedException();
+        }
         public Task<PageResult<SetorResponse>> ConsultarAsync(int pageNumber, int pageSize)
         {
             throw new NotImplementedException();
         }
-
-        public void Dispose()
-        {
-            unitOfWork.Dispose();
-        }
-
-        public Task<SetorResponse> Excluir(Guid id)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<SetorResponse> Modificar(Guid id, SetorRequest request)
-        {
-            throw new NotImplementedException();
-        }
-
         public Task<SetorResponse?> ObterPorIdAsync(Guid id)
         {
             throw new NotImplementedException();
+        }
+        public Task<SetorResponse> ExcluirAsync(Guid id)
+        {
+            throw new NotImplementedException();
+        }  
+        public void Dispose()
+        {
+            unitOfWork.Dispose();
         }
     }
 }

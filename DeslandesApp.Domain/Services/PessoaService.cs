@@ -29,12 +29,12 @@ namespace DeslandesApp.Domain.Services
             throw new NotImplementedException();
         }
 
-        public Task<PessoaFisicaResponse> Excluir(Guid id)
+        public Task<PessoaFisicaResponse> ExcluirAsync(Guid id)
         {
             throw new NotImplementedException();
         }
 
-        public Task<PessoaFisicaResponse> Modificar(Guid id, PessoaFisicaRequest request)
+        public Task<PessoaFisicaResponse> ModificarAsync(Guid id, PessoaFisicaRequest request)
         {
             throw new NotImplementedException();
         }

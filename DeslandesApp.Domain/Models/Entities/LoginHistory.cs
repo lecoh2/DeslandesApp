@@ -8,7 +8,7 @@ namespace DeslandesApp.Domain.Models.Entities
 {
     public class LoginHistory
     {
-       // public Guid IdLoginHistory { get; set; } = Guid.NewGuid();
+        public Guid IdLoginHistory { get; set; } = Guid.NewGuid();
         public Guid IdUsuario { get; set; }
         public string? IpAcesso { get; set; }
         public string? UserAgent { get; set; }

@@ -12,5 +12,6 @@ namespace DeslandesApp.Domain.Interfaces.Repositories
 {
     public interface IUsuarioRepository : IBaseRepository<Usuario, Guid>
     {
+        Task<Usuario?> GetUsuarioByLoginAsync(string login);
     }
 }

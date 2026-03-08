@@ -1,6 +1,7 @@
 ﻿
 using DeslandesApp.Domain.Models.Dtos.Requests.Usuarios;
 using DeslandesApp.Domain.Models.Dtos.Responses.Usuarios;
+using DeslandesApp.Domain.Models.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,5 +12,11 @@ namespace DeslandesApp.Domain.Interfaces.Services
 {
     public interface IUsuarioService : IBaseService<UsuariosRequest, UsuariosResponse, Guid>
     {
+        Task<AutenticarUsuarioResponse> AutenticarUsuarioAsync(
+ AutenticarUsuarioRequest request,
+ string ip,
+ string userAgent);
+
+
     }
 }
