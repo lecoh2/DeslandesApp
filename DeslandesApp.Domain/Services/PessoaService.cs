@@ -44,7 +44,7 @@ namespace DeslandesApp.Domain.Services
             throw new NotImplementedException();
         }
 
-        public Task<PessoaFisicaResponse> ModificarAsync(Guid id, PessoaFisicaRequest request)
+        public Task<PessoaFisicaResponse> ModificarAsync(Guid id, PessoaFisicaUpdateRequest request)
         {
             throw new NotImplementedException();
         }

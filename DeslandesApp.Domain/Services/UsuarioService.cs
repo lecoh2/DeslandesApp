@@ -96,25 +96,17 @@ namespace DeslandesApp.Domain.Services
             // Retorno
             return mapper.Map<UsuariosResponse>(usuario);
         }
-        public async Task<UsuariosResponse> ModificarAsync(Guid id, UsuariosRequest request)
+        public async Task<UsuariosResponse> ModificarAsync(Guid id, UsuarioUpdateRequest request)
         {
             var usuario = await unitOfWork.UsuarioRepository.GetByIdAsync(id);
             if (usuario == null)
                 throw new KeyNotFoundException("Usuário não encontrado.");
             mapper.Map(request, usuario);
 
-            var validtor = new UsuarioValidator();
-            var result = validtor.Validate(usuario);
+          
             usuario.Senha = CryptoHelper.SHA256Encrypt(usuario.Senha);
             usuario.DataAtualizacao = DateTime.Now;
 
-            if (!result.IsValid)
-                throw new ValidationException(result.Errors);
-            var any = await unitOfWork.UsuarioRepository.AnyAsync
-                (u => u.NomeUsuario.Equals(usuario.NomeUsuario));
-            if (any)
-                throw new InvalidOperationException
-                    ("já existe um usuário com esté nome. tente outro");
             await unitOfWork.UsuarioRepository.UpdateAsync(usuario);
             return mapper.Map<UsuariosResponse>(usuario);
 
@@ -325,26 +317,28 @@ namespace DeslandesApp.Domain.Services
             unitOfWork.Dispose();
         }
 
-        public Task<Usuario?> GetUsuarioByLoginAsync(string login)
+        public async Task<PageResult<UsuarioPaginacaoResponse>> ConsultarUsuariosComPaginacaoAsync(
+        int pageNumber,
+        int pageSize,
+        string? searchTerm = null)
         {
-            throw new NotImplementedException();
+            var paged = await unitOfWork.UsuarioRepository
+                .GetUsuariosComPaginadoAsync(pageNumber, pageSize, searchTerm);
+
+            if (paged == null || !paged.Items.Any())
+            {
+                return new PageResult<UsuarioPaginacaoResponse>
+                {
+                    Items = new List<UsuarioPaginacaoResponse>(),
+                    TotalCount = 0,
+                    PageNumber = pageNumber,
+                    PageSize = pageSize
+                };
+            }
+
+            return paged;
         }
 
-        public Task<AutenticarUsuarioResponse> AutenticarUsuarioAsync(AutenticarUsuarioResponse request, string ip, string userAgent)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<PageResult<UsuariosResponse>> ConsultarPagincaoAsync(int pageNumber, int pageSize, string? serchTerm = null)
-        {
-            throw new NotImplementedException();
-        }
-
-      
-
-        public Task<PageResult<UsuariosResponse>> ConsultarPaginacaoAsync(int pageNumber, int pageSize, string? serchTerm = null)
-        {
-            throw new NotImplementedException();
-        }
+     
     }
 }

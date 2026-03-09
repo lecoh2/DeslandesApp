@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace DeslandesApp.Domain.Interfaces.Services
 {
-    public interface ISetorService : IBaseService<SetorRequest, SetorResponse, Guid>
+    public interface ISetorService : IBaseService<SetorRequest,SetorUpdateRequest, SetorResponse, Guid>
     {
     }
 }

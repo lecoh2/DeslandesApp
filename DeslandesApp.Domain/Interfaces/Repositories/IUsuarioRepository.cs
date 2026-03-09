@@ -14,10 +14,7 @@ namespace DeslandesApp.Domain.Interfaces.Repositories
     public interface IUsuarioRepository : IBaseRepository<Usuario, Guid>
     {
         Task<Usuario?> GetUsuarioByLoginAsync(string login);
-        Task<PageResult<UsuariosResponse>>
-        GetAllPaginacao(
-            int pageNumber,
-            int pageSize,
-            string? searchTerm = null);
+        Task<PageResult<UsuarioPaginacaoResponse>> GetUsuariosComPaginadoAsync(int pageNumber, int pageSize, string? searchTerm = null);
+
     }
 }

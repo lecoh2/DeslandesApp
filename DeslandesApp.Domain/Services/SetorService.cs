@@ -44,7 +44,7 @@ namespace DeslandesApp.Domain.Services
 
             return mapper.Map<SetorResponse>(setor);
         }
-        public Task<SetorResponse> ModificarAsync(Guid id, SetorRequest request)
+        public Task<SetorResponse> ModificarAsync(Guid id, SetorUpdateRequest request)
         {
             throw new NotImplementedException();
         }

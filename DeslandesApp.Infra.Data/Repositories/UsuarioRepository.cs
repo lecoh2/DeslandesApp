@@ -1,4 +1,6 @@
 ﻿using DeslandesApp.Domain.Interfaces.Repositories;
+using DeslandesApp.Domain.Models.Dtos.Responses.GrupoNiveis;
+using DeslandesApp.Domain.Models.Dtos.Responses.GrupoSetores;
 using DeslandesApp.Domain.Models.Dtos.Responses.Usuarios;
 using DeslandesApp.Domain.Models.Entities;
 using DeslandesApp.Domain.Utils;
@@ -15,9 +17,71 @@ namespace DeslandesApp.Infra.Data.Repositories
     public class UsuarioRepository(DataContext dataContext)
         : BaseRepository<Usuario, Guid>(dataContext), IUsuarioRepository
     {
-        public Task<PageResult<UsuariosResponse>> GetAllPaginacao(int pageNumber, int pageSize, string? searchTerm = null)
+        public async Task<PageResult<UsuarioPaginacaoResponse>> GetUsuariosComPaginadoAsync(
+          int pageNumber,
+          int pageSize,
+          string? searchTerm = null)
         {
-            throw new NotImplementedException();
+            var query = dataContext.Usuario
+       .AsNoTracking()
+       .Include(u => u.GrupoSetores)
+           .ThenInclude(gs => gs.Setor)
+       .Include(u => u.GrupoNiveis)
+           .ThenInclude(gn => gn.Niveis)
+       .AsQueryable();
+
+            // --- filtro ---
+            if (!string.IsNullOrWhiteSpace(searchTerm))
+            {
+                var term = searchTerm.ToLower();
+
+                query = query.Where(u =>
+                    u.Login.ToLower().Contains(term) ||
+                    u.NomeUsuario.ToLower().Contains(term) ||
+                    u.GrupoSetores.Any(gs => gs.Setor != null && gs.Setor.NomeSetor.ToLower().Contains(term)) ||
+                    u.GrupoNiveis.Any(gn => gn.Niveis != null && gn.Niveis.NomeNivel.ToLower().Contains(term))
+                );
+            }
+
+            // --- total ---
+            var totalCount = await query.CountAsync();
+
+            var items = await query
+       .OrderBy(u => u.NomeUsuario)
+       .Skip((pageNumber - 1) * pageSize)
+       .Take(pageSize)
+       .Select(u => new UsuarioPaginacaoResponse(
+           u.Id,
+           u.NomeUsuario,
+           u.Login,
+           u.Status,
+
+           u.GrupoSetores
+               .Where(gs => gs.Setor != null)
+               .Select(gs => new GrupoSetorPaginacaoResponse(
+                   gs.Setor.Id,
+                   gs.Setor.NomeSetor
+               ))
+               .ToList(),
+
+           u.GrupoNiveis
+               .Where(gn => gn.Niveis != null)
+               .Select(gn => new GrupoNivelPaginacaoResponse(
+                   gn.Niveis.Id,
+                   gn.Niveis.NomeNivel
+               ))
+               .ToList()
+       ))
+       .ToListAsync();
+
+
+            return new PageResult<UsuarioPaginacaoResponse>
+            {
+                Items = items,
+                TotalCount = totalCount,
+                PageNumber = pageNumber,
+                PageSize = pageSize
+            };
         }
 
         // Buscar usuário apenas pelo login

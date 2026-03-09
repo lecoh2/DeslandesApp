@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace DeslandesApp.Domain.Interfaces.Services
 {
-    public interface INivelServices : IBaseService<NivelRequest, NivelResponse, Guid>
+    public interface INivelServices : IBaseService<NivelRequest, NivelUpdateRequest, NivelResponse, Guid>
     {
     }
 }

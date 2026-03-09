@@ -1,5 +1,6 @@
 ﻿
 using DeslandesApp.Domain.Models.Dtos.Requests.Pessoas;
+using DeslandesApp.Domain.Models.Dtos.Requests.Usuarios;
 using DeslandesApp.Domain.Models.Dtos.Responses.Pessoas;
 using System;
 using System.Collections.Generic;
@@ -9,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace DeslandesApp.Domain.Interfaces.Services
 {
-    public interface IPessoaService : IBaseService<PessoaFisicaRequest, PessoaFisicaResponse, Guid>
+    public interface IPessoaService : IBaseService<PessoaFisicaRequest, PessoaFisicaUpdateRequest, PessoaFisicaResponse, Guid>
     {
     }
 }

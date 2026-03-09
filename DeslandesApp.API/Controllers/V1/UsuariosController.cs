@@ -46,9 +46,9 @@ namespace DeslandesApp.API.Controllers.V1
             }
         }
 
-        [HttpPut("{id}")]
+        [HttpPut("atualizar-usuario{id}")]
         [ProducesResponseType(typeof(UsuariosResponse),200)]
-        public async Task<IActionResult> PutAsync(Guid id, [FromBody] UsuariosRequest request)
+        public async Task<IActionResult> PutAsync(Guid id, [FromBody] UsuarioUpdateRequest request)
         {
             var response = await usuarioService.ModificarAsync(id, request);
             return StatusCode(200, response);
@@ -140,6 +140,19 @@ namespace DeslandesApp.API.Controllers.V1
             }
         }
 
+        [HttpGet("consultar-usuarios-paginacao")]
+        public async Task<IActionResult> ConsultarUsuarioPaginacao(
+    [FromQuery] int pageNumber = 1,
+    [FromQuery] int pageSize = 10,
+    [FromQuery] string? searchTerm = null)
+        {
+            pageNumber = pageNumber <= 0 ? 1 : pageNumber;
+            pageSize = pageSize <= 0 ? 10 : Math.Min(pageSize, 100);
 
+            var usuarioPaged = await usuarioService
+                .ConsultarUsuariosComPaginacaoAsync(pageNumber, pageSize, searchTerm);
+
+            return Ok(usuarioPaged);
+        }
     }
 }

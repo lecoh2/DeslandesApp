@@ -46,7 +46,7 @@ namespace DeslandesApp.Domain.Services
 
             return mapper.Map<NivelResponse>(nivel);
         }
-        public Task<NivelResponse> ModificarAsync(Guid id, NivelRequest request)
+        public Task<NivelResponse> ModificarAsync(Guid id, NivelUpdateRequest request)
         {
             throw new NotImplementedException();
         }
