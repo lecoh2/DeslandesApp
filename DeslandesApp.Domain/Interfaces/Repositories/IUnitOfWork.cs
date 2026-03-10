@@ -24,6 +24,7 @@ namespace DeslandesApp.Domain.Interfaces.Repositories
         IGrupoNiveisRepository GrupoNiveisRepository { get; }
         IFailedLoginAttemptRepository FailedLoginAttemptRepository { get; }
         ILoginHistoryRepository LoginHistoryRepository { get; }
+        IEnderecoRepository EnderecoRepository { get; }
         #endregion
     }
 }

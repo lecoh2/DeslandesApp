@@ -12,5 +12,11 @@ namespace DeslandesApp.Domain.Interfaces.Repositories
 {
     public interface IPessoaRepository : IBaseRepository<Pessoa,Guid>
     {
+        Task<bool> CpfInUseAsync(string cpf);
+        // Task<Pessoa> ObterPorCpfAsync(string cpf);
+        Task<bool> EmailInUseAsync(string email);
+        Task<bool> RgInUseAsync(string cpf);
+        Task<PessoaFisica> GetByCpfAsync(string cpf);
+      
     }
 }

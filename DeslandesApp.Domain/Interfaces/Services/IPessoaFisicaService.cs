@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace DeslandesApp.Domain.Interfaces.Services
 {
-    public interface IPessoaService : IBaseService<PessoaFisicaRequest, PessoaFisicaUpdateRequest, PessoaFisicaResponse, Guid>
+    public interface IPessoaFisicaService : IBaseService<PessoaFisicaRequest, PessoaFisicaUpdateRequest, PessoaFisicaResponse, Guid>
     {
     }
 }

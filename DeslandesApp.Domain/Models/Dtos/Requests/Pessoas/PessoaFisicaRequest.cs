@@ -11,32 +11,38 @@ namespace DeslandesApp.Domain.Models.Dtos.Requests.Pessoas
 {
     public record PessoaFisicaRequest
     (
-         string Nome,
-         string Apelido,
-         string Telefone,
-         string Site,
+         string? Nome,
+         string? Rg,
+         string? Cpf,
+         string? TituloEleitor,
+         string? CarteiraTrabalho,
+         string? PisPasep,
+         string? CNH,
+         string? Passaporte,
+         string? CertidaoReservist,
+         string? Telefone,
+         string? Site,
          DateTime DataCadastro,
-         DateTime DataAtualizacao,
-         Guid IdUsuarioCadastro,
-         Guid IdSexo,
-         Guid IdEtiqueta,
-         Guid IdPessoa,
+         DateTime? DataAtualizacao,
+         Guid? IdUsuarioCadastro,
+         Guid? IdSexo,
+         Guid? IdEtiqueta,
+         Guid? IdPessoa,
     #region Relacionamento
-         Endereco Endereco,
-         InformacoesComplementares InformacoesComplementares,
-         Sexo Sexo,
+         Endereco? Endereco,
+         InformacoesComplementares? InformacoesComplementares,
+         Sexo? Sexo,
      //Usuario Usuario,
-    // Usuario UsuarioCadastro,
-     ValorEmail ValorEmail,
+     // Usuario UsuarioCadastro,
+         ValorEmail? ValorEmail,
     #endregion
 
     #region ENUMERADO STATUS
-     Etiqueta Etiqueta,
-     Perfil Perfil,
-     Telefone TipoTelefone,
-     TipoConta TipoEmail
-
-        #endregion
+        Etiqueta? Etiqueta,
+        Perfil? Perfil,
+       Telefone? TipoTelefone,
+       TipoConta? TipoConta
+    #endregion
 
     );
 }

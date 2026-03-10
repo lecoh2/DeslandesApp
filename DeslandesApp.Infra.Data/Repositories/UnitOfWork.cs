@@ -29,7 +29,30 @@ namespace DeslandesApp.Infra.Data.Repositories
         private IGrupoSetoresRepository? _grupoSetoresRepository;
         private IFailedLoginAttemptRepository? _failedLoginAttemptRepository;
         private ILoginHistoryRepository _loginHistoryRepository;
-      
+        private IPessoaRepository _pessoaRepository;
+        private IEnderecoRepository _enderecoRepository;
+        public IEnderecoRepository EnderecoRepository
+
+        {
+            get
+            {
+                if (_enderecoRepository == null)
+                    _enderecoRepository = new EnderecoRepository(dataContext);
+
+                return _enderecoRepository;
+            }
+        }
+        public IPessoaRepository PessoaRepository
+
+        {
+            get
+            {
+                if (_pessoaRepository == null)
+                    _pessoaRepository = new PessoaRepository(dataContext);
+
+                return _pessoaRepository;
+            }
+        }
         public ILoginHistoryRepository LoginHistoryRepository
         {
             get
@@ -100,9 +123,11 @@ namespace DeslandesApp.Infra.Data.Repositories
                 return _grupoNiveisRepository;
             }
         }
-        public IPessoaRepository PessoaRepository => throw new NotImplementedException();
 
-       
+        
+
+
+
 
 
 

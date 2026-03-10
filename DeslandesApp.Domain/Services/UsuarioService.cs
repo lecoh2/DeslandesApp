@@ -25,6 +25,7 @@ namespace DeslandesApp.Domain.Services
 
         public async Task<UsuariosResponse> AdicionarAsync(UsuariosRequest request)
         {
+            await unitOfWork.BeginTransactionAsync();
             // Mapeia DTO -> Entidade
             var usuario = mapper.Map<Usuario>(request);
 
@@ -44,9 +45,9 @@ namespace DeslandesApp.Domain.Services
             usuario.Senha = CryptoHelper.SHA256Encrypt(usuario.Senha);
             // Consulta única para verificar duplicidade
             var existente = await unitOfWork.UsuarioRepository.GetByAsync(u =>
-      u.NomeUsuario == usuario.NomeUsuario ||
-      u.Login == usuario.Login ||
-      u.ValorEmail == usuario.ValorEmail);
+                  u.NomeUsuario == usuario.NomeUsuario ||
+                  u.Login == usuario.Login ||
+                  u.ValorEmail == usuario.ValorEmail);
             if (existente != null)
             {
                 if (existente.NomeUsuario == usuario.NomeUsuario)
@@ -339,6 +340,6 @@ namespace DeslandesApp.Domain.Services
             return paged;
         }
 
-     
+
     }
 }

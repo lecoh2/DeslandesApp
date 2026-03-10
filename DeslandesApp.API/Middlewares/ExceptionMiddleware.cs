@@ -23,8 +23,7 @@ namespace DeslandesApp.API.Middlewares
                 await HandleExceptionAsync(context, ex);
             }
         }
-        private static async Task HandleExceptionAsync
-(HttpContext context, Exception ex)
+        private static async Task HandleExceptionAsync(HttpContext context, Exception ex)
         {
             context.Response.ContentType = "application/json";
             var response = context.Response;
@@ -45,31 +44,37 @@ namespace DeslandesApp.API.Middlewares
                         })
                         .ToList();
                     break;
+
+                case ApplicationException appEx:
+                    response.StatusCode = (int)HttpStatusCode.BadRequest;
+                    result.StatusCode = response.StatusCode;
+                    result.Message = appEx.Message;
+                    break;
+
                 case InvalidOperationException invalidOpEx:
                     response.StatusCode = (int)HttpStatusCode.BadRequest;
                     result.StatusCode = response.StatusCode;
                     result.Message = invalidOpEx.Message;
                     break;
 
-                case KeyNotFoundException invalidOpEx:
+                case KeyNotFoundException keyEx:
                     response.StatusCode = (int)HttpStatusCode.NotFound;
                     result.StatusCode = response.StatusCode;
-                    result.Message = invalidOpEx.Message;
+                    result.Message = keyEx.Message;
                     break;
 
                 default:
-                    response.StatusCode =
-(int)HttpStatusCode.InternalServerError;
+                    response.StatusCode = (int)HttpStatusCode.InternalServerError;
                     result.StatusCode = response.StatusCode;
                     result.Message = "Ocorreu um erro interno no servidor.";
                     break;
             }
-            var json = JsonSerializer.Serialize(result,
-      new JsonSerializerOptions
-      {
-          PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-          WriteIndented = true
-      });
+
+            var json = JsonSerializer.Serialize(result, new JsonSerializerOptions
+            {
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+                WriteIndented = true
+            });
 
             await context.Response.WriteAsync(json);
         }

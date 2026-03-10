@@ -96,37 +96,29 @@ namespace DeslandesApp.Domain.Services
         {
             await unitOfWork.BeginTransactionAsync();
 
-            try
+            var usuario = await unitOfWork.UsuarioRepository.GetByIdAsync(idUsuario);
+            if (usuario is null)
+                throw new ApplicationException("Usuário não encontrado.");
+
+            var nivel = await unitOfWork.NivelRepository.GetByIdAsync(idNivel);
+            if (nivel is null)
+                throw new ApplicationException("Nível não encontrado.");
+
+            var existeVinculo = await unitOfWork.GrupoNiveisRepository
+                .ExistUsuarioNivelAsync(idUsuario, idNivel);
+
+            if (existeVinculo != null)
+                throw new ApplicationException("Este usuário já está vinculado a esse nível.");
+
+            var grupoNivel = new GrupoNiveis
             {
-                var usuario = await unitOfWork.UsuarioRepository.GetByIdAsync(idUsuario);
-                if (usuario is null)
-                    throw new ApplicationException("Usuário não encontrado.");
+                IdUsuario = idUsuario,
+                IdNivel = idNivel
+            };
 
-                var nivel = await unitOfWork.NivelRepository.GetByIdAsync(idNivel);
-                if (nivel is null)
-                    throw new ApplicationException("Nível não encontrado.");
+            await unitOfWork.GrupoNiveisRepository.AddAsync(grupoNivel);
 
-                var existeVinculo = await unitOfWork.GrupoNiveisRepository
-                    .ExistUsuarioNivelAsync(idUsuario, idNivel);
-
-                if (existeVinculo != null)
-                    throw new ApplicationException("Este usuário já está vinculado a esse nível.");
-
-                var grupoNivel = new GrupoNiveis
-                {
-                    IdUsuario = idUsuario,
-                    IdNivel = idNivel
-                };
-
-                await unitOfWork.GrupoNiveisRepository.AddAsync(grupoNivel);
-
-                await unitOfWork.CommitAsync();
-            }
-            catch
-            {
-                await unitOfWork.RollbackAsync();
-                throw;
-            }
+            await unitOfWork.CommitAsync();
         }
         public async Task RemoverNivelAsync(Guid idUsuario, Guid idNivel)
         {

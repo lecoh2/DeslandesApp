@@ -20,9 +20,9 @@ namespace DeslandesApp.Domain.Extensions
 (typeof(ProfileMap)));
 
             services.AddTransient<IUsuarioService, UsuarioService>();
-            services.AddTransient<IPessoaService, PessoaService>();
+            services.AddTransient<IPessoaFisicaService, PessoaFisicaService>();
             services.AddTransient<ISetorService, SetorService>();
-            services.AddTransient<INivelServices, NiveisService>();
+            services.AddTransient<INivelServices, NiveisService>();            
             //services.AddTransient<IGrupoNiveisServices, GrupoNiveisService>();
             //services.AddTransient<IGrupoSetoresService, GrupoSetoresService>()
             
