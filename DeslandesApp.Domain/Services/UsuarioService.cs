@@ -5,6 +5,7 @@ using DeslandesApp.Domain.Interfaces.Repositories;
 using DeslandesApp.Domain.Interfaces.Services;
 using DeslandesApp.Domain.Models.Dtos.Requests.Usuarios;
 using DeslandesApp.Domain.Models.Dtos.Responses.Nivel;
+using DeslandesApp.Domain.Models.Dtos.Responses.Setor;
 using DeslandesApp.Domain.Models.Dtos.Responses.Usuarios;
 using DeslandesApp.Domain.Models.Entities;
 using DeslandesApp.Domain.Models.Enum;
@@ -46,9 +47,6 @@ namespace DeslandesApp.Domain.Services
       u.NomeUsuario == usuario.NomeUsuario ||
       u.Login == usuario.Login ||
       u.ValorEmail == usuario.ValorEmail);
-
-
-
             if (existente != null)
             {
                 if (existente.NomeUsuario == usuario.NomeUsuario)
@@ -89,7 +87,6 @@ namespace DeslandesApp.Domain.Services
                 ;
             #endregion
 
-
             // Salva no banco
             await unitOfWork.CommitAsync();
 
@@ -99,17 +96,21 @@ namespace DeslandesApp.Domain.Services
         public async Task<UsuariosResponse> ModificarAsync(Guid id, UsuarioUpdateRequest request)
         {
             var usuario = await unitOfWork.UsuarioRepository.GetByIdAsync(id);
+
             if (usuario == null)
                 throw new KeyNotFoundException("Usuário não encontrado.");
+
             mapper.Map(request, usuario);
 
-          
-            usuario.Senha = CryptoHelper.SHA256Encrypt(usuario.Senha);
+            if (!string.IsNullOrEmpty(request.Senha))
+                usuario.Senha = CryptoHelper.SHA256Encrypt(request.Senha);
+            usuario.Status = Status.Ativo;
             usuario.DataAtualizacao = DateTime.Now;
 
-            await unitOfWork.UsuarioRepository.UpdateAsync(usuario);
-            return mapper.Map<UsuariosResponse>(usuario);
 
+            await unitOfWork.UsuarioRepository.UpdateAsync(usuario);
+
+            return mapper.Map<UsuariosResponse>(usuario);
         }
         public async Task<PageResult<UsuariosResponse>> ConsultarAsync(int pageNumber, int pageSize)
         {
@@ -142,70 +143,70 @@ namespace DeslandesApp.Domain.Services
             await unitOfWork.UsuarioRepository.DeleteAsync(usuario);
             return mapper.Map<UsuariosResponse>(usuario);
         }
-            public async Task<AutenticarUsuarioResponse> AutenticarUsuarioAsync(
-    AutenticarUsuarioRequest request, string ip, string userAgent)
-
+        public async Task<AutenticarUsuarioResponse> AutenticarUsuarioAsync(
+ AutenticarUsuarioRequest request,
+ string ip,
+ string userAgent)
         {
             if (request == null)
-                throw new ApplicationException("Requisição inválida");
-            // Delay aleatório para mitigar timing attacks / brute force
+                throw new ApplicationException("Requisição inválida.");
+
+            // Delay aleatório para reduzir brute force
             var rnd = new Random();
-            await Task.Delay(rnd.Next(500, 1001)); // 500..1000 ms
+            await Task.Delay(rnd.Next(500, 1001));
 
             await unitOfWork.BeginTransactionAsync();
+
             try
             {
-                // 1) Buscar usuário apenas pelo login (sem senha)
-                var usuario = await unitOfWork.UsuarioRepository.GetUsuarioByLoginAsync(request.Login?.Trim());
+                // 1️⃣ Buscar usuário
+                var usuario = await unitOfWork.UsuarioRepository
+                    .GetUsuarioByLoginAsync(request.Login?.Trim());
 
-                // 2) Se o usuário não existe -> registrar tentativa em FailedLoginAttempt (sem FK) e retornar genérico
+                // 2️⃣ Usuário não encontrado
                 if (usuario == null)
                 {
-                    var failedAttempt = new FailedLoginAttempt
+                    await unitOfWork.FailedLoginAttemptRepository.AddAsync(new FailedLoginAttempt
                     {
                         Id = Guid.NewGuid(),
-                        IdUsuario = null,
                         Login = request.Login ?? string.Empty,
                         IpAcesso = ip,
                         UserAgent = userAgent,
                         DataHora = DateTime.UtcNow,
                         Mensagem = "Usuário não encontrado."
-                    };
+                    });
 
-                    await unitOfWork.FailedLoginAttemptRepository.AddAsync(failedAttempt);
-                    await unitOfWork.CommitAsync(); // persiste apenas o failedAttempt
+                    await unitOfWork.CommitAsync();
 
                     throw new ApplicationException("Credenciais inválidas.");
                 }
 
-                // 3) Se o usuário estiver bloqueado, retorne mensagem específica (não tente gravar LoginHistory com FK nesta rota)
+                // 3️⃣ Conta bloqueada
                 if (usuario.Status == Status.Bloqueado)
                 {
-                    // opcional: registrar um failedAttempt sem FK para auditoria
-                    var failedAttemptBlocked = new FailedLoginAttempt
+                    await unitOfWork.FailedLoginAttemptRepository.AddAsync(new FailedLoginAttempt
                     {
                         Id = Guid.NewGuid(),
                         IdUsuario = usuario.Id,
-                        Login = request.Login ?? string.Empty,
+                        Login = usuario.Login ?? "",
                         IpAcesso = ip,
                         UserAgent = userAgent,
                         DataHora = DateTime.UtcNow,
                         Mensagem = "Tentativa de login em conta bloqueada."
-                    };
+                    });
 
-                    await unitOfWork.FailedLoginAttemptRepository.AddAsync(failedAttemptBlocked);
                     await unitOfWork.CommitAsync();
 
                     throw new ApplicationException("Conta bloqueada. Contate o administrador.");
+                }
 
-                } // 4) Verifica a senha
+                // 4️⃣ Validar senha
                 var senhaCriptografada = CryptoHelper.SHA256Encrypt(request.Senha);
                 var senhaValida = usuario.Senha == senhaCriptografada;
 
                 if (!senhaValida)
                 {
-                    // registrar LoginHistory (com FK — usuário existe)
-                    var historicoFalha = new LoginHistory
+                    await unitOfWork.LoginHistoryRepository.AddAsync(new LoginHistory
                     {
                         Id = Guid.NewGuid(),
                         IdUsuario = usuario.Id,
@@ -214,36 +215,34 @@ namespace DeslandesApp.Domain.Services
                         UserAgent = userAgent,
                         Sucesso = false,
                         Mensagem = "Falha ao autenticar: senha incorreta."
-                    };
-                    await unitOfWork.LoginHistoryRepository.AddAsync(historicoFalha);
+                    });
 
-                    // registrar FailedLoginAttempt (sem dependência de FK para auditoria e contagem)
-                    var failedAttempt = new FailedLoginAttempt
+                    await unitOfWork.FailedLoginAttemptRepository.AddAsync(new FailedLoginAttempt
                     {
                         Id = Guid.NewGuid(),
                         IdUsuario = usuario.Id,
-                        Login = request.Login ?? string.Empty,
+                        Login = usuario.Login ?? "",
                         IpAcesso = ip,
                         UserAgent = userAgent,
                         DataHora = DateTime.UtcNow,
                         Mensagem = "Senha incorreta."
-                    };
-                    await unitOfWork.FailedLoginAttemptRepository.AddAsync(failedAttempt);
+                    });
 
-                    // persiste as tentativas
                     await unitOfWork.CommitAsync();
 
-                    // 6) Verificar número de tentativas falhas e bloquear se >= 3
-                    var totalFailed = await unitOfWork.FailedLoginAttemptRepository
+                    // 5️⃣ Verificar tentativas
+                    var totalFailed = await unitOfWork
+                        .FailedLoginAttemptRepository
                         .CountRecentFailedAttemptsByUserAsync(usuario.Id);
 
                     if (totalFailed >= 3)
                     {
                         usuario.Status = Status.Bloqueado;
                         usuario.DataAtualizacao = DateTime.UtcNow;
+
                         await unitOfWork.UsuarioRepository.UpdateAsync(usuario);
 
-                        var bloqueioHistory = new LoginHistory
+                        await unitOfWork.LoginHistoryRepository.AddAsync(new LoginHistory
                         {
                             Id = Guid.NewGuid(),
                             IdUsuario = usuario.Id,
@@ -252,64 +251,65 @@ namespace DeslandesApp.Domain.Services
                             UserAgent = userAgent,
                             Sucesso = false,
                             Mensagem = "Usuário bloqueado após múltiplas tentativas inválidas."
-                        };
-                        await unitOfWork.LoginHistoryRepository.AddAsync(bloqueioHistory);
+                        });
 
                         await unitOfWork.CommitAsync();
                     }
 
-                    // Mensagem genérica para o cliente
                     throw new ApplicationException("Credenciais inválidas.");
                 }
 
-                // 7) Se chegou aqui, senha válida -> login bem-sucedido
+                // 6️⃣ Login sucesso
+
+                var niveis = (usuario.GrupoNiveis ?? Enumerable.Empty<GrupoNiveis>())
+                    .Select(gn => new NivelResponse(
+                        gn.Niveis?.Id ?? Guid.Empty,
+                        gn.Niveis?.NomeNivel ?? string.Empty))
+                    .ToList();
+
+                var setores = (usuario.GrupoSetores ?? Enumerable.Empty<GrupoSetores>())
+                    .Select(gs => new SetorResponse(
+                        gs.Setor?.Id ?? Guid.Empty,
+                        gs.Setor?.NomeSetor ?? string.Empty))
+                    .ToList();
+
                 var response = new AutenticarUsuarioResponse(
-                  usuario.Id,
-                  usuario.Login,
-                  (usuario.GrupoNiveis ?? Enumerable.Empty<GrupoNiveis>())
-                      .Select(gn => new NivelResponse(
-                          gn.Niveis?.Id ?? Guid.Empty,
-                          gn.Niveis?.NomeNivel ?? string.Empty
-                      )).ToList(),
-                  DateTime.UtcNow,
-                  _jwtTokenService.GenerateExpirationDate(),
-                  _jwtTokenService.GenerateToken(usuario),
-                  "", // NomeUsuario
-                  "", // Sexo
-                  "", // Foto
-                  ip  // IpAcesso
-              );
+                    usuario.Id,
+                    usuario.Login ?? "",
+                    niveis,
+                    setores,
+                    DateTime.UtcNow,
+                    _jwtTokenService.GenerateExpirationDate(),
+                    _jwtTokenService.GenerateToken(usuario),
+                    usuario.NomeUsuario ?? "",
+                    usuario.Fotos?.FotoNome ?? "",
+                    ip
+                );
 
-
-                // 8) Registrar LoginHistory (sucesso)
-                var loginSucesso = new LoginHistory
+                // 7️⃣ Registrar login sucesso
+                await unitOfWork.LoginHistoryRepository.AddAsync(new LoginHistory
                 {
                     Id = Guid.NewGuid(),
                     IdUsuario = usuario.Id,
+                    DataHoraAcesso = DateTime.UtcNow,
                     IpAcesso = ip,
                     UserAgent = userAgent,
-                    DataHoraAcesso = DateTime.UtcNow,
                     Sucesso = true,
                     Mensagem = "Login efetuado com sucesso."
-                };
-                await unitOfWork.LoginHistoryRepository.AddAsync(loginSucesso);
+                });
 
-                // 9) Limpar tentativas falhas do usuário (opcional, mantém histórico mas marca/limpa)
-                await unitOfWork.FailedLoginAttemptRepository.ClearFailedAttemptsForUserAsync(usuario.Id);
+                // 8️⃣ Limpar tentativas falhas
+                await unitOfWork.FailedLoginAttemptRepository
+                    .ClearFailedAttemptsForUserAsync(usuario.Id);
 
                 await unitOfWork.CommitAsync();
 
                 return response;
             }
-            catch (ApplicationException)
+            catch
             {
                 await unitOfWork.RollbackAsync();
                 throw;
-            }
-            catch (Exception ex)
-            {
-                await unitOfWork.RollbackAsync();
-                throw new ApplicationException("Erro interno no servidor.", ex);
             }
         }
         public void Dispose()

@@ -1,4 +1,5 @@
 ﻿using DeslandesApp.Domain.Models.Dtos.Responses.Nivel;
+using DeslandesApp.Domain.Models.Dtos.Responses.Setor;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,16 +8,16 @@ using System.Threading.Tasks;
 
 namespace DeslandesApp.Domain.Models.Dtos.Responses.Usuarios
 {
-    public class AutenticarUsuarioResponse
+    public record AutenticarUsuarioResponse
     (
-          Guid? IdUsuario,
+     Guid? IdUsuario,
      string Login,
      List<NivelResponse> Nivel,
+     List<SetorResponse>Setores,
      DateTime DataHoraAcesso ,
      DateTime DataHoraExpiracao,
      string AccessToken,
-     string NomeUsuario ,
-     string Sexo, 
+     string NomeUsuario ,    
      string Foto ,
      string? IpAcesso 
         );

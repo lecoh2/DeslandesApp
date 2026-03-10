@@ -23,18 +23,29 @@ namespace DeslandesApp.Domain.Mappings
     {       
             public ProfileMap()
             {
-                #region Usuarios
-                CreateMap<UsuariosRequest, Usuario>()
-                    .ForMember(dest => dest.ValorEmail,
-                        opt => opt.MapFrom(src => new ValorEmail(src.Email)));               
+            #region Usuarios
+
+            CreateMap<UsuariosRequest, Usuario>()
+                .ForMember(dest => dest.ValorEmail,
+                    opt => opt.MapFrom(src => new ValorEmail(src.Email)));
+
+            CreateMap<UsuarioUpdateRequest, Usuario>()
+    .ForMember(dest => dest.ValorEmail,
+        opt => opt.MapFrom(src =>
+            string.IsNullOrEmpty(src.Email)
+            ? null
+            : new ValorEmail(src.Email)
+        ));
 
             CreateMap<Usuario, UsuariosResponse>()
-    .ForCtorParam(
-        "Email",
-        opt => opt.MapFrom(src => src.ValorEmail.EnderecoEmail)
-    );
+                .ForCtorParam(
+                    "Email",
+                    opt => opt.MapFrom(src => src.ValorEmail.EnderecoEmail)
+                );
 
             #endregion
+
+
 
 
             #region Setor

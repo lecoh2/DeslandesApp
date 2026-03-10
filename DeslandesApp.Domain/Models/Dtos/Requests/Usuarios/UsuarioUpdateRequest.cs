@@ -10,11 +10,12 @@ namespace DeslandesApp.Domain.Models.Dtos.Requests.Usuarios
 {
     public record UsuarioUpdateRequest
         (
-        Guid IdUsuario,
+       // Guid IdUsuario,
+       string NomeUsuario,
         string Login,
         string Senha,
         DateTime DataAtualizacao,
-        Status? Status,
+       // Status? Status,
         string Email
         );
 }

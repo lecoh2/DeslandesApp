@@ -88,10 +88,12 @@ namespace DeslandesApp.Infra.Data.Repositories
         public async Task<Usuario?> GetUsuarioByLoginAsync(string login)
         {
             return await dataContext.Set<Usuario>()
-                .Include(u => u.Pessoa)
-                    .ThenInclude(p => p.Sexo)
+                .AsNoTracking()
                 .Include(u => u.GrupoNiveis)
                     .ThenInclude(gn => gn.Niveis)
+                .Include(u => u.GrupoSetores)
+                    .ThenInclude(gs => gs.Setor)
+                .Include(u => u.Fotos)
                 .FirstOrDefaultAsync(u => u.Login == login);
         }
     }

@@ -14,36 +14,17 @@ namespace DeslandesApp.API.Controllers.V1
     public class UsuariosController(IUsuarioService usuarioService) : ControllerBase
     {
         [HttpPost]
-        [ProducesResponseType(typeof(UsuariosResponse), 201)]
+        [ProducesResponseType(typeof(UsuariosResponse), StatusCodes.Status201Created)]
         public async Task<IActionResult> PostAsync([FromBody] UsuariosRequest request)
         {
-            try
-            {
-                var response = await usuarioService.AdicionarAsync(request);
+            var response = await usuarioService.AdicionarAsync(request);
 
-                return StatusCode(201, new
-                {
-                    success = true,
-                    message = $"Usuário {response.NomeUsuario} cadastrado com sucesso.",
-                    data = response
-                });
-            }
-            catch (ValidationException ex)
+            return StatusCode(StatusCodes.Status201Created, new
             {
-                return BadRequest(new
-                {
-                    success = false,
-                    message = ex.Errors.Select(e => e.ErrorMessage)
-                });
-            }
-            catch (InvalidOperationException ex)
-            {
-                return BadRequest(new
-                {
-                    success = false,
-                    message = ex.Message
-                });
-            }
+                success = true,
+                message = $"Usuário {response.NomeUsuario} cadastrado com sucesso.",
+                data = response
+            });
         }
 
         [HttpPut("atualizar-usuario{id}")]
@@ -51,7 +32,12 @@ namespace DeslandesApp.API.Controllers.V1
         public async Task<IActionResult> PutAsync(Guid id, [FromBody] UsuarioUpdateRequest request)
         {
             var response = await usuarioService.ModificarAsync(id, request);
-            return StatusCode(200, response);
+            return StatusCode(StatusCodes.Status201Created, new
+            {
+                success = true,
+                message = $"Usuário {response.NomeUsuario} atualizado com sucesso.",
+                data = response
+            });
         }
 
         [HttpDelete("{id}")]
@@ -79,65 +65,41 @@ namespace DeslandesApp.API.Controllers.V1
             return StatusCode(200, response);
         }
         [HttpPost("autenticar-usuario")]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         public async Task<IActionResult> AutenticarUsuario([FromBody] AutenticarUsuarioRequest dto)
         {
             if (!ModelState.IsValid)
+            {
                 return BadRequest(new
                 {
                     sucesso = false,
                     mensagem = "Requisição inválida. Verifique os campos enviados.",
-                    erros = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage)
-                });
-
-            try
-            {
-                // 🔹 Captura o IP real (considerando proxy reverso)
-                var clientIp = Request.Headers.ContainsKey("X-Forwarded-For")
-                    ? Request.Headers["X-Forwarded-For"].FirstOrDefault()
-                    : HttpContext.Connection.RemoteIpAddress?.ToString();
-
-                clientIp ??= "IP não identificado";
-
-                // 🔹 Captura o User-Agent (navegador / dispositivo)
-                var userAgent = Request.Headers["User-Agent"].FirstOrDefault() ?? "UserAgent não informado";
-
-                // 🔹 Chama o serviço de autenticação
-                var response = await usuarioService.AutenticarUsuarioAsync(dto, clientIp, userAgent);
-
-                // 🔹 Retorno padronizado para sucesso
-                return StatusCode(201, new
-                {
-                    sucesso = true,
-                    mensagem = "Usuário autenticado com sucesso.",
-                    dados = response
+                    erros = ModelState.Values
+                        .SelectMany(v => v.Errors)
+                        .Select(e => e.ErrorMessage)
                 });
             }
-            catch (ApplicationException ex)
-            {
-                // ⚠️ Erros esperados (credenciais inválidas, conta bloqueada, etc.)
-                var mensagemErro = ex.Message switch
-                {
-                    "Conta bloqueada. Entre em contato com o administrador." => "Conta bloqueada. Entre em contato com o administrador.",
-                    "Credenciais inválidas." => "Credenciais inválidas.",
-                    _ => "Falha na autenticação. Verifique seus dados. Conta bloqueada!"
-                };
 
-                return Unauthorized(new
-                {
-                    sucesso = false,
-                    mensagem = mensagemErro
-                });
-            }
-            catch (Exception ex)
+            // Captura IP
+            var clientIp = Request.Headers.ContainsKey("X-Forwarded-For")
+                ? Request.Headers["X-Forwarded-For"].FirstOrDefault()
+                : HttpContext.Connection.RemoteIpAddress?.ToString();
+
+            clientIp ??= "IP não identificado";
+
+            // Captura UserAgent
+            var userAgent = Request.Headers["User-Agent"].FirstOrDefault()
+                            ?? "UserAgent não informado";
+
+            var response = await usuarioService.AutenticarUsuarioAsync(dto, clientIp, userAgent);
+
+            return StatusCode(StatusCodes.Status201Created, new
             {
-                // ⚠️ Erros inesperados (banco, mapeamento, etc.)
-                return StatusCode(500, new
-                {
-                    sucesso = false,
-                    mensagem = "Erro interno no servidor. Tente novamente mais tarde.",
-                    erro = ex.Message
-                });
-            }
+                success = true,
+                message = $"Usuário {response.Login} autenticado com sucesso.",
+                data = response
+            });
         }
 
         [HttpGet("consultar-usuarios-paginacao")]
