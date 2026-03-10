@@ -12,5 +12,7 @@ namespace DeslandesApp.Domain.Interfaces.Services
 {
     public interface ISetorService : IBaseService<SetorRequest,SetorUpdateRequest, SetorResponse, Guid>
     {
+        Task RemoverSetorAsync(Guid idUsuario, Guid idSetor);
+        Task AdicionarSetorAsync(Guid idUsuario, Guid idSetor);
     }
 }

@@ -12,5 +12,7 @@ namespace DeslandesApp.Domain.Interfaces.Services
 {
     public interface INivelServices : IBaseService<NivelRequest, NivelUpdateRequest, NivelResponse, Guid>
     {
+        Task AdicionarNivelAsync(Guid idUsuario, Guid idNivel);
+        Task RemoverNivelAsync(Guid idUsuario, Guid idNivel);
     }
 }

@@ -29,6 +29,7 @@ namespace DeslandesApp.Infra.Data.Repositories
         private IGrupoSetoresRepository? _grupoSetoresRepository;
         private IFailedLoginAttemptRepository? _failedLoginAttemptRepository;
         private ILoginHistoryRepository _loginHistoryRepository;
+      
         public ILoginHistoryRepository LoginHistoryRepository
         {
             get

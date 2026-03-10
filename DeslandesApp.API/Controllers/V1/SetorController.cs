@@ -61,5 +61,31 @@ namespace DeslandesApp.API.Controllers.V1
         {
             throw new NotImplementedException();
         }
+
+        [HttpPost("adicionar-grupo-setor/{idUsuario:guid}/{idSetor:guid}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<IActionResult> AdicionarGrupoSetor(Guid idUsuario, Guid idSetor)
+        {
+            await setorService.AdicionarSetorAsync(idUsuario, idSetor);
+
+            return Ok(new
+            {
+                success = true,
+                message = "Setor adicionado ao usuário com sucesso."
+            });
+        }
+
+        [HttpDelete("remover-grupo-setor/{idUsuario:guid}/{idSetor:guid}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<IActionResult> RemoverGrupoSetor(Guid idUsuario, Guid idSetor)
+        {
+            await setorService.RemoverSetorAsync(idUsuario, idSetor);
+
+            return Ok(new
+            {
+                success = true,
+                message = "Setor removido do usuário com sucesso."
+            });
+        }
     }
 }

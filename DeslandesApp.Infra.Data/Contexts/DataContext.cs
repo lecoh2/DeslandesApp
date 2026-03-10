@@ -19,6 +19,7 @@ namespace DeslandesApp.Infra.Data.Contexts
         public DbSet<FailedLoginAttempt> FailedLoginAttempt { get; set; }
         public DbSet<Niveis> Niveis { get; set; }
         public DbSet<GrupoNiveis> GrupoNiveis { get; set; }
+        public DbSet<GrupoSetores> GrupoSetores { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             //modelBuilder.ApplyConfiguration(new CategoriaMap());

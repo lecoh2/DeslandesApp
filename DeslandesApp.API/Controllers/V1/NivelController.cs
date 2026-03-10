@@ -68,5 +68,29 @@ namespace DeslandesApp.API.Controllers.V1
             var response = await nivelService.ConsultarAsync(pageNumber, pageSize);
             return StatusCode(200, response);
         }
+        [HttpPost("adicionar-grupo-nivel/{idUsuario:guid}/{idNivel:guid}")]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        public async Task<IActionResult> AdicionarGrupoNivel(Guid idUsuario, Guid idNivel)
+        {
+            await nivelService.AdicionarNivelAsync(idUsuario, idNivel);
+
+            return StatusCode(StatusCodes.Status201Created, new
+            {
+                success = true,
+                message = "Nível adicionado ao usuário com sucesso."
+            });
+        }
+        [HttpDelete("remover-grupo-nivel/{idUsuario:guid}/{idNivel:guid}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<IActionResult> RemoverGrupoNivel(Guid idUsuario, Guid idNivel)
+        {
+            await nivelService.RemoverNivelAsync(idUsuario, idNivel);
+
+            return Ok(new
+            {
+                success = true,
+                message = "Nível removido do usuário com sucesso."
+            });
+        }
     }
 }

@@ -13,6 +13,8 @@ namespace DeslandesApp.Domain.Interfaces.Services
 {
     public interface IGrupoSetoresService : IBaseService<GrupoSetorRequest, GrupoNivelUpdateRequest, GrupoSetorResponse, Guid>
     {
+        Task<bool> RemoverSetorAsync(Guid idUsuario, Guid idSetor);
+        Task<bool> AdicionarSetorAsync(Guid idUsuario, Guid idSetor);
     }
 }
 

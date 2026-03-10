@@ -9,5 +9,7 @@ namespace DeslandesApp.Domain.Interfaces.Repositories
 {
     public interface IGrupoSetoresRepository : IBaseRepository<GrupoSetores, Guid>
     {
+        Task<GrupoSetores> GetByIdUSuarioIdSetor(Guid idUsuario, Guid idSetor);
+        Task<GrupoSetores> ExistUsuarioSetorAsync(Guid idUsuario, Guid idSetor);
     }
 }
