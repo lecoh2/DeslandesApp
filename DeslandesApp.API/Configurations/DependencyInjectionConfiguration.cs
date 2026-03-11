@@ -11,9 +11,11 @@ namespace DeslandesApp.API.Configurations
         {
             services.AddTransient<IJwtTokenService, JwtTokenService>();
 
-            // Repositórios (Infra.Data)
+            // Repositórios
             services.AddScoped<IUsuarioRepository, UsuarioRepository>();
-            //services.AddScoped<IPessoaRepository,>();
+            services.AddScoped<IPessoaRepository, PessoaRepository>();
+            services.AddScoped<IEnderecoRepository, EnderecoRepository>();
+            services.AddScoped<IInformacoesComplementaresRepository, InformacoesComplementaresRepository>();
             services.AddScoped<ISetorRepository, SetorRepository>();
             services.AddScoped<INivelRepository, NivelRepository>();
 

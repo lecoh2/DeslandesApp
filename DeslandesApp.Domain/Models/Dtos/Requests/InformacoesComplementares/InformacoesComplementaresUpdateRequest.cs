@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace DeslandesApp.Domain.Models.Dtos.Requests.InformacoesComplementares
 {
-    public record InformacoesComplementaresRequest
+    public record InformacoesComplementaresUpdateRequest
     (
      DateOnly DataNascimento,
      string NomeEmpresa,

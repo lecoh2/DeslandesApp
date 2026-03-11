@@ -12,37 +12,17 @@ using System.Threading.Tasks;
 
 namespace DeslandesApp.Domain.Models.Dtos.Responses.Pessoas
 {
-    public record PessoaFisicaResponse
-    (
-        Guid Id,
-         string Nome,
-         string Apelido,
-         string Telefone,
-         string Site,
-         DateTime DataCadastro,
-         DateTime DataAtualizacao,
-         Guid IdUsuarioCadastro,
-         Guid IdSexo,
-         Guid IdEtiqueta,
-         Guid IdPessoa,
-    #region Relacionamento
-         EnderecoResponse Endereco,
-         InformacoesComplementaresResponse InformacoesComplementares,
-         //SexoRequest Sexo,
-    // Usuario Usuario,
-    // Usuario UsuarioCadastro,
-          string Email,
   
-    #endregion
-
-    #region ENUMERADO STATUS
-    Etiqueta Etiqueta,
-     Perfil Perfil,
-     Telefone TipoTelefone,
-     TipoConta TipoEmail
-
-    #endregion
-
-    );
+     public record PessoaFisicaResponse
+(
+    Guid Id,
+    string Nome,
+    string Apelido,
+    string Telefone,
+    string Email,
+    DateTime DataCadastro,
+    EnderecoResponse Endereco,
+    InformacoesComplementaresResponse InformacoesComplementares
+);
 
 }

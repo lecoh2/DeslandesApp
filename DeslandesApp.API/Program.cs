@@ -37,7 +37,7 @@ CorsConfiguration.Configure(builder.Services);
 
 // ===== Build app =====
 var app = builder.Build();
-
+app.UseDeveloperExceptionPage();
 // ===== Middlewares =====
 app.UseMiddleware<ExceptionMiddleware>();
 

@@ -20,7 +20,6 @@ namespace DeslandesApp.Domain.Models.Entities
         public DateTime? DataAtualizacao { get; set; }
        
         public Guid? IdSexo { get; set; }
-        public Guid? IdEtiqueta { get; set; }
         public Guid? IdUsuario { get; set; }
         #region Relacionamento
         public Endereco? Endereco { get; set; }

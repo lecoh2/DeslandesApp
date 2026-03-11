@@ -31,6 +31,18 @@ namespace DeslandesApp.Infra.Data.Repositories
         private ILoginHistoryRepository _loginHistoryRepository;
         private IPessoaRepository _pessoaRepository;
         private IEnderecoRepository _enderecoRepository;
+        private IInformacoesComplementaresRepository _informacoesComplementaresRepository;
+        public IInformacoesComplementaresRepository InformacoesComplementaresRepository
+
+        {
+            get
+            {
+                if (_informacoesComplementaresRepository == null)
+                    _informacoesComplementaresRepository = new InformacoesComplementaresRepository(dataContext);
+
+                return _informacoesComplementaresRepository;
+            }
+        }
         public IEnderecoRepository EnderecoRepository
 
         {
@@ -124,7 +136,8 @@ namespace DeslandesApp.Infra.Data.Repositories
             }
         }
 
-        
+       
+
 
 
 

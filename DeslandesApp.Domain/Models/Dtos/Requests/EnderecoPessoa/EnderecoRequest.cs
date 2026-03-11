@@ -15,7 +15,7 @@ namespace DeslandesApp.Domain.Models.Dtos.Requests.EnderecoPessoa
      string? Bairro,
      string? Cep,
      string? Localidade,
-     string? Uf,
-     Guid? IdPessoa
+     string? Uf
+    // Guid? IdPessoa
         );
 }

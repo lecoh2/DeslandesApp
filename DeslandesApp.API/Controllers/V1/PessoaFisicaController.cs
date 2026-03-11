@@ -11,20 +11,37 @@ namespace DeslandesApp.API.Controllers.V1
 {
     [Route("api/v1/pessoa-fisica")]
     [ApiController]
-    public class PessoaFisicaController(IPessoaFisicaService PessoaService) : ControllerBase 
+    public class PessoaFisicaController : ControllerBase
     {
+        private readonly IPessoaFisicaService _pessoaService;
+
+        public PessoaFisicaController(IPessoaFisicaService pessoaService)
+        {
+            _pessoaService = pessoaService;
+        }
+
         [HttpPost]
-        [ProducesResponseType(typeof(PessoaFisicaResponse), StatusCodes.Status201Created)]
         public async Task<IActionResult> PostAsync([FromBody] PessoaFisicaRequest request)
         {
-            var response = await PessoaService.AdicionarAsync(request);
-
-            return StatusCode(StatusCodes.Status201Created, new
+            try
             {
-                success = true,
-                message = $"Cliente {response.Nome} cadastrado com sucesso.",
-                data = response
-            });
+                var response = await _pessoaService.AdicionarAsync(request);
+
+                return StatusCode(StatusCodes.Status201Created, new
+                {
+                    success = true,
+                    message = $"Cliente {response.Nome} cadastrado com sucesso.",
+                    data = response
+                });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new
+                {
+                    erroReal = ex.Message,
+                    stack = ex.StackTrace
+                });
+            }
         }
     }
 }

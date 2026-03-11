@@ -25,6 +25,7 @@ namespace DeslandesApp.Domain.Interfaces.Repositories
         IFailedLoginAttemptRepository FailedLoginAttemptRepository { get; }
         ILoginHistoryRepository LoginHistoryRepository { get; }
         IEnderecoRepository EnderecoRepository { get; }
+        IInformacoesComplementaresRepository InformacoesComplementaresRepository { get;  }
         #endregion
     }
 }

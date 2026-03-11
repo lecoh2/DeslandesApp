@@ -18,83 +18,80 @@ using System.Threading.Tasks;
 
 namespace DeslandesApp.Domain.Services
 {
-    public class PessoaFisicaService(IUnitOfWork unitOfWork, IMapper mapper) : IPessoaFisicaService
+    public class PessoaFisicaService : IPessoaFisicaService
     {
+        private readonly IUnitOfWork _unitOfWork;
+        private readonly IMapper _mapper;
+
+        public PessoaFisicaService(IUnitOfWork unitOfWork, IMapper mapper)
+        {
+            _unitOfWork = unitOfWork;
+            _mapper = mapper;
+        }
+
         public async Task<PessoaFisicaResponse> AdicionarAsync(PessoaFisicaRequest request)
         {
-            await unitOfWork.BeginTransactionAsync();
+            await _unitOfWork.BeginTransactionAsync();
 
-            // 1. Mapeia DTO -> Entidade
-            var pessoa = mapper.Map<PessoaFisica>(request);
-            // Informações complementares (opcional)
-            // Informações complementares (opcional)
-            if (request.InformacoesComplementares != null)
-            {
-                pessoa.InformacoesComplementares =
-                    mapper.Map<InformacoesComplementares>(request.InformacoesComplementares);
-            }
-            // Sexo (opcional)
-           
-            
-            
-            // 2. Normalização de dados
             var cpf = FunctionsHelper.RemovePontosTracos(request.Cpf);
             var rg = FunctionsHelper.RemovePontosTracos(request.Rg);
+
+            if (!FunctionsHelper.ValidadorCPF(cpf))
+                throw new ApplicationException("CPF inválido.");
+
+            if (await _unitOfWork.PessoaRepository.CpfInUseAsync(cpf))
+                throw new InvalidOperationException("CPF já cadastrado.");
+
+            if (!string.IsNullOrWhiteSpace(rg) &&
+                await _unitOfWork.PessoaRepository.RgInUseAsync(rg))
+                throw new InvalidOperationException("RG já cadastrado.");
+
+            var pessoa = _mapper.Map<PessoaFisica>(request);
 
             pessoa.CPF = cpf;
             pessoa.RG = rg;
             pessoa.Telefone = FunctionsHelper.RemovePontosTracosTelefone(pessoa.Telefone);
             pessoa.DataCadastro = DateTime.Now;
             pessoa.IdSexo = request.IdSexo;
-            pessoa.Telefone = FunctionsHelper.RemovePontosTracosTelefone(pessoa.Telefone);
-            // Caso não tenha email
+
             pessoa.ValorEmail = string.IsNullOrWhiteSpace(pessoa.ValorEmail?.EnderecoEmail)
                 ? new ValorEmail($"nadaconsta{cpf}@email.com")
                 : pessoa.ValorEmail;
 
-            // 3. Validação de CPF
-            if (!FunctionsHelper.ValidadorCPF(cpf))
-                throw new ApplicationException("CPF inválido.");
+            if (await _unitOfWork.PessoaRepository.EmailInUseAsync(pessoa.ValorEmail.EnderecoEmail))
+                throw new InvalidOperationException("Email já cadastrado.");
 
-            // 4. Validação com FluentValidation
             var validator = new PessoaFisicaValidator();
             var result = validator.Validate(pessoa);
 
-            if (!result.IsValid) 
+            if (!result.IsValid)
                 throw new ValidationException(result.Errors);
 
-            // 5. Consulta única para verificar duplicidades
-            if (await unitOfWork.PessoaRepository.CpfInUseAsync(cpf))
-                throw new InvalidOperationException("CPF já cadastrado.");
+            await _unitOfWork.PessoaRepository.AddAsync(pessoa);
 
-            if (!string.IsNullOrEmpty(rg) &&
-                await unitOfWork.PessoaRepository.RgInUseAsync(rg))
-                throw new InvalidOperationException("RG já cadastrado.");
+            if (request.Endereco != null)
+            {
+                var endereco = _mapper.Map<Endereco>(request.Endereco);
+                endereco.IdPessoa = pessoa.Id;
+                endereco.Cep = FunctionsHelper.RemovePontosTracos(endereco.Cep);
+                endereco.Complemento ??= "";
 
-            if (await unitOfWork.PessoaRepository.EmailInUseAsync(pessoa.ValorEmail.EnderecoEmail))
-                throw new InvalidOperationException("Email já cadastrado.");
+                await _unitOfWork.EnderecoRepository.AddAsync(endereco);
+            }
 
-            // 6. Adiciona Pessoa
-            await unitOfWork.PessoaRepository.AddAsync(pessoa);
+            if (request.InformacoesComplementares != null)
+            {
+                var info = _mapper.Map<InformacoesComplementares>(request.InformacoesComplementares);
+                info.IdPessoa = pessoa.Id;
 
-            // salva para gerar Id
-            await unitOfWork.CommitAsync();
+                await _unitOfWork.InformacoesComplementaresRepository.AddAsync(info);
+            }
 
-            // 7. Adiciona Endereço
-            var endereco = mapper.Map<Endereco>(request);
+            await _unitOfWork.CommitAsync();
 
-            endereco.IdPessoa = pessoa.Id;
-            endereco.Cep = FunctionsHelper.RemovePontosTracos(endereco.Cep);
-            endereco.Complemento ??= "";
-
-            await unitOfWork.EnderecoRepository.AddAsync(endereco);
-
-            // 8. Salva no banco
-            await unitOfWork.CommitAsync();
-
-            // 9. Retorno
-            return mapper.Map<PessoaFisicaResponse>(pessoa);
+            return _mapper.Map<PessoaFisicaResponse>(pessoa);
         }
+
 
         public Task<PageResult<PessoaFisicaResponse>> ConsultarAsync(int pageNumber, int pageSize, string? serchTerms = null)
         {
@@ -113,7 +110,7 @@ namespace DeslandesApp.Domain.Services
 
         public void Dispose()
         {
-            throw new NotImplementedException();
+            _unitOfWork.Dispose();
         }
 
         public Task<PessoaFisicaResponse> ExcluirAsync(Guid id)
