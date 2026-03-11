@@ -1,4 +1,7 @@
-﻿using DeslandesApp.Domain.Models.Entities;
+﻿using DeslandesApp.Domain.Models.Dtos.Requests.Sexo;
+using DeslandesApp.Domain.Models.Dtos.Responses.EnderecoEndereco;
+using DeslandesApp.Domain.Models.Dtos.Responses.InformacoesComplementares;
+using DeslandesApp.Domain.Models.Entities;
 using DeslandesApp.Domain.Models.Enum;
 using DeslandesApp.Domain.ValueObjects;
 using System;
@@ -23,16 +26,17 @@ namespace DeslandesApp.Domain.Models.Dtos.Responses.Pessoas
          Guid IdEtiqueta,
          Guid IdPessoa,
     #region Relacionamento
-         Endereco Endereco,
-         InformacoesComplementares InformacoesComplementares,
-         Sexo Sexo,
+         EnderecoResponse Endereco,
+         InformacoesComplementaresResponse InformacoesComplementares,
+         //SexoRequest Sexo,
     // Usuario Usuario,
     // Usuario UsuarioCadastro,
-     ValorEmail ValorEmail,
+          string Email,
+  
     #endregion
 
     #region ENUMERADO STATUS
-     Etiqueta Etiqueta,
+    Etiqueta Etiqueta,
      Perfil Perfil,
      Telefone TipoTelefone,
      TipoConta TipoEmail

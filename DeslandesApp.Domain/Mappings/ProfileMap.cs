@@ -1,12 +1,15 @@
 ﻿using AutoMapper;
 using DeslandesApp.Domain.Models.Dtos.Requests.GrupoNiveis;
 using DeslandesApp.Domain.Models.Dtos.Requests.GrupoSetores;
+using DeslandesApp.Domain.Models.Dtos.Requests.InformacoesComplementares;
 using DeslandesApp.Domain.Models.Dtos.Requests.Nivel;
+using DeslandesApp.Domain.Models.Dtos.Requests.Pessoas;
 using DeslandesApp.Domain.Models.Dtos.Requests.Setor;
 using DeslandesApp.Domain.Models.Dtos.Requests.Usuarios;
 using DeslandesApp.Domain.Models.Dtos.Responses.GrupoNiveis;
 using DeslandesApp.Domain.Models.Dtos.Responses.GrupoSetores;
 using DeslandesApp.Domain.Models.Dtos.Responses.Nivel;
+using DeslandesApp.Domain.Models.Dtos.Responses.Pessoas;
 using DeslandesApp.Domain.Models.Dtos.Responses.Setor;
 using DeslandesApp.Domain.Models.Dtos.Responses.Usuarios;
 using DeslandesApp.Domain.Models.Entities;
@@ -63,9 +66,7 @@ namespace DeslandesApp.Domain.Mappings
                 CreateMap<Niveis, NivelResponse>()
                     .ForCtorParam("IdNivel", opt => opt.MapFrom(src => src.Id))
                     .ForCtorParam("NomeNivel", opt => opt.MapFrom(src => src.NomeNivel));
-            CreateMap<Niveis, NivelResponse>()
-    .ForCtorParam("IdNivel", opt => opt.MapFrom(src => src.Id))
-    .ForCtorParam("NomeNivel", opt => opt.MapFrom(src => src.NomeNivel));
+
 
             #endregion
             #region GrupoNivel
@@ -75,6 +76,23 @@ namespace DeslandesApp.Domain.Mappings
             #region GrupoSetores
             CreateMap<GrupoSetorRequest, GrupoSetores>();
             CreateMap<GrupoSetores, GrupoSetorResponse>();
+            #endregion
+            #region PessoaFiscica
+            CreateMap<PessoaFisicaRequest, PessoaFisica>()
+    .ForMember(dest => dest.ValorEmail,
+        opt => opt.MapFrom(src =>
+            string.IsNullOrEmpty(src.Email)
+            ? null
+            : new ValorEmail(src.Email)
+        ));
+            CreateMap<PessoaFisica, PessoaFisicaResponse>()
+    .ForCtorParam(
+        "Email",
+        opt => opt.MapFrom(src => src.ValorEmail.EnderecoEmail)
+    );
+            #endregion
+            #region Informacoes Complementares
+            CreateMap<InformacoesComplementaresRequest, InformacoesComplementares>();
             #endregion
         }
     }

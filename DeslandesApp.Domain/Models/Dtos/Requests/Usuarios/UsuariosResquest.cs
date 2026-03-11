@@ -19,7 +19,7 @@ namespace DeslandesApp.Domain.Models.Dtos.Requests.Usuarios
         public string? Senha { get; set; }
         public DateTime? DataCadastro { get; set; }
         public Status? Status { get; set; }
-        public string Email { get; set; }
+        public string? Email { get; set; }
       
         public List<GrupoSetorRequest>? GrupoSetor { get; set; }
       

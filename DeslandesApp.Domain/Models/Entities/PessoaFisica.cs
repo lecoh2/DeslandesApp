@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DeslandesApp.Domain.ValueObjects;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -16,9 +17,9 @@ namespace DeslandesApp.Domain.Models.Entities
         public string CNH { get; set; } = string.Empty;
         public string Passaporte { get; set; } = string.Empty;
         public string CertidaoReservista { get; set; } = string.Empty;
-
+  
         #region Relacionamento
-     
+
         #endregion
     }
 }
