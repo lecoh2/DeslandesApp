@@ -20,7 +20,7 @@ namespace DeslandesApp.Domain.Models.Dtos.Requests.Pessoas
         string? Passaporte,
         string? CertidaoReservista,
         string? Telefone,
-        Guid? IdUsuarioCadastro,
+        Guid? IdUsuario,
         Guid? IdSexo,
 
     #region Relacionamentos

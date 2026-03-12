@@ -1,5 +1,6 @@
 ﻿using DeslandesApp.Domain.Interfaces.Repositories;
 using DeslandesApp.Domain.Models.Entities;
+using DeslandesApp.Domain.ValueObjects;
 using DeslandesApp.Infra.Data.Contexts;
 using DeslandesApp.Infra.Data.Repositories;
 using Microsoft.EntityFrameworkCore;
@@ -33,7 +34,7 @@ public class PessoaRepository(DataContext dataContext)
         return await dataContext
             .Set<Pessoa>()
             .AsNoTracking()
-            .AnyAsync(p => p.ValorEmail.EnderecoEmail == email);
+            .AnyAsync(p => p.ValorEmail == new ValorEmail(email));
     }
 
     public async Task<PessoaFisica?> GetByCpfAsync(string cpf)

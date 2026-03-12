@@ -7,18 +7,18 @@ using System.Threading.Tasks;
 namespace DeslandesApp.Domain.Models.Dtos.Requests.InformacoesComplementares
 {
     public record InformacoesComplementaresRequest
-    (
-     DateOnly DataNascimento,
-     string NomeEmpresa,
-     string Profissao,
-     string AtividadeEconomica ,
-     string EstadoCivil,
-     string Codigo ,
-     string NomePai ,
-     string NomeMae ,
-     string Naturalidade,
-     string Nacionalidade ,
-     string Comentario
-    // Guid IdPessoa 
-        );
+   (
+       DateOnly? DataNascimento,  // agora opcional
+       string? NomeEmpresa = null,
+       string? Profissao = null,
+       string? AtividadeEconomica = null,
+       string? EstadoCivil = null,
+       string? Codigo = null,
+       string? NomePai = null,
+       string? NomeMae = null,
+       string? Naturalidade = null,
+       string? Nacionalidade = null,
+       string? Comentario = null
+   // Guid? IdPessoa = null // se quiser vincular opcionalmente
+   );
 }

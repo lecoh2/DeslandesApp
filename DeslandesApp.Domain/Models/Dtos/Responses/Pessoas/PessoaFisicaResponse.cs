@@ -19,10 +19,10 @@ namespace DeslandesApp.Domain.Models.Dtos.Responses.Pessoas
     string Nome,
     string Apelido,
     string Telefone,
-    string Email,
-    DateTime DataCadastro,
-    EnderecoResponse Endereco,
-    InformacoesComplementaresResponse InformacoesComplementares
+    string Email
+   // DateTime DataCadastro,
+   // EnderecoResponse Endereco,
+   // InformacoesComplementaresResponse InformacoesComplementares
 );
 
 }

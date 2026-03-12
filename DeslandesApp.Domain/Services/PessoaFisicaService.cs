@@ -48,6 +48,12 @@ namespace DeslandesApp.Domain.Services
 
             var pessoa = _mapper.Map<PessoaFisica>(request);
 
+            var validator = new PessoaFisicaValidator();
+            var result = validator.Validate(pessoa);
+
+            if (!result.IsValid)
+                throw new ValidationException(result.Errors);
+
             pessoa.CPF = cpf;
             pessoa.RG = rg;
             pessoa.Telefone = FunctionsHelper.RemovePontosTracosTelefone(pessoa.Telefone);
@@ -61,37 +67,28 @@ namespace DeslandesApp.Domain.Services
             if (await _unitOfWork.PessoaRepository.EmailInUseAsync(pessoa.ValorEmail.EnderecoEmail))
                 throw new InvalidOperationException("Email já cadastrado.");
 
-            var validator = new PessoaFisicaValidator();
-            var result = validator.Validate(pessoa);
-
-            if (!result.IsValid)
-                throw new ValidationException(result.Errors);
-
-            await _unitOfWork.PessoaRepository.AddAsync(pessoa);
-
+            // ENDEREÇO
             if (request.Endereco != null)
             {
-                var endereco = _mapper.Map<Endereco>(request.Endereco);
-                endereco.IdPessoa = pessoa.Id;
-                endereco.Cep = FunctionsHelper.RemovePontosTracos(endereco.Cep);
-                endereco.Complemento ??= "";
-
-                await _unitOfWork.EnderecoRepository.AddAsync(endereco);
+                pessoa.Endereco = _mapper.Map<Endereco>(request.Endereco);
+                pessoa.Endereco.Cep = FunctionsHelper.RemovePontosTracos(pessoa.Endereco.Cep);
+                pessoa.Endereco.Complemento ??= "";
             }
 
+            // INFORMAÇÕES COMPLEMENTARES
             if (request.InformacoesComplementares != null)
             {
-                var info = _mapper.Map<InformacoesComplementares>(request.InformacoesComplementares);
-                info.IdPessoa = pessoa.Id;
-
-                await _unitOfWork.InformacoesComplementaresRepository.AddAsync(info);
+                pessoa.InformacoesComplementares =
+                    _mapper.Map<InformacoesComplementares>(request.InformacoesComplementares);
             }
+
+            // SALVA TUDO JUNTO
+            await _unitOfWork.PessoaRepository.AddAsync(pessoa);
 
             await _unitOfWork.CommitAsync();
 
             return _mapper.Map<PessoaFisicaResponse>(pessoa);
         }
-
 
         public Task<PageResult<PessoaFisicaResponse>> ConsultarAsync(int pageNumber, int pageSize, string? serchTerms = null)
         {

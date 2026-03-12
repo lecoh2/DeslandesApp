@@ -21,6 +21,9 @@ namespace DeslandesApp.Infra.Data.Mappings
             builder.Property(p => p.Nome)
                 .HasColumnName("NOME")
                 .IsRequired();
+            builder.Property(p => p.Apelido)
+                .HasColumnName("APELIDO")
+                .IsRequired(false);
 
             builder.Property(p => p.DataCadastro)
                 .HasColumnName("DATACADASTRO")

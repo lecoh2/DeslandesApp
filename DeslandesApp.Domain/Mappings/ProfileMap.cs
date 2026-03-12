@@ -93,9 +93,33 @@ namespace DeslandesApp.Domain.Mappings
 
             #endregion
             #region Informacoes Complementares
-            CreateMap<InformacoesComplementaresRequest, InformacoesComplementares>();
+            CreateMap<InformacoesComplementaresRequest, InformacoesComplementares>()
+        .ForMember(dest => dest.DataNascimento,
+            opt => opt.MapFrom(src => src.DataNascimento != default ? src.DataNascimento : (DateTime?)null))
+        .ForMember(dest => dest.NomeEmpresa,
+            opt => opt.MapFrom(src => NullIfEmpty(src.NomeEmpresa)))
+        .ForMember(dest => dest.Profissao,
+            opt => opt.MapFrom(src => NullIfEmpty(src.Profissao)))
+        .ForMember(dest => dest.AtividadeEconomica,
+            opt => opt.MapFrom(src => NullIfEmpty(src.AtividadeEconomica)))
+        .ForMember(dest => dest.EstadoCivil,
+            opt => opt.MapFrom(src => NullIfEmpty(src.EstadoCivil)))
+        .ForMember(dest => dest.Codigo,
+            opt => opt.MapFrom(src => NullIfEmpty(src.Codigo)))
+        .ForMember(dest => dest.NomePai,
+            opt => opt.MapFrom(src => NullIfEmpty(src.NomePai)))
+        .ForMember(dest => dest.NomeMae,
+            opt => opt.MapFrom(src => NullIfEmpty(src.NomeMae)))
+        .ForMember(dest => dest.Naturalidade,
+            opt => opt.MapFrom(src => NullIfEmpty(src.Naturalidade)))
+        .ForMember(dest => dest.Nacionalidade,
+            opt => opt.MapFrom(src => NullIfEmpty(src.Nacionalidade)))
+        .ForMember(dest => dest.Comentario,
+            opt => opt.MapFrom(src => NullIfEmpty(src.Comentario)));
+
+            #endregion  
             CreateMap<InformacoesComplementares, InformacoesComplementaresResponse>();
-            #endregion
+          
             #region Endereco
             CreateMap<EnderecoRequest, Endereco>();
             CreateMap<Endereco, EnderecoResponse>();
@@ -117,7 +141,12 @@ namespace DeslandesApp.Domain.Mappings
                             : null));
 
             #endregion
+
+
+
         }
+        // Função auxiliar para strings opcionais
+        private static string? NullIfEmpty(string? value) => string.IsNullOrWhiteSpace(value) ? null : value;
     }
 
     }
