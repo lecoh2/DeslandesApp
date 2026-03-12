@@ -2,6 +2,7 @@
 using DeslandesApp.Domain.Helpers;
 using DeslandesApp.Domain.Interfaces.Repositories;
 using DeslandesApp.Domain.Interfaces.Services;
+using DeslandesApp.Domain.Models.Dtos.Requests.InformacoesComplementares;
 using DeslandesApp.Domain.Models.Dtos.Requests.Pessoas;
 using DeslandesApp.Domain.Models.Dtos.Responses.Pessoas;
 using DeslandesApp.Domain.Models.Entities;
@@ -76,7 +77,7 @@ namespace DeslandesApp.Domain.Services
             }
 
             // INFORMAÇÕES COMPLEMENTARES
-            if (request.InformacoesComplementares != null)
+            if (TemAlgumValor(request.InformacoesComplementares))
             {
                 pessoa.InformacoesComplementares =
                     _mapper.Map<InformacoesComplementares>(request.InformacoesComplementares);
@@ -123,6 +124,22 @@ namespace DeslandesApp.Domain.Services
         public Task<PessoaFisicaResponse?> ObterPorIdAsync(Guid id)
         {
             throw new NotImplementedException();
+        }
+        private bool TemAlgumValor(InformacoesComplementaresRequest info)
+        {
+            if (info == null) return false;
+
+            return !string.IsNullOrWhiteSpace(info.DataNascimento)
+                || !string.IsNullOrWhiteSpace(info.NomeEmpresa)
+                || !string.IsNullOrWhiteSpace(info.Profissao)
+                || !string.IsNullOrWhiteSpace(info.AtividadeEconomica)
+                || !string.IsNullOrWhiteSpace(info.EstadoCivil)
+                || !string.IsNullOrWhiteSpace(info.Codigo)
+                || !string.IsNullOrWhiteSpace(info.NomePai)
+                || !string.IsNullOrWhiteSpace(info.NomeMae)
+                || !string.IsNullOrWhiteSpace(info.Naturalidade)
+                || !string.IsNullOrWhiteSpace(info.Nacionalidade)
+                || !string.IsNullOrWhiteSpace(info.Comentario);
         }
     }
 }

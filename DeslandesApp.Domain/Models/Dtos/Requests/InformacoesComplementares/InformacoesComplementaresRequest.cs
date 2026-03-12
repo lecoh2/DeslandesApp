@@ -8,7 +8,7 @@ namespace DeslandesApp.Domain.Models.Dtos.Requests.InformacoesComplementares
 {
     public record InformacoesComplementaresRequest
    (
-       DateOnly? DataNascimento,  // agora opcional
+       string? DataNascimento = null,  // agora opcional
        string? NomeEmpresa = null,
        string? Profissao = null,
        string? AtividadeEconomica = null,

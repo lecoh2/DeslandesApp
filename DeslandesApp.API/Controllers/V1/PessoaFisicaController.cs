@@ -23,25 +23,14 @@ namespace DeslandesApp.API.Controllers.V1
         [HttpPost]
         public async Task<IActionResult> PostAsync([FromBody] PessoaFisicaRequest request)
         {
-            try
-            {
-                var response = await _pessoaService.AdicionarAsync(request);
+            var response = await _pessoaService.AdicionarAsync(request);
 
-                return StatusCode(StatusCodes.Status201Created, new
-                {
-                    success = true,
-                    message = $"Cliente {response.Nome} cadastrado com sucesso.",
-                    data = response
-                });
-            }
-            catch (Exception ex)
+            return StatusCode(StatusCodes.Status201Created, new
             {
-                return StatusCode(500, new
-                {
-                    erroReal = ex.Message,
-                    stack = ex.StackTrace
-                });
-            }
+                success = true,
+                message = $"Cliente {response.Nome} cadastrado com sucesso.",
+                data = response
+            });
         }
     }
 }

@@ -44,7 +44,9 @@ namespace DeslandesApp.Infra.Data.Contexts
                         property.SetIsUnicode(false);
                         //campo do tipo varchar 
                         //tamanho máximo de caracteres
-                        property.SetMaxLength(250);
+                        // só define 250 se não tiver MaxLength configurado
+                        if (!property.GetMaxLength().HasValue)
+                            property.SetMaxLength(250);
 
                         //definindo como not null (obrigatório)
                         //property.IsNullable = false;

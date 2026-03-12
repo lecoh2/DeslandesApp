@@ -4,6 +4,7 @@ using DeslandesApp.Infra.Data.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DeslandesApp.Infra.Data.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20260312204556_InitialDatanascimentofalse")]
+    partial class InitialDatanascimentofalse
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -52,9 +55,9 @@ namespace DeslandesApp.Infra.Data.Migrations
 
                     b.Property<string>("Localidade")
                         .IsRequired()
-                        .HasMaxLength(100)
+                        .HasMaxLength(250)
                         .IsUnicode(false)
-                        .HasColumnType("varchar(100)")
+                        .HasColumnType("varchar(250)")
                         .HasColumnName("LOCALIDADE");
 
                     b.Property<string>("Logradouro")
@@ -71,9 +74,9 @@ namespace DeslandesApp.Infra.Data.Migrations
 
                     b.Property<string>("Uf")
                         .IsRequired()
-                        .HasMaxLength(2)
+                        .HasMaxLength(250)
                         .IsUnicode(false)
-                        .HasColumnType("varchar(2)")
+                        .HasColumnType("varchar(250)")
                         .HasColumnName("UF");
 
                     b.HasKey("Id");
@@ -99,28 +102,28 @@ namespace DeslandesApp.Infra.Data.Migrations
                         .HasColumnName("IDUSUARIO");
 
                     b.Property<string>("IpAcesso")
-                        .HasMaxLength(50)
+                        .HasMaxLength(250)
                         .IsUnicode(false)
-                        .HasColumnType("varchar(50)")
+                        .HasColumnType("varchar(250)")
                         .HasColumnName("IPACESSO");
 
                     b.Property<string>("Login")
                         .IsRequired()
-                        .HasMaxLength(150)
+                        .HasMaxLength(250)
                         .IsUnicode(false)
-                        .HasColumnType("varchar(150)")
+                        .HasColumnType("varchar(250)")
                         .HasColumnName("LOGIN");
 
                     b.Property<string>("Mensagem")
-                        .HasMaxLength(200)
+                        .HasMaxLength(250)
                         .IsUnicode(false)
-                        .HasColumnType("varchar(200)")
+                        .HasColumnType("varchar(250)")
                         .HasColumnName("MENSAGEM");
 
                     b.Property<string>("UserAgent")
-                        .HasMaxLength(300)
+                        .HasMaxLength(250)
                         .IsUnicode(false)
-                        .HasColumnType("varchar(300)")
+                        .HasColumnType("varchar(250)")
                         .HasColumnName("USERAGENT");
 
                     b.HasKey("Id");
@@ -211,9 +214,9 @@ namespace DeslandesApp.Infra.Data.Migrations
                         .HasColumnName("ATIVIDADEECONOMICA");
 
                     b.Property<string>("Codigo")
-                        .HasMaxLength(100)
+                        .HasMaxLength(250)
                         .IsUnicode(false)
-                        .HasColumnType("varchar(100)")
+                        .HasColumnType("varchar(250)")
                         .HasColumnName("CODIGO");
 
                     b.Property<string>("Comentario")
@@ -223,9 +226,9 @@ namespace DeslandesApp.Infra.Data.Migrations
                         .HasColumnName("COMENTARIO");
 
                     b.Property<string>("DataNascimento")
-                        .HasMaxLength(10)
+                        .HasMaxLength(250)
                         .IsUnicode(false)
-                        .HasColumnType("varchar(10)")
+                        .HasColumnType("varchar(250)")
                         .HasColumnName("DATANASCIMENTO");
 
                     b.Property<string>("EstadoCivil")
@@ -239,15 +242,15 @@ namespace DeslandesApp.Infra.Data.Migrations
                         .HasColumnName("PESSOA_ID");
 
                     b.Property<string>("Nacionalidade")
-                        .HasMaxLength(50)
+                        .HasMaxLength(250)
                         .IsUnicode(false)
-                        .HasColumnType("varchar(50)")
+                        .HasColumnType("varchar(250)")
                         .HasColumnName("NASCIONALIDADE");
 
                     b.Property<string>("Naturalidade")
-                        .HasMaxLength(50)
+                        .HasMaxLength(250)
                         .IsUnicode(false)
-                        .HasColumnType("varchar(50)")
+                        .HasColumnType("varchar(250)")
                         .HasColumnName("NATURALIDADE");
 
                     b.Property<string>("NomeEmpresa")
@@ -295,24 +298,24 @@ namespace DeslandesApp.Infra.Data.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("IpAcesso")
-                        .HasMaxLength(45)
+                        .HasMaxLength(250)
                         .IsUnicode(false)
-                        .HasColumnType("varchar(45)")
+                        .HasColumnType("varchar(250)")
                         .HasColumnName("IPACESSO");
 
                     b.Property<string>("Mensagem")
-                        .HasMaxLength(300)
+                        .HasMaxLength(250)
                         .IsUnicode(false)
-                        .HasColumnType("varchar(300)")
+                        .HasColumnType("varchar(250)")
                         .HasColumnName("MENSAGEM");
 
                     b.Property<bool>("Sucesso")
                         .HasColumnType("bit");
 
                     b.Property<string>("UserAgent")
-                        .HasMaxLength(300)
+                        .HasMaxLength(250)
                         .IsUnicode(false)
-                        .HasColumnType("varchar(300)")
+                        .HasColumnType("varchar(250)")
                         .HasColumnName("USERAGENT");
 
                     b.HasKey("Id");
@@ -431,9 +434,9 @@ namespace DeslandesApp.Infra.Data.Migrations
 
                     b.Property<string>("NomeSetor")
                         .IsRequired()
-                        .HasMaxLength(255)
+                        .HasMaxLength(250)
                         .IsUnicode(false)
-                        .HasColumnType("varchar(255)")
+                        .HasColumnType("varchar(250)")
                         .HasColumnName("NOMESETOR");
 
                     b.HasKey("Id");
@@ -449,9 +452,9 @@ namespace DeslandesApp.Infra.Data.Migrations
 
                     b.Property<string>("NomeSexo")
                         .IsRequired()
-                        .HasMaxLength(100)
+                        .HasMaxLength(250)
                         .IsUnicode(false)
-                        .HasColumnType("varchar(100)")
+                        .HasColumnType("varchar(250)")
                         .HasColumnName("NOMESEXO");
 
                     b.HasKey("Id");
