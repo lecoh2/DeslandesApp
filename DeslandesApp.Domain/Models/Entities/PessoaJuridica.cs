@@ -14,7 +14,7 @@ namespace DeslandesApp.Domain.Models.Entities
         public string InscricaoEstadual { get; set; } = string.Empty;
         public string InscricaoMunicipal { get; set; } = string.Empty;
         
-        #region RElacionamento Enumeradores
+        #region Relacionamento Enumeradores
         public Etiqueta? Etiqueta { get; set; }
         public Perfil? Perfil { get; set; }
         public SimplesNacional? SimplesNacional { get; set; }

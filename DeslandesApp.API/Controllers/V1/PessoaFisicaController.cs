@@ -21,7 +21,7 @@ namespace DeslandesApp.API.Controllers.V1
         }
 
         [HttpPost]
-        public async Task<IActionResult> PostAsync([FromBody] PessoaFisicaRequest request)
+        public async Task<IActionResult> PostPessoaFisicaAsync([FromBody] PessoaFisicaRequest request)
         {
             var response = await _pessoaService.AdicionarAsync(request);
 
@@ -32,5 +32,18 @@ namespace DeslandesApp.API.Controllers.V1
                 data = response
             });
         }
+
+        //[HttpPost]
+        //public async Task<IActionResult> PostPessoaJuridicaAsync([FromBody] PessoaJuridicaRequest request)
+        //{
+        //    var response = await _pessoaService.AdicionarAsync(request);
+
+        //    return StatusCode(StatusCodes.Status201Created, new
+        //    {
+        //        success = true,
+        //        message = $"Cliente {response.Nome} cadastrado com sucesso.",
+        //        data = response
+        //    });
+        //}
     }
 }

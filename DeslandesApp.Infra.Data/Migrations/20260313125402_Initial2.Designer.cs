@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DeslandesApp.Infra.Data.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20260308094629_FixEmailConvertercreate2")]
-    partial class FixEmailConvertercreate2
+    [Migration("20260313125402_Initial2")]
+    partial class Initial2
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -55,9 +55,9 @@ namespace DeslandesApp.Infra.Data.Migrations
 
                     b.Property<string>("Localidade")
                         .IsRequired()
-                        .HasMaxLength(250)
+                        .HasMaxLength(100)
                         .IsUnicode(false)
-                        .HasColumnType("varchar(250)")
+                        .HasColumnType("varchar(100)")
                         .HasColumnName("LOCALIDADE");
 
                     b.Property<string>("Logradouro")
@@ -74,9 +74,9 @@ namespace DeslandesApp.Infra.Data.Migrations
 
                     b.Property<string>("Uf")
                         .IsRequired()
-                        .HasMaxLength(250)
+                        .HasMaxLength(2)
                         .IsUnicode(false)
-                        .HasColumnType("varchar(250)")
+                        .HasColumnType("varchar(2)")
                         .HasColumnName("UF");
 
                     b.HasKey("Id");
@@ -85,6 +85,52 @@ namespace DeslandesApp.Infra.Data.Migrations
                         .IsUnique();
 
                     b.ToTable("ENDERECO", (string)null);
+                });
+
+            modelBuilder.Entity("DeslandesApp.Domain.Models.Entities.FailedLoginAttempt", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("IDFAILEDLOGINATTEMPT");
+
+                    b.Property<DateTime>("DataHora")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("DATAHORA");
+
+                    b.Property<Guid?>("IdUsuario")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("IDUSUARIO");
+
+                    b.Property<string>("IpAcesso")
+                        .HasMaxLength(50)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(50)")
+                        .HasColumnName("IPACESSO");
+
+                    b.Property<string>("Login")
+                        .IsRequired()
+                        .HasMaxLength(150)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(150)")
+                        .HasColumnName("LOGIN");
+
+                    b.Property<string>("Mensagem")
+                        .HasMaxLength(200)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(200)")
+                        .HasColumnName("MENSAGEM");
+
+                    b.Property<string>("UserAgent")
+                        .HasMaxLength(300)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(300)")
+                        .HasColumnName("USERAGENT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("IdUsuario");
+
+                    b.ToTable("FAILEDLOGINATTEMPTS", (string)null);
                 });
 
             modelBuilder.Entity("DeslandesApp.Domain.Models.Entities.Fotos", b =>
@@ -161,82 +207,27 @@ namespace DeslandesApp.Infra.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("AtividadeEconomica")
-                        .IsRequired()
-                        .HasMaxLength(250)
-                        .IsUnicode(false)
-                        .HasColumnType("varchar(250)")
-                        .HasColumnName("ATIVIDADEECONOMICA");
-
                     b.Property<string>("Codigo")
-                        .IsRequired()
-                        .HasMaxLength(250)
+                        .HasMaxLength(50)
                         .IsUnicode(false)
-                        .HasColumnType("varchar(250)")
+                        .HasColumnType("varchar(50)")
                         .HasColumnName("CODIGO");
 
                     b.Property<string>("Comentario")
-                        .IsRequired()
                         .HasMaxLength(250)
                         .IsUnicode(false)
                         .HasColumnType("varchar(250)")
                         .HasColumnName("COMENTARIO");
 
-                    b.Property<DateOnly>("DataNascimento")
-                        .HasColumnType("date")
-                        .HasColumnName("DATANASCIMENTO");
-
-                    b.Property<string>("EstadoCivil")
-                        .IsRequired()
-                        .HasMaxLength(250)
-                        .IsUnicode(false)
-                        .HasColumnType("varchar(250)")
-                        .HasColumnName("ESTADOCIVIL");
-
                     b.Property<Guid>("IdPessoa")
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("PESSOA_ID");
 
-                    b.Property<string>("Nacionalidade")
+                    b.Property<string>("TIPOPESSOA")
                         .IsRequired()
                         .HasMaxLength(250)
                         .IsUnicode(false)
-                        .HasColumnType("varchar(250)")
-                        .HasColumnName("NASCIONALIDADE");
-
-                    b.Property<string>("Naturalidade")
-                        .IsRequired()
-                        .HasMaxLength(250)
-                        .IsUnicode(false)
-                        .HasColumnType("varchar(250)")
-                        .HasColumnName("NATURALIDADE");
-
-                    b.Property<string>("NomeEmpresa")
-                        .IsRequired()
-                        .HasMaxLength(250)
-                        .IsUnicode(false)
-                        .HasColumnType("varchar(250)")
-                        .HasColumnName("NOMEEMPRESA");
-
-                    b.Property<string>("NomeMae")
-                        .IsRequired()
-                        .HasMaxLength(250)
-                        .IsUnicode(false)
-                        .HasColumnType("varchar(250)")
-                        .HasColumnName("NOMEMAE");
-
-                    b.Property<string>("NomePai")
-                        .IsRequired()
-                        .HasMaxLength(250)
-                        .IsUnicode(false)
-                        .HasColumnType("varchar(250)")
-                        .HasColumnName("NOMEPAI");
-
-                    b.Property<string>("Profissao")
-                        .HasMaxLength(250)
-                        .IsUnicode(false)
-                        .HasColumnType("varchar(250)")
-                        .HasColumnName("PROFISSAO");
+                        .HasColumnType("varchar(250)");
 
                     b.HasKey("Id");
 
@@ -244,6 +235,50 @@ namespace DeslandesApp.Infra.Data.Migrations
                         .IsUnique();
 
                     b.ToTable("INFORMACOESCOMPLEMENTARES", (string)null);
+
+                    b.HasDiscriminator<string>("TIPOPESSOA").HasValue("InformacoesComplementares");
+
+                    b.UseTphMappingStrategy();
+                });
+
+            modelBuilder.Entity("DeslandesApp.Domain.Models.Entities.LoginHistory", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("DataHoraAcesso")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("IdUsuario")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("IpAcesso")
+                        .HasMaxLength(45)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(45)")
+                        .HasColumnName("IPACESSO");
+
+                    b.Property<string>("Mensagem")
+                        .HasMaxLength(300)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(300)")
+                        .HasColumnName("MENSAGEM");
+
+                    b.Property<bool>("Sucesso")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("UserAgent")
+                        .HasMaxLength(300)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(300)")
+                        .HasColumnName("USERAGENT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("IdUsuario");
+
+                    b.ToTable("LOGINHISTORY", (string)null);
                 });
 
             modelBuilder.Entity("DeslandesApp.Domain.Models.Entities.Niveis", b =>
@@ -271,10 +306,10 @@ namespace DeslandesApp.Infra.Data.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Apelido")
-                        .IsRequired()
                         .HasMaxLength(250)
                         .IsUnicode(false)
-                        .HasColumnType("varchar(250)");
+                        .HasColumnType("varchar(250)")
+                        .HasColumnName("APELIDO");
 
                     b.Property<DateTime?>("DataAtualizacao")
                         .HasColumnType("datetime2")
@@ -286,9 +321,6 @@ namespace DeslandesApp.Infra.Data.Migrations
 
                     b.Property<int?>("Etiqueta")
                         .HasColumnType("int");
-
-                    b.Property<Guid?>("IdEtiqueta")
-                        .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid>("IdSexo")
                         .HasColumnType("uniqueidentifier")
@@ -358,9 +390,9 @@ namespace DeslandesApp.Infra.Data.Migrations
 
                     b.Property<string>("NomeSetor")
                         .IsRequired()
-                        .HasMaxLength(250)
+                        .HasMaxLength(255)
                         .IsUnicode(false)
-                        .HasColumnType("varchar(250)")
+                        .HasColumnType("varchar(255)")
                         .HasColumnName("NOMESETOR");
 
                     b.HasKey("Id");
@@ -376,9 +408,9 @@ namespace DeslandesApp.Infra.Data.Migrations
 
                     b.Property<string>("NomeSexo")
                         .IsRequired()
-                        .HasMaxLength(250)
+                        .HasMaxLength(100)
                         .IsUnicode(false)
-                        .HasColumnType("varchar(250)")
+                        .HasColumnType("varchar(100)")
                         .HasColumnName("NOMESEXO");
 
                     b.HasKey("Id");
@@ -434,6 +466,117 @@ namespace DeslandesApp.Infra.Data.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("USUARIOS", (string)null);
+                });
+
+            modelBuilder.Entity("DeslandesApp.Domain.Models.Entities.InformacoesComplementaresPessoaFisica", b =>
+                {
+                    b.HasBaseType("DeslandesApp.Domain.Models.Entities.InformacoesComplementares");
+
+                    b.Property<string>("AtividadeEconomica")
+                        .HasMaxLength(255)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(255)")
+                        .HasColumnName("ATIVIDADEECONOMICA");
+
+                    b.Property<string>("DataNascimento")
+                        .HasMaxLength(250)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(250)")
+                        .HasColumnName("DATANASCIMENTO");
+
+                    b.Property<string>("EstadoCivil")
+                        .HasMaxLength(50)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(50)")
+                        .HasColumnName("ESTADOCIVIL");
+
+                    b.Property<string>("Nacionalidade")
+                        .HasMaxLength(100)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(100)")
+                        .HasColumnName("NACIONALIDADE");
+
+                    b.Property<string>("Naturalidade")
+                        .HasMaxLength(100)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(100)")
+                        .HasColumnName("NATURALIDADE");
+
+                    b.Property<string>("NomeEmpresa")
+                        .HasMaxLength(250)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(250)");
+
+                    b.Property<string>("NomeMae")
+                        .HasMaxLength(250)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(250)")
+                        .HasColumnName("NOMEMAE");
+
+                    b.Property<string>("NomePai")
+                        .HasMaxLength(250)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(250)")
+                        .HasColumnName("NOMEPAI");
+
+                    b.Property<string>("Profissao")
+                        .HasMaxLength(250)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(250)")
+                        .HasColumnName("PROFISSAO");
+
+                    b.ToTable("INFORMACOESCOMPLEMENTARES");
+
+                    b.HasDiscriminator().HasValue("PF");
+                });
+
+            modelBuilder.Entity("DeslandesApp.Domain.Models.Entities.InformacoesComplementaresPessoaJuridica", b =>
+                {
+                    b.HasBaseType("DeslandesApp.Domain.Models.Entities.InformacoesComplementares");
+
+                    b.Property<string>("Agencia")
+                        .HasMaxLength(100)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(100)")
+                        .HasColumnName("AGENCIA");
+
+                    b.Property<string>("Cargo")
+                        .HasMaxLength(250)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(250)")
+                        .HasColumnName("CARGO");
+
+                    b.Property<string>("Contato")
+                        .HasMaxLength(250)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(250)")
+                        .HasColumnName("CONTATO");
+
+                    b.Property<string>("NomeBanco")
+                        .HasMaxLength(250)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(250)")
+                        .HasColumnName("NOMEBANCO");
+
+                    b.Property<string>("NumeroConta")
+                        .HasMaxLength(100)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(100)")
+                        .HasColumnName("NUMEROCONTA");
+
+                    b.Property<string>("Pix")
+                        .HasMaxLength(255)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(255)")
+                        .HasColumnName("PIX");
+
+                    b.Property<int?>("TipoConta")
+                        .HasColumnType("int")
+                        .HasColumnName("TIPOCONTA");
+
+                    b.ToTable("INFORMACOESCOMPLEMENTARES");
+
+                    b.HasDiscriminator().HasValue("PJ");
                 });
 
             modelBuilder.Entity("DeslandesApp.Domain.Models.Entities.PessoaFisica", b =>
@@ -534,6 +677,14 @@ namespace DeslandesApp.Infra.Data.Migrations
                     b.Navigation("Pessoa");
                 });
 
+            modelBuilder.Entity("DeslandesApp.Domain.Models.Entities.FailedLoginAttempt", b =>
+                {
+                    b.HasOne("DeslandesApp.Domain.Models.Entities.Usuario", null)
+                        .WithMany()
+                        .HasForeignKey("IdUsuario")
+                        .OnDelete(DeleteBehavior.NoAction);
+                });
+
             modelBuilder.Entity("DeslandesApp.Domain.Models.Entities.Fotos", b =>
                 {
                     b.HasOne("DeslandesApp.Domain.Models.Entities.Usuario", "Usuario")
@@ -590,6 +741,17 @@ namespace DeslandesApp.Infra.Data.Migrations
                         .IsRequired();
 
                     b.Navigation("Pessoa");
+                });
+
+            modelBuilder.Entity("DeslandesApp.Domain.Models.Entities.LoginHistory", b =>
+                {
+                    b.HasOne("DeslandesApp.Domain.Models.Entities.Usuario", "Usuario")
+                        .WithMany()
+                        .HasForeignKey("IdUsuario")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Usuario");
                 });
 
             modelBuilder.Entity("DeslandesApp.Domain.Models.Entities.Pessoa", b =>
