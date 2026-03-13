@@ -75,42 +75,33 @@ namespace DeslandesApp.Domain.Mappings
             CreateMap<GrupoSetorRequest, GrupoSetores>();
             CreateMap<GrupoSetores, GrupoSetorResponse>();
             #endregion
-            #region PessoaFisica
+            #region PessoaJuridica
 
-            CreateMap<PessoaFisicaRequest, PessoaFisica>()
-            .ForMember(dest => dest.ValorEmail,
-                opt => opt.MapFrom(src =>
-                    string.IsNullOrEmpty(src.Email)
-                    ? null
-                    : new ValorEmail(src.Email)))
-    .ForMember(dest => dest.InformacoesComplementares, opt => opt.Ignore());
-            CreateMap<PessoaFisica, PessoaFisicaResponse>()
-            .ForCtorParam("Email",
-                opt => opt.MapFrom(src =>
-                    src.ValorEmail != null
-                        ? src.ValorEmail.EnderecoEmail
-                        : null));
+            CreateMap<PessoaJuridicaRequest, PessoaJuridica>()
+                .ForMember(dest => dest.ValorEmail,
+                    opt => opt.MapFrom(src =>
+                        string.IsNullOrEmpty(src.Email)
+                        ? null
+                        : new ValorEmail(src.Email)))
+                .ForMember(dest => dest.InformacoesComplementares, opt => opt.Ignore());
 
-            #endregion
-            #region Informacoes Complementares
-            CreateMap<InformacoesComplementaresRequest, InformacoesComplementares>();
-        
+            CreateMap<PessoaJuridica, PessoaJuridicaResponse>()
+                .ForCtorParam("Email",
+                    opt => opt.MapFrom(src =>
+                        src.ValorEmail != null
+                            ? src.ValorEmail.EnderecoEmail
+                            : null));
 
-            #endregion  
-            CreateMap<InformacoesComplementares, InformacoesComplementaresResponse>();
-          
-            #region Endereco
-            CreateMap<EnderecoRequest, Endereco>();
-            CreateMap<Endereco, EnderecoResponse>();
             #endregion
             #region PessoaFisica
 
             CreateMap<PessoaFisicaRequest, PessoaFisica>()
-    .ForMember(dest => dest.ValorEmail,
-        opt => opt.MapFrom(src =>
-            string.IsNullOrEmpty(src.Email)
-                ? null
-                : new ValorEmail(src.Email)));
+                .ForMember(dest => dest.ValorEmail,
+                    opt => opt.MapFrom(src =>
+                        string.IsNullOrEmpty(src.Email)
+                        ? null
+                        : new ValorEmail(src.Email)))
+                .ForMember(dest => dest.InformacoesComplementares, opt => opt.Ignore());
 
             CreateMap<PessoaFisica, PessoaFisicaResponse>()
                 .ForCtorParam("Email",
@@ -120,6 +111,41 @@ namespace DeslandesApp.Domain.Mappings
                             : null));
 
             #endregion
+            #region Informacoes Complementares
+
+            CreateMap<InformacoesComplementaresRequest, InformacoesComplementaresPessoaFisica>();
+
+            CreateMap<InformacoesComplementaresPessoaFisica, InformacoesComplementaresResponse>();
+
+
+            CreateMap<InformacoesComplementaresRequest, InformacoesComplementaresPessoaJuridica>();
+
+            CreateMap<InformacoesComplementaresPessoaJuridica, InformacoesComplementaresResponse>();
+            #endregion
+
+            #region Endereco
+
+            CreateMap<EnderecoRequest, Endereco>();
+            CreateMap<Endereco, EnderecoResponse>();
+
+            #endregion
+            //        #region PessoaFisica
+
+            //        CreateMap<PessoaFisicaRequest, PessoaFisica>()
+            //.ForMember(dest => dest.ValorEmail,
+            //    opt => opt.MapFrom(src =>
+            //        string.IsNullOrEmpty(src.Email)
+            //            ? null
+            //            : new ValorEmail(src.Email)));
+
+            //        CreateMap<PessoaFisica, PessoaFisicaResponse>()
+            //            .ForCtorParam("Email",
+            //                opt => opt.MapFrom(src =>
+            //                    src.ValorEmail != null
+            //                        ? src.ValorEmail.EnderecoEmail
+            //                        : null));
+
+            //        #endregion
 
 
 

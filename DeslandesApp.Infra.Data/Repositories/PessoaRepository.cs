@@ -45,6 +45,20 @@ public class PessoaRepository(DataContext dataContext)
             .FirstOrDefaultAsync(p => p.CPF == cpf);
     }
 
-   
+    public async Task<bool> CnpjInUseAsync(string cnpj)
+    {
+        return await dataContext
+             .Set<PessoaJuridica>()
+             .AsNoTracking()
+             .AnyAsync(p => p.CNPJ == cnpj);
+    }
+
+    public async Task<bool> IncricaoEstadualInUseAsync(string incricaoEstadual)
+    {
+        return await dataContext
+            .Set<PessoaJuridica>()
+            .AsNoTracking()
+            .AnyAsync(p => p.InscricaoEstadual == incricaoEstadual);
+    }
 }
 

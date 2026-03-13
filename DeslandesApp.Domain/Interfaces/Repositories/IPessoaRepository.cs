@@ -17,6 +17,8 @@ namespace DeslandesApp.Domain.Interfaces.Repositories
         Task<bool> EmailInUseAsync(string email);
         Task<bool> RgInUseAsync(string cpf);
         Task<PessoaFisica> GetByCpfAsync(string cpf);
-      
+        Task<bool> CnpjInUseAsync(string cnpj);
+        Task<bool> IncricaoEstadualInUseAsync(string incricaoEstadual);
+
     }
 }

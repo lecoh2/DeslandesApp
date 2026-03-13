@@ -19,10 +19,11 @@ namespace DeslandesApp.Domain.Extensions
             services.AddAutoMapper(map => map.AddProfile
 (typeof(ProfileMap)));
 
-            services.AddTransient<IUsuarioService, UsuarioService>();
-            services.AddTransient<IPessoaFisicaService, PessoaFisicaService>();
-            services.AddTransient<ISetorService, SetorService>();
-            services.AddTransient<INivelServices, NiveisService>();            
+            services.AddScoped<IUsuarioService, UsuarioService>();
+            services.AddScoped<IPessoaFisicaService, PessoaFisicaService>();
+            services.AddScoped<IPessoaJuridicaService, PessoaJuridicaService>();
+            services.AddScoped<ISetorService, SetorService>();
+            services.AddScoped<INivelServices, NiveisService>();            
             //services.AddTransient<IGrupoNiveisServices, GrupoNiveisService>();
             //services.AddTransient<IGrupoSetoresService, GrupoSetoresService>()
             

@@ -21,7 +21,9 @@ namespace DeslandesApp.Infra.Data.Contexts
         public DbSet<GrupoNiveis> GrupoNiveis { get; set; }
         public DbSet<GrupoSetores> GrupoSetores { get; set; }
         public DbSet<Endereco> Endereco { get; set; }
-        public DbSet<InformacoesComplementares> InformacoesComplementares { get; set; }
+        public DbSet<InformacoesComplementaresPessoaFisica> InformacoesComplementaresPessoaFisicas { get; set; }
+
+        public DbSet<InformacoesComplementaresPessoaJuridica> InformacoesComplementaresPessoaJuridicas { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             //modelBuilder.ApplyConfiguration(new CategoriaMap());

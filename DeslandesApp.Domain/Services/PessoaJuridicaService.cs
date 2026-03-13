@@ -6,7 +6,6 @@ using DeslandesApp.Domain.Models.Dtos.Requests.InformacoesComplementares;
 using DeslandesApp.Domain.Models.Dtos.Requests.Pessoas;
 using DeslandesApp.Domain.Models.Dtos.Responses.Pessoas;
 using DeslandesApp.Domain.Models.Entities;
-using DeslandesApp.Domain.Models.Enum;
 using DeslandesApp.Domain.Utils;
 using DeslandesApp.Domain.Validators;
 using DeslandesApp.Domain.ValueObjects;
@@ -19,50 +18,50 @@ using System.Threading.Tasks;
 
 namespace DeslandesApp.Domain.Services
 {
-    public class PessoaFisicaService : IPessoaFisicaService
+    public class PessoaJuridicaService : IPessoaJuridicaService
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
 
-        public PessoaFisicaService(IUnitOfWork unitOfWork, IMapper mapper)
+        public PessoaJuridicaService(IUnitOfWork unitOfWork, IMapper mapper)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
         }
 
-        public async Task<PessoaFisicaResponse> AdicionarAsync(PessoaFisicaRequest request)
+        public async Task<PessoaJuridicaResponse> AdicionarAsync(PessoaJuridicaRequest request)
         {
             await _unitOfWork.BeginTransactionAsync();
 
-            var cpf = FunctionsHelper.RemovePontosTracos(request.Cpf);
-            var rg = FunctionsHelper.RemovePontosTracos(request.Rg);
+            var cnpj = FunctionsHelper.RemovePontosTracos(request.Cnpj);
+            var incricaoEstadual = FunctionsHelper.RemovePontosTracos(request.InscricaoEstadual);
 
-            if (!FunctionsHelper.ValidadorCPF(cpf))
-                throw new ApplicationException("CPF inválido.");
+            if (!FunctionsHelper.ValidadorCNPJ(cnpj))
+                throw new ApplicationException("Cnpj inválido.");
 
-            if (await _unitOfWork.PessoaRepository.CpfInUseAsync(cpf))
-                throw new InvalidOperationException("CPF já cadastrado.");
+            if (await _unitOfWork.PessoaRepository.CnpjInUseAsync(cnpj))
+                throw new InvalidOperationException("CNPJ já cadastrado.");
 
-            if (!string.IsNullOrWhiteSpace(rg) &&
-                await _unitOfWork.PessoaRepository.RgInUseAsync(rg))
+            if (!string.IsNullOrWhiteSpace(incricaoEstadual) &&
+                await _unitOfWork.PessoaRepository.IncricaoEstadualInUseAsync(incricaoEstadual))
                 throw new InvalidOperationException("RG já cadastrado.");
 
-            var pessoa = _mapper.Map<PessoaFisica>(request);
+            var pessoa = _mapper.Map<PessoaJuridica>(request);
 
-            var validator = new PessoaFisicaValidator();
+            var validator = new PessoaJuridicaValidator();
             var result = validator.Validate(pessoa);
 
             if (!result.IsValid)
                 throw new ValidationException(result.Errors);
 
-            pessoa.CPF = cpf;
-            pessoa.RG = rg;
+            pessoa.CNPJ = cnpj;
+            pessoa.InscricaoEstadual = incricaoEstadual;
             pessoa.Telefone = FunctionsHelper.RemovePontosTracosTelefone(pessoa.Telefone);
             pessoa.DataCadastro = DateTime.Now;
-            pessoa.IdSexo = request.IdSexo;
+         
 
             pessoa.ValorEmail = string.IsNullOrWhiteSpace(pessoa.ValorEmail?.EnderecoEmail)
-                ? new ValorEmail($"nadaconsta{cpf}@email.com")
+                ? new ValorEmail($"nadaconsta{cnpj}@email.com")
                 : pessoa.ValorEmail;
 
             if (await _unitOfWork.PessoaRepository.EmailInUseAsync(pessoa.ValorEmail.EnderecoEmail))
@@ -81,7 +80,7 @@ namespace DeslandesApp.Domain.Services
             if (TemAlgumValor(request.InformacoesComplementares))
             {
                 pessoa.InformacoesComplementares =
-                    _mapper.Map<InformacoesComplementaresPessoaFisica>(request.InformacoesComplementares);
+                    _mapper.Map<InformacoesComplementaresPessoaJuridica>(request.InformacoesComplementares);
             }
 
             // SALVA TUDO JUNTO
@@ -89,20 +88,12 @@ namespace DeslandesApp.Domain.Services
 
             await _unitOfWork.CommitAsync();
 
-            return _mapper.Map<PessoaFisicaResponse>(pessoa);
+            return _mapper.Map<PessoaJuridicaResponse>(pessoa);
         }
 
-        public Task<PageResult<PessoaFisicaResponse>> ConsultarAsync(int pageNumber, int pageSize, string? serchTerms = null)
-        {
-            throw new NotImplementedException();
-        }
+        
 
-        public Task<PageResult<PessoaFisicaResponse>> ConsultarAsync(int pageNumber, int pageSize)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<PageResult<PessoaFisicaResponse>> ConsultarPaginacaoAsync(int pageNumber, int pageSize, string? serchTerm = null)
+        public Task<PageResult<PessoaJuridicaResponse>> ConsultarAsync(int pageNumber, int pageSize)
         {
             throw new NotImplementedException();
         }
@@ -112,35 +103,32 @@ namespace DeslandesApp.Domain.Services
             _unitOfWork.Dispose();
         }
 
-        public Task<PessoaFisicaResponse> ExcluirAsync(Guid id)
+        public Task<PessoaJuridicaResponse> ExcluirAsync(Guid id)
         {
             throw new NotImplementedException();
         }
 
-        public Task<PessoaFisicaResponse> ModificarAsync(Guid id, PessoaFisicaUpdateRequest request)
+        public Task<PessoaJuridicaResponse> ModificarAsync(Guid id, PessoaJuridicaUpdateRequest request)
         {
             throw new NotImplementedException();
         }
 
-        public Task<PessoaFisicaResponse?> ObterPorIdAsync(Guid id)
+        public Task<PessoaJuridicaResponse?> ObterPorIdAsync(Guid id)
         {
             throw new NotImplementedException();
         }
-        private bool TemAlgumValor(InformacoesComplementaresRequest info)
+        private bool TemAlgumValor(InformacoesComplementaresJuridicaRequest info)
         {
             if (info == null) return false;
 
-            return !string.IsNullOrWhiteSpace(info.DataNascimento)
-                || !string.IsNullOrWhiteSpace(info.NomeEmpresa)
-                || !string.IsNullOrWhiteSpace(info.Profissao)
-                || !string.IsNullOrWhiteSpace(info.AtividadeEconomica)
-                || !string.IsNullOrWhiteSpace(info.EstadoCivil)
-                || !string.IsNullOrWhiteSpace(info.Codigo)
-                || !string.IsNullOrWhiteSpace(info.NomePai)
-                || !string.IsNullOrWhiteSpace(info.NomeMae)
-                || !string.IsNullOrWhiteSpace(info.Naturalidade)
-                || !string.IsNullOrWhiteSpace(info.Nacionalidade)
-                || !string.IsNullOrWhiteSpace(info.Comentario);
+            return !string.IsNullOrWhiteSpace(info.Contato)
+                || !string.IsNullOrWhiteSpace(info.Cargo)
+                || !string.IsNullOrWhiteSpace(info.NomeBanco)
+                || !string.IsNullOrWhiteSpace(info.Agencia)
+                || !string.IsNullOrWhiteSpace(info.NumeroConta)
+                || !string.IsNullOrWhiteSpace(info.Pix);
+             
+            
         }
     }
 }

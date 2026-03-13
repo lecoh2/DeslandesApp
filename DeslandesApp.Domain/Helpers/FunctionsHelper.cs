@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DeslandesApp.Domain.Models.Dtos.Requests.InformacoesComplementares;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -191,6 +192,72 @@ namespace DeslandesApp.Domain.Helpers
             digito = digito + resto.ToString();
 
             return cpf.EndsWith(digito);
+        }
+        public static bool ValidadorCNPJ(string cnpj)
+        {
+            // Remove caracteres não numéricos
+            cnpj = Regex.Replace(cnpj, "[^0-9]", "");
+
+            // Verifica se o CNPJ tem 14 dígitos
+            if (cnpj.Length != 14)
+                return false;
+
+            // Verifica se todos os dígitos são iguais (CNPJ inválido)
+            if (new string(cnpj[0], cnpj.Length) == cnpj)
+                return false;
+
+            int[] multiplicadores1 = new int[12]
+                { 5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2 };
+
+            int[] multiplicadores2 = new int[13]
+                { 6, 5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2 };
+
+            string tempCnpj = cnpj.Substring(0, 12);
+            int soma = 0;
+
+            for (int i = 0; i < 12; i++)
+                soma += int.Parse(tempCnpj[i].ToString()) * multiplicadores1[i];
+
+            int resto = soma % 11;
+
+            if (resto < 2)
+                resto = 0;
+            else
+                resto = 11 - resto;
+
+            string digito = resto.ToString();
+            tempCnpj = tempCnpj + digito;
+            soma = 0;
+
+            for (int i = 0; i < 13; i++)
+                soma += int.Parse(tempCnpj[i].ToString()) * multiplicadores2[i];
+
+            resto = soma % 11;
+
+            if (resto < 2)
+                resto = 0;
+            else
+                resto = 11 - resto;
+
+            digito = digito + resto.ToString();
+
+            return cnpj.EndsWith(digito);
+        }
+        public bool TemAlgumValor(InformacoesComplementaresRequest info)
+        {
+            if (info == null) return false;
+
+            return !string.IsNullOrWhiteSpace(info.DataNascimento)
+                || !string.IsNullOrWhiteSpace(info.NomeEmpresa)
+                || !string.IsNullOrWhiteSpace(info.Profissao)
+                || !string.IsNullOrWhiteSpace(info.AtividadeEconomica)
+                || !string.IsNullOrWhiteSpace(info.EstadoCivil)
+                || !string.IsNullOrWhiteSpace(info.Codigo)
+                || !string.IsNullOrWhiteSpace(info.NomePai)
+                || !string.IsNullOrWhiteSpace(info.NomeMae)
+                || !string.IsNullOrWhiteSpace(info.Naturalidade)
+                || !string.IsNullOrWhiteSpace(info.Nacionalidade)
+                || !string.IsNullOrWhiteSpace(info.Comentario);
         }
     }
 }
