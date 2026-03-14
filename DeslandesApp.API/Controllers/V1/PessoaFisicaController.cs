@@ -32,7 +32,21 @@ namespace DeslandesApp.API.Controllers.V1
                 data = response
             });
         }
+        [HttpGet("consultar-pessoa-fisica-paginacao")]
+        public async Task<IActionResult> ConsultarUsuarioPaginacao(
+    [FromQuery] int pageNumber = 1,
+    [FromQuery] int pageSize = 10,
+    [FromQuery] string? searchTerm = null)
+        {
+            pageNumber = pageNumber <= 0 ? 1 : pageNumber;
+            pageSize = pageSize <= 0 ? 10 : Math.Min(pageSize, 100);
 
-       
+            var usuarioPaged = await _pessoaService
+                .ConsultarPessoaFisicaPaginacaoAsync(pageNumber, pageSize, searchTerm);
+
+            return Ok(usuarioPaged);
+        }
     }
+
 }
+

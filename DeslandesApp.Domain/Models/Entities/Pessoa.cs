@@ -17,8 +17,7 @@ namespace DeslandesApp.Domain.Models.Entities
         public string Telefone { get; set; } = string.Empty;               
         public string Site { get; set; } = string.Empty;
         public DateTime? DataCadastro { get; set; }
-        public DateTime? DataAtualizacao { get; set; }
-       
+        public DateTime? DataAtualizacao { get; set; }       
         public Guid? IdSexo { get; set; }
         public Guid? IdUsuario { get; set; }
         #region Relacionamento
@@ -26,7 +25,7 @@ namespace DeslandesApp.Domain.Models.Entities
         public InformacoesComplementares? InformacoesComplementares { get; set; }
      
         public Sexo? Sexo { get; set; }
-       public Usuario? Usuario { get; set; }            // Usuário vinculado
+        public Usuario? Usuario { get; set; }            // Usuário vinculado
        // public Usuario? UsuarioCadastro { get; set; }    // Usuário que cadastrou
         public ValorEmail? ValorEmail { get; set; }              // Email principal vinculado
         #endregion

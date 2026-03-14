@@ -107,6 +107,11 @@ namespace DeslandesApp.Domain.Services
             throw new NotImplementedException();
         }
 
+        public Task<PageResult<PessoaFisicaPaginacaoResponse>> ConsultarPessoaFisicaPaginacaoAsync(int pageNumber, int pageSize, string? searchTerm = null)
+        {
+            throw new NotImplementedException();
+        }
+
         public void Dispose()
         {
             _unitOfWork.Dispose();

@@ -9,7 +9,7 @@ namespace DeslandesApp.Domain.Models.Entities
 {
     public class InformacoesComplementaresPessoaJuridica : InformacoesComplementares
     {
-        public string? Contato { get; set; } = string.Empty;
+        public string? Contato { get; set; } 
         public string? Cargo { get; set; } = string.Empty; 
         public string NomeBanco { get; set; } = string.Empty;
         public string Agencia { get; set; } = string.Empty;

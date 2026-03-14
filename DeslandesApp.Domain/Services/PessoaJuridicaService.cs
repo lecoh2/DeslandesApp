@@ -77,10 +77,12 @@ namespace DeslandesApp.Domain.Services
 
             // INFORMAÇÕES COMPLEMENTARES
             // INFORMAÇÕES COMPLEMENTARES
-            if (TemAlgumValor(request.InformacoesComplementares))
+            if (request.InformacoesComplementares != null &&
+    TemAlgumValor(request.InformacoesComplementares))
             {
                 pessoa.InformacoesComplementares =
-                    _mapper.Map<InformacoesComplementaresPessoaJuridica>(request.InformacoesComplementares);
+                    _mapper.Map<InformacoesComplementaresPessoaJuridica>(
+                        request.InformacoesComplementares);
             }
 
             // SALVA TUDO JUNTO

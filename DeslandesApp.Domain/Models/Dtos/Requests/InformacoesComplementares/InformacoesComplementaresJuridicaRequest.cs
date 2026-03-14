@@ -9,14 +9,14 @@ namespace DeslandesApp.Domain.Models.Dtos.Requests.InformacoesComplementares
 {
     public record InformacoesComplementaresJuridicaRequest
    (
-       string? Contato,
+     string? Contato,
      string? Cargo,
      string? NomeBanco,
      string? Agencia,
      string? NumeroConta,
-     string? Pix
+     string? Pix,
     #region Relacionamento Enumeradores
-   //TipoConta? TipoConta
+    TipoConta? TipoConta
    // Guid? IdPessoa = null // se quiser vincular opcionalmente
     #endregion
    );

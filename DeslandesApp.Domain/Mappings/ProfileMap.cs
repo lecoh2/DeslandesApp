@@ -113,14 +113,20 @@ namespace DeslandesApp.Domain.Mappings
             #endregion
             #region Informacoes Complementares
 
+            #region Informacoes Complementares
+
             CreateMap<InformacoesComplementaresRequest, InformacoesComplementaresPessoaFisica>();
 
             CreateMap<InformacoesComplementaresPessoaFisica, InformacoesComplementaresResponse>();
 
+            CreateMap<InformacoesComplementaresJuridicaRequest,
+                      InformacoesComplementaresPessoaJuridica>();
 
-            CreateMap<InformacoesComplementaresRequest, InformacoesComplementaresPessoaJuridica>();
+            CreateMap<InformacoesComplementaresPessoaJuridica,
+                      InformacoesComplementaresResponse>();
 
-            CreateMap<InformacoesComplementaresPessoaJuridica, InformacoesComplementaresResponse>();
+            #endregion
+
             #endregion
 
             #region Endereco

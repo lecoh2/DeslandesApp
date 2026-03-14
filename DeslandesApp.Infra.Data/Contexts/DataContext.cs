@@ -22,7 +22,7 @@ namespace DeslandesApp.Infra.Data.Contexts
         public DbSet<GrupoSetores> GrupoSetores { get; set; }
         public DbSet<Endereco> Endereco { get; set; }
         public DbSet<InformacoesComplementaresPessoaFisica> InformacoesComplementaresPessoaFisicas { get; set; }
-
+        public DbSet<PessoaFisica> PessoasFisicas { get; set; }
         public DbSet<InformacoesComplementaresPessoaJuridica> InformacoesComplementaresPessoaJuridicas { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
