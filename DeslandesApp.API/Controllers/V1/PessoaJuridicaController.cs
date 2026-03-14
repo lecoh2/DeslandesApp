@@ -32,12 +32,23 @@ namespace DeslandesApp.API.Controllers.V1
             catch (Exception ex)
             {
                 // Log completo da exceção
-                Console.WriteLine(ex.ToString()); // ou use ILogger
-                return StatusCode(500, new { success = false, message = ex.Message });
+                //  Console.WriteLine(ex.ToString()); // ou use ILogger
+                return StatusCode(500, new { erroReal = ex.Message, stack = ex.StackTrace });
             }
         }
 
-
+        //    public async Task<IActionResult> PostAsync([FromBody] PessoaFisicaRequest request) 
+        //    {
+        //        try {
+        //            var response = await _pessoaService.AdicionarAsync(request);
+        //            return StatusCode(StatusCodes.Status201Created, new 
+        //            { success = true, message = $"Cliente {response.Nome} cadastrado com sucesso.",
+        //                data = response });
+        //        }
+        //        catch (Exception ex)
+        //        { return StatusCode(500, new { erroReal = ex.Message, stack = ex.StackTrace }); } }
+        //}
     }
 }
+
 

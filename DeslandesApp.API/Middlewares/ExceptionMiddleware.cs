@@ -63,10 +63,24 @@ namespace DeslandesApp.API.Middlewares
                     result.Message = keyEx.Message;
                     break;
 
+                //default:
+                //    response.StatusCode = (int)HttpStatusCode.InternalServerError;
+                //    result.StatusCode = response.StatusCode;
+                //    result.Message = ex.Message; // mostrar erro real
+                //    break;
                 default:
                     response.StatusCode = (int)HttpStatusCode.InternalServerError;
                     result.StatusCode = response.StatusCode;
-                    result.Message = "Ocorreu um erro interno no servidor.";
+                    result.Message = ex.Message;
+
+                    result.Errors = new List<ValidationError>
+    {
+        new ValidationError
+        {
+            Campo = "InnerException",
+            Erro = ex.InnerException?.Message ?? "Sem inner exception"
+        }
+    };
                     break;
             }
 

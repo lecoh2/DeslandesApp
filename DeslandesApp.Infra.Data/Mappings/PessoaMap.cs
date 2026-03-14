@@ -35,7 +35,7 @@ namespace DeslandesApp.Infra.Data.Mappings
 
             builder.Property(p => p.IdSexo)
                 .HasColumnName("SEXO_ID")
-                .IsRequired();
+                .IsRequired(false);
 
             builder.Property(p => p.IdUsuario)
                 .HasColumnName("USUARIO_ID")

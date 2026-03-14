@@ -9,11 +9,11 @@ namespace DeslandesApp.Domain.Models.Dtos.Responses.Pessoas
     public record PessoaJuridicaResponse
     (
         Guid Id,
-    string Nome,
-    string IncricaoEstadual,
-    string InscricaoMunicipal,
-    string Telefone,
-    string Email
-        );
-    
+        string Nome,
+        string InscricaoEstadual,
+        string InscricaoMunicipal,
+        string Telefone,
+        string Email
+    );
+
 }
