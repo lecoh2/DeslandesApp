@@ -2,6 +2,7 @@
 using DeslandesApp.Domain.Models.Dtos.Requests.Pessoas;
 using DeslandesApp.Domain.Models.Dtos.Responses.Pessoas;
 using DeslandesApp.Domain.Models.Entities;
+using DeslandesApp.Domain.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,6 +20,10 @@ namespace DeslandesApp.Domain.Interfaces.Repositories
         Task<PessoaFisica> GetByCpfAsync(string cpf);
         Task<bool> CnpjInUseAsync(string cnpj);
         Task<bool> IncricaoEstadualInUseAsync(string incricaoEstadual);
+        Task<PageResult<PessoaFisicaPaginacaoResponse>> PessoaFisicaComPaginacaoAsync(
+     int pageNumber, int pageSize, string? searchTerm = null);
+        Task<PageResult<PessoaJuridicaPaginacaoResponse>> ConsultarPessoaJuridicaComPaginacaoAsync(
+    int pageNumber, int pageSize, string? searchTerm = null);
 
     }
 }

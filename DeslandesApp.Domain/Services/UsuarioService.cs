@@ -144,10 +144,7 @@ namespace DeslandesApp.Domain.Services
             await unitOfWork.UsuarioRepository.DeleteAsync(usuario);
             return mapper.Map<UsuariosResponse>(usuario);
         }
-        public async Task<AutenticarUsuarioResponse> AutenticarUsuarioAsync(
- AutenticarUsuarioRequest request,
- string ip,
- string userAgent)
+        public async Task<AutenticarUsuarioResponse> AutenticarUsuarioAsync(AutenticarUsuarioRequest request, string ip,string userAgent)
         {
             if (request == null)
                 throw new ApplicationException("Requisição inválida.");

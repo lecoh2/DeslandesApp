@@ -9,12 +9,12 @@ using System.Threading.Tasks;
 
 namespace DeslandesApp.Domain.Models.Dtos.Responses.Pessoas
 {
-    public record PessoaFisicaPaginacaoResponse
+    public record PessoaJuridicaPaginacaoResponse
    (
     Guid? Id,
     string? Nome,
-    string? CPF,
-    string? RG,
+    string? Cnpj,
+    string? IncricaoEstadual,
     //string? Email,
     string? Telefone
    );

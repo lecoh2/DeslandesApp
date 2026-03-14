@@ -88,10 +88,7 @@ public class PessoaRepository(DataContext dataContext)
             var term = searchTerm.ToLower();
 
             query = query.Where(p =>
-                p.Nome.ToLower().Contains(term) ||
-                (p.ValorEmail != null ? p.ValorEmail.EnderecoEmail : "")
-                    .ToLower()
-                    .Contains(term) ||
+                p.Nome.ToLower().Contains(term) ||                
                 (p.CPF ?? "").Contains(term) ||
                 (p.RG ?? "").Contains(term) ||
                 (p.Telefone ?? "").Contains(term)
@@ -110,8 +107,7 @@ public class PessoaRepository(DataContext dataContext)
               p.Id,
               p.Nome,
               p.CPF,
-              p.RG,
-              p.ValorEmail.EnderecoEmail,
+              p.RG,             
               p.Telefone
           ))
           .ToListAsync();
@@ -119,6 +115,62 @@ public class PessoaRepository(DataContext dataContext)
 
         // --- 5️⃣ Retornar o resultado ---
         return new PageResult<PessoaFisicaPaginacaoResponse>
+        {
+            Items = items,
+            TotalCount = totalCount,
+            PageNumber = pageNumber,
+            PageSize = pageSize
+        };
+    }
+    public async Task<PageResult<PessoaJuridicaPaginacaoResponse>> ConsultarPessoaJuridicaComPaginacaoAsync(
+     int pageNumber, int pageSize, string? searchTerm = null)
+    {
+        // --- 1️⃣ Base da consulta: somente leitura, sem tracking ---
+        var query = dataContext.PessoaJuridica
+            .AsNoTracking()
+            .Select(p => new
+            {
+                p.Id,
+                p.Nome,
+                p.ValorEmail,
+                p.CNPJ,
+                p.InscricaoEstadual,
+                p.Telefone
+            });
+
+        // --- 2️⃣ Aplicar filtro (apenas quando necessário) ---
+        if (!string.IsNullOrWhiteSpace(searchTerm))
+        {
+            var term = searchTerm.ToLower();
+
+            query = query.Where(p =>
+                p.Nome.ToLower().Contains(term) ||
+                (p.CNPJ ?? "").Contains(term) ||
+                (p.InscricaoEstadual ?? "").Contains(term) ||
+                (p.Telefone ?? "").Contains(term)
+            );
+        }
+
+        // --- 3️⃣ Contagem total (executa COUNT apenas) ---
+        var totalCount = await query.CountAsync();
+
+        // --- 4️⃣ Paginação + projeção final ---
+        var items = await query
+          .OrderBy(p => p.Nome)
+          .Skip((pageNumber - 1) * pageSize)
+          .Take(pageSize)
+          .Select(p => new PessoaJuridicaPaginacaoResponse(
+              p.Id,
+              p.Nome,
+              p.CNPJ,
+              p.InscricaoEstadual,
+              p.Telefone
+          ))
+          .ToListAsync();
+        ////
+
+        // --- 5️⃣ Retornar o resultado ---
+        return new PageResult<PessoaJuridicaPaginacaoResponse>
         {
             Items = items,
             TotalCount = totalCount,

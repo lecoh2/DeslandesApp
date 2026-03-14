@@ -94,7 +94,6 @@ namespace DeslandesApp.Domain.Mappings
 
             #endregion
             #region PessoaFisica
-
             CreateMap<PessoaFisicaRequest, PessoaFisica>()
                 .ForMember(dest => dest.ValorEmail,
                     opt => opt.MapFrom(src =>
@@ -110,10 +109,8 @@ namespace DeslandesApp.Domain.Mappings
                             ? src.ValorEmail.EnderecoEmail
                             : null));
 
-            #endregion
-            #region Informacoes Complementares
-
-            #region Informacoes Complementares
+            #endregion        
+            #region Informacoes Complementares PesoaFisica eJuridica
 
             CreateMap<InformacoesComplementaresRequest, InformacoesComplementaresPessoaFisica>();
 
@@ -126,39 +123,14 @@ namespace DeslandesApp.Domain.Mappings
                       InformacoesComplementaresResponse>();
 
             #endregion
-
-            #endregion
-
             #region Endereco
-
             CreateMap<EnderecoRequest, Endereco>();
             CreateMap<Endereco, EnderecoResponse>();
 
             #endregion
-            //        #region PessoaFisica
-
-            //        CreateMap<PessoaFisicaRequest, PessoaFisica>()
-            //.ForMember(dest => dest.ValorEmail,
-            //    opt => opt.MapFrom(src =>
-            //        string.IsNullOrEmpty(src.Email)
-            //            ? null
-            //            : new ValorEmail(src.Email)));
-
-            //        CreateMap<PessoaFisica, PessoaFisicaResponse>()
-            //            .ForCtorParam("Email",
-            //                opt => opt.MapFrom(src =>
-            //                    src.ValorEmail != null
-            //                        ? src.ValorEmail.EnderecoEmail
-            //                        : null));
-
-            //        #endregion
-
-
-
         }
         // Função auxiliar para strings opcionais
         private static string? NullIfEmpty(string? value) => string.IsNullOrWhiteSpace(value) ? null : value;
     }
-
-    }
+}
 

@@ -48,6 +48,21 @@ namespace DeslandesApp.API.Controllers.V1
         //        catch (Exception ex)
         //        { return StatusCode(500, new { erroReal = ex.Message, stack = ex.StackTrace }); } }
         //}
+
+        [HttpGet("consultar-pessoa-juridica-paginacao")]
+        public async Task<IActionResult> ConsultarPessoaJuridicaPaginacao(
+    [FromQuery] int pageNumber = 1,
+    [FromQuery] int pageSize = 10,
+    [FromQuery] string? searchTerm = null)
+        {
+            pageNumber = pageNumber <= 0 ? 1 : pageNumber;
+            pageSize = pageSize <= 0 ? 10 : Math.Min(pageSize, 100);
+
+            var usuarioPaged = await _pessoaService
+                .ConsultarPessoaJuridicaPaginacaoAsync(pageNumber, pageSize, searchTerm);
+
+            return Ok(usuarioPaged);
+        }
     }
 }
 

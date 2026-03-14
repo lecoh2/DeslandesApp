@@ -58,7 +58,7 @@ namespace DeslandesApp.Domain.Services
             pessoa.InscricaoEstadual = incricaoEstadual;
             pessoa.Telefone = FunctionsHelper.RemovePontosTracosTelefone(pessoa.Telefone);
             pessoa.DataCadastro = DateTime.Now;
-         
+
 
             pessoa.ValorEmail = string.IsNullOrWhiteSpace(pessoa.ValorEmail?.EnderecoEmail)
                 ? new ValorEmail($"nadaconsta{cnpj}@email.com")
@@ -93,8 +93,6 @@ namespace DeslandesApp.Domain.Services
             return _mapper.Map<PessoaJuridicaResponse>(pessoa);
         }
 
-        
-
         public Task<PageResult<PessoaJuridicaResponse>> ConsultarAsync(int pageNumber, int pageSize)
         {
             throw new NotImplementedException();
@@ -119,6 +117,24 @@ namespace DeslandesApp.Domain.Services
         {
             throw new NotImplementedException();
         }
+        public async Task<PageResult<PessoaJuridicaPaginacaoResponse>> ConsultarPessoaJuridicaPaginacaoAsync(int pageNumber, int pageSize, string? searchTerm = null)
+        {
+            var paged = await _unitOfWork.PessoaRepository.ConsultarPessoaJuridicaComPaginacaoAsync
+                (pageNumber, pageSize, searchTerm);
+
+            if (paged == null || !paged.Items.Any())
+            {
+                return new PageResult<PessoaJuridicaPaginacaoResponse>
+                {
+                    Items = new List<PessoaJuridicaPaginacaoResponse>(),
+                    TotalCount = 0,
+                    PageNumber = pageNumber,
+                    PageSize = pageSize
+                };
+            }
+
+            return paged;
+        }
         private bool TemAlgumValor(InformacoesComplementaresJuridicaRequest info)
         {
             if (info == null) return false;
@@ -129,8 +145,10 @@ namespace DeslandesApp.Domain.Services
                 || !string.IsNullOrWhiteSpace(info.Agencia)
                 || !string.IsNullOrWhiteSpace(info.NumeroConta)
                 || !string.IsNullOrWhiteSpace(info.Pix);
-             
-            
+
+
         }
     }
 }
+
+       

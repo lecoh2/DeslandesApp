@@ -5,6 +5,7 @@ using DeslandesApp.Domain.Interfaces.Services;
 using DeslandesApp.Domain.Models.Dtos.Requests.InformacoesComplementares;
 using DeslandesApp.Domain.Models.Dtos.Requests.Pessoas;
 using DeslandesApp.Domain.Models.Dtos.Responses.Pessoas;
+using DeslandesApp.Domain.Models.Dtos.Responses.Usuarios;
 using DeslandesApp.Domain.Models.Entities;
 using DeslandesApp.Domain.Models.Enum;
 using DeslandesApp.Domain.Utils;
@@ -92,24 +93,31 @@ namespace DeslandesApp.Domain.Services
             return _mapper.Map<PessoaFisicaResponse>(pessoa);
         }
 
-        public Task<PageResult<PessoaFisicaResponse>> ConsultarAsync(int pageNumber, int pageSize, string? serchTerms = null)
-        {
-            throw new NotImplementedException();
-        }
-
+     
         public Task<PageResult<PessoaFisicaResponse>> ConsultarAsync(int pageNumber, int pageSize)
         {
             throw new NotImplementedException();
         }
 
-        public Task<PageResult<PessoaFisicaResponse>> ConsultarPaginacaoAsync(int pageNumber, int pageSize, string? serchTerm = null)
-        {
-            throw new NotImplementedException();
-        }
+      
 
-        public Task<PageResult<PessoaFisicaPaginacaoResponse>> ConsultarPessoaFisicaPaginacaoAsync(int pageNumber, int pageSize, string? searchTerm = null)
+        public async Task<PageResult<PessoaFisicaPaginacaoResponse>> ConsultarPessoaFisicaPaginacaoAsync(int pageNumber, int pageSize, string? searchTerm = null)
         {
-            throw new NotImplementedException();
+            var paged = await  _unitOfWork.PessoaRepository.PessoaFisicaComPaginacaoAsync
+                (pageNumber, pageSize, searchTerm);
+
+            if (paged == null || !paged.Items.Any())
+            {
+                return new PageResult<PessoaFisicaPaginacaoResponse>
+                {
+                    Items = new List<PessoaFisicaPaginacaoResponse>(),
+                    TotalCount = 0,
+                    PageNumber = pageNumber,
+                    PageSize = pageSize
+                };
+            }
+
+            return paged;
         }
 
         public void Dispose()
