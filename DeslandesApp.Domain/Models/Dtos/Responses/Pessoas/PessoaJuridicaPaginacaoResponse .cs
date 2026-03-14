@@ -15,7 +15,7 @@ namespace DeslandesApp.Domain.Models.Dtos.Responses.Pessoas
     string? Nome,
     string? Cnpj,
     string? IncricaoEstadual,
-    //string? Email,
+    string? Email,
     string? Telefone
    );
 

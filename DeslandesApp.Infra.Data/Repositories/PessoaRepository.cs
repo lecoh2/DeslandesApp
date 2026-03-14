@@ -75,10 +75,10 @@ public class PessoaRepository(DataContext dataContext)
             .Select(p => new
             {
                 p.Id,
-                p.Nome,
-                p.ValorEmail,
+                p.Nome,             
                 p.CPF,
                 p.RG,
+                p.ValorEmail,
                 p.Telefone
             });
 
@@ -88,7 +88,7 @@ public class PessoaRepository(DataContext dataContext)
             var term = searchTerm.ToLower();
 
             query = query.Where(p =>
-                p.Nome.ToLower().Contains(term) ||                
+                p.Nome.ToLower().Contains(term) ||
                 (p.CPF ?? "").Contains(term) ||
                 (p.RG ?? "").Contains(term) ||
                 (p.Telefone ?? "").Contains(term)
@@ -107,7 +107,8 @@ public class PessoaRepository(DataContext dataContext)
               p.Id,
               p.Nome,
               p.CPF,
-              p.RG,             
+              p.RG,
+              p.ValorEmail != null ? p.ValorEmail.EnderecoEmail : null,
               p.Telefone
           ))
           .ToListAsync();
@@ -131,10 +132,10 @@ public class PessoaRepository(DataContext dataContext)
             .Select(p => new
             {
                 p.Id,
-                p.Nome,
-                p.ValorEmail,
+                p.Nome,              
                 p.CNPJ,
                 p.InscricaoEstadual,
+                p.ValorEmail,
                 p.Telefone
             });
 
@@ -164,6 +165,7 @@ public class PessoaRepository(DataContext dataContext)
               p.Nome,
               p.CNPJ,
               p.InscricaoEstadual,
+               p.ValorEmail != null ? p.ValorEmail.EnderecoEmail : null,
               p.Telefone
           ))
           .ToListAsync();
