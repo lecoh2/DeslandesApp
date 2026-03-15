@@ -28,10 +28,22 @@ namespace DeslandesApp.Infra.Data.Repositories
         private IGrupoNiveisRepository? _grupoNiveisRepository;
         private IGrupoSetoresRepository? _grupoSetoresRepository;
         private IFailedLoginAttemptRepository? _failedLoginAttemptRepository;
-        private ILoginHistoryRepository _loginHistoryRepository;
-        private IPessoaRepository _pessoaRepository;
-        private IEnderecoRepository _enderecoRepository;
-        private IInformacoesComplementaresRepository _informacoesComplementaresRepository;
+        private ILoginHistoryRepository? _loginHistoryRepository;
+        private IPessoaRepository? _pessoaRepository;
+        private IEnderecoRepository? _enderecoRepository;
+        private IInformacoesComplementaresRepository? _informacoesComplementaresRepository;
+        private IPessoaHistoricoRepository? _pessoaHistoricoRepository;
+        public IPessoaHistoricoRepository PessoaHistoricoRepository
+
+        {
+            get
+            {
+                if (_pessoaHistoricoRepository == null)
+                    _pessoaHistoricoRepository = new PessoaHistoricoRepository(dataContext);
+
+                return _pessoaHistoricoRepository;
+            }
+        }
         public IInformacoesComplementaresRepository InformacoesComplementaresRepository
 
         {

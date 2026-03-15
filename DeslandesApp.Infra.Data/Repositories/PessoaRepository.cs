@@ -180,5 +180,17 @@ public class PessoaRepository(DataContext dataContext)
             PageSize = pageSize
         };
     }
+
+    public async Task<PessoaFisica?> ConsultarPessoasFisicasComIdRelacionamentosAsync(Guid idPessoa)
+    {
+        return await dataContext.PessoasFisicas
+            .OfType<PessoaFisica>()
+            .Include(p => p.Endereco)
+            .Include(p => p.Sexo)
+            .Include(p => p.InformacoesComplementares)
+            .FirstOrDefaultAsync(p => p.Id == idPessoa);
+    }
+
+  
 }
 

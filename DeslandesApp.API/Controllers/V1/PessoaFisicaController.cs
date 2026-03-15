@@ -46,7 +46,19 @@ namespace DeslandesApp.API.Controllers.V1
 
             return Ok(usuarioPaged);
         }
-    }
 
+        [HttpPut("atualizar-pessoa-fisica{id}")]
+        [ProducesResponseType(typeof(UsuariosResponse), 200)]
+        public async Task<IActionResult> PutAsync(Guid id, [FromBody] PessoaFisicaUpdateRequest request)
+        {
+            var response = await _pessoaService.ModificarAsync(id, request);
+            return StatusCode(StatusCodes.Status201Created, new
+            {
+                success = true,
+                message = $"Usuário {response.Nome} atualizado com sucesso.",
+                data = response
+            });
+        }
+    }
 }
 

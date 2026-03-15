@@ -24,6 +24,6 @@ namespace DeslandesApp.Domain.Interfaces.Repositories
      int pageNumber, int pageSize, string? searchTerm = null);
         Task<PageResult<PessoaJuridicaPaginacaoResponse>> ConsultarPessoaJuridicaComPaginacaoAsync(
     int pageNumber, int pageSize, string? searchTerm = null);
-
+        Task<PessoaFisica> ConsultarPessoasFisicasComIdRelacionamentosAsync(Guid idPessoa);
     }
 }

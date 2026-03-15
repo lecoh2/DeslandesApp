@@ -24,6 +24,7 @@ namespace DeslandesApp.Infra.Data.Contexts
         public DbSet<InformacoesComplementaresPessoaFisica> InformacoesComplementaresPessoaFisicas { get; set; }
         public DbSet<PessoaFisica> PessoasFisicas { get; set; }
         public DbSet<PessoaJuridica> PessoaJuridica { get; set; }
+        public DbSet<PessoaHistorico> PessoaHistorico { get; set; }
         public DbSet<InformacoesComplementaresPessoaJuridica> InformacoesComplementaresPessoaJuridicas { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
