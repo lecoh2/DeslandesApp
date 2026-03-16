@@ -10,7 +10,7 @@ namespace DeslandesApp.Domain.Models.Dtos.Requests.Pessoas
 {
     public record PessoaFisicaUpdateRequest
     (
-        Guid? Id,
+        //Guid? Id,
         string? Nome,
         string? Apelido,
         int? IdEtiqueta,

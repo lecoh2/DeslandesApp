@@ -386,20 +386,18 @@ namespace DeslandesApp.Infra.Data.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("DadosAntes")
-                        .IsRequired()
                         .HasMaxLength(250)
                         .IsUnicode(false)
                         .HasColumnType("VARCHAR(MAX)")
                         .HasColumnName("DADOSANTES");
 
                     b.Property<string>("DadosDepois")
-                        .IsRequired()
                         .HasMaxLength(250)
                         .IsUnicode(false)
                         .HasColumnType("VARCHAR(MAX)")
                         .HasColumnName("DADOSDEPOIS");
 
-                    b.Property<DateTime>("DataAlteracao")
+                    b.Property<DateTime?>("DataAlteracao")
                         .HasColumnType("datetime2")
                         .HasColumnName("DATAALTERACAO");
 
@@ -412,7 +410,6 @@ namespace DeslandesApp.Infra.Data.Migrations
                         .HasColumnName("USUARIO_ID");
 
                     b.Property<string>("Observacoes")
-                        .IsRequired()
                         .HasMaxLength(250)
                         .IsUnicode(false)
                         .HasColumnType("VARCHAR(255)")
@@ -424,7 +421,7 @@ namespace DeslandesApp.Infra.Data.Migrations
 
                     b.HasIndex("IdUsuario");
 
-                    b.ToTable("PESSOA_HISTORICO", (string)null);
+                    b.ToTable("PESSOAHISTORICO", (string)null);
                 });
 
             modelBuilder.Entity("DeslandesApp.Domain.Models.Entities.Setor", b =>

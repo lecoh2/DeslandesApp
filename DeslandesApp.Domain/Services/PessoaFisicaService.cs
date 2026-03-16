@@ -134,15 +134,19 @@ namespace DeslandesApp.Domain.Services
         public async Task<PessoaFisicaResponse> ModificarAsync(Guid id, PessoaFisicaUpdateRequest request)
         {
             await _unitOfWork.BeginTransactionAsync();
+
             try
             {
-                // Recuperar a pessoa
                 var pessoa = await _unitOfWork.PessoaRepository.GetByIdAsync(id);
+
                 if (pessoa == null)
                     throw new ApplicationException("Pessoa não encontrada para edição.");
 
-                // Buscar dados antes da alteração
-                var pessoaAntes = await _unitOfWork.PessoaRepository.ConsultarPessoasFisicasComIdRelacionamentosAsync(id);
+                var pessoaAntes = await _unitOfWork
+                    .PessoaRepository
+                    .ConsultarPessoasFisicasComIdRelacionamentosAsync(id);
+
+                var infoAntes = pessoaAntes.InformacoesComplementares as InformacoesComplementaresPessoaFisica;
 
                 var dadosAntes = new
                 {
@@ -153,20 +157,16 @@ namespace DeslandesApp.Domain.Services
                     pessoaAntes.Site,
                     pessoaAntes.CPF,
                     pessoaAntes.RG,
-                    pessoaAntes.TituloEleitor,
-                    pessoaAntes.CarteiraTrabalho,
-                    pessoaAntes.PisPasep,
-                    pessoaAntes.CNH,
-                    pessoaAntes.Passaporte,
-                    pessoaAntes.CertidaoReservista,
-                    
+
                     Sexo = pessoaAntes.Sexo?.NomeSexo,
+
                     Usuario = pessoaAntes.Usuario != null ? new
                     {
                         pessoaAntes.Usuario.Id,
                         pessoaAntes.Usuario.Login,
-                        pessoaAntes.Usuario.NomeUsuario,
+                        pessoaAntes.Usuario.NomeUsuario
                     } : null,
+
                     Endereco = pessoaAntes.Endereco != null ? new
                     {
                         pessoaAntes.Endereco.Logradouro,
@@ -176,51 +176,50 @@ namespace DeslandesApp.Domain.Services
                         pessoaAntes.Endereco.Uf,
                         pessoaAntes.Endereco.Cep
                     } : null,
-                    InformacoesComplementares = pessoaAntes.InformacoesComplementares != null ? new
+
+                    InformacoesComplementares = infoAntes != null ? new
                     {
                         pessoaAntes.InformacoesComplementares.Codigo,
                         pessoaAntes.InformacoesComplementares.Comentario,
-
-                        DataNascimento = ((InformacoesComplementaresPessoaFisica)pessoaAntes.InformacoesComplementares).DataNascimento,
-                        NomeEmpresa = ((InformacoesComplementaresPessoaFisica)pessoaAntes.InformacoesComplementares).NomeEmpresa,
-                        Profissao = ((InformacoesComplementaresPessoaFisica)pessoaAntes.InformacoesComplementares).Profissao,
-                        AtividadeEconomica = ((InformacoesComplementaresPessoaFisica)pessoaAntes.InformacoesComplementares).AtividadeEconomica,
-                        EstadoCivil = ((InformacoesComplementaresPessoaFisica)pessoaAntes.InformacoesComplementares).EstadoCivil,
-                        NomePai = ((InformacoesComplementaresPessoaFisica)pessoaAntes.InformacoesComplementares).NomePai,
-                        NomeMae = ((InformacoesComplementaresPessoaFisica)pessoaAntes.InformacoesComplementares).NomeMae,
-                        Naturalidade = ((InformacoesComplementaresPessoaFisica)pessoaAntes.InformacoesComplementares).Naturalidade,
-                        Nacionalidade = ((InformacoesComplementaresPessoaFisica)pessoaAntes.InformacoesComplementares).Nacionalidade
+                        infoAntes.DataNascimento,
+                        infoAntes.NomeEmpresa,
+                        infoAntes.Profissao,
+                        infoAntes.AtividadeEconomica
                     } : null,
-                    pessoaAntes.DataAtualizacao,
+
+                    pessoaAntes.DataAtualizacao
                 };
 
                 pessoa.DataAtualizacao = DateTime.Now;
 
-                // Aplicar alterações
                 _mapper.Map(request, pessoa);
                 await _unitOfWork.PessoaRepository.UpdateAsync(pessoa);
 
-                // Atualizar endereço (se necessário)
                 if (request.Endereco != null)
                 {
-                    var enderecoExistente = await _unitOfWork.EnderecoRepository.GetByIdAsync(pessoa.Id);
-                    if (enderecoExistente != null)
+                    var endereco = await _unitOfWork.EnderecoRepository.GetByIdAsync(pessoa.Id);
+
+                    if (endereco != null)
                     {
-                        _mapper.Map(request.Endereco, enderecoExistente);
-                        await _unitOfWork.EnderecoRepository.UpdateAsync(enderecoExistente);
+                        _mapper.Map(request.Endereco, endereco);
+                        await _unitOfWork.EnderecoRepository.UpdateAsync(endereco);
                     }
                 }
+
                 if (request.InformacoesComplementares != null)
                 {
-                    var informacoesExistente = await _unitOfWork.InformacoesComplementaresRepository.GetByIdAsync(pessoa.Id);
-                    if (informacoesExistente != null)
+                    var info = await _unitOfWork.InformacoesComplementaresRepository.GetByIdAsync(pessoa.Id);
+
+                    if (info != null)
                     {
-                        _mapper.Map(request.InformacoesComplementares, informacoesExistente);
-                        await _unitOfWork.InformacoesComplementaresRepository.UpdateAsync(informacoesExistente);
+                        _mapper.Map(request.InformacoesComplementares, info);
+                        await _unitOfWork.InformacoesComplementaresRepository.UpdateAsync(info);
                     }
                 }
-                // Buscar novamente para montar os dados depois
-                var pessoaDepois = await _unitOfWork.PessoaRepository.ConsultarPessoasFisicasComIdRelacionamentosAsync(id);
+
+                var pessoaDepois = await _unitOfWork
+                    .PessoaRepository
+                    .ConsultarPessoasFisicasComIdRelacionamentosAsync(id);
 
                 var dadosDepois = new
                 {
@@ -231,53 +230,28 @@ namespace DeslandesApp.Domain.Services
                     pessoaDepois.Site,
                     pessoaDepois.CPF,
                     pessoaDepois.RG,
-                    pessoaDepois.TituloEleitor,
-                    pessoaDepois.CarteiraTrabalho,
-                    pessoaDepois.PisPasep,
-                    pessoaDepois.CNH,
-                    pessoaDepois.Passaporte,
-                    pessoaDepois.CertidaoReservista,
                     Sexo = pessoaDepois.Sexo?.NomeSexo,
-                    Usuario = pessoaDepois.Usuario != null ? new
-                    {
-                        pessoaDepois.Usuario.Id,
-                        pessoaDepois.Usuario.Login,
-                        pessoaDepois.Usuario.NomeUsuario,
-                    } : null,
-                    Endereco = pessoaDepois.Endereco != null ? new
-                    {
-                        pessoaDepois.Endereco.Logradouro,
-                        pessoaDepois.Endereco.Numero,
-                        pessoaDepois.Endereco.Bairro,
-                        pessoaDepois.Endereco.Localidade,
-                        pessoaDepois.Endereco.Uf,
-                        pessoaDepois.Endereco.Cep
-                    } : null,
                     pessoaDepois.DataAtualizacao
                 };
-                if (pessoa.Id== null)
-                    throw new ApplicationException("Id da pessoa está nulo. Verifique se a pessoa foi carregada corretamente.");
 
                 if (request.IdUsuario == null)
-                    throw new ApplicationException("Id do usuário está nulo. Verifique se está sendo enviado corretamente.");
+                    throw new ApplicationException("Id do usuário não informado.");
 
-                // Criar histórico
                 var historico = new PessoaHistorico
                 {
-                   
-                    IdPessoa = pessoa.Id!,
-                    IdUsuario = request.IdUsuario!.Value,// Você pode incluir isso no DTO ou recuperar do contexto
+                    IdPessoa = pessoa.Id,
+                    IdUsuario = request.IdUsuario.Value,
                     DataAlteracao = DateTime.Now,
-                    Observacoes = request.Observacoes,
+                    Observacoes = request.Observacoes ?? "",
                     DadosAntes = JsonConvert.SerializeObject(dadosAntes),
                     DadosDepois = JsonConvert.SerializeObject(dadosDepois)
                 };
 
                 await _unitOfWork.PessoaHistoricoRepository.AddAsync(historico);
+
                 await _unitOfWork.CommitAsync();
 
-                var response = _mapper.Map<PessoaFisicaResponse>(pessoaDepois);
-                return response;
+                return _mapper.Map<PessoaFisicaResponse>(pessoaDepois);
             }
             catch
             {

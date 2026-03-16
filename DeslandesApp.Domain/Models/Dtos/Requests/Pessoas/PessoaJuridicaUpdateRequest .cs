@@ -18,9 +18,9 @@ namespace DeslandesApp.Domain.Models.Dtos.Requests.Pessoas
         string? Site,
         int? IdPerfil, 
         string? Telefone,
-        Guid? IdUsuario,   
-
-        #region Relacionamentos
+        Guid? IdUsuario,
+       string? Observacoes,
+    #region Relacionamentos
         EnderecoRequest? Endereco,
         InformacoesComplementaresRequest? InformacoesComplementares
     #endregion

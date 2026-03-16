@@ -1,5 +1,6 @@
 ﻿using DeslandesApp.Domain.Interfaces.Services;
 using DeslandesApp.Domain.Models.Dtos.Requests.Pessoas;
+using DeslandesApp.Domain.Models.Dtos.Responses.Usuarios;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -62,6 +63,19 @@ namespace DeslandesApp.API.Controllers.V1
                 .ConsultarPessoaJuridicaPaginacaoAsync(pageNumber, pageSize, searchTerm);
 
             return Ok(usuarioPaged);
+        }
+
+        [HttpPut("atualizar-pessoa-juridica{id}")]
+        [ProducesResponseType(typeof(UsuariosResponse), 200)]
+        public async Task<IActionResult> PutAsync(Guid id, [FromBody] PessoaJuridicaUpdateRequest request)
+        {
+            var response = await _pessoaService.ModificarAsync(id, request);
+            return StatusCode(StatusCodes.Status201Created, new
+            {
+                success = true,
+                message = $"Usuário {response.Nome} atualizado com sucesso.",
+                data = response
+            });
         }
     }
 }

@@ -190,7 +190,7 @@ namespace DeslandesApp.Infra.Data.Migrations
                     Site = table.Column<string>(type: "varchar(250)", unicode: false, maxLength: 250, nullable: false),
                     DATACADASTRO = table.Column<DateTime>(type: "datetime2", nullable: false),
                     DATAATUALIZACAO = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    SEXO_ID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    SEXO_ID = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     USUARIO_ID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     EMAIL = table.Column<string>(type: "nvarchar(150)", maxLength: 150, nullable: true),
                     Etiqueta = table.Column<int>(type: "int", nullable: true),
@@ -260,7 +260,7 @@ namespace DeslandesApp.Infra.Data.Migrations
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     CODIGO = table.Column<string>(type: "varchar(50)", unicode: false, maxLength: 50, nullable: true),
                     COMENTARIO = table.Column<string>(type: "varchar(250)", unicode: false, maxLength: 250, nullable: true),
-                    IdPessoa = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    PESSOA_ID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     TIPOPESSOA = table.Column<string>(type: "varchar(250)", unicode: false, maxLength: 250, nullable: false),
                     DATANASCIMENTO = table.Column<string>(type: "varchar(250)", unicode: false, maxLength: 250, nullable: true),
                     NomeEmpresa = table.Column<string>(type: "varchar(250)", unicode: false, maxLength: 250, nullable: true),
@@ -283,9 +283,38 @@ namespace DeslandesApp.Infra.Data.Migrations
                 {
                     table.PrimaryKey("PK_INFORMACOESCOMPLEMENTARES", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_INFORMACOESCOMPLEMENTARES_PESSOA_IdPessoa",
-                        column: x => x.IdPessoa,
+                        name: "FK_INFORMACOESCOMPLEMENTARES_PESSOA_PESSOA_ID",
+                        column: x => x.PESSOA_ID,
                         principalTable: "PESSOA",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "PESSOA_HISTORICO",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    PESSOA_ID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    USUARIO_ID = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    DATAALTERACAO = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    OBSERVACOES = table.Column<string>(type: "VARCHAR(255)", unicode: false, maxLength: 250, nullable: false),
+                    DADOSANTES = table.Column<string>(type: "VARCHAR(MAX)", unicode: false, maxLength: 250, nullable: false),
+                    DADOSDEPOIS = table.Column<string>(type: "VARCHAR(MAX)", unicode: false, maxLength: 250, nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PESSOA_HISTORICO", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_PessoaHistorico_Pessoa",
+                        column: x => x.PESSOA_ID,
+                        principalTable: "PESSOA",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_PessoaHistorico_Usuario",
+                        column: x => x.USUARIO_ID,
+                        principalTable: "USUARIOS",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                 });
@@ -319,9 +348,9 @@ namespace DeslandesApp.Infra.Data.Migrations
                 column: "IdSetor");
 
             migrationBuilder.CreateIndex(
-                name: "IX_INFORMACOESCOMPLEMENTARES_IdPessoa",
+                name: "IX_INFORMACOESCOMPLEMENTARES_PESSOA_ID",
                 table: "INFORMACOESCOMPLEMENTARES",
-                column: "IdPessoa",
+                column: "PESSOA_ID",
                 unique: true);
 
             migrationBuilder.CreateIndex(
@@ -337,6 +366,16 @@ namespace DeslandesApp.Infra.Data.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_PESSOA_USUARIO_ID",
                 table: "PESSOA",
+                column: "USUARIO_ID");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PESSOA_HISTORICO_PESSOA_ID",
+                table: "PESSOA_HISTORICO",
+                column: "PESSOA_ID");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PESSOA_HISTORICO_USUARIO_ID",
+                table: "PESSOA_HISTORICO",
                 column: "USUARIO_ID");
 
             migrationBuilder.CreateIndex(
@@ -369,6 +408,9 @@ namespace DeslandesApp.Infra.Data.Migrations
 
             migrationBuilder.DropTable(
                 name: "LOGINHISTORY");
+
+            migrationBuilder.DropTable(
+                name: "PESSOA_HISTORICO");
 
             migrationBuilder.DropTable(
                 name: "NIVEL");

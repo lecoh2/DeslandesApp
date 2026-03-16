@@ -11,10 +11,10 @@ namespace DeslandesApp.Domain.Models.Entities
     {
         public string? Contato { get; set; } 
         public string? Cargo { get; set; } = string.Empty; 
-        public string NomeBanco { get; set; } = string.Empty;
-        public string Agencia { get; set; } = string.Empty;
-        public string NumeroConta { get; set; } = string.Empty;
-        public string Pix { get; set; } = string.Empty;
+        public string? NomeBanco { get; set; } = string.Empty;
+        public string? Agencia { get; set; } = string.Empty;
+        public string? NumeroConta { get; set; } = string.Empty;
+        public string? Pix { get; set; } = string.Empty;
         #region Relacionamento Enumeradores
         public TipoConta? TipoConta { get; set; }
         #endregion

@@ -13,21 +13,21 @@ namespace DeslandesApp.Infra.Data.Mappings
     {
         public void Configure(EntityTypeBuilder<PessoaHistorico> builder)
         {
-            builder.ToTable("PESSOA_HISTORICO");
+            builder.ToTable("PESSOAHISTORICO");
             builder.HasKey(p => p.Id);
 
             builder.Property(p => p.IdPessoa).HasColumnName("PESSOA_ID").IsRequired();
 
             builder.Property(p => p.IdUsuario).HasColumnName("USUARIO_ID");
 
-            builder.Property(p => p.DataAlteracao).HasColumnName("DATAALTERACAO").IsRequired();
+            builder.Property(p => p.DataAlteracao).HasColumnName("DATAALTERACAO").IsRequired(false);
 
             builder.Property(p => p.Observacoes)
-                .HasColumnName("OBSERVACOES").HasColumnType("VARCHAR(255)").IsRequired();
+                .HasColumnName("OBSERVACOES").HasColumnType("VARCHAR(255)").IsRequired(false);
 
-            builder.Property(p => p.DadosAntes).HasColumnName("DADOSANTES").HasColumnType("VARCHAR(MAX)").IsRequired();
+            builder.Property(p => p.DadosAntes).HasColumnName("DADOSANTES").HasColumnType("VARCHAR(MAX)").IsRequired(false);
 
-            builder.Property(p => p.DadosDepois).HasColumnName("DADOSDEPOIS").HasColumnType("VARCHAR(MAX)").IsRequired();
+            builder.Property(p => p.DadosDepois).HasColumnName("DADOSDEPOIS").HasColumnType("VARCHAR(MAX)").IsRequired(false);
 
             // Relacionamento com Pessoa (opcional)
             builder.HasOne(p => p.Pessoa)

@@ -13,7 +13,7 @@ namespace DeslandesApp.Domain.Models.Entities
         //public Guid IdHistoricoPessoa { get; set; }
         public Guid IdPessoa { get; set; }
         public Guid? IdUsuario { get; set; }
-        public DateTime DataAlteracao { get; set; }
+        public DateTime? DataAlteracao { get; set; }
         public string? Observacoes { get; set; }
 
         //JSON bruto

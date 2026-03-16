@@ -93,7 +93,44 @@ namespace DeslandesApp.Domain.Mappings
                             : null));
 
             #endregion
+            //       #region PessoaFisica
+            //       CreateMap<PessoaFisicaRequest, PessoaFisica>()
+            //           .ForMember(dest => dest.ValorEmail,
+            //               opt => opt.MapFrom(src =>
+            //                   string.IsNullOrEmpty(src.Email)
+            //                   ? null
+            //                   : new ValorEmail(src.Email)))
+            //           .ForMember(dest => dest.InformacoesComplementares, opt => opt.Ignore());
+
+            //       CreateMap<PessoaFisica, PessoaFisicaResponse>()
+            //           .ForCtorParam("Email",
+            //               opt => opt.MapFrom(src =>
+            //                   src.ValorEmail != null
+            //                       ? src.ValorEmail.EnderecoEmail
+            //                       : null));
+
+            //       CreateMap<PessoaFisicaUpdateRequest, PessoaFisica>()
+            //.ForMember(dest => dest.InformacoesComplementares,
+            //    opt => opt.MapFrom(src => src.InformacoesComplementares));
+
+            //       CreateMap<PessoaFisica, PessoaFisicaResponse>();
+
+            //       #endregion        
+            //       #region Informacoes Complementares PesoaFisica eJuridica
+
+            //       CreateMap<InformacoesComplementaresRequest, InformacoesComplementaresPessoaFisica>();
+
+            //       CreateMap<InformacoesComplementaresPessoaFisica, InformacoesComplementaresResponse>();
+
+            //       CreateMap<InformacoesComplementaresJuridicaRequest,
+            //                 InformacoesComplementaresPessoaJuridica>();
+
+            //       CreateMap<InformacoesComplementaresPessoaJuridica,
+            //                 InformacoesComplementaresResponse>();
+
+            //       #endregion
             #region PessoaFisica
+
             CreateMap<PessoaFisicaRequest, PessoaFisica>()
                 .ForMember(dest => dest.ValorEmail,
                     opt => opt.MapFrom(src =>
@@ -102,6 +139,10 @@ namespace DeslandesApp.Domain.Mappings
                         : new ValorEmail(src.Email)))
                 .ForMember(dest => dest.InformacoesComplementares, opt => opt.Ignore());
 
+            CreateMap<PessoaFisicaUpdateRequest, PessoaFisica>()
+                .ForMember(dest => dest.InformacoesComplementares,
+                    opt => opt.MapFrom(src => src.InformacoesComplementares));
+
             CreateMap<PessoaFisica, PessoaFisicaResponse>()
                 .ForCtorParam("Email",
                     opt => opt.MapFrom(src =>
@@ -109,9 +150,12 @@ namespace DeslandesApp.Domain.Mappings
                             ? src.ValorEmail.EnderecoEmail
                             : null));
 
-            #endregion        
-            #region Informacoes Complementares PesoaFisica eJuridica
+            #endregion
 
+            #region Informacoes Complementares
+            CreateMap<PessoaFisicaUpdateRequest, PessoaFisica>()
+    .ForMember(dest => dest.InformacoesComplementares, opt => opt.Ignore())
+    .ForMember(dest => dest.Endereco, opt => opt.Ignore());
             CreateMap<InformacoesComplementaresRequest, InformacoesComplementaresPessoaFisica>();
 
             CreateMap<InformacoesComplementaresPessoaFisica, InformacoesComplementaresResponse>();
