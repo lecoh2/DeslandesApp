@@ -14,8 +14,7 @@ using System.Threading.Tasks;
 
 namespace DeslandesApp.Infra.Data.Repositories
 {
-    public class UsuarioRepository(DataContext dataContext)
-        : BaseRepository<Usuario, Guid>(dataContext), IUsuarioRepository
+    public class UsuarioRepository(DataContext dataContext): BaseRepository<Usuario, Guid>(dataContext), IUsuarioRepository
     {
         public async Task<PageResult<UsuarioPaginacaoResponse>> GetUsuariosComPaginadoAsync(
           int pageNumber,

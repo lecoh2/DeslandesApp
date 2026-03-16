@@ -183,14 +183,19 @@ public class PessoaRepository(DataContext dataContext)
 
     public async Task<PessoaFisica?> ConsultarPessoasFisicasComIdRelacionamentosAsync(Guid idPessoa)
     {
-        return await dataContext.PessoasFisicas
-            .OfType<PessoaFisica>()
+        return await dataContext.PessoasFisicas            
             .Include(p => p.Endereco)
             .Include(p => p.Sexo)
             .Include(p => p.InformacoesComplementares)
             .FirstOrDefaultAsync(p => p.Id == idPessoa);
     }
 
-  
+    public async Task<PessoaJuridica> ConsultarPessoasJuridicasComIdRelacionamentosAsync(Guid idPessoa)
+    {
+        return await dataContext.PessoaJuridica           
+           .Include(p => p.Endereco)
+           .Include(p => p.InformacoesComplementares)
+           .FirstOrDefaultAsync(p => p.Id == idPessoa);
+    }
 }
 

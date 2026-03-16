@@ -6,6 +6,7 @@ using DeslandesApp.Domain.Models.Dtos.Requests.InformacoesComplementares;
 using DeslandesApp.Domain.Models.Dtos.Requests.Pessoas;
 using DeslandesApp.Domain.Models.Dtos.Responses.Pessoas;
 using DeslandesApp.Domain.Models.Entities;
+using DeslandesApp.Domain.Models.Enum;
 using DeslandesApp.Domain.Utils;
 using DeslandesApp.Domain.Validators;
 using DeslandesApp.Domain.ValueObjects;
@@ -122,21 +123,24 @@ namespace DeslandesApp.Domain.Services
 
                 var pessoaAntes = await _unitOfWork
                     .PessoaRepository
-                    .ConsultarPessoasFisicasComIdRelacionamentosAsync(id);
+                    .ConsultarPessoasJuridicasComIdRelacionamentosAsync(id);
 
                 var infoAntes = pessoaAntes.InformacoesComplementares as InformacoesComplementaresPessoaJuridica;
 
                 var dadosAntes = new
                 {
                     pessoaAntes.Nome,
-                    pessoaAntes.Apelido,
-                    pessoaAntes.Telefone,
+                    pessoaAntes.CNPJ,
+                    pessoaAntes.InscricaoEstadual,
+                    pessoaAntes.InscricaoMunicipal,
                     pessoaAntes.ValorEmail,
                     pessoaAntes.Site,
-                    pessoaAntes.CPF,
-                    pessoaAntes.RG,
-
-                    Sexo = pessoaAntes.Sexo?.NomeSexo,
+                    infoAntes.Codigo,
+                    infoAntes.Comentario,
+                    infoAntes.Contato,
+                    infoAntes.Cargo,
+                    infoAntes.Agencia,
+                    infoAntes.NumeroConta,                   
 
                     Usuario = pessoaAntes.Usuario != null ? new
                     {
@@ -177,7 +181,7 @@ namespace DeslandesApp.Domain.Services
 
                 if (request.Endereco != null)
                 {
-                    var endereco = await _unitOfWork.EnderecoRepository.GetByIdAsync(pessoa.Id);
+                    var endereco = await _unitOfWork.EnderecoRepository.GetByAsync(e=>e.IdPessoa == pessoa.Id);
 
                     if (endereco != null)
                     {
@@ -188,7 +192,7 @@ namespace DeslandesApp.Domain.Services
 
                 if (request.InformacoesComplementares != null)
                 {
-                    var info = await _unitOfWork.InformacoesComplementaresRepository.GetByIdAsync(pessoa.Id);
+                    var info = await _unitOfWork.InformacoesComplementaresRepository.GetByAsync(e => e.IdPessoa == pessoa.Id);
 
                     if (info != null)
                     {
@@ -199,18 +203,16 @@ namespace DeslandesApp.Domain.Services
 
                 var pessoaDepois = await _unitOfWork
                     .PessoaRepository
-                    .ConsultarPessoasFisicasComIdRelacionamentosAsync(id);
+                    .ConsultarPessoasJuridicasComIdRelacionamentosAsync(id);
 
                 var dadosDepois = new
                 {
                     pessoaDepois.Nome,
-                    pessoaDepois.Apelido,
-                    pessoaDepois.Telefone,
+                    pessoaDepois.CNPJ,
+                    pessoaDepois.InscricaoEstadual,
+                    pessoaDepois.InscricaoMunicipal,
                     pessoaDepois.ValorEmail,
                     pessoaDepois.Site,
-                    pessoaDepois.CPF,
-                    pessoaDepois.RG,
-                    Sexo = pessoaDepois.Sexo?.NomeSexo,
                     pessoaDepois.DataAtualizacao
                 };
 

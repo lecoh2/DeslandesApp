@@ -197,7 +197,7 @@ namespace DeslandesApp.Domain.Services
 
                 if (request.Endereco != null)
                 {
-                    var endereco = await _unitOfWork.EnderecoRepository.GetByIdAsync(pessoa.Id);
+                    var endereco = await _unitOfWork.EnderecoRepository.GetByAsync(e => e.IdPessoa == pessoa.Id);
 
                     if (endereco != null)
                     {
@@ -208,7 +208,7 @@ namespace DeslandesApp.Domain.Services
 
                 if (request.InformacoesComplementares != null)
                 {
-                    var info = await _unitOfWork.InformacoesComplementaresRepository.GetByIdAsync(pessoa.Id);
+                    var info = await _unitOfWork.InformacoesComplementaresRepository.GetByAsync(e => e.IdPessoa == pessoa.Id);
 
                     if (info != null)
                     {

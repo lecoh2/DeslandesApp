@@ -9,7 +9,8 @@ using System.Threading.Tasks;
 namespace DeslandesApp.Domain.Models.Dtos.Requests.Pessoas
 {
     public record PessoaJuridicaUpdateRequest
-   (       
+   (
+        string? Nome,
         string? Cnpj,
         string? InscricaoEstadual,
         string? InscricaoMunicipal,
@@ -22,7 +23,7 @@ namespace DeslandesApp.Domain.Models.Dtos.Requests.Pessoas
        string? Observacoes,
     #region Relacionamentos
         EnderecoRequest? Endereco,
-        InformacoesComplementaresRequest? InformacoesComplementares
+        InformacoesComplementaresJuridicaRequest? InformacoesComplementares
     #endregion
     );
     
