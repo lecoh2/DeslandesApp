@@ -10,8 +10,10 @@ namespace DeslandesApp.Domain.Models.Entities
     {
         public Guid? IdPessoa { get; set; }
         public Guid? IdProcesso { get; set; }
+        public Guid? IdQualificacao { get; set; }
         public Pessoa? Pessoa { get; set; }
         public Processo? Processo { get; set; }
+        public Qualificacao? QualificacaoEnvolvidos { get; set; }
   
     }
 }

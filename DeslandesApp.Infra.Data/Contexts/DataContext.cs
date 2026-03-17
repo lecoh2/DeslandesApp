@@ -19,13 +19,17 @@ namespace DeslandesApp.Infra.Data.Contexts
         public DbSet<FailedLoginAttempt> FailedLoginAttempt { get; set; }
         public DbSet<Niveis> Niveis { get; set; }
         public DbSet<GrupoNiveis> GrupoNiveis { get; set; }
-        public DbSet<GrupoSetores> GrupoSetores { get; set; }
+        public DbSet<GrupoSetores> GrupoSetores { get; set; }      
+
         public DbSet<Endereco> Endereco { get; set; }
         public DbSet<InformacoesComplementaresPessoaFisica> InformacoesComplementaresPessoaFisicas { get; set; }
         public DbSet<PessoaFisica> PessoasFisicas { get; set; }
         public DbSet<PessoaJuridica> PessoaJuridica { get; set; }
         public DbSet<PessoaHistorico> PessoaHistorico { get; set; }
         public DbSet<InformacoesComplementaresPessoaJuridica> InformacoesComplementaresPessoaJuridicas { get; set; }
+        public DbSet<Processo> Processos{ get; set; }
+        public DbSet<GrupoPessoaClientes> GrupoPessoaClientes { get; set; }
+        public DbSet<GrupoEnvolvidos> GrupoEnvolvidos { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);

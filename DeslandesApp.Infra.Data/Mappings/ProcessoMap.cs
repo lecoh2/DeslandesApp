@@ -34,14 +34,10 @@ namespace DeslandesApp.Infra.Data.Mappings
                 .WithOne(x => x.Processo)
                 .HasForeignKey(x => x.IdProcesso);
 
-            // ⚠️ OUTROS ENVOLVIDOS (se quiser manter simples por enquanto)
-            builder.HasMany(x => x.OutrosEnvolvidos)
-                .WithMany(); // sem tabela explícita (EF cria automaticamente)
+            builder.HasMany(x => x.GrupoEnvolvidos)
+               .WithOne(x => x.Processo)
+               .HasForeignKey(x => x.IdProcesso);
 
-            // ⚠️ QUALIFICACAO
-            builder.HasMany(x => x.Qualificacao)
-                .WithOne() // ajuste se tiver navegação inversa
-                .OnDelete(DeleteBehavior.Cascade);
 
             // 💡 DATEONLY (IMPORTANTE)
             builder.Property(x => x.Distribuido)

@@ -27,6 +27,7 @@ namespace DeslandesApp.Domain.Models.Entities
 
         public string? Observacao { get; set; }
         public string? Responsavael { get; set; }
+        public DateTime? DataCadastro { get; set; }
 
         #region Relacionamentos
 
@@ -36,8 +37,8 @@ namespace DeslandesApp.Domain.Models.Entities
         // 🔥 RELAÇÃO N:N (correta)
         public ICollection<GrupoPessoaClientes> GrupoPessoaClientes { get; set; }
 
-        public ICollection<Pessoa> OutrosEnvolvidos { get; set; }
-        public ICollection<Qualificacao> Qualificacao { get; set; }
+        public ICollection<GrupoEnvolvidos> GrupoEnvolvidos { get; set; }
+
 
         #endregion
 

@@ -33,6 +33,43 @@ namespace DeslandesApp.Infra.Data.Repositories
         private IEnderecoRepository? _enderecoRepository;
         private IInformacoesComplementaresRepository? _informacoesComplementaresRepository;
         private IPessoaHistoricoRepository? _pessoaHistoricoRepository;
+        private IProcessoRepository? _processoRepository;
+        private IGrupoClientesRepository? _grupoClientesRepository;
+        private IGrupoEnvolvidosRepository? _grupoEnvolvidosRepository;
+        public IGrupoEnvolvidosRepository GrupoEnvolvidosRepository
+
+        {
+            get
+            {
+                if (_grupoEnvolvidosRepository == null)
+                    _grupoEnvolvidosRepository = new GrupoEnvolvidosRepository(dataContext);
+
+                return _grupoEnvolvidosRepository;
+            }
+        }
+        public IGrupoClientesRepository GrupoClientesRepository
+
+        {
+            get
+            {
+                if (_grupoClientesRepository == null)
+                    _grupoClientesRepository = new GrupoClientesRepository(dataContext);
+
+                return _grupoClientesRepository;
+            }
+        }
+       
+        public IProcessoRepository ProcessoRepository
+
+        {
+            get
+            {
+                if (_processoRepository == null)
+                    _processoRepository = new ProcessoRepository(dataContext);
+
+                return _processoRepository;
+            }
+        }
         public IPessoaHistoricoRepository PessoaHistoricoRepository
 
         {

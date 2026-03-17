@@ -24,6 +24,7 @@ namespace DeslandesApp.Domain.Models.Entities
         public Endereco? Endereco { get; set; }
         public InformacoesComplementares? InformacoesComplementares { get; set; }
         public ICollection<GrupoPessoaClientes> GrupoPessoaClientes { get; set; }
+        public ICollection<GrupoEnvolvidos> GrupoEnvolvidos { get; set; }
         public Sexo? Sexo { get; set; }
         public Usuario? Usuario { get; set; }            // Usuário vinculado
        // public Usuario? UsuarioCadastro { get; set; }    // Usuário que cadastrou

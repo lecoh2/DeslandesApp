@@ -21,12 +21,7 @@ namespace DeslandesApp.Infra.Data.Mappings
                 .HasColumnName("NOMEQUALIFICACAO")
                 .HasMaxLength(150)
                 .IsRequired();
-
-            // 🔗 RELACIONAMENTO COM PROCESSO
-            builder.HasOne(q => q.Processo)
-                   .WithMany(p => p.Qualificacao)
-                   .HasForeignKey(q => q.Id)
-                   .OnDelete(DeleteBehavior.Cascade);
+              
         }
     }
 }

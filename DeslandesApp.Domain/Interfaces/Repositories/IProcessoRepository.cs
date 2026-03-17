@@ -1,0 +1,18 @@
+﻿using DeslandesApp.Domain.Models.Dtos.Responses.Processo;
+using DeslandesApp.Domain.Models.Dtos.Responses.Usuarios;
+using DeslandesApp.Domain.Models.Entities;
+using DeslandesApp.Domain.Utils;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace DeslandesApp.Domain.Interfaces.Repositories
+{
+    public interface IProcessoRepository : IBaseRepository<Processo, Guid>
+    {
+        Task<PageResult<ProcessoPaginacaoResponse>> GetProcessoPaginacaoAsync(int pageNumber, int pageSize, string? searchTerm = null);
+
+    }
+}
