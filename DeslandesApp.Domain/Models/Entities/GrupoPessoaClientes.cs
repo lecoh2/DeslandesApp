@@ -6,11 +6,11 @@ using System.Threading.Tasks;
 
 namespace DeslandesApp.Domain.Models.Entities
 {
-    public class GrupoPessoaFisica
+    public class GrupoPessoaClientes
     {
         public Guid IdPessoa { get; set; }
         public Guid IdProcesso { get; set; }
-        public PessoaFisica? PessoaFisica{get;set;}
+        public Pessoa? Pessoa{get;set;}
         public Processo? Processo { get; set; }
     }
 }

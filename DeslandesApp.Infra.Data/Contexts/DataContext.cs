@@ -28,42 +28,57 @@ namespace DeslandesApp.Infra.Data.Contexts
         public DbSet<InformacoesComplementaresPessoaJuridica> InformacoesComplementaresPessoaJuridicas { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            //modelBuilder.ApplyConfiguration(new CategoriaMap());
-            //modelBuilder.ApplyConfiguration(new MovimentacaoMap());
+            base.OnModelCreating(modelBuilder);
 
-            //Adicionar todas as classe de mapemenento do Fluent API
+            // 🔥 Aplica todos os mappings do Fluent API
             modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
-            //definindo as configurações DEFAULT para campos das entidades 
+
+            // 🔥 PADRONIZAÇÃO GLOBAL
             foreach (var entity in modelBuilder.Model.GetEntityTypes())
             {
-                //definir o nome das tabelas em caixa alta
-                entity.SetTableName(entity.GetTableName().ToUpper());
+                // ✅ Nome da tabela em UPPERCASE
+                entity.SetTableName(entity.GetTableName()?.ToUpper());
 
-                //verificando o tipo de campo de cada entidade 
+                // ✅ Nome das colunas + regras padrão
                 foreach (var property in entity.GetProperties())
                 {
-                    //configurações default para campos de texto (string) 
+                    // 🔥 Nome da coluna em UPPERCASE
+                    property.SetColumnName(property.GetColumnBaseName().ToUpper());
+
+                    // 🔤 STRING → varchar(250) default
                     if (property.ClrType == typeof(string))
                     {
                         property.SetIsUnicode(false);
-                        //campo do tipo varchar 
-                        //tamanho máximo de caracteres
-                        // só define 250 se não tiver MaxLength configurado
+
                         if (!property.GetMaxLength().HasValue)
                             property.SetMaxLength(250);
-
-                        //definindo como not null (obrigatório)
-                        //property.IsNullable = false;
                     }
-                    //configurações default para campos do tipo decimal 
-                    else if (property.ClrType == typeof(decimal))
+
+                    // 💰 DECIMAL → decimal(18,2)
+                    if (property.ClrType == typeof(decimal) || property.ClrType == typeof(decimal?))
                     {
-                        //definindo o tipo do campo no banco de dados 
                         property.SetColumnType("decimal(18,2)");
                     }
                 }
+
+                // 🔑 PRIMARY KEY NAME
+                foreach (var key in entity.GetKeys())
+                {
+                    key.SetName(key.GetName()?.ToUpper());
+                }
+
+                // 🔗 FOREIGN KEY NAME
+                foreach (var fk in entity.GetForeignKeys())
+                {
+                    fk.SetConstraintName(fk.GetConstraintName()?.ToUpper());
+                }
+
+                // 📊 INDEX NAME
+                foreach (var index in entity.GetIndexes())
+                {
+                    index.SetDatabaseName(index.GetDatabaseName()?.ToUpper());
+                }
             }
-            base.OnModelCreating(modelBuilder);
         }
     }
 }

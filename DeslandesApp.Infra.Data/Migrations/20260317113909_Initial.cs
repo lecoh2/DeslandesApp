@@ -291,20 +291,20 @@ namespace DeslandesApp.Infra.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "PESSOA_HISTORICO",
+                name: "PESSOAHISTORICO",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     PESSOA_ID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     USUARIO_ID = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    DATAALTERACAO = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    OBSERVACOES = table.Column<string>(type: "VARCHAR(255)", unicode: false, maxLength: 250, nullable: false),
-                    DADOSANTES = table.Column<string>(type: "VARCHAR(MAX)", unicode: false, maxLength: 250, nullable: false),
-                    DADOSDEPOIS = table.Column<string>(type: "VARCHAR(MAX)", unicode: false, maxLength: 250, nullable: false)
+                    DATAALTERACAO = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    OBSERVACOES = table.Column<string>(type: "VARCHAR(255)", unicode: false, maxLength: 250, nullable: true),
+                    DADOSANTES = table.Column<string>(type: "VARCHAR(MAX)", unicode: false, maxLength: 250, nullable: true),
+                    DADOSDEPOIS = table.Column<string>(type: "VARCHAR(MAX)", unicode: false, maxLength: 250, nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_PESSOA_HISTORICO", x => x.Id);
+                    table.PrimaryKey("PK_PESSOAHISTORICO", x => x.Id);
                     table.ForeignKey(
                         name: "FK_PessoaHistorico_Pessoa",
                         column: x => x.PESSOA_ID,
@@ -369,13 +369,13 @@ namespace DeslandesApp.Infra.Data.Migrations
                 column: "USUARIO_ID");
 
             migrationBuilder.CreateIndex(
-                name: "IX_PESSOA_HISTORICO_PESSOA_ID",
-                table: "PESSOA_HISTORICO",
+                name: "IX_PESSOAHISTORICO_PESSOA_ID",
+                table: "PESSOAHISTORICO",
                 column: "PESSOA_ID");
 
             migrationBuilder.CreateIndex(
-                name: "IX_PESSOA_HISTORICO_USUARIO_ID",
-                table: "PESSOA_HISTORICO",
+                name: "IX_PESSOAHISTORICO_USUARIO_ID",
+                table: "PESSOAHISTORICO",
                 column: "USUARIO_ID");
 
             migrationBuilder.CreateIndex(
@@ -410,7 +410,7 @@ namespace DeslandesApp.Infra.Data.Migrations
                 name: "LOGINHISTORY");
 
             migrationBuilder.DropTable(
-                name: "PESSOA_HISTORICO");
+                name: "PESSOAHISTORICO");
 
             migrationBuilder.DropTable(
                 name: "NIVEL");

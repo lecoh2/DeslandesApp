@@ -23,7 +23,7 @@ namespace DeslandesApp.Domain.Models.Entities
         #region Relacionamento
         public Endereco? Endereco { get; set; }
         public InformacoesComplementares? InformacoesComplementares { get; set; }
-     
+        public ICollection<GrupoPessoaClientes> GrupoPessoaClientes { get; set; }
         public Sexo? Sexo { get; set; }
         public Usuario? Usuario { get; set; }            // Usuário vinculado
        // public Usuario? UsuarioCadastro { get; set; }    // Usuário que cadastrou
@@ -33,7 +33,6 @@ namespace DeslandesApp.Domain.Models.Entities
         #region ENUMERADO STATUS
         public Etiqueta? Etiqueta { get; set; }
         public Perfil? Perfil { get; set; }
-        public Telefone? TipoTelefone { get; set; }
         public TipoConta? TipoEmail { get; set; }
 
         #endregion

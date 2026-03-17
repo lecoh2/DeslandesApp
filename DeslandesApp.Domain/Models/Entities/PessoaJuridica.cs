@@ -15,12 +15,12 @@ namespace DeslandesApp.Domain.Models.Entities
         public string InscricaoMunicipal { get; set; } = string.Empty;
         
         #region Relacionamento Enumeradores
-        public Etiqueta? Etiqueta { get; set; }
-        public Perfil? Perfil { get; set; }
+       
         public SimplesNacional? SimplesNacional { get; set; }
         #endregion
         #region Relacionamento     
- 
+        // 🔥 ESSENCIAL PARA N:N
+        public ICollection<GrupoPessoaClientes> GrupoPessoaClientes { get; set; }
         #endregion
     }
 }

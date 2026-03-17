@@ -53,15 +53,19 @@ namespace DeslandesApp.Infra.Data.Mappings
 
             // RELACIONAMENTO SEXO
             builder.HasOne(s => s.Sexo)
-                   .WithMany(p => p.Pessoa)
-                   .HasForeignKey(s => s.IdSexo)
-                   .IsRequired();
+         .WithMany(p => p.Pessoa)
+         .HasForeignKey(s => s.IdSexo).IsRequired(false)
+         .OnDelete(DeleteBehavior.Restrict);
 
             // RELACIONAMENTO USUARIO
             builder.HasOne(p => p.Usuario)
                    .WithMany(u => u.Pessoa)
                    .HasForeignKey(p => p.IdUsuario)
                    .OnDelete(DeleteBehavior.Restrict);
+
+            builder.HasMany(p => p.GrupoPessoaClientes)
+       .WithOne(g => g.Pessoa)
+       .HasForeignKey(g => g.IdPessoa);
 
             // HERANÇA
             builder.HasDiscriminator<string>("TIPO")
