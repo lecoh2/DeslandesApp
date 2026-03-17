@@ -10,6 +10,8 @@ namespace DeslandesApp.Domain.Models.Entities
     public class Qualificacao : BaseEntity
     {
         public string NomeQualificacao { get; set; } = string.Empty;
+        // 🔥 FK (OBRIGATÓRIO)
+        public Guid IdProcesso { get; set; }
         public Processo Processo { get; set; }
     }
 }

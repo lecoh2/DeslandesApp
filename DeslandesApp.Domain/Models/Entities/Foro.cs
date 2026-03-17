@@ -9,7 +9,7 @@ namespace DeslandesApp.Domain.Models.Entities
 {
     public class Foro : BaseEntity
     {
-        public string NomeForo { get; set; } = string.Empty;
+        public string? NomeForo { get; set; } = string.Empty;
   
     }
 }
