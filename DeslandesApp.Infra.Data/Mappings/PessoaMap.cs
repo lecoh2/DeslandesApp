@@ -65,7 +65,7 @@ namespace DeslandesApp.Infra.Data.Mappings
 
             builder.HasMany(p => p.GrupoPessoaClientes)
        .WithOne(g => g.Pessoa)
-       .HasForeignKey(g => g.IdPessoa);
+       .HasForeignKey(g => g.PessoaId);
 
             // HERANÇA
             builder.HasDiscriminator<string>("TIPO")

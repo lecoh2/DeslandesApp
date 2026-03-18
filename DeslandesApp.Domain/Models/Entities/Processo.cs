@@ -10,17 +10,14 @@ namespace DeslandesApp.Domain.Models.Entities
 {
     public class Processo : BaseEntity
     {
-        public Guid? IdAcao { get; set; }
-        public Guid? IdForo { get; set; }
+        public Guid? ForoId { get; set; }
+        public Guid? AcaoId { get; set; }
 
         public string? Pasta { get; set; }
         public string? Titulo { get; set; }
         public string? NumeroProcesso { get; set; }
-        public string? Juizo { get; set; }
-        public string? Vara { get; set; }
         public string? LinkTribunal { get; set; }
         public string? Objeto { get; set; }
-
         public decimal? ValorCausa { get; set; }
         public DateOnly? Distribuido { get; set; }
         public decimal? ValorCondenacao { get; set; }

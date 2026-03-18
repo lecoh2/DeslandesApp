@@ -16,14 +16,14 @@ namespace DeslandesApp.Infra.Data.Repositories
         public async Task<GrupoPessoaClientes> ExistClienteProcessoAsync(Guid idCliene, Guid idProcesso, Guid IdQualificacao)
         {
             return await dataContext.GrupoPessoaClientes
-              .FirstOrDefaultAsync(gc => gc.IdPessoa == idCliene && gc.IdProcesso == idProcesso && gc.IdQualificacao == IdQualificacao);
+              .FirstOrDefaultAsync(gc => gc.PessoaId == idCliene && gc.ProcessoId == idProcesso && gc.QualificacaoId == IdQualificacao);
         }
 
         public async Task<GrupoPessoaClientes> GetByIdCliente(Guid idCliene, Guid idProcesso, Guid IdQualificacao)
         {
             return await dataContext.GrupoPessoaClientes
 
-        .Where(gc => gc.IdPessoa == idCliene && gc.IdProcesso == idProcesso && gc.IdQualificacao == IdQualificacao)
+        .Where(gc => gc.PessoaId == idCliene && gc.ProcessoId == idProcesso && gc.QualificacaoId == IdQualificacao)
         .FirstOrDefaultAsync();
         }
     }

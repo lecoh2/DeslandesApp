@@ -25,9 +25,7 @@ namespace DeslandesApp.Domain.Validators
             RuleFor(x => x.LinkTribunal)
     .Matches(@"^(https?:\/\/)(www\.)?[A-Za-z0-9\-._~:/?#[\]@!$&'()*+,;=%]+$")
     .WithMessage("Informe um link válido (http ou https).");
-            RuleFor(x => x.Juizo)
-    .Matches(@"^\d+$")
-    .WithMessage("O campo deve conter apenas números.");
+            
         }
     }
 }

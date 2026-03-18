@@ -9,20 +9,19 @@ using System.Threading.Tasks;
 
 namespace DeslandesApp.Infra.Data.Mappings
 {
-    public class ForoMap : IEntityTypeConfiguration<Foro>
+    public class JuizoMap : IEntityTypeConfiguration<Juizo>
     {
-        public void Configure(EntityTypeBuilder<Foro> builder)
+        public void Configure(EntityTypeBuilder<Juizo> builder)
         {
             builder.HasKey(x => x.Id);
 
-            builder.Property(x => x.NomeForo)
-                .IsRequired() // 🔥 importante
+            builder.Property(x => x.NomeJuizo)
+                .IsRequired()
                 .HasMaxLength(200);
 
-            builder.HasOne(x => x.Vara)
-                .WithMany(x => x.Foros)
-                .HasForeignKey(x => x.VaraId)
-                .IsRequired() // 🔥 garante obrigatoriedade
+            builder.HasMany(x => x.Varas)
+                .WithOne(x => x.Juizo)
+                .HasForeignKey(x => x.JuizoId)
                 .OnDelete(DeleteBehavior.Restrict);
         }
     }

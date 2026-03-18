@@ -13,33 +13,35 @@ namespace DeslandesApp.Infra.Data.Mappings
 {
     public class ProcessoMap : IEntityTypeConfiguration<Processo>
     {
+
         public void Configure(EntityTypeBuilder<Processo> builder)
         {
             builder.HasKey(x => x.Id);
 
-            // 🔗 RELACIONAMENTO COM FORO
+            // 🔗 RELACIONAMENTO COM FORO (1:N)
             builder.HasOne(x => x.Foro)
-                .WithMany()
-                .HasForeignKey(x => x.IdForo)
+                .WithMany() // ou .WithMany(f => f.Processos) se você adicionar a coleção no Foro
+                .HasForeignKey(x => x.ForoId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            // 🔗 RELACIONAMENTO COM ACAO
+            // 🔗 RELACIONAMENTO COM ACAO (1:N)
             builder.HasOne(x => x.Acao)
                 .WithMany()
-                .HasForeignKey(x => x.IdAcao)
+                .HasForeignKey(x => x.AcaoId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            // 🔥 RELACIONAMENTO N:N (via tabela de junção)
+            // 🔥 RELAÇÃO N:N (tabela de junção)
             builder.HasMany(x => x.GrupoPessoaClientes)
                 .WithOne(x => x.Processo)
-                .HasForeignKey(x => x.IdProcesso);
+                .HasForeignKey(x => x.ProcessoId)
+                .OnDelete(DeleteBehavior.Cascade);
 
             builder.HasMany(x => x.GrupoEnvolvidos)
-               .WithOne(x => x.Processo)
-               .HasForeignKey(x => x.IdProcesso);
+                .WithOne(x => x.Processo)
+                .HasForeignKey(x => x.ProcessoId)
+                .OnDelete(DeleteBehavior.Cascade);
 
-
-            // 💡 DATEONLY (IMPORTANTE)
+            // 💡 DATEONLY
             builder.Property(x => x.Distribuido)
                 .HasConversion<NullableDateOnlyConverter, NullableDateOnlyComparer>();
         }

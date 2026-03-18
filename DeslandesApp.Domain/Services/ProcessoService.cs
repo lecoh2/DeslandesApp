@@ -33,7 +33,7 @@ namespace DeslandesApp.Domain.Services
             processo.Titulo = processo.Titulo.Trim().ToUpper();
             processo.NumeroProcesso = processo.NumeroProcesso.Trim();
             processo.LinkTribunal = processo.LinkTribunal.Trim();
-            processo.Juizo = processo.Juizo.Trim();
+         
 
             processo.DataCadastro = DateTime.Now;       
             // Validação
@@ -64,9 +64,9 @@ namespace DeslandesApp.Domain.Services
             {
                 var grupoCliente = new GrupoPessoaClientes
                 {
-                    IdProcesso = processo.Id,
-                    IdQualificacao = grupos.IdQualificacao,
-                    IdPessoa=grupos.IdPessoa,
+                    ProcessoId = processo.Id,
+                    QualificacaoId = grupos.IdQualificacao,
+                    PessoaId = grupos.IdPessoa,
 
                 };
                 await unitOfWork.GrupoClientesRepository.AddAsync(grupoCliente);
@@ -76,9 +76,9 @@ namespace DeslandesApp.Domain.Services
             {
                 var grupoEnvolvidos = new GrupoEnvolvidos
                 {
-                    IdProcesso = processo.Id,
-                    IdQualificacao = grupos.IdQualificacao,
-                    IdPessoa = grupos.IdPessoa,
+                    ProcessoId = processo.Id,
+                    QualificacaoId = grupos.IdQualificacao,
+                    PessoaId = grupos.IdPessoa,
 
                 };
                 await unitOfWork.GrupoEnvolvidosRepository.AddAsync(grupoEnvolvidos);          }

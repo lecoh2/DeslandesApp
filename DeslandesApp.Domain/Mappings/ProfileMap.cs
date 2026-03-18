@@ -5,6 +5,7 @@ using DeslandesApp.Domain.Models.Dtos.Requests.GrupoSetores;
 using DeslandesApp.Domain.Models.Dtos.Requests.InformacoesComplementares;
 using DeslandesApp.Domain.Models.Dtos.Requests.Nivel;
 using DeslandesApp.Domain.Models.Dtos.Requests.Pessoas;
+using DeslandesApp.Domain.Models.Dtos.Requests.Processo;
 using DeslandesApp.Domain.Models.Dtos.Requests.Setor;
 using DeslandesApp.Domain.Models.Dtos.Requests.Usuarios;
 using DeslandesApp.Domain.Models.Dtos.Responses.EnderecoEndereco;
@@ -13,6 +14,7 @@ using DeslandesApp.Domain.Models.Dtos.Responses.GrupoSetores;
 using DeslandesApp.Domain.Models.Dtos.Responses.InformacoesComplementares;
 using DeslandesApp.Domain.Models.Dtos.Responses.Nivel;
 using DeslandesApp.Domain.Models.Dtos.Responses.Pessoas;
+using DeslandesApp.Domain.Models.Dtos.Responses.Processo;
 using DeslandesApp.Domain.Models.Dtos.Responses.Setor;
 using DeslandesApp.Domain.Models.Dtos.Responses.Usuarios;
 using DeslandesApp.Domain.Models.Entities;
@@ -164,6 +166,11 @@ namespace DeslandesApp.Domain.Mappings
             CreateMap<EnderecoRequest, Endereco>();
             CreateMap<Endereco, EnderecoResponse>();
 
+            #endregion
+
+            #region Processo
+            CreateMap<ProcessoRequest, Processo>();
+            CreateMap<Processo, ProcessoResponse>();
             #endregion
 
         }

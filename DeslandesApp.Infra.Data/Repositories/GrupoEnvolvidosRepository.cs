@@ -16,7 +16,7 @@ namespace DeslandesApp.Infra.Data.Repositories
         public async Task<GrupoEnvolvidos> GetByIdEnvolvido(Guid idCliene, Guid idProcesso, Guid IdQualificacao)
         {
             return await dataContext.GrupoEnvolvidos
-              .FirstOrDefaultAsync(gc => gc.IdPessoa == idCliene && gc.IdProcesso == idProcesso && gc.IdQualificacao == IdQualificacao);
+              .FirstOrDefaultAsync(gc => gc.PessoaId == idCliene && gc.ProcessoId == idProcesso && gc.QualificacaoId == IdQualificacao);
         }
 
         public async Task<GrupoEnvolvidos> ExistEnvolvidoProcessoAsync(Guid idCliene, Guid idProcesso, Guid IdQualificacao)

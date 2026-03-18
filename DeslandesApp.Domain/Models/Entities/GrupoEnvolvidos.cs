@@ -8,9 +8,9 @@ namespace DeslandesApp.Domain.Models.Entities
 {
     public class GrupoEnvolvidos
     {
-        public Guid? IdPessoa { get; set; }
-        public Guid? IdProcesso { get; set; }
-        public Guid? IdQualificacao { get; set; }
+        public Guid? PessoaId { get; set; }
+        public Guid? ProcessoId { get; set; }
+        public Guid? QualificacaoId { get; set; }
         public Pessoa? Pessoa { get; set; }
         public Processo? Processo { get; set; }
         public Qualificacao? QualificacaoEnvolvidos { get; set; }
