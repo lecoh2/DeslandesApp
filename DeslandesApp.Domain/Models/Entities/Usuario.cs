@@ -19,15 +19,15 @@ namespace DeslandesApp.Domain.Models.Entities
         public DateTime? DataCadastro { get; set; }
         public DateTime? DataAtualizacao { get; set; }
 
-        #region
+        #region Relacionamentos
 
         public List<Pessoa>? Pessoa { get; set; }
         public Status? Status { get; set; }
         public ICollection<GrupoSetores> GrupoSetores { get; set; }
         public ICollection<GrupoNiveis> GrupoNiveis { get; set; }
         public virtual Fotos? Fotos { get; set; }
-        public ValorEmail? ValorEmail { get; set; }   
-
+        public ValorEmail? ValorEmail { get; set; }
+        public ICollection<Processo> ProcessosResponsaveis { get; set; }
         #endregion
     }
 }

@@ -4,6 +4,7 @@ using DeslandesApp.Infra.Data.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DeslandesApp.Infra.Data.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20260319124843_RefatoracaoEstruturaJudicial")]
+    partial class RefatoracaoEstruturaJudicial
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -777,15 +780,17 @@ namespace DeslandesApp.Infra.Data.Migrations
                         .HasColumnType("varchar(250)")
                         .HasColumnName("PASTA");
 
+                    b.Property<string>("Responsavel")
+                        .HasMaxLength(250)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(250)")
+                        .HasColumnName("RESPONSAVEL");
+
                     b.Property<string>("Titulo")
                         .HasMaxLength(250)
                         .IsUnicode(false)
                         .HasColumnType("varchar(250)")
                         .HasColumnName("TITULO");
-
-                    b.Property<Guid?>("UsuarioResponsavelId")
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnName("USUARIORESPONSAVELID");
 
                     b.Property<decimal?>("ValorCausa")
                         .HasColumnType("decimal(18,2)")
@@ -804,9 +809,6 @@ namespace DeslandesApp.Infra.Data.Migrations
 
                     b.HasIndex("AcaoId")
                         .HasDatabaseName("IX_PROCESSOS_ACAOID");
-
-                    b.HasIndex("UsuarioResponsavelId")
-                        .HasDatabaseName("IX_PROCESSOS_USUARIORESPONSAVELID");
 
                     b.HasIndex("VaraId")
                         .HasDatabaseName("IX_PROCESSOS_VARAID");
@@ -1242,12 +1244,6 @@ namespace DeslandesApp.Infra.Data.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .HasConstraintName("FK_PROCESSOS_ACAO_ACAOID");
 
-                    b.HasOne("DeslandesApp.Domain.Models.Entities.Usuario", "UsuarioResponsavel")
-                        .WithMany("ProcessosResponsaveis")
-                        .HasForeignKey("UsuarioResponsavelId")
-                        .OnDelete(DeleteBehavior.SetNull)
-                        .HasConstraintName("FK_PROCESSOS_USUARIOS_USUARIORESPONSAVELID");
-
                     b.HasOne("DeslandesApp.Domain.Models.Entities.Vara", "Vara")
                         .WithMany("Processos")
                         .HasForeignKey("VaraId")
@@ -1256,8 +1252,6 @@ namespace DeslandesApp.Infra.Data.Migrations
                         .HasConstraintName("FK_PROCESSOS_VARA_VARAID");
 
                     b.Navigation("Acao");
-
-                    b.Navigation("UsuarioResponsavel");
 
                     b.Navigation("Vara");
                 });
@@ -1302,8 +1296,6 @@ namespace DeslandesApp.Infra.Data.Migrations
                     b.Navigation("GrupoSetores");
 
                     b.Navigation("Pessoa");
-
-                    b.Navigation("ProcessosResponsaveis");
                 });
 
             modelBuilder.Entity("DeslandesApp.Domain.Models.Entities.Vara", b =>

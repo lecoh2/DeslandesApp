@@ -13,17 +13,23 @@ namespace DeslandesApp.Infra.Data.Mappings
     {
         public void Configure(EntityTypeBuilder<Foro> builder)
         {
+            builder.ToTable("Foro");
+
             builder.HasKey(x => x.Id);
 
             builder.Property(x => x.NomeForo)
-                .IsRequired() // 🔥 importante
+                .IsRequired()
                 .HasMaxLength(200);
 
-            builder.HasOne(x => x.Vara)
-                .WithMany(x => x.Foros)
-                .HasForeignKey(x => x.VaraId)
-                .IsRequired() // 🔥 garante obrigatoriedade
-                .OnDelete(DeleteBehavior.Restrict);
+            // 🔒 Evita foro duplicado
+            builder.HasIndex(x => x.NomeForo)
+                .IsUnique();
+
+            // 🔗 1 Foro -> N Varas
+            builder.HasMany(x => x.Varas)
+                .WithOne(x => x.Foro)
+                .HasForeignKey(x => x.ForoId)
+                .OnDelete(DeleteBehavior.Restrict); // 🔥 evita deletar foro com vara
         }
     }
 }

@@ -9,10 +9,8 @@ namespace DeslandesApp.Domain.Models.Entities
 {
     public class Foro : BaseEntity
     {
-        public string? NomeForo { get; set; } = string.Empty;
+        public string NomeForo { get; set; } = string.Empty;
 
-        public Guid VaraId { get; set; }
-        public Vara Vara { get; set; } = null!;
-        public ICollection<Processo> Processos { get; set; } = new List<Processo>();
+        public ICollection<Vara> Varas { get; set; } = new List<Vara>();
     }
 }

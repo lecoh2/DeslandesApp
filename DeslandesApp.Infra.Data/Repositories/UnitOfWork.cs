@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore.Storage;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -36,8 +37,18 @@ namespace DeslandesApp.Infra.Data.Repositories
         private IProcessoRepository? _processoRepository;
         private IGrupoClientesRepository? _grupoClientesRepository;
         private IGrupoEnvolvidosRepository? _grupoEnvolvidosRepository;
-        public IGrupoEnvolvidosRepository GrupoEnvolvidosRepository
+        private IVaraRepository? _varaRepository;
+        public IVaraRepository VaraRepository
+        {
+            get
+            {
+                if (_varaRepository == null)
+                    _varaRepository = new VaraRepository(dataContext);
 
+                return _varaRepository;
+            }
+        }
+        public IGrupoEnvolvidosRepository GrupoEnvolvidosRepository
         {
             get
             {
@@ -58,7 +69,7 @@ namespace DeslandesApp.Infra.Data.Repositories
                 return _grupoClientesRepository;
             }
         }
-       
+
         public IProcessoRepository ProcessoRepository
 
         {
@@ -185,7 +196,7 @@ namespace DeslandesApp.Infra.Data.Repositories
             }
         }
 
-       
+
 
 
 
@@ -224,7 +235,7 @@ namespace DeslandesApp.Infra.Data.Repositories
         }
         public async Task RollbackAsync()
         {
-            if(transaction !=null)
+            if (transaction != null)
                 await transaction.RollbackAsync();
         }
         public void Dispose()
@@ -232,7 +243,7 @@ namespace DeslandesApp.Infra.Data.Repositories
             dataContext.Dispose();
             if (transaction != null)
                 transaction.Dispose();
-           
+
         }
         #endregion
 

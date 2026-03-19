@@ -25,69 +25,100 @@ namespace DeslandesApp.Domain.Services
         public async Task<ProcessoResponse> AdicionarAsync(ProcessoRequest request)
         {
             await unitOfWork.BeginTransactionAsync();
-            // Mapeia DTO -> Entidade
+
+            // 🔁 DTO -> Entidade
             var processo = mapper.Map<Processo>(request);
 
-            // Normalização de dados
-            processo.Pasta = processo.Pasta.Trim().ToUpper();
-            processo.Titulo = processo.Titulo.Trim().ToUpper();
-            processo.NumeroProcesso = processo.NumeroProcesso.Trim();
-            processo.LinkTribunal = processo.LinkTribunal.Trim();
-         
+            // 🧹 Normalização segura
+            processo.Pasta = processo.Pasta?.Trim().ToUpper();
+            processo.Titulo = processo.Titulo?.Trim().ToUpper();
+            processo.NumeroProcesso = processo.NumeroProcesso?.Trim();
+            processo.LinkTribunal = processo.LinkTribunal?.Trim();
 
-            processo.DataCadastro = DateTime.Now;       
-            // Validação
+            processo.DataCadastro = DateTime.Now;
+
+            // 👤 Responsável
+            processo.UsuarioResponsavelId = request.UsuarioResponsavelId;
+
+            // ✅ Validação Fluent
             var validator = new ProcessoValidator();
             var result = validator.Validate(processo);
 
             if (!result.IsValid)
                 throw new ValidationException(result.Errors);
-           
-            // Consulta única para verificar duplicidade
+
+            // 🔥 VALIDA VARA
+            if (processo.VaraId == Guid.Empty)
+                throw new InvalidOperationException("Vara é obrigatória.");
+
+            var vara = await unitOfWork.VaraRepository.GetByIdAsync(processo.VaraId);
+
+            if (vara == null)
+                throw new InvalidOperationException("Vara não encontrada.");
+
+            // 🔥 VALIDA USUÁRIO RESPONSÁVEL (opcional se for obrigatório)
+            if (processo.UsuarioResponsavelId.HasValue)
+            {
+                var usuario = await unitOfWork.UsuarioRepository
+                    .GetByIdAsync(processo.UsuarioResponsavelId.Value);
+
+                if (usuario == null)
+                    throw new InvalidOperationException("Usuário responsável não encontrado.");
+            }
+
+            // 🔍 Verifica duplicidade
             var existente = await unitOfWork.ProcessoRepository.GetByAsync(p =>
-                 p.Pasta == processo.Pasta ||
-                 p.Titulo == processo.Titulo ||
-                 p.NumeroProcesso == processo.NumeroProcesso);
+                p.Pasta == processo.Pasta ||
+                p.NumeroProcesso == processo.NumeroProcesso);
+
             if (existente != null)
             {
                 if (existente.Pasta == processo.Pasta)
                     throw new InvalidOperationException("Nome de pasta já utilizado por outro processo.");
-                
 
                 if (existente.NumeroProcesso == processo.NumeroProcesso)
                     throw new InvalidOperationException("Nº do processo já cadastrado no sistema.");
             }
+
+            // 💾 Salva processo
             await unitOfWork.ProcessoRepository.AddAsync(processo);
 
-            await unitOfWork.CommitAsync();
-            foreach (var grupos in request.GrupoCliente)
+            // 🔥 N:N - Clientes
+            if (request.GrupoCliente != null && request.GrupoCliente.Any())
             {
-                var grupoCliente = new GrupoPessoaClientes
+                foreach (var grupos in request.GrupoCliente)
                 {
-                    ProcessoId = processo.Id,
-                    QualificacaoId = grupos.IdQualificacao,
-                    PessoaId = grupos.IdPessoa,
+                    var grupoCliente = new GrupoPessoaClientes
+                    {
+                        ProcessoId = processo.Id,
+                        QualificacaoId = grupos.IdQualificacao,
+                        PessoaId = grupos.IdPessoa
+                    };
 
-                };
-                await unitOfWork.GrupoClientesRepository.AddAsync(grupoCliente);
+                    await unitOfWork.GrupoClientesRepository.AddAsync(grupoCliente);
+                }
             }
-                ;
-            foreach (var grupos in request.GrupoEnvolvidos)
+
+            // 🔥 N:N - Envolvidos
+            if (request.GrupoEnvolvidos != null && request.GrupoEnvolvidos.Any())
             {
-                var grupoEnvolvidos = new GrupoEnvolvidos
+                foreach (var grupos in request.GrupoEnvolvidos)
                 {
-                    ProcessoId = processo.Id,
-                    QualificacaoId = grupos.IdQualificacao,
-                    PessoaId = grupos.IdPessoa,
+                    var grupoEnvolvidos = new GrupoEnvolvidos
+                    {
+                        ProcessoId = processo.Id,
+                        QualificacaoId = grupos.IdQualificacao,
+                        PessoaId = grupos.IdPessoa
+                    };
 
-                };
-                await unitOfWork.GrupoEnvolvidosRepository.AddAsync(grupoEnvolvidos);          }
-              
+                    await unitOfWork.GrupoEnvolvidosRepository.AddAsync(grupoEnvolvidos);
+                }
+            }
 
-
-            // Salva no banco
+            // ✅ Commit único
             await unitOfWork.CommitAsync();
-            // Retorno
+
+            // 🔁 Retorno
             return mapper.Map<ProcessoResponse>(processo);
         }
 
@@ -98,7 +129,7 @@ namespace DeslandesApp.Domain.Services
 
         public void Dispose()
         {
-            throw new NotImplementedException();
+            unitOfWork.Dispose();
         }
 
         public Task<ProcessoResponse> ExcluirAsync(Guid id)

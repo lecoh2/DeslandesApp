@@ -23,7 +23,8 @@ namespace DeslandesApp.Domain.Extensions
             services.AddScoped<IPessoaFisicaService, PessoaFisicaService>();
             services.AddScoped<IPessoaJuridicaService, PessoaJuridicaService>();
             services.AddScoped<ISetorService, SetorService>();
-            services.AddScoped<INivelServices, NiveisService>();            
+            services.AddScoped<INivelServices, NiveisService>();
+            services.AddScoped<IProcessoService, ProcessoService>();
             //services.AddTransient<IGrupoNiveisServices, GrupoNiveisService>();
             //services.AddTransient<IGrupoSetoresService, GrupoSetoresService>()
             

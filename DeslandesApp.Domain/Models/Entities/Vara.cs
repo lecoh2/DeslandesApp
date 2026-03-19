@@ -9,10 +9,13 @@ namespace DeslandesApp.Domain.Models.Entities
 {
     public class Vara : BaseEntity
     {
-        public string? NomeVara { get; set; }
-        public Guid JuizoId { get; set; }
-        public Juizo Juizo { get; set; } = null!;
+        public string NomeVara { get; set; } = string.Empty; // Ex: "2ª Vara Cível"
+        public int Numero { get; set; } // 2
+        public string Tipo { get; set; } = string.Empty; // Cível, Criminal...
 
-        public ICollection<Foro> Foros { get; set; } = new List<Foro>();
+        public Guid ForoId { get; set; }
+        public Foro Foro { get; set; } = null!;
+
+        public ICollection<Processo> Processos { get; set; } = new List<Processo>();
     }
 }

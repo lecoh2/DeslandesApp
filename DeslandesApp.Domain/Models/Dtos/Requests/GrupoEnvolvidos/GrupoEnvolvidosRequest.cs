@@ -8,5 +8,6 @@ namespace DeslandesApp.Domain.Models.Dtos.Requests.GrupoEnvolvidos
 {
     public record GrupoEnvolvidosRequest
     (Guid IdPessoa,
+      
     Guid IdQualificacao);
 }

@@ -30,6 +30,7 @@ namespace DeslandesApp.Domain.Interfaces.Repositories
         IProcessoRepository ProcessoRepository { get; }
         IGrupoClientesRepository GrupoClientesRepository { get; }
         IGrupoEnvolvidosRepository GrupoEnvolvidosRepository { get; }
+        IVaraRepository VaraRepository { get; }
         #endregion
     }
 }

@@ -13,20 +13,33 @@ namespace DeslandesApp.Infra.Data.Mappings
     {
         public void Configure(EntityTypeBuilder<Vara> builder)
         {
+            builder.ToTable("Vara");
+
             builder.HasKey(x => x.Id);
 
             builder.Property(x => x.NomeVara)
+                .IsRequired()
                 .HasMaxLength(200);
 
-            builder.HasOne(x => x.Juizo)
-                .WithMany(x => x.Varas)
-                .HasForeignKey(x => x.JuizoId)
-                .OnDelete(DeleteBehavior.Restrict);
+            builder.Property(x => x.Numero)
+                .IsRequired();
 
-            builder.HasMany(x => x.Foros)
+            builder.Property(x => x.Tipo)
+                .IsRequired()
+                .HasMaxLength(100);
+
+            // 🔍 Índice para busca rápida
+            builder.HasIndex(x => x.ForoId);
+
+            // 🔒 Evita duplicidade de vara dentro do mesmo foro
+            builder.HasIndex(x => new { x.Numero, x.Tipo, x.ForoId })
+                .IsUnique();
+
+            // 🔗 1 Vara -> N Processos
+            builder.HasMany(x => x.Processos)
                 .WithOne(x => x.Vara)
                 .HasForeignKey(x => x.VaraId)
-                .OnDelete(DeleteBehavior.Restrict);
+                .OnDelete(DeleteBehavior.Restrict); // 🔥 evita apagar vara com processo
         }
     }
 }

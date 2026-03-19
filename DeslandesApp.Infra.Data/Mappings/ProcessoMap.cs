@@ -18,11 +18,11 @@ namespace DeslandesApp.Infra.Data.Mappings
         {
             builder.HasKey(x => x.Id);
 
-            // 🔗 RELACIONAMENTO COM FORO (1:N)
-            builder.HasOne(x => x.Foro)
-                .WithMany() // ou .WithMany(f => f.Processos) se você adicionar a coleção no Foro
-                .HasForeignKey(x => x.ForoId)
-                .OnDelete(DeleteBehavior.Restrict);
+            // 🔗 RELACIONAMENTO COM VAr (1:N)
+            builder.HasOne(x => x.Vara)
+                   .WithMany(x => x.Processos)
+                   .HasForeignKey(x => x.VaraId)
+                   .OnDelete(DeleteBehavior.Restrict);
 
             // 🔗 RELACIONAMENTO COM ACAO (1:N)
             builder.HasOne(x => x.Acao)
@@ -40,7 +40,10 @@ namespace DeslandesApp.Infra.Data.Mappings
                 .WithOne(x => x.Processo)
                 .HasForeignKey(x => x.ProcessoId)
                 .OnDelete(DeleteBehavior.Cascade);
-
+            builder.HasOne(x => x.UsuarioResponsavel)
+    .WithMany(u => u.ProcessosResponsaveis) // se tiver coleção no Usuario
+    .HasForeignKey(x => x.UsuarioResponsavelId)
+    .OnDelete(DeleteBehavior.SetNull);
             // 💡 DATEONLY
             builder.Property(x => x.Distribuido)
                 .HasConversion<NullableDateOnlyConverter, NullableDateOnlyComparer>();

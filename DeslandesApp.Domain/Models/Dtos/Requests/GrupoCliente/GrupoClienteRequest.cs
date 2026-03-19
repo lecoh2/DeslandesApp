@@ -9,6 +9,8 @@ namespace DeslandesApp.Domain.Models.Dtos.Requests.GrupoCliente
     public record GrupoClienteRequset
     (
         Guid? IdPessoa,
+   
     Guid? IdQualificacao
+
     );
 }
