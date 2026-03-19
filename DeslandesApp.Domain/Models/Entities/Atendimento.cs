@@ -1,4 +1,5 @@
-﻿using DeslandesApp.Domain.Models.Enum;
+﻿using DeslandesApp.Domain.Commons;
+using DeslandesApp.Domain.Models.Enum;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,23 +8,19 @@ using System.Threading.Tasks;
 
 namespace DeslandesApp.Domain.Models.Entities
 {
-    public class Atendimento
+    public class Atendimento : BaseEntity
     {
         public string Assunto { get; set; } = string.Empty;
-        public string RegistroAtendimento { get; set; } = string.Empty;
-        #region Relacionamentos
-        public ICollection<Pessoa> Pessoas { get; set; }
+        public string Registro { get; set; } = string.Empty; // conteúdo ou observações
+        public Etiqueta Etiqueta { get; set; } 
+
+        // Processo relacionado
+        public Guid? ProcessoId { get; set; }
         public Processo? Processo { get; set; }
-        public ListaTarefas     ? ListaTarefas { get; set; }
-        public ICollection<GrupoEnvolvidos> Envolvidos { get; set; }
 
-        //Observção: Verificar os relacionamentos pode ser casa ou atendimento
-        #endregion
-        #region Enumerações
-        public Etiqueta? Etiqueta { get; set; }
-        public Prioridade?  Prioridade { get; set; }
+        // Clientes do atendimento (1:N via tabela de junção)
+        public List<GrupoAtendimentoCliente> GrupoClientes { get; set; } = new List<GrupoAtendimentoCliente>();
 
-        #endregion
     }
 }
 

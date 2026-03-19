@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DeslandesApp.Infra.Data.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20260319131905_CorrecaoProcesso")]
-    partial class CorrecaoProcesso
+    [Migration("20260319182520_Initial")]
+    partial class Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

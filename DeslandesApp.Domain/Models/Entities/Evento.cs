@@ -1,4 +1,5 @@
-﻿using DeslandesApp.Domain.Models.Enum;
+﻿using DeslandesApp.Domain.Commons;
+using DeslandesApp.Domain.Models.Enum;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,30 +8,30 @@ using System.Threading.Tasks;
 
 namespace DeslandesApp.Domain.Models.Entities
 {
-    public class Evento
+    public class Evento : BaseEntity
     {
-        public string NomeEvento { get; set; }
-        public DateOnly DataInicioEvento { get; set; }
-        public TimeSpan HoraInicioEvento { get; set; }
-        public DateOnly DataFimEvento { get; set; }
-        public TimeSpan HoraFimEvento { get; set; }
-        public string? Local { get; set; }
-        public string? Observacao   { get; set; }
+        public string Titulo { get; set; } = string.Empty;
 
-        #region Enumerações
-        public Dia? Dia { get; set; }
-        public Modalidade? Modalidade { get; set; }
-        public AlertaDias? AlertaDias { get; set; }
-        #endregion
+        public DateOnly DataInicial { get; set; }
+        public TimeOnly HoraInicial { get; set; }
 
-        #region Relacionamentos
-        public Recorencia? RecorenciaEvento { get; set; }
-        public Processo? Processo { get; set; }
-        public Alerta? Alerta { get; set; } 
-        public ICollection<Usuario> Usuario { get; set; }
-        //Caso ou evento
+        public DateOnly? DataFinal { get; set; }
+        public TimeOnly? HoraFinal { get; set; }
 
-        #endregion
+        public bool DiaInteiro { get; set; }
+
+        public string? Endereco { get; set; }
+
+        public ModalidadeEvento Modalidade { get; set; } = ModalidadeEvento.NaoSeAplica;
+
+        public string? Observacao { get; set; }
+
+        // 🔗 Vínculo dinâmico
+        public Guid? EntidadeId { get; set; }
+        public TipoVinculoEvento? TipoVinculo { get; set; }
+
+        // 👥 Responsáveis (N:N)
+        public List<GrupoEventoResponsavel> GrupoEventoResponsavel { get; set; } = new();
 
     }
 }
