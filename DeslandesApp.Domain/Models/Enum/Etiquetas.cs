@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace DeslandesApp.Domain.Models.Enum
 {
-    public enum Etiqueta
+    public enum Etiquetas
     {
         Inicial = 1,
         Balcao = 2,

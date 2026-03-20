@@ -11,7 +11,7 @@ namespace DeslandesApp.Domain.Models.Dtos.Requests.Atendimento
     {
         public string Assunto { get; init; } = string.Empty;
         public string Registro { get; init; } = string.Empty;
-        public Etiqueta Etiqueta { get; init; } 
+        public Etiquetas Etiqueta { get; init; } 
         public Guid? ProcessoId { get; init; }
         public List<Guid> ClientesIds { get; init; } = new List<Guid>();
     }

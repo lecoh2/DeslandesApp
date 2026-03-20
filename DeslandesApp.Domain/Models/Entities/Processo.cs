@@ -28,7 +28,7 @@ public class Processo : BaseEntity
     public ICollection<GrupoPessoaClientes> GrupoPessoaClientes { get; set; }
     public ICollection<GrupoEnvolvidos> GrupoEnvolvidos { get; set; }
 
-    public Etiqueta? Etiqueta { get; set; }
+    public Etiquetas? Etiqueta { get; set; }
     public Instancia? Instancia { get; set; }
     public Acesso? Acesso { get; set; }
 }

@@ -27,9 +27,6 @@ namespace DeslandesApp.Infra.Data.Mappings
                    .IsUnicode(false)
                    .HasColumnName("REGISTRO");
 
-            builder.Property(x => x.Etiqueta)
-                   .HasColumnName("ETIQUETA");
-
             builder.Property(x => x.ProcessoId)
                    .HasColumnName("PROCESSOID");
 
@@ -44,6 +41,13 @@ namespace DeslandesApp.Infra.Data.Mappings
                    .HasForeignKey(x => x.AtendimentoId)
                    .OnDelete(DeleteBehavior.Cascade)
                    .HasConstraintName("FK_ATENDIMENTO_ATENDIMENTCLIENTE");
+
+            // ✅ NOVO RELACIONAMENTO N:N
+            builder.HasMany(x => x.GrupoEtiquetas)
+                   .WithOne(x => x.Atendimento)
+                   .HasForeignKey(x => x.AtendimentoId)
+                   .OnDelete(DeleteBehavior.Cascade)
+                   .HasConstraintName("FK_ATENDIMENTO_ETIQUETA");
         }
     }
 }

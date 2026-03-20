@@ -12,7 +12,7 @@ namespace DeslandesApp.Domain.Models.Entities
     {
         public string Assunto { get; set; } = string.Empty;
         public string Registro { get; set; } = string.Empty; // conteúdo ou observações
-        public Etiqueta Etiqueta { get; set; } 
+        public List<GrupoAtendimentoEtiqueta> GrupoEtiquetas { get; set; } = new();
 
         // Processo relacionado
         public Guid? ProcessoId { get; set; }
