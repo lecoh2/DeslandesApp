@@ -38,6 +38,61 @@ namespace DeslandesApp.Infra.Data.Repositories
         private IGrupoClientesRepository? _grupoClientesRepository;
         private IGrupoEnvolvidosRepository? _grupoEnvolvidosRepository;
         private IVaraRepository? _varaRepository;
+        private ITarefaRepository? _tarefaRepository;
+        private IListaTarefaRepository? _listaTarefaRepository;
+        private IGrupoTarefaEnvolvidoRepository? _grupoTarefaEnvolvidoRepository;
+        private ICasoRepository? _casoRepository;
+        private IAtendimentoRepository? _atendimentoRepository;
+        public IAtendimentoRepository AtendimentoRepository
+        {
+            get
+            {
+                if (_atendimentoRepository == null)
+                    _atendimentoRepository = new AtendimentoRepository(dataContext);
+
+                return _atendimentoRepository;
+            }
+        }
+        public ICasoRepository CasoRepository
+        {
+            get
+            {
+                if (_casoRepository == null)
+                    _casoRepository = new CasoRepository(dataContext);
+
+                return _casoRepository;
+            }
+        }
+        public IGrupoTarefaEnvolvidoRepository GrupoTarefaEnvolvidoRepository
+        {
+            get
+            {
+                if (_grupoTarefaEnvolvidoRepository == null)
+                    _grupoTarefaEnvolvidoRepository = new GrupoTarefaEnvolvidoRepository(dataContext);
+
+                return _grupoTarefaEnvolvidoRepository;
+            }
+        }
+        public IListaTarefaRepository ListaTarefaRepository
+        {
+            get
+            {
+                if (_listaTarefaRepository == null)
+                    _listaTarefaRepository = new ListaTarefaRepository(dataContext);
+
+                return _listaTarefaRepository;
+            }
+        }
+        public ITarefaRepository TarefaRepository
+        {
+            get
+            {
+                if (_tarefaRepository == null)
+                    _tarefaRepository = new TarefaRepository(dataContext);
+
+                return _tarefaRepository;
+            }
+        }
         public IVaraRepository VaraRepository
         {
             get
@@ -69,7 +124,6 @@ namespace DeslandesApp.Infra.Data.Repositories
                 return _grupoClientesRepository;
             }
         }
-
         public IProcessoRepository ProcessoRepository
 
         {
@@ -195,6 +249,8 @@ namespace DeslandesApp.Infra.Data.Repositories
                 return _grupoNiveisRepository;
             }
         }
+
+       
 
 
 

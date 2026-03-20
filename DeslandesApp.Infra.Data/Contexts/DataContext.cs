@@ -1,4 +1,5 @@
 ﻿using DeslandesApp.Domain.Models.Entities;
+using DeslandesApp.Infra.Data.Repositories;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -30,6 +31,11 @@ namespace DeslandesApp.Infra.Data.Contexts
         public DbSet<Processo> Processos{ get; set; }
         public DbSet<GrupoPessoaClientes> GrupoPessoaClientes { get; set; }
         public DbSet<GrupoEnvolvidos> GrupoEnvolvidos { get; set; }
+        public DbSet<Tarefa> Tarefas { get; set; }
+        public DbSet<ListaTarefa> ListasTarefa { get; set; }
+        public DbSet<GrupoTarefaEnvolvido> GrupoTarefaEnvolvidos { get; set; }
+        public DbSet<Atendimento> Atendimento { get; set; }
+        public DbSet<Caso> Caso { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);

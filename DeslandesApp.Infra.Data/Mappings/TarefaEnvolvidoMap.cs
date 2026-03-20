@@ -17,17 +17,17 @@ namespace DeslandesApp.Infra.Data.Mappings
 
             builder.HasKey(x => x.Id);
 
-            builder.Property(x => x.PessoaId)
-                   .HasColumnName("PESSOAID");
+            builder.Property(x => x.UsuarioId)
+                   .HasColumnName("USUARIOID");
 
             builder.Property(x => x.ListaTarefaId)
                    .HasColumnName("LISTATAREFAID");
 
-            builder.HasOne(x => x.Pessoa)
+            builder.HasOne(x => x.Usuario)
                    .WithMany()
-                   .HasForeignKey(x => x.PessoaId)
+                   .HasForeignKey(x => x.UsuarioId)
                    .OnDelete(DeleteBehavior.Restrict)
-                   .HasConstraintName("FK_TAREFAENVOLVIDO_PESSOA");
+                   .HasConstraintName("FK_TAREFAENVOLVIDO_USUARIOS");
 
             builder.HasOne(x => x.ListaTarefa)
                    .WithMany(x => x.GrupoTarefaEnvolvido)

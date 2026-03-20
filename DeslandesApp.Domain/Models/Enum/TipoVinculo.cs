@@ -6,11 +6,10 @@ using System.Threading.Tasks;
 
 namespace DeslandesApp.Domain.Models.Enum
 {
-    public  enum Modalidade
+    public enum TipoVinculo
     {
-        Presencial = 1,
-        Online = 2,
-        Hibrida = 3,
-        NaoSeaplica     = 4
+        Processo = 1,
+        Caso = 2,
+        Atendimento =3
     }
 }

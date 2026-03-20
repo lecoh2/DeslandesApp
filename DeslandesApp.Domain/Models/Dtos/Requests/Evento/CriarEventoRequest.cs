@@ -26,7 +26,7 @@ namespace DeslandesApp.Domain.Models.Dtos.Requests.Evento
         public string? Observacao { get; init; }
 
         public Guid? EntidadeId { get; init; }
-        public TipoVinculoEvento? TipoVinculo { get; init; }
+        public TipoVinculo? TipoVinculo { get; init; }
 
         public List<Guid> ResponsaveisIds { get; init; } = new();
     }

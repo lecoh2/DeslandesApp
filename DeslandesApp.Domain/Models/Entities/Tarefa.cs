@@ -16,6 +16,6 @@ namespace DeslandesApp.Domain.Models.Entities
         public DateTime? DataAtualizacao { get; set; }
 
         // Lista de tarefas vinculadas ao processo
-        public List<ListaTarefa>? Listas { get; set; } = new List<ListaTarefa>();
+        public List<ListaTarefa>? ListasTarefa { get; set; } = new List<ListaTarefa>();
     }
 }

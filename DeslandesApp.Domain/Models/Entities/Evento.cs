@@ -28,7 +28,7 @@ namespace DeslandesApp.Domain.Models.Entities
 
         // 🔗 Vínculo dinâmico
         public Guid? EntidadeId { get; set; }
-        public TipoVinculoEvento? TipoVinculo { get; set; }
+        public TipoVinculo? TipoVinculo { get; set; }
 
         // 👥 Responsáveis (N:N)
         public List<GrupoEventoResponsavel> GrupoEventoResponsavel { get; set; } = new();

@@ -7,6 +7,7 @@ using DeslandesApp.Domain.Models.Dtos.Requests.Nivel;
 using DeslandesApp.Domain.Models.Dtos.Requests.Pessoas;
 using DeslandesApp.Domain.Models.Dtos.Requests.Processo;
 using DeslandesApp.Domain.Models.Dtos.Requests.Setor;
+using DeslandesApp.Domain.Models.Dtos.Requests.Tarefa;
 using DeslandesApp.Domain.Models.Dtos.Requests.Usuarios;
 using DeslandesApp.Domain.Models.Dtos.Responses.EnderecoEndereco;
 using DeslandesApp.Domain.Models.Dtos.Responses.GrupoNiveis;
@@ -16,6 +17,7 @@ using DeslandesApp.Domain.Models.Dtos.Responses.Nivel;
 using DeslandesApp.Domain.Models.Dtos.Responses.Pessoas;
 using DeslandesApp.Domain.Models.Dtos.Responses.Processo;
 using DeslandesApp.Domain.Models.Dtos.Responses.Setor;
+using DeslandesApp.Domain.Models.Dtos.Responses.Tarefa;
 using DeslandesApp.Domain.Models.Dtos.Responses.Usuarios;
 using DeslandesApp.Domain.Models.Entities;
 using DeslandesApp.Domain.ValueObjects;
@@ -180,6 +182,19 @@ namespace DeslandesApp.Domain.Mappings
      .ForCtorParam("Titulo", opt => opt.MapFrom(src => src.Titulo))
      .ForCtorParam("NumeroProcesso", opt => opt.MapFrom(src => src.NumeroProcesso))
      .ForAllMembers(opt => opt.Ignore());
+            #endregion
+            #region Tarefas
+            #region Tarefas
+
+            CreateMap<CriarTarefaRequest, Tarefa>()
+                .ForMember(dest => dest.ListasTarefa, opt => opt.Ignore());
+
+            CreateMap<Tarefa, CriarTarefaResponse>();
+
+            CreateMap<CriarListaTarefaRequest, ListaTarefa>()
+                .ForMember(dest => dest.GrupoTarefaEnvolvido, opt => opt.Ignore());
+
+            #endregion
             #endregion
 
         }

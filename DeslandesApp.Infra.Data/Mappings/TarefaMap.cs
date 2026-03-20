@@ -25,7 +25,7 @@ namespace DeslandesApp.Infra.Data.Mappings
             builder.Property(x => x.DataCadastro)
                    .HasColumnName("DATA");
 
-            builder.HasMany(x => x.Listas)
+            builder.HasMany(x => x.ListasTarefa)
                    .WithOne(x => x.Tarefa)
                    .HasForeignKey(x => x.TarefaId)
                    .OnDelete(DeleteBehavior.Cascade)

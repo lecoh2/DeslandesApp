@@ -8,23 +8,24 @@ using System.Threading.Tasks;
 
 namespace DeslandesApp.Domain.Models.Entities
 {
+
     public class ListaTarefa : BaseEntity
     {
-       
+        public Guid Id { get; set; }
 
         public Guid TarefaId { get; set; }
+
+        // 🔥 FALTAVA ISSO
         public Tarefa Tarefa { get; set; } = null!;
 
-        public Guid ProcessoId { get; set; }
-        public Processo Processo { get; set; } = null!;
+        public Guid VinculoId { get; set; }
+        public TipoVinculo TipoVinculo { get; set; }
 
         public Guid? ResponsavelId { get; set; }
-        public Pessoa? Responsavel { get; set; }
-        #region Relacionamentos
+        public Usuario? Responsavel { get; set; }
+        public PrioridadeTarefa Prioridade { get; set; }
 
-        public PrioridadeTarefa Prioridade { get; set; } = PrioridadeTarefa.Media;
-
-        public List<GrupoTarefaEnvolvido> GrupoTarefaEnvolvido { get; set; } = new List<GrupoTarefaEnvolvido>();
-        #endregion
+        public List<GrupoTarefaEnvolvido> GrupoTarefaEnvolvido { get; set; } = new();
     }
 }
+
