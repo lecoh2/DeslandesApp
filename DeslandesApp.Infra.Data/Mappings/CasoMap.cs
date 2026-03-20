@@ -36,6 +36,7 @@ namespace DeslandesApp.Infra.Data.Mappings
                    .HasMaxLength(2000)
                    .IsUnicode(false)
                    .HasColumnName("OBSERVACAO");
+            builder.Property(x => x.DataCadastro).HasColumnName("DATACADASTRO").IsRequired(false);
 
             builder.Property(x => x.ResponsavelId)
                    .HasColumnName("RESPONSAVELID");
@@ -47,7 +48,7 @@ namespace DeslandesApp.Infra.Data.Mappings
                    .WithMany()
                    .HasForeignKey(x => x.ResponsavelId)
                    .OnDelete(DeleteBehavior.Restrict)
-                   .HasConstraintName("FK_CASO_PESSOA");
+                   .HasConstraintName("FK_CASO_USUARIO");
 
             builder.HasMany(x => x.GrupoCasoCliente)
                    .WithOne(x => x.Caso)

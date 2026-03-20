@@ -20,8 +20,7 @@ namespace DeslandesApp.Infra.Data.Contexts
         public DbSet<FailedLoginAttempt> FailedLoginAttempt { get; set; }
         public DbSet<Niveis> Niveis { get; set; }
         public DbSet<GrupoNiveis> GrupoNiveis { get; set; }
-        public DbSet<GrupoSetores> GrupoSetores { get; set; }      
-
+        public DbSet<GrupoSetores> GrupoSetores { get; set; } 
         public DbSet<Endereco> Endereco { get; set; }
         public DbSet<InformacoesComplementaresPessoaFisica> InformacoesComplementaresPessoaFisicas { get; set; }
         public DbSet<PessoaFisica> PessoasFisicas { get; set; }
@@ -36,6 +35,8 @@ namespace DeslandesApp.Infra.Data.Contexts
         public DbSet<GrupoTarefaEnvolvido> GrupoTarefaEnvolvidos { get; set; }
         public DbSet<Atendimento> Atendimento { get; set; }
         public DbSet<Caso> Caso { get; set; }
+        public DbSet<GrupoCasoCliente> GrupoCasoCliente { get; set; }
+        public DbSet<GrupoCasoEnvolvido> GrupoCasoEnvolvido { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);

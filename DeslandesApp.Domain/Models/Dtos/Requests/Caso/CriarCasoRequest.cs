@@ -1,4 +1,7 @@
-﻿using DeslandesApp.Domain.Models.Enum;
+﻿using DeslandesApp.Domain.Models.Dtos.Requests.GrupoCasoCliente;
+using DeslandesApp.Domain.Models.Dtos.Requests.GrupoCasoEnvolvidos;
+using DeslandesApp.Domain.Models.Entities;
+using DeslandesApp.Domain.Models.Enum;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,7 +19,7 @@ namespace DeslandesApp.Domain.Models.Dtos.Requests.Caso
         public Guid? ResponsavelId { get; init; }
         public AcessoCaso Acesso { get; init; } = AcessoCaso.Publico;
 
-        public List<Guid> ClientesIds { get; init; } = new List<Guid>();
-        public List<CriarCasoEnvolvidoRequest> Envolvidos { get; init; } = new List<CriarCasoEnvolvidoRequest>();
+        public List<GrupoCasoClienteRequest> GrupoCasoClientes { get; init; } = new List<GrupoCasoClienteRequest>();
+        public List<GrupoCasoEnvolvidosRequest> GrupoCasoEnvolvidos { get; init; } = new List<GrupoCasoEnvolvidosRequest>();
     }
 }

@@ -43,6 +43,28 @@ namespace DeslandesApp.Infra.Data.Repositories
         private IGrupoTarefaEnvolvidoRepository? _grupoTarefaEnvolvidoRepository;
         private ICasoRepository? _casoRepository;
         private IAtendimentoRepository? _atendimentoRepository;
+        private IGrupoCasoClienteRepository? _grupoCasoClienteRepository;
+        private IGrupoCasoEnvolvidosRepository? _grupoCasoEnvolvidosRepository;
+        public IGrupoCasoEnvolvidosRepository GrupoCasoEnvolvidosRepository
+        {
+            get
+            {
+                if (_grupoCasoEnvolvidosRepository == null)
+                    _grupoCasoEnvolvidosRepository = new GrupoCasoEnvolvidosRepository(dataContext);
+
+                return _grupoCasoEnvolvidosRepository;
+            }
+        }
+        public IGrupoCasoClienteRepository GrupoCasoClienteRepository
+        {
+            get
+            {
+                if (_grupoCasoClienteRepository == null)
+                    _grupoCasoClienteRepository = new GrupoCasoClienteRepository(dataContext);
+
+                return _grupoCasoClienteRepository;
+            }
+        }
         public IAtendimentoRepository AtendimentoRepository
         {
             get
@@ -249,16 +271,6 @@ namespace DeslandesApp.Infra.Data.Repositories
                 return _grupoNiveisRepository;
             }
         }
-
-       
-
-
-
-
-
-
-
-
 
 
 

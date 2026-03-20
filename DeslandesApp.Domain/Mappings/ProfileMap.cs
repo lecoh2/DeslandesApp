@@ -1,5 +1,8 @@
 ﻿using AutoMapper;
+using DeslandesApp.Domain.Models.Dtos.Requests.Caso;
 using DeslandesApp.Domain.Models.Dtos.Requests.EnderecoPessoa;
+using DeslandesApp.Domain.Models.Dtos.Requests.GrupoCasoCliente;
+using DeslandesApp.Domain.Models.Dtos.Requests.GrupoCasoEnvolvidos;
 using DeslandesApp.Domain.Models.Dtos.Requests.GrupoNiveis;
 using DeslandesApp.Domain.Models.Dtos.Requests.GrupoSetores;
 using DeslandesApp.Domain.Models.Dtos.Requests.InformacoesComplementares;
@@ -9,6 +12,7 @@ using DeslandesApp.Domain.Models.Dtos.Requests.Processo;
 using DeslandesApp.Domain.Models.Dtos.Requests.Setor;
 using DeslandesApp.Domain.Models.Dtos.Requests.Tarefa;
 using DeslandesApp.Domain.Models.Dtos.Requests.Usuarios;
+using DeslandesApp.Domain.Models.Dtos.Responses.Caso;
 using DeslandesApp.Domain.Models.Dtos.Responses.EnderecoEndereco;
 using DeslandesApp.Domain.Models.Dtos.Responses.GrupoNiveis;
 using DeslandesApp.Domain.Models.Dtos.Responses.GrupoSetores;
@@ -183,7 +187,7 @@ namespace DeslandesApp.Domain.Mappings
      .ForCtorParam("NumeroProcesso", opt => opt.MapFrom(src => src.NumeroProcesso))
      .ForAllMembers(opt => opt.Ignore());
             #endregion
-            #region Tarefas
+           
             #region Tarefas
 
             CreateMap<CriarTarefaRequest, Tarefa>()
@@ -195,6 +199,28 @@ namespace DeslandesApp.Domain.Mappings
                 .ForMember(dest => dest.GrupoTarefaEnvolvido, opt => opt.Ignore());
 
             #endregion
+            #region Caso
+
+            // 🔁 Request -> Entidade
+            CreateMap<CriarCasoRequest, Caso>()
+                .ForMember(dest => dest.GrupoCasoCliente, opt => opt.Ignore())
+                .ForMember(dest => dest.GrupoCasoEnvolvido, opt => opt.Ignore());
+
+            // 🔁 Entidade -> Response
+            CreateMap<Caso, CriarCasoResponse>();
+
+            #endregion
+
+            #region GrupoCasoCliente
+
+            CreateMap<GrupoCasoClienteRequest, GrupoCasoCliente>();
+
+            #endregion
+
+            #region GrupoCasoEnvolvido
+
+            CreateMap<GrupoCasoEnvolvidosRequest, GrupoCasoEnvolvido>();
+
             #endregion
 
         }

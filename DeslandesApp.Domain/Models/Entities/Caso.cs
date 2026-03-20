@@ -14,10 +14,10 @@ namespace DeslandesApp.Domain.Models.Entities
         public string Titulo { get; set; } = string.Empty;
         public string Descricao { get; set; } = string.Empty;
         public string? Observacao { get; set; }
-
+        public DateTime? DataCadastro { get; set; }
         // Responsável
         public Guid? ResponsavelId { get; set; }
-        public Pessoa? Responsavel { get; set; }
+        public Usuario? Responsavel { get; set; }
 
         // Acesso
         public AcessoCaso Acesso { get; set; } = AcessoCaso.Publico;
