@@ -26,7 +26,7 @@ namespace DeslandesApp.Domain.Services
         {
             await unitOfWork.BeginTransactionAsync();
 
-            // 🔁 DTO -> Entidade
+            //  DTO -> Entidade
             var processo = mapper.Map<Processo>(request);
 
             // 🧹 Normalização segura
@@ -37,17 +37,17 @@ namespace DeslandesApp.Domain.Services
 
             processo.DataCadastro = DateTime.Now;
 
-            // 👤 Responsável
+            //  Responsável
             processo.UsuarioResponsavelId = request.UsuarioResponsavelId;
 
-            // ✅ Validação Fluent
+            //  Validação Fluent
             var validator = new ProcessoValidator();
             var result = validator.Validate(processo);
 
             if (!result.IsValid)
                 throw new ValidationException(result.Errors);
 
-            // 🔥 VALIDA VARA
+            //  VALIDA VARA
             if (processo.VaraId == Guid.Empty)
                 throw new InvalidOperationException("Vara é obrigatória.");
 
@@ -56,7 +56,7 @@ namespace DeslandesApp.Domain.Services
             if (vara == null)
                 throw new InvalidOperationException("Vara não encontrada.");
 
-            // 🔥 VALIDA USUÁRIO RESPONSÁVEL (opcional se for obrigatório)
+            //  VALIDA USUÁRIO RESPONSÁVEL (opcional se for obrigatório)
             if (processo.UsuarioResponsavelId.HasValue)
             {
                 var usuario = await unitOfWork.UsuarioRepository
@@ -66,7 +66,7 @@ namespace DeslandesApp.Domain.Services
                     throw new InvalidOperationException("Usuário responsável não encontrado.");
             }
 
-            // 🔍 Verifica duplicidade
+            //  Verifica duplicidade
             var existente = await unitOfWork.ProcessoRepository.GetByAsync(p =>
                 p.Pasta == processo.Pasta ||
                 p.NumeroProcesso == processo.NumeroProcesso);
@@ -80,10 +80,10 @@ namespace DeslandesApp.Domain.Services
                     throw new InvalidOperationException("Nº do processo já cadastrado no sistema.");
             }
 
-            // 💾 Salva processo
+            //  Salva processo
             await unitOfWork.ProcessoRepository.AddAsync(processo);
 
-            // 🔥 N:N - Clientes
+            //  N:N - Clientes
             if (request.GrupoCliente != null && request.GrupoCliente.Any())
             {
                 foreach (var grupos in request.GrupoCliente)
@@ -99,7 +99,7 @@ namespace DeslandesApp.Domain.Services
                 }
             }
 
-            // 🔥 N:N - Envolvidos
+            //  N:N - Envolvidos
             if (request.GrupoEnvolvidos != null && request.GrupoEnvolvidos.Any())
             {
                 foreach (var grupos in request.GrupoEnvolvidos)
@@ -115,10 +115,10 @@ namespace DeslandesApp.Domain.Services
                 }
             }
 
-            // ✅ Commit único
+            //  Commit único
             await unitOfWork.CommitAsync();
 
-            // 🔁 Retorno
+            //  Retorno
             return mapper.Map<ProcessoResponse>(processo);
         }
 

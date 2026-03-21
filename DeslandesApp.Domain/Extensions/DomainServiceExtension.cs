@@ -27,7 +27,8 @@ namespace DeslandesApp.Domain.Extensions
             services.AddScoped<IProcessoService, ProcessoService>();
             services.AddScoped<ITarefaService, TarefaService>();
             services.AddScoped<ICasoService, CasoService>();
-          
+            services.AddScoped<IAtendimentoService, AtendiemntoService>();
+
             //services.AddTransient<IGrupoNiveisServices, GrupoNiveisService>();
             //services.AddTransient<IGrupoSetoresService, GrupoSetoresService>()
 

@@ -13,7 +13,7 @@ namespace DeslandesApp.Infra.Data.Mappings
     {
         public void Configure(EntityTypeBuilder<GrupoAtendimentoEtiqueta> builder)
         {
-            builder.ToTable("ATENDIMENTO_ETIQUETA");
+            builder.ToTable("GRUPOATENDIMENTOETIQUETA");
 
             builder.HasKey(x => new { x.AtendimentoId, x.EtiquetaId });
 

@@ -45,6 +45,40 @@ namespace DeslandesApp.Infra.Data.Repositories
         private IAtendimentoRepository? _atendimentoRepository;
         private IGrupoCasoClienteRepository? _grupoCasoClienteRepository;
         private IGrupoCasoEnvolvidosRepository? _grupoCasoEnvolvidosRepository;
+        private IEtiquetaRepository? _etiquetaRepository;
+        private IGrupoAtendimentoClienteRepository? _atendimentoClienteRepository;
+        private IGrupoAtendimentoEtiquetaRepository? _grupoAtendimentoEtiquetaRepository;
+
+        public IGrupoAtendimentoEtiquetaRepository GrupoAtendimentoEtiquetaRepository
+        {
+            get
+            {
+                if (_grupoAtendimentoEtiquetaRepository == null)
+                    _grupoAtendimentoEtiquetaRepository = new GrupoAtendimentoEtiquetaRepository(dataContext);
+
+                return _grupoAtendimentoEtiquetaRepository;
+            }
+        }
+        public IGrupoAtendimentoClienteRepository GrupoAtendimentoClienteRepository
+        {
+            get
+            {
+                if (_atendimentoClienteRepository == null)
+                    _atendimentoClienteRepository = new GrupoAtendimentoClienteRepository(dataContext);
+
+                return _atendimentoClienteRepository;
+            }
+        }
+        public IEtiquetaRepository EtiquetaRepository
+        {
+            get
+            {
+                if (_etiquetaRepository == null)
+                    _etiquetaRepository = new EtiquetaRepository(dataContext);
+
+                return _etiquetaRepository;
+            }
+        }
         public IGrupoCasoEnvolvidosRepository GrupoCasoEnvolvidosRepository
         {
             get

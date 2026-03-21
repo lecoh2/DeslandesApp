@@ -4,6 +4,7 @@ using DeslandesApp.Infra.Data.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DeslandesApp.Infra.Data.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20260321120154_atendimentoCliente")]
+    partial class atendimentoCliente
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -56,22 +59,6 @@ namespace DeslandesApp.Infra.Data.Migrations
                         .HasColumnType("varchar(500)")
                         .HasColumnName("ASSUNTO");
 
-                    b.Property<Guid?>("AtendimentoPaiId")
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnName("ATENDIMENTOPAIID");
-
-                    b.Property<Guid?>("CasoId")
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnName("CASOID");
-
-                    b.Property<DateTime?>("DataAtualizacao")
-                        .HasColumnType("datetime2")
-                        .HasColumnName("DATAATUALIZACAO");
-
-                    b.Property<DateTime>("DataCadastro")
-                        .HasColumnType("datetime2")
-                        .HasColumnName("DATACADASTRO");
-
                     b.Property<Guid?>("ProcessoId")
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("PROCESSOID");
@@ -83,28 +70,11 @@ namespace DeslandesApp.Infra.Data.Migrations
                         .HasColumnType("varchar(2000)")
                         .HasColumnName("REGISTRO");
 
-                    b.Property<Guid?>("ResponsavelId")
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnName("RESPONSAVELID");
-
-                    b.Property<int?>("TipoVinculo")
-                        .HasColumnType("int")
-                        .HasColumnName("TIPOVINCULO");
-
                     b.HasKey("Id")
                         .HasName("PK_ATENDIMENTO");
 
-                    b.HasIndex("AtendimentoPaiId")
-                        .HasDatabaseName("IX_ATENDIMENTO_ATENDIMENTOPAIID");
-
-                    b.HasIndex("CasoId")
-                        .HasDatabaseName("IX_ATENDIMENTO_CASOID");
-
                     b.HasIndex("ProcessoId")
                         .HasDatabaseName("IX_ATENDIMENTO_PROCESSOID");
-
-                    b.HasIndex("ResponsavelId")
-                        .HasDatabaseName("IX_ATENDIMENTO_RESPONSAVELID");
 
                     b.ToTable("ATENDIMENTO", (string)null);
                 });
@@ -1450,34 +1420,13 @@ namespace DeslandesApp.Infra.Data.Migrations
 
             modelBuilder.Entity("DeslandesApp.Domain.Models.Entities.Atendimento", b =>
                 {
-                    b.HasOne("DeslandesApp.Domain.Models.Entities.Atendimento", "AtendimentoPai")
-                        .WithMany()
-                        .HasForeignKey("AtendimentoPaiId")
-                        .HasConstraintName("FK_ATENDIMENTO_ATENDIMENTO_ATENDIMENTOPAIID");
-
-                    b.HasOne("DeslandesApp.Domain.Models.Entities.Caso", "Caso")
-                        .WithMany()
-                        .HasForeignKey("CasoId")
-                        .HasConstraintName("FK_ATENDIMENTO_CASO_CASOID");
-
                     b.HasOne("Processo", "Processo")
                         .WithMany()
                         .HasForeignKey("ProcessoId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .HasConstraintName("FK_ATENDIMENTO_PROCESSO");
 
-                    b.HasOne("DeslandesApp.Domain.Models.Entities.Usuario", "Responsavel")
-                        .WithMany()
-                        .HasForeignKey("ResponsavelId")
-                        .HasConstraintName("FK_ATENDIMENTO_USUARIOS_RESPONSAVELID");
-
-                    b.Navigation("AtendimentoPai");
-
-                    b.Navigation("Caso");
-
                     b.Navigation("Processo");
-
-                    b.Navigation("Responsavel");
                 });
 
             modelBuilder.Entity("DeslandesApp.Domain.Models.Entities.Caso", b =>

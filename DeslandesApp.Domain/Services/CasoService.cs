@@ -21,10 +21,10 @@ namespace DeslandesApp.Domain.Services
         {
             await unitOfWork.BeginTransactionAsync();
 
-            // 🔁 DTO -> Entidade
+            //  DTO -> Entidade
             var caso = mapper.Map<Caso>(request);
 
-            // 🧹 Normalização
+            //  Normalização
             caso.Pasta = caso.Pasta?.Trim().ToUpper();
             caso.Titulo = caso.Titulo?.Trim().ToUpper();
             caso.Descricao = caso.Descricao?.Trim();
@@ -33,17 +33,17 @@ namespace DeslandesApp.Domain.Services
             // (se tiver DataCadastro no BaseEntity)
             caso.DataCadastro = DateTime.Now;
 
-            // 👤 Responsável
+            //  Responsável
             caso.ResponsavelId = request.ResponsavelId;
 
-            // ✅ Validação Fluent
+            //  Validação Fluent
             var validator = new CasoValidator();
             var result = validator.Validate(caso);
 
             if (!result.IsValid)
                 throw new ValidationException(result.Errors);
 
-            // 🔥 VALIDA RESPONSÁVEL (opcional)
+            //  VALIDA RESPONSÁVEL (opcional)
             if (caso.ResponsavelId.HasValue)
             {
                 var pessoa = await unitOfWork.UsuarioRepository
@@ -53,17 +53,17 @@ namespace DeslandesApp.Domain.Services
                     throw new InvalidOperationException("Responsável não encontrado.");
             }
 
-            // 🔍 Verifica duplicidade (por Pasta)
+            //  Verifica duplicidade (por Pasta)
             var existente = await unitOfWork.CasoRepository
                 .GetByAsync(c => c.Pasta == caso.Pasta);
 
             if (existente != null)
                 throw new InvalidOperationException("Nome de pasta já utilizado por outro caso.");
 
-            // 💾 Salva Caso
+            //  Salva Caso
             await unitOfWork.CasoRepository.AddAsync(caso);
 
-            // 🔥 N:N - Clientes
+            //  N:N - Clientes
             if (request.GrupoCasoClientes != null && request.GrupoCasoClientes.Any())
             {
                 foreach (var grupos in request.GrupoCasoClientes)
@@ -79,7 +79,7 @@ namespace DeslandesApp.Domain.Services
                 }
             }
 
-            // 🔥 N:N - Envolvidos
+            //  N:N - Envolvidos
             if (request.GrupoCasoEnvolvidos != null && request.GrupoCasoEnvolvidos.Any())
             {
                 foreach (var grupos in request.GrupoCasoEnvolvidos)
@@ -95,10 +95,10 @@ namespace DeslandesApp.Domain.Services
                 }
             }
 
-            // ✅ Commit
+            //  Commit
             await unitOfWork.CommitAsync();
 
-            // 🔁 Retorno
+            //  Retorno
             return mapper.Map<CriarCasoResponse>(caso);
         }
 

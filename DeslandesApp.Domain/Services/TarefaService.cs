@@ -24,33 +24,33 @@ namespace DeslandesApp.Domain.Services
         {
             await unitOfWork.BeginTransactionAsync();
 
-            // 🔁 DTO -> Entidade
+            //  DTO -> Entidade
             var tarefa = mapper.Map<Tarefa>(request);
 
-            // 🧹 Normalização
+            //  Normalização
             tarefa.Descricao = tarefa.Descricao?.Trim();
             tarefa.DataCadastro = DateTime.Now;
 
-            // ✅ Validação Fluent
+            //  Validação Fluent
             var validator = new TarefaValidator();
             var result = validator.Validate(tarefa);
 
             if (!result.IsValid)
                 throw new ValidationException(result.Errors);
 
-            // 💾 Salva Tarefa
+            //  Salva Tarefa
             await unitOfWork.TarefaRepository.AddAsync(tarefa);
 
-            // 🔥 Relacionamentos
+            //  Relacionamentos
             if (request.ListasTarefa != null && request.ListasTarefa.Any())
             {
                 foreach (var item in request.ListasTarefa)
                 {
-                    // ❗ Validação
+                    //  Validação
                     if (item.VinculoId == Guid.Empty)
                         throw new InvalidOperationException("Vínculo é obrigatório.");
 
-                    // 🔍 Valida vínculo
+                    //  Valida vínculo
                     switch (item.TipoVinculo)
                     {
                         case TipoVinculo.Processo:
@@ -75,7 +75,7 @@ namespace DeslandesApp.Domain.Services
                             throw new InvalidOperationException("Tipo de vínculo inválido.");
                     }
 
-                    // 🔍 Responsável
+                    //  Responsável
                     if (item.ResponsavelId.HasValue)
                     {
                         var usuario = await unitOfWork.UsuarioRepository.GetByIdAsync(item.ResponsavelId.Value);
@@ -91,12 +91,12 @@ namespace DeslandesApp.Domain.Services
                         ResponsavelId = item.ResponsavelId,
                         Prioridade = item.Prioridade
 
-                       
+
                     };
 
                     await unitOfWork.ListaTarefaRepository.AddAsync(listaTarefa);
 
-                    // 🔥 Envolvidos
+                    //  Envolvidos
                     if (item.GrupoTarefaEnvolvido != null && item.GrupoTarefaEnvolvido.Any())
                     {
                         foreach (var envolvido in item.GrupoTarefaEnvolvido)
@@ -119,7 +119,7 @@ namespace DeslandesApp.Domain.Services
                 }
             }
 
-            // ✅ Commit
+            //  Commit
             await unitOfWork.CommitAsync();
 
             return mapper.Map<CriarTarefaResponse>(tarefa);

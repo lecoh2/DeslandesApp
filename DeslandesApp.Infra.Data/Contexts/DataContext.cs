@@ -37,6 +37,8 @@ namespace DeslandesApp.Infra.Data.Contexts
         public DbSet<Caso> Caso { get; set; }
         public DbSet<GrupoCasoCliente> GrupoCasoCliente { get; set; }
         public DbSet<GrupoCasoEnvolvido> GrupoCasoEnvolvido { get; set; }
+        public DbSet<GrupoAtendimentoCliente> GrupoAtendimentoCliente { get; set; }
+        public DbSet<Etiqueta> Etiqueta { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);

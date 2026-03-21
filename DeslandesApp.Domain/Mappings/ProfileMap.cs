@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using DeslandesApp.Domain.Models.Dtos.Requests.Atendimento;
 using DeslandesApp.Domain.Models.Dtos.Requests.Caso;
 using DeslandesApp.Domain.Models.Dtos.Requests.EnderecoPessoa;
 using DeslandesApp.Domain.Models.Dtos.Requests.GrupoCasoCliente;
@@ -12,6 +13,7 @@ using DeslandesApp.Domain.Models.Dtos.Requests.Processo;
 using DeslandesApp.Domain.Models.Dtos.Requests.Setor;
 using DeslandesApp.Domain.Models.Dtos.Requests.Tarefa;
 using DeslandesApp.Domain.Models.Dtos.Requests.Usuarios;
+using DeslandesApp.Domain.Models.Dtos.Responses.Atendimento;
 using DeslandesApp.Domain.Models.Dtos.Responses.Caso;
 using DeslandesApp.Domain.Models.Dtos.Responses.EnderecoEndereco;
 using DeslandesApp.Domain.Models.Dtos.Responses.GrupoNiveis;
@@ -221,6 +223,17 @@ namespace DeslandesApp.Domain.Mappings
 
             CreateMap<GrupoCasoEnvolvidosRequest, GrupoCasoEnvolvido>();
 
+            #endregion
+
+            #region Atendiemnto
+            CreateMap<CriarAtendimentoClienteRequest, Atendimento>()
+            .ForMember(dest => dest.GrupoEtiquetas, opt => opt.Ignore())
+            .ForMember(dest => dest.GrupoClientes, opt => opt.Ignore())
+            .ForMember(dest => dest.Processo, opt => opt.Ignore())
+            .ForMember(dest => dest.Caso, opt => opt.Ignore())
+            .ForMember(dest => dest.AtendimentoPai, opt => opt.Ignore())
+            .ForMember(dest => dest.Responsavel, opt => opt.Ignore());
+            CreateMap<Atendimento, CriarAtendimentoClienteResponse>();
             #endregion
 
         }

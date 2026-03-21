@@ -38,6 +38,9 @@ namespace DeslandesApp.Domain.Interfaces.Repositories
         ICasoRepository CasoRepository { get; }
         IGrupoCasoClienteRepository GrupoCasoClienteRepository { get; }
         IGrupoCasoEnvolvidosRepository GrupoCasoEnvolvidosRepository { get; }
+        IGrupoAtendimentoClienteRepository GrupoAtendimentoClienteRepository { get; }
+        IGrupoAtendimentoEtiquetaRepository GrupoAtendimentoEtiquetaRepository { get; }
+        IEtiquetaRepository EtiquetaRepository { get; }
         #endregion
     }
 }

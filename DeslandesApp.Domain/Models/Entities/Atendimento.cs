@@ -11,16 +11,40 @@ namespace DeslandesApp.Domain.Models.Entities
     public class Atendimento : BaseEntity
     {
         public string Assunto { get; set; } = string.Empty;
-        public string Registro { get; set; } = string.Empty; // conteúdo ou observações
+        public string Registro { get; set; } = string.Empty;
+
+        public DateTime DataCadastro { get; set; }
+        public DateTime? DataAtualizacao { get; set; }
+
         public List<GrupoAtendimentoEtiqueta> GrupoEtiquetas { get; set; } = new();
 
-        // Processo relacionado
+        // 🔹 Relacionamentos possíveis
         public Guid? ProcessoId { get; set; }
         public Processo? Processo { get; set; }
 
-        // Clientes do atendimento (1:N via tabela de junção)
-        public List<GrupoAtendimentoCliente> GrupoClientes { get; set; } = new List<GrupoAtendimentoCliente>();
+        public Guid? CasoId { get; set; }
+        public Caso? Caso { get; set; }
+        public Guid? ResponsavelId { get; set; }
+        public Usuario? Responsavel { get; set; }
+        public Guid? AtendimentoPaiId { get; set; }
+        public Atendimento? AtendimentoPai { get; set; }
 
+        // 🔹 Clientes
+        public List<GrupoAtendimentoCliente> GrupoClientes { get; set; } = new();
+
+        public TipoVinculo? TipoVinculo { get; set; }
+        public void ValidarVinculo()
+        {
+            int count = 0;
+
+            if (ProcessoId.HasValue) count++;
+            if (CasoId.HasValue) count++;
+            if (AtendimentoPaiId.HasValue) count++;
+
+            if (count > 1)
+                throw new Exception("O atendimento não pode ter mais de um vínculo.");
+        }
     }
+
 }
 
