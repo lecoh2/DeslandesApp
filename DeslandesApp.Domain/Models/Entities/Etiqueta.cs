@@ -7,8 +7,10 @@ using System.Threading.Tasks;
 
 namespace DeslandesApp.Domain.Models.Entities
 {
-    public class Etiqueta :BaseEntity
-    {     
-        public string Nome { get; set; }
+    public class Etiqueta : BaseEntity
+    {
+        public string Nome { get; set; } = string.Empty;
+
+        public List<TarefaEtiqueta> TarefaEtiquetas { get; set; } = new();
     }
 }

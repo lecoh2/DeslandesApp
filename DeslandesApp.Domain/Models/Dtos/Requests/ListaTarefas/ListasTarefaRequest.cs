@@ -1,15 +1,12 @@
-﻿using DeslandesApp.Domain.Commons;
-using DeslandesApp.Domain.Models.Enum;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DeslandesApp.Domain.Models.Entities
+namespace DeslandesApp.Domain.Models.Dtos.Requests.ListaTarefas
 {
-
-    public class ListaTarefa : BaseEntity
+    public record ListasTarefaRequest
     {
         public string Descricao { get; set; } = string.Empty;
 
@@ -17,11 +14,6 @@ namespace DeslandesApp.Domain.Models.Entities
 
         public DateTime? DataConclusao { get; set; }
 
-        public Guid TarefaId { get; set; }
-        public Tarefa Tarefa { get; set; } = null!;
-
         public int Ordem { get; set; }
     }
 }
-
-

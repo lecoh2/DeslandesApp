@@ -189,16 +189,18 @@ namespace DeslandesApp.Domain.Mappings
      .ForCtorParam("NumeroProcesso", opt => opt.MapFrom(src => src.NumeroProcesso))
      .ForAllMembers(opt => opt.Ignore());
             #endregion
-           
+
             #region Tarefas
 
             CreateMap<CriarTarefaRequest, Tarefa>()
-                .ForMember(dest => dest.ListasTarefa, opt => opt.Ignore());
-
-            CreateMap<Tarefa, CriarTarefaResponse>();
-
-            CreateMap<CriarListaTarefaRequest, ListaTarefa>()
+                .ForMember(dest => dest.ListasTarefa, opt => opt.Ignore())
+                .ForMember(dest => dest.TarefaEtiquetas, opt => opt.Ignore())
                 .ForMember(dest => dest.GrupoTarefaEnvolvido, opt => opt.Ignore());
+
+            CreateMap<Tarefa, CriarTarefaResponse>()
+                .ForMember(dest => dest.Descricao, opt => opt.MapFrom(src => src.Descricao));
+
+            CreateMap<CriarListaTarefaRequest, ListaTarefa>();
 
             #endregion
             #region Caso

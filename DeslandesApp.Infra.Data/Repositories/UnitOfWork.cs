@@ -48,7 +48,17 @@ namespace DeslandesApp.Infra.Data.Repositories
         private IEtiquetaRepository? _etiquetaRepository;
         private IGrupoAtendimentoClienteRepository? _atendimentoClienteRepository;
         private IGrupoAtendimentoEtiquetaRepository? _grupoAtendimentoEtiquetaRepository;
+        private ITarefaEtiquetaRepository? _tarefaEtiquetaRepository;
+        public ITarefaEtiquetaRepository TarefaEtiquetaRepository
+        {
+            get
+            {
+                if (_tarefaEtiquetaRepository == null)
+                    _tarefaEtiquetaRepository = new TarefaEtiquetaRepository(dataContext);
 
+                return _tarefaEtiquetaRepository;
+            }
+        }
         public IGrupoAtendimentoEtiquetaRepository GrupoAtendimentoEtiquetaRepository
         {
             get

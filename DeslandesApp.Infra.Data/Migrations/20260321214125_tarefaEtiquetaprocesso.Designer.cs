@@ -4,6 +4,7 @@ using DeslandesApp.Infra.Data.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DeslandesApp.Infra.Data.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20260321214125_tarefaEtiquetaprocesso")]
+    partial class tarefaEtiquetaprocesso
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1023,14 +1026,6 @@ namespace DeslandesApp.Infra.Data.Migrations
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("ID");
 
-                    b.Property<Guid?>("AtendimentoId")
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnName("ATENDIMENTOID");
-
-                    b.Property<Guid?>("CasoId")
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnName("CASOID");
-
                     b.Property<DateTime?>("DataAtualizacao")
                         .HasColumnType("datetime2")
                         .HasColumnName("DATAATUALIZACAO");
@@ -1054,29 +1049,20 @@ namespace DeslandesApp.Infra.Data.Migrations
                         .HasColumnType("int")
                         .HasColumnName("PRIORIDADE");
 
-                    b.Property<Guid?>("ProcessoId")
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnName("PROCESSOID");
-
                     b.Property<Guid?>("ResponsavelId")
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("RESPONSAVELID");
 
-                    b.Property<int?>("TipoVinculo")
+                    b.Property<int>("TipoVinculo")
                         .HasColumnType("int")
                         .HasColumnName("TIPOVINCULO");
 
+                    b.Property<Guid>("VinculoId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("VINCULOID");
+
                     b.HasKey("Id")
                         .HasName("PK_TAREFA");
-
-                    b.HasIndex("AtendimentoId")
-                        .HasDatabaseName("IX_TAREFA_ATENDIMENTOID");
-
-                    b.HasIndex("CasoId")
-                        .HasDatabaseName("IX_TAREFA_CASOID");
-
-                    b.HasIndex("ProcessoId")
-                        .HasDatabaseName("IX_TAREFA_PROCESSOID");
 
                     b.HasIndex("ResponsavelId")
                         .HasDatabaseName("IX_TAREFA_RESPONSAVELID");
@@ -1906,35 +1892,11 @@ namespace DeslandesApp.Infra.Data.Migrations
 
             modelBuilder.Entity("DeslandesApp.Domain.Models.Entities.Tarefa", b =>
                 {
-                    b.HasOne("DeslandesApp.Domain.Models.Entities.Atendimento", "Atendimento")
-                        .WithMany()
-                        .HasForeignKey("AtendimentoId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .HasConstraintName("FK_TAREFA_ATENDIMENTO");
-
-                    b.HasOne("DeslandesApp.Domain.Models.Entities.Caso", "Caso")
-                        .WithMany()
-                        .HasForeignKey("CasoId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .HasConstraintName("FK_TAREFA_CASO");
-
-                    b.HasOne("Processo", "Processo")
-                        .WithMany()
-                        .HasForeignKey("ProcessoId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .HasConstraintName("FK_TAREFA_PROCESSO");
-
                     b.HasOne("DeslandesApp.Domain.Models.Entities.Usuario", "Responsavel")
                         .WithMany()
                         .HasForeignKey("ResponsavelId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .HasConstraintName("FK_TAREFA_USUARIO");
-
-                    b.Navigation("Atendimento");
-
-                    b.Navigation("Caso");
-
-                    b.Navigation("Processo");
 
                     b.Navigation("Responsavel");
                 });

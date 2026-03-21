@@ -20,20 +20,20 @@ namespace DeslandesApp.Infra.Data.Mappings
             builder.Property(x => x.UsuarioId)
                    .HasColumnName("USUARIOID");
 
-            builder.Property(x => x.ListaTarefaId)
-                   .HasColumnName("LISTATAREFAID");
+            builder.Property(x => x.TarefaId)
+                   .HasColumnName("TAREFAID");
 
             builder.HasOne(x => x.Usuario)
                    .WithMany()
                    .HasForeignKey(x => x.UsuarioId)
                    .OnDelete(DeleteBehavior.Restrict)
-                   .HasConstraintName("FK_TAREFAENVOLVIDO_USUARIOS");
+                   .HasConstraintName("FK_TAREFAENVOLVIDO_USUARIO");
 
-            builder.HasOne(x => x.ListaTarefa)
+            builder.HasOne(x => x.Tarefa)
                    .WithMany(x => x.GrupoTarefaEnvolvido)
-                   .HasForeignKey(x => x.ListaTarefaId)
+                   .HasForeignKey(x => x.TarefaId)
                    .OnDelete(DeleteBehavior.Cascade)
-                   .HasConstraintName("FK_TAREFAENVOLVIDO_LISTATAREFA");
+                   .HasConstraintName("FK_TAREFAENVOLVIDO_TAREFA");
         }
     }
 }
