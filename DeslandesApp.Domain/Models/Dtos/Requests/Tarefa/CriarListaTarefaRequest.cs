@@ -12,7 +12,7 @@ namespace DeslandesApp.Domain.Models.Dtos.Requests.Tarefa
     {
         public string Descricao { get; init; } = string.Empty;
 
-        public int Ordem { get; init; }
+        //public int? Ordem { get; init; }
     }
 }
 

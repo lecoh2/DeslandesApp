@@ -4,6 +4,7 @@ using DeslandesApp.Infra.Data.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DeslandesApp.Infra.Data.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20260322184434_ListanulaGrupoEnvolvidos23")]
+    partial class ListanulaGrupoEnvolvidos23
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -256,10 +259,6 @@ namespace DeslandesApp.Infra.Data.Migrations
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("ID");
 
-                    b.Property<DateOnly?>("DataFimRecorrencia")
-                        .HasColumnType("date")
-                        .HasColumnName("DATAFIMRECORRENCIA");
-
                     b.Property<DateOnly?>("DataFinal")
                         .HasColumnType("date")
                         .HasColumnName("DATAFINAL");
@@ -272,16 +271,15 @@ namespace DeslandesApp.Infra.Data.Migrations
                         .HasColumnType("bit")
                         .HasColumnName("DIAINTEIRO");
 
-                    b.Property<string>("DiasSemana")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)")
-                        .HasColumnName("DIASSEMANA");
-
                     b.Property<string>("Endereco")
                         .HasMaxLength(250)
                         .IsUnicode(false)
                         .HasColumnType("varchar(250)")
                         .HasColumnName("ENDERECO");
+
+                    b.Property<Guid?>("EntidadeId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("ENTIDADEID");
 
                     b.Property<TimeOnly?>("HoraFinal")
                         .HasColumnType("time")
@@ -290,10 +288,6 @@ namespace DeslandesApp.Infra.Data.Migrations
                     b.Property<TimeOnly>("HoraInicial")
                         .HasColumnType("time")
                         .HasColumnName("HORAINICIAL");
-
-                    b.Property<int>("IntervaloRecorrencia")
-                        .HasColumnType("int")
-                        .HasColumnName("INTERVALORECORRENCIA");
 
                     b.Property<int>("Modalidade")
                         .HasColumnType("int")
@@ -305,13 +299,9 @@ namespace DeslandesApp.Infra.Data.Migrations
                         .HasColumnType("varchar(2000)")
                         .HasColumnName("OBSERVACAO");
 
-                    b.Property<int?>("QuantidadeOcorrencias")
+                    b.Property<int?>("TipoVinculo")
                         .HasColumnType("int")
-                        .HasColumnName("QUANTIDADEOCORRENCIAS");
-
-                    b.Property<int>("TipoRecorrencia")
-                        .HasColumnType("int")
-                        .HasColumnName("TIPORECORRENCIA");
+                        .HasColumnName("TIPOVINCULO");
 
                     b.Property<string>("Titulo")
                         .IsRequired()

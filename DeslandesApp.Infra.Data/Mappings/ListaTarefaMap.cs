@@ -24,17 +24,17 @@ namespace DeslandesApp.Infra.Data.Mappings
                        .IsRequired();
 
                 builder.Property(x => x.Concluida)
-                       .HasColumnName("CONCLUIDA");
+                       .HasColumnName("CONCLUIDA").IsRequired(false);
 
                 builder.Property(x => x.DataConclusao)
-                       .HasColumnName("DATACONCLUSAO");
+                       .HasColumnName("DATACONCLUSAO").IsRequired(false);
 
-                builder.Property(x => x.Ordem)
-                       .HasColumnName("ORDEM");
+            builder.Property(x => x.Ordem)
+                       .HasColumnName("ORDEM").IsRequired(false);
 
-                builder.Property(x => x.TarefaId)
+            builder.Property(x => x.TarefaId)
                        .HasColumnName("TAREFAID")
-                       .IsRequired();
+                       .IsRequired(false);
 
                 builder.HasOne(x => x.Tarefa)
                        .WithMany(x => x.ListasTarefa)

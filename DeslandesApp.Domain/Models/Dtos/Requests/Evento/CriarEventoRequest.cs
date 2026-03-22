@@ -8,26 +8,31 @@ using System.Threading.Tasks;
 namespace DeslandesApp.Domain.Models.Dtos.Requests.Evento
 {
     public record CriarEventoRequest
-    {
-        public string Titulo { get; init; } = string.Empty;
+ (
+     string Titulo,
 
-        public DateOnly DataInicial { get; init; }
-        public TimeOnly HoraInicial { get; init; }
+     DateOnly DataInicial,
+     TimeOnly HoraInicial,
 
-        public DateOnly? DataFinal { get; init; }
-        public TimeOnly? HoraFinal { get; init; }
+     DateOnly? DataFinal,
+     TimeOnly? HoraFinal,
 
-        public bool DiaInteiro { get; init; }
+     bool DiaInteiro,
 
-        public string? Endereco { get; init; }
+     string? Endereco,
 
-        public ModalidadeEvento Modalidade { get; init; } = ModalidadeEvento.NaoSeAplica;
+     ModalidadeEvento Modalidade,
 
-        public string? Observacao { get; init; }
+     string? Observacao,
 
-        public Guid? EntidadeId { get; init; }
-        public TipoVinculo? TipoVinculo { get; init; }
+     // 👥 Responsáveis (N:N)
+     List<Guid>? ResponsaveisIds,
 
-        public List<Guid> ResponsaveisIds { get; init; } = new();
-    }
+     // 🔁 Recorrência
+     TipoRecorrencia TipoRecorrencia,
+     int IntervaloRecorrencia,
+     List<DayOfWeek>? DiasSemana,
+     DateOnly? DataFimRecorrencia,
+     int? QuantidadeOcorrencias
+ );
 }

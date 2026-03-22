@@ -4,6 +4,7 @@ using DeslandesApp.Infra.Data.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DeslandesApp.Infra.Data.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20260322201101_Evento2")]
+    partial class Evento2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -273,7 +276,6 @@ namespace DeslandesApp.Infra.Data.Migrations
                         .HasColumnName("DIAINTEIRO");
 
                     b.Property<string>("DiasSemana")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)")
                         .HasColumnName("DIASSEMANA");
 
@@ -282,6 +284,10 @@ namespace DeslandesApp.Infra.Data.Migrations
                         .IsUnicode(false)
                         .HasColumnType("varchar(250)")
                         .HasColumnName("ENDERECO");
+
+                    b.Property<Guid?>("EntidadeId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("ENTIDADEID");
 
                     b.Property<TimeOnly?>("HoraFinal")
                         .HasColumnType("time")
@@ -312,6 +318,10 @@ namespace DeslandesApp.Infra.Data.Migrations
                     b.Property<int>("TipoRecorrencia")
                         .HasColumnType("int")
                         .HasColumnName("TIPORECORRENCIA");
+
+                    b.Property<int?>("TipoVinculo")
+                        .HasColumnType("int")
+                        .HasColumnName("TIPOVINCULO");
 
                     b.Property<string>("Titulo")
                         .IsRequired()

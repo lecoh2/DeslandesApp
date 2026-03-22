@@ -17,23 +17,29 @@ namespace DeslandesApp.Infra.Data.Mappings
 
             builder.HasKey(x => x.Id);
 
-            builder.Property(x => x.UsuarioId)
-                   .HasColumnName("USUARIOID");
+            builder.Property(x => x.PessoaId)
+                   .HasColumnName("PESSOAID")
+                   .IsRequired();
 
             builder.Property(x => x.TarefaId)
-                   .HasColumnName("TAREFAID");
+                   .HasColumnName("TAREFAID")
+                   .IsRequired();
 
-            builder.HasOne(x => x.Usuario)
-                   .WithMany()
-                   .HasForeignKey(x => x.UsuarioId)
+            builder.HasOne(x => x.Pessoa)
+                   .WithMany(x => x.GrupoTarefaEnvolvido)
+                   .HasForeignKey(x => x.PessoaId)
                    .OnDelete(DeleteBehavior.Restrict)
-                   .HasConstraintName("FK_TAREFAENVOLVIDO_USUARIO");
+                   .HasConstraintName("FK_TAREFAENVOLVIDO_PESSOA");
 
             builder.HasOne(x => x.Tarefa)
                    .WithMany(x => x.GrupoTarefaEnvolvido)
                    .HasForeignKey(x => x.TarefaId)
                    .OnDelete(DeleteBehavior.Cascade)
                    .HasConstraintName("FK_TAREFAENVOLVIDO_TAREFA");
+
+            // 🔥 Evita duplicidade
+            builder.HasIndex(x => new { x.TarefaId, x.PessoaId })
+                   .IsUnique();
         }
     }
 }

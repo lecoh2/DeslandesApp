@@ -7,9 +7,8 @@ using System.Threading.Tasks;
 
 namespace DeslandesApp.Domain.Interfaces.Repositories
 {
-    public interface IListaTarefaRepository : IBaseRepository<ListaTarefa, Guid>
+    public interface IEventoRepository : IBaseRepository<Evento, Guid>
     {
-        Task<int?> ObterMaiorOrdemPorTarefaId(Guid tarefaId);
-        Task<List<ListaTarefa>> ObterPorIdsAsync(List<Guid> ids);
     }
 }
+

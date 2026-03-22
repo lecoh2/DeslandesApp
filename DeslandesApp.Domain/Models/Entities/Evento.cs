@@ -26,12 +26,18 @@ namespace DeslandesApp.Domain.Models.Entities
 
         public string? Observacao { get; set; }
 
-        // 🔗 Vínculo dinâmico
-        public Guid? EntidadeId { get; set; }
-        public TipoVinculo? TipoVinculo { get; set; }
-
         // 👥 Responsáveis (N:N)
         public List<GrupoEventoResponsavel> GrupoEventoResponsavel { get; set; } = new();
 
+        // 🔁 Recorrência
+        public TipoRecorrencia TipoRecorrencia { get; set; } = TipoRecorrencia.Nenhuma;
+
+        public int IntervaloRecorrencia { get; set; } = 1;
+
+        public List<DayOfWeek> DiasSemana { get; set; } = new();
+
+        public DateOnly? DataFimRecorrencia { get; set; }
+
+        public int? QuantidadeOcorrencias { get; set; }
     }
 }

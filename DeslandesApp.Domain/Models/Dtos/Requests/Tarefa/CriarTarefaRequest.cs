@@ -17,8 +17,8 @@ namespace DeslandesApp.Domain.Models.Dtos.Requests.Tarefa
         public DateTime? DataTarefa { get; init; }
 
         // 🔗 Vínculo (opcional)
-        public Guid? VinculoId { get; init; }
-        public TipoVinculo? TipoVinculo { get; init; }
+       // public Guid? VinculoId { get; init; }
+      //  public TipoVinculo? TipoVinculo { get; init; }
 
         // 👤 Responsável (opcional)
         public Guid? ProcessoId { get; init; }

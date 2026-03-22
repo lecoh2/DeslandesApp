@@ -2,6 +2,7 @@
 using DeslandesApp.Domain.Models.Dtos.Requests.Atendimento;
 using DeslandesApp.Domain.Models.Dtos.Requests.Caso;
 using DeslandesApp.Domain.Models.Dtos.Requests.EnderecoPessoa;
+using DeslandesApp.Domain.Models.Dtos.Requests.Evento;
 using DeslandesApp.Domain.Models.Dtos.Requests.GrupoCasoCliente;
 using DeslandesApp.Domain.Models.Dtos.Requests.GrupoCasoEnvolvidos;
 using DeslandesApp.Domain.Models.Dtos.Requests.GrupoNiveis;
@@ -16,6 +17,7 @@ using DeslandesApp.Domain.Models.Dtos.Requests.Usuarios;
 using DeslandesApp.Domain.Models.Dtos.Responses.Atendimento;
 using DeslandesApp.Domain.Models.Dtos.Responses.Caso;
 using DeslandesApp.Domain.Models.Dtos.Responses.EnderecoEndereco;
+using DeslandesApp.Domain.Models.Dtos.Responses.Evento;
 using DeslandesApp.Domain.Models.Dtos.Responses.GrupoNiveis;
 using DeslandesApp.Domain.Models.Dtos.Responses.GrupoSetores;
 using DeslandesApp.Domain.Models.Dtos.Responses.InformacoesComplementares;
@@ -238,6 +240,16 @@ namespace DeslandesApp.Domain.Mappings
             CreateMap<Atendimento, CriarAtendimentoClienteResponse>();
             #endregion
 
+            #region Evento
+            CreateMap<CriarEventoRequest, Evento>();
+            CreateMap<Evento, CriarEventoResponse>();
+
+            #endregion
+            #region GrupoEvento
+
+            CreateMap<GrupoEventoResponsavel, GrupoEventoResponsavel>();
+
+            #endregion
         }
     }
 }

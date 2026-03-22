@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using DeslandesApp.Domain.Interfaces.Repositories;
 using DeslandesApp.Domain.Interfaces.Services;
+using DeslandesApp.Domain.Models.Dtos.Requests.ListaTarefas;
 using DeslandesApp.Domain.Models.Dtos.Requests.Processo;
 using DeslandesApp.Domain.Models.Dtos.Requests.Tarefa;
 using DeslandesApp.Domain.Models.Dtos.Responses.Processo;
@@ -97,14 +98,22 @@ namespace DeslandesApp.Domain.Services
             // Checklist
             if (request.ListasTarefa != null && request.ListasTarefa.Any())
             {
+                var ultimaOrdem = await unitOfWork.ListaTarefaRepository
+     .ObterMaiorOrdemPorTarefaId(tarefa.Id) ?? 0;
+
+                int incremento = 0;
+
                 foreach (var item in request.ListasTarefa)
                 {
+                    incremento += 10;
+
                     var lista = new ListaTarefa
                     {
                         TarefaId = tarefa.Id,
                         Descricao = item.Descricao?.Trim(),
-                        Ordem = item.Ordem
+                        Ordem = ultimaOrdem + incremento
                     };
+
                     await unitOfWork.ListaTarefaRepository.AddAsync(lista);
                 }
             }
@@ -131,14 +140,14 @@ namespace DeslandesApp.Domain.Services
             {
                 foreach (var envolvido in request.GrupoTarefaEnvolvido)
                 {
-                    var usuario = await unitOfWork.UsuarioRepository.GetByIdAsync(envolvido.UsuarioId);
+                    var usuario = await unitOfWork.PessoaRepository.GetByIdAsync(envolvido.PessoaId);
                     if (usuario == null)
                         throw new InvalidOperationException("Usuário não encontrado.");
 
                     var grupo = new GrupoTarefaEnvolvido
                     {
                         TarefaId = tarefa.Id,
-                        UsuarioId = envolvido.UsuarioId
+                        PessoaId = envolvido.PessoaId
                     };
                     await unitOfWork.GrupoTarefaEnvolvidoRepository.AddAsync(grupo);
                 }
@@ -149,7 +158,29 @@ namespace DeslandesApp.Domain.Services
             return mapper.Map<CriarTarefaResponse>(tarefa);
         }
 
+        public async Task ReordenarListaAsync(List<ReordenarListaTarefaRequest> request)
+        {
+            if (request == null || !request.Any())
+                return;
 
+            await unitOfWork.BeginTransactionAsync();
+
+            var ids = request.Select(x => x.Id).ToList();
+
+            var listas = await unitOfWork.ListaTarefaRepository.ObterPorIdsAsync(ids);
+
+            if (listas.Count != request.Count)
+                throw new InvalidOperationException("Um ou mais itens não foram encontrados.");
+
+            var requestDict = request.ToDictionary(x => x.Id, x => x.Ordem);
+
+            foreach (var lista in listas)
+            {
+                lista.Ordem = requestDict[lista.Id];
+            }
+
+            await unitOfWork.CommitAsync();
+        }
 
         public Task<PageResult<CriarTarefaResponse>> ConsultarAsync(int pageNumber, int pageSize)
         {

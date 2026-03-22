@@ -1,7 +1,9 @@
-﻿using DeslandesApp.Domain.Models.Dtos.Requests.Processo;
+﻿using DeslandesApp.Domain.Models.Dtos.Requests.ListaTarefas;
+using DeslandesApp.Domain.Models.Dtos.Requests.Processo;
 using DeslandesApp.Domain.Models.Dtos.Requests.Tarefa;
 using DeslandesApp.Domain.Models.Dtos.Responses.Processo;
 using DeslandesApp.Domain.Models.Dtos.Responses.Tarefa;
+using DeslandesApp.Domain.Models.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,5 +14,7 @@ namespace DeslandesApp.Domain.Interfaces.Services
 {
     public interface ITarefaService : IBaseService<CriarTarefaRequest, TarefaUpdateRequest, CriarTarefaResponse, Guid>
     {
+        Task ReordenarListaAsync(List<ReordenarListaTarefaRequest> request);
+       
     }
 }

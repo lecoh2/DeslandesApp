@@ -1,5 +1,6 @@
 ﻿using DeslandesApp.Domain.Models.Entities;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using System;
 using System.Collections.Generic;
@@ -9,6 +10,8 @@ using System.Threading.Tasks;
 
 namespace DeslandesApp.Infra.Data.Mappings
 {
+    using Microsoft.EntityFrameworkCore.ChangeTracking;
+
     public class EventoMap : IEntityTypeConfiguration<Evento>
     {
         public void Configure(EntityTypeBuilder<Evento> builder)
@@ -43,12 +46,36 @@ namespace DeslandesApp.Infra.Data.Mappings
                    .IsUnicode(false)
                    .HasColumnName("OBSERVACAO");
 
-            builder.Property(x => x.EntidadeId)
-                   .HasColumnName("ENTIDADEID");
+            // 🔁 RECORRÊNCIA
+            builder.Property(x => x.TipoRecorrencia)
+                   .HasColumnName("TIPORECORRENCIA");
 
-            builder.Property(x => x.TipoVinculo)
-                   .HasColumnName("TIPOVINCULO");
+            builder.Property(x => x.IntervaloRecorrencia)
+                   .HasColumnName("INTERVALORECORRENCIA");
 
+            builder.Property(x => x.DataFimRecorrencia)
+                   .HasColumnName("DATAFIMRECORRENCIA");
+
+            builder.Property(x => x.QuantidadeOcorrencias)
+                   .HasColumnName("QUANTIDADEOCORRENCIAS");
+
+            builder.Property(x => x.DiasSemana)
+                   .HasColumnName("DIASSEMANA")
+                   .HasConversion(
+                       v => string.Join(",", v),
+                       v => string.IsNullOrEmpty(v)
+                            ? new List<DayOfWeek>()
+                            : v.Split(',', StringSplitOptions.RemoveEmptyEntries)
+                               .Select(x => Enum.Parse<DayOfWeek>(x))
+                               .ToList()
+                   )
+                   .Metadata.SetValueComparer(new ValueComparer<List<DayOfWeek>>(
+                       (c1, c2) => c1.SequenceEqual(c2),
+                       c => c.Aggregate(0, (a, v) => HashCode.Combine(a, v.GetHashCode())),
+                       c => c.ToList()
+                   ));
+
+            // 👥 Responsáveis (N:N)
             builder.HasMany(x => x.GrupoEventoResponsavel)
                    .WithOne(x => x.Evento)
                    .HasForeignKey(x => x.EventoId)
