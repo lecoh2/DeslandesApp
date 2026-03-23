@@ -23,9 +23,14 @@ namespace DeslandesApp.Infra.Data.Mappings
                    .HasColumnName("DESCRICAO");
 
             builder.Property(x => x.DataCadastro)
-                   .HasColumnName("DATA")
+                   .HasColumnName("DATACADASTRO")
                    .IsRequired();
+            builder.Property(x => x.Status)
+       .HasColumnName("STATUS")
+       .IsRequired();
 
+            builder.Property(x => x.TipoVinculo)
+                   .HasColumnName("TIPOVINCULO");
             builder.Property(x => x.DataAtualizacao)
                    .HasColumnName("DATAATUALIZACAO");
 
@@ -78,6 +83,13 @@ namespace DeslandesApp.Infra.Data.Mappings
                    .HasForeignKey(x => x.TarefaId)
                    .OnDelete(DeleteBehavior.Cascade)
                    .HasConstraintName("FK_TAREFA_ENVOLVIDO");
+            builder.HasOne(e => e.UsuarioCriacao)
+                .WithMany()
+                .HasForeignKey(e => e.UsuarioCriacaoId)
+                .OnDelete(DeleteBehavior.Restrict);
+            builder.Property(x => x.Status)
+       .HasColumnName("STATUS")
+       .IsRequired();
         }
     }
 }

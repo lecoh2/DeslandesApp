@@ -1,4 +1,6 @@
-﻿using DeslandesApp.Domain.Models.Enum;
+﻿using DeslandesApp.Domain.Models.Dtos.Requests.GrupoEnvolvidos;
+using DeslandesApp.Domain.Models.Entities;
+using DeslandesApp.Domain.Models.Enum;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,31 +10,32 @@ using System.Threading.Tasks;
 namespace DeslandesApp.Domain.Models.Dtos.Requests.Evento
 {
     public record CriarEventoRequest
- (
-     string Titulo,
+    {
+        public string Titulo { get; init; }
 
-     DateOnly DataInicial,
-     TimeOnly HoraInicial,
+        public DateOnly DataInicial { get; init; }
+        public TimeOnly HoraInicial { get; init; }
 
-     DateOnly? DataFinal,
-     TimeOnly? HoraFinal,
+        public DateOnly? DataFinal { get; init; }
+        public TimeOnly? HoraFinal { get; init; }
 
-     bool DiaInteiro,
+        public bool DiaInteiro { get; init; }
 
-     string? Endereco,
+        public string? Endereco { get; init; }
 
-     ModalidadeEvento Modalidade,
+        public ModalidadeEvento Modalidade { get; init; }
 
-     string? Observacao,
+        public string? Observacao { get; init; }
 
-     // 👥 Responsáveis (N:N)
-     List<Guid>? ResponsaveisIds,
+        // 👥 SOMENTE IDS (CORRETO)
+        public List<GrupoEventoResponsavelRequest>? GrupoEventoResponsavel { get; init; }
 
-     // 🔁 Recorrência
-     TipoRecorrencia TipoRecorrencia,
-     int IntervaloRecorrencia,
-     List<DayOfWeek>? DiasSemana,
-     DateOnly? DataFimRecorrencia,
-     int? QuantidadeOcorrencias
- );
+        // 🔁 Recorrência
+        public TipoRecorrencia TipoRecorrencia { get; init; }
+        public int IntervaloRecorrencia { get; init; }
+        public List<DayOfWeek>? DiasSemana { get; init; }
+        public DateOnly? DataFimRecorrencia { get; init; }
+        public int? QuantidadeOcorrencias { get; init; }
+        public StatusEvento? Status { get; init; }
+    }
 }

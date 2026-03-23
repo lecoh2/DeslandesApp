@@ -12,7 +12,7 @@ namespace DeslandesApp.Domain.Models.Entities
         public Guid EventoId { get; set; }
         public Evento Evento { get; set; } = null!;
 
-        public Guid PessoaId { get; set; }
-        public Pessoa Pessoa { get; set; } = null!;
+        public Guid UsuarioId { get; set; }
+        public Usuario Usuario{ get; set; } = null!;
     }
 }

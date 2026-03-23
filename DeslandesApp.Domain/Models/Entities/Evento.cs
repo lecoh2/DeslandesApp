@@ -39,5 +39,9 @@ namespace DeslandesApp.Domain.Models.Entities
         public DateOnly? DataFimRecorrencia { get; set; }
 
         public int? QuantidadeOcorrencias { get; set; }
+        public StatusEvento Status { get; set; } = StatusEvento.Agendado;
+        // 🔥 FUNDAMENTAL
+        public Guid? UsuarioCriacaoId { get; set; }
+        public Usuario? UsuarioCriacao { get; set; } // ✔ nullable também
     }
 }

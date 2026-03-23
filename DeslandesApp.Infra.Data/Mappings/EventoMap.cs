@@ -81,6 +81,10 @@ namespace DeslandesApp.Infra.Data.Mappings
                    .HasForeignKey(x => x.EventoId)
                    .OnDelete(DeleteBehavior.Cascade)
                    .HasConstraintName("FK_EVENTO_EVENTORESPONSAVEL");
+            builder.HasOne(e => e.UsuarioCriacao)
+              .WithMany()
+              .HasForeignKey(e => e.UsuarioCriacaoId)
+              .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }

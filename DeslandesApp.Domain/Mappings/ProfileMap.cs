@@ -14,6 +14,7 @@ using DeslandesApp.Domain.Models.Dtos.Requests.Processo;
 using DeslandesApp.Domain.Models.Dtos.Requests.Setor;
 using DeslandesApp.Domain.Models.Dtos.Requests.Tarefa;
 using DeslandesApp.Domain.Models.Dtos.Requests.Usuarios;
+using DeslandesApp.Domain.Models.Dtos.Responses.Agenda;
 using DeslandesApp.Domain.Models.Dtos.Responses.Atendimento;
 using DeslandesApp.Domain.Models.Dtos.Responses.Caso;
 using DeslandesApp.Domain.Models.Dtos.Responses.EnderecoEndereco;
@@ -28,6 +29,7 @@ using DeslandesApp.Domain.Models.Dtos.Responses.Setor;
 using DeslandesApp.Domain.Models.Dtos.Responses.Tarefa;
 using DeslandesApp.Domain.Models.Dtos.Responses.Usuarios;
 using DeslandesApp.Domain.Models.Entities;
+using DeslandesApp.Domain.Models.Enum;
 using DeslandesApp.Domain.ValueObjects;
 
 namespace DeslandesApp.Domain.Mappings
@@ -249,6 +251,23 @@ namespace DeslandesApp.Domain.Mappings
 
             CreateMap<GrupoEventoResponsavel, GrupoEventoResponsavel>();
 
+            #endregion
+            #region Agenda
+            CreateMap<Tarefa, AgendaItemResponse>()
+    .ForMember(dest => dest.Titulo, opt => opt.MapFrom(src => src.Descricao))
+    .ForMember(dest => dest.Data, opt => opt.MapFrom(src => DateOnly.FromDateTime(src.DataTarefa ?? src.DataCadastro)))
+    .ForMember(dest => dest.Tipo, opt => opt.MapFrom(_ => "Tarefa"))
+    .ForMember(dest => dest.Status, opt => opt.MapFrom(src => (StatusAgenda)src.Status))
+    .ForMember(dest => dest.HoraInicio, opt => opt.Ignore())
+    .ForMember(dest => dest.HoraFim, opt => opt.Ignore());
+
+            CreateMap<Evento, AgendaItemResponse>()
+    .ForMember(dest => dest.Titulo, opt => opt.MapFrom(src => src.Titulo))
+    .ForMember(dest => dest.Data, opt => opt.MapFrom(src => src.DataInicial))
+    .ForMember(dest => dest.HoraInicio, opt => opt.MapFrom(src => src.HoraInicial))
+    .ForMember(dest => dest.HoraFim, opt => opt.MapFrom(src => src.HoraFinal))
+    .ForMember(dest => dest.Tipo, opt => opt.MapFrom(_ => "Evento"))
+    .ForMember(dest => dest.Status, opt => opt.MapFrom(src => (StatusAgenda)src.Status));
             #endregion
         }
     }

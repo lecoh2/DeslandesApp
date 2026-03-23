@@ -36,5 +36,6 @@ namespace DeslandesApp.Domain.Models.Dtos.Requests.Tarefa
 
         // 👥 Envolvidos
         public List<GrupoTarefaEnvolvidosRequest> GrupoTarefaEnvolvido { get; init; } = new();
+        public StatusTarefa? Status { get; init; }
     }
 }

@@ -15,19 +15,19 @@ namespace DeslandesApp.Infra.Data.Mappings
         {
             builder.ToTable("EVENTORESPONSAVEL");
 
-            builder.HasKey(x => new { x.EventoId, x.PessoaId });
+            builder.HasKey(x => new { x.EventoId, x.UsuarioId });
 
             builder.Property(x => x.EventoId).HasColumnName("EVENTOID");
-            builder.Property(x => x.PessoaId).HasColumnName("PESSOAID");
+            builder.Property(x => x.UsuarioId).HasColumnName("USUARIOID");
 
             builder.HasOne(x => x.Evento)
                    .WithMany(x => x.GrupoEventoResponsavel)
                    .HasForeignKey(x => x.EventoId)
                    .OnDelete(DeleteBehavior.Cascade);
 
-            builder.HasOne(x => x.Pessoa)
+            builder.HasOne(x => x.Usuario)
                    .WithMany()
-                   .HasForeignKey(x => x.PessoaId)
+                   .HasForeignKey(x => x.UsuarioId)
                    .OnDelete(DeleteBehavior.Restrict);
         }
     }

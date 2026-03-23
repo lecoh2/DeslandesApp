@@ -50,6 +50,17 @@ namespace DeslandesApp.Infra.Data.Repositories
         private IGrupoAtendimentoEtiquetaRepository? _grupoAtendimentoEtiquetaRepository;
         private ITarefaEtiquetaRepository? _tarefaEtiquetaRepository;
         private IEventoRepository? _eventoRepository;
+        private IGrupoEventoResponsavelRepository? _grupoEventoResponsavelRepository;
+        public IGrupoEventoResponsavelRepository GrupoEventoResponsavelRepository
+        {
+            get
+            {
+                if (_grupoEventoResponsavelRepository == null)
+                    _grupoEventoResponsavelRepository = new GrupoEventoResponsavelRepository(dataContext);
+
+                return _grupoEventoResponsavelRepository;
+            }
+        }
         public IEventoRepository EventoRepository
         {
             get

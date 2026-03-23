@@ -4,6 +4,7 @@ using DeslandesApp.Infra.Data.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DeslandesApp.Infra.Data.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20260323182531_agenda")]
+    partial class agenda
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -324,7 +327,7 @@ namespace DeslandesApp.Infra.Data.Migrations
                         .HasColumnType("varchar(250)")
                         .HasColumnName("TITULO");
 
-                    b.Property<Guid?>("UsuarioCriacaoId")
+                    b.Property<Guid>("UsuarioCriacaoId")
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("USUARIOCRIACAOID");
 
@@ -1095,7 +1098,7 @@ namespace DeslandesApp.Infra.Data.Migrations
                         .HasColumnType("int")
                         .HasColumnName("TIPOVINCULO");
 
-                    b.Property<Guid?>("UsuarioCriacaoId")
+                    b.Property<Guid>("UsuarioCriacaoId")
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("USUARIOCRIACAOID");
 
@@ -1601,6 +1604,7 @@ namespace DeslandesApp.Infra.Data.Migrations
                         .WithMany()
                         .HasForeignKey("UsuarioCriacaoId")
                         .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
                         .HasConstraintName("FK_EVENTO_USUARIOS_USUARIOCRIACAOID");
 
                     b.Navigation("UsuarioCriacao");
@@ -1980,6 +1984,7 @@ namespace DeslandesApp.Infra.Data.Migrations
                         .WithMany()
                         .HasForeignKey("UsuarioCriacaoId")
                         .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
                         .HasConstraintName("FK_TAREFA_USUARIOS_USUARIOCRIACAOID");
 
                     b.Navigation("Atendimento");
