@@ -1,69 +1,133 @@
 ﻿using DeslandesApp.API.Configurations;
 using DeslandesApp.API.Middlewares;
+using DeslandesApp.Domain.Interfaces.Services;
 using DeslandesApp.Domain.Extensions;
 using DeslandesApp.Infra.Data.Extensions;
-using Scalar.AspNetCore;
+using Hangfire;
+using Hangfire.SqlServer;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// ===== Carregar appsettings.json e appsettings.{Ambiente}.json =====
+// ===== Carregar appsettings =====
 builder.Configuration
     .SetBasePath(Directory.GetCurrentDirectory())
     .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
     .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: true, reloadOnChange: true)
     .AddEnvironmentVariables();
 
-// Log pra confirmar qual ambiente está sendo usado
 Console.WriteLine($">>> Ambiente atual: {builder.Environment.EnvironmentName}");
 
-// ===== Add services =====
-builder.Services.AddControllers();
+// ===== Services =====
+builder.Services.AddHttpContextAccessor();
+
+// Adiciona controllers e exige usuário autenticado por padrão
+builder.Services.AddControllers(config =>
+{
+    var policy = new Microsoft.AspNetCore.Authorization.AuthorizationPolicyBuilder()
+                     .RequireAuthenticatedUser()
+                     .Build();
+    config.Filters.Add(new Microsoft.AspNetCore.Mvc.Authorization.AuthorizeFilter(policy));
+});
+
+// ===== Swagger / OpenAPI =====
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
-builder.Services.AddOpenApi();
+builder.Services.AddSwaggerGen(c =>
+{
+    c.SwaggerDoc("v1", new OpenApiInfo
+    {
+        Title = "DeslandesApp API",
+        Version = "v1",
+        Description = "API REST .NET com EntityFramework"
+    });
 
-// ===== Configurações de infraestrutura e banco =====
+    // Configuração JWT
+    c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        Name = "Authorization",
+        Type = SecuritySchemeType.Http,
+        Scheme = "Bearer",
+        BearerFormat = "JWT",
+        In = ParameterLocation.Header,
+        Description = "Insira o token JWT assim: Bearer {token}"
+    });
+
+    c.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference { Type = ReferenceType.SecurityScheme, Id = "Bearer" }
+            },
+            Array.Empty<string>()
+        }
+    });
+});
+
+// ===== Entity Framework / Infra =====
 builder.Services.AddEntityFramework(builder.Configuration);
-
-// ===== Serviços do Domain =====
-builder.Services.AddDomainService(); // Interfaces e serviços do Domain
-
-// ===== Serviços concretos e repositórios (Infra) =====
 DependencyInjectionConfiguration.Configure(builder.Services);
 
-// ===== JWT, CORS, Swagger extras =====
+// ===== Domain Services =====
+builder.Services.AddDomainService();
+
+// ===== JWT + CORS =====
 JwtConfiguration.Configure(builder.Services);
 CorsConfiguration.Configure(builder.Services);
 
-// ===== Build app =====
+// ===== Hangfire =====
+builder.Services.AddHangfire(config =>
+    config.SetDataCompatibilityLevel(CompatibilityLevel.Version_180)
+          .UseSimpleAssemblyNameTypeSerializer()
+          .UseRecommendedSerializerSettings()
+          .UseSqlServerStorage(builder.Configuration.GetConnectionString("DeslandesApp")));
+
+builder.Services.AddHangfireServer();
+
 var app = builder.Build();
+
+// ===== Developer / Middleware =====
 app.UseDeveloperExceptionPage();
-// ===== Middlewares =====
 app.UseMiddleware<ExceptionMiddleware>();
 
 // ===== Swagger =====
-if (app.Environment.IsDevelopment())
-{
-    app.MapOpenApi();
-}
 app.UseSwagger();
-app.UseSwaggerUI(options =>
+app.UseSwaggerUI(c =>
 {
-    options.SwaggerEndpoint("/swagger/v1/swagger.json", "ProconApp API V1");
+    c.SwaggerEndpoint("/swagger/v1/swagger.json", "DeslandesApp API V1");
+    c.RoutePrefix = string.Empty; // Swagger na raiz: http://localhost:5000/
 });
 
-// ===== Scalar API =====
-app.MapScalarApiReference(s => s.WithTheme(ScalarTheme.BluePlanet));
+// ===== Hangfire Dashboard =====
+app.UseHangfireDashboard("/hangfire");
 
-// ===== Autorização e CORS =====
-app.UseAuthorization();
+// ===== Pipeline =====
+app.UseRouting();
 app.UseCors(CorsConfiguration.PolicyName);
 
-// ===== Map Controllers =====
+app.UseAuthentication(); // ✅ JWT
+app.UseAuthorization();
+
+// ===== Controllers =====
 app.MapControllers();
 
-// ===== Run app =====
+// ===== Jobs Hangfire (Background) =====
+RecurringJob.AddOrUpdate<IEventoService>(
+    "atualizar-status-eventos",
+    x => x.AtualizarStatusAutomatico(),
+    Cron.Hourly
+);
+RecurringJob.AddOrUpdate<ITarefaService>(
+    "atualizar-status-tarefas",
+    x => x.AtualizarStatusTarefasAutomatico(),
+    Cron.Hourly
+);
+
+// ===== Run =====
 app.Run();
 
-// ===== Para testes e WebApplicationFactory =====
+// ===== Para WebApplicationFactory (Testes) =====
 public partial class Program { }

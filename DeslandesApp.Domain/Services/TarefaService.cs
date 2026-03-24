@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using DeslandesApp.Domain.Interfaces.Repositories;
 using DeslandesApp.Domain.Interfaces.Services;
+using DeslandesApp.Domain.Models.Dtos.Requests;
 using DeslandesApp.Domain.Models.Dtos.Requests.ListaTarefas;
 using DeslandesApp.Domain.Models.Dtos.Requests.Processo;
 using DeslandesApp.Domain.Models.Dtos.Requests.Tarefa;
@@ -16,10 +17,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 
 namespace DeslandesApp.Domain.Services
 {
-    public class TarefaService(IUnitOfWork unitOfWork, IMapper mapper) : ITarefaService
+    public class TarefaService(IUnitOfWork unitOfWork, IMapper mapper, IHttpContextAccessor httpContextAccessor) : ITarefaService
     {
         public async Task<CriarTarefaResponse> AdicionarAsync(CriarTarefaRequest request)
         {
@@ -35,6 +37,7 @@ namespace DeslandesApp.Domain.Services
 
             // Responsável
             tarefa.ResponsavelId = request.ResponsavelId;
+            tarefa.UsuarioCriacaoId = ObterUsuarioId();
 
             // 🔗 VALIDAÇÃO DE VÍNCULOS OPCIONAIS
             int count = 0;
@@ -205,6 +208,72 @@ namespace DeslandesApp.Domain.Services
         public Task<CriarTarefaResponse?> ObterPorIdAsync(Guid id)
         {
             throw new NotImplementedException();
+        }
+        public async Task MoverCardAsync(MoverKanbanCardRequest request)
+        {
+            await unitOfWork.BeginTransactionAsync();
+
+            try
+            {
+                if (request.Tipo == "Tarefa")
+                {
+                    var tarefa = await unitOfWork.TarefaRepository.GetByIdAsync(request.Id);
+
+                    if (tarefa == null)
+                        throw new Exception("Tarefa não encontrada");
+
+                    tarefa.StatusGeralKanban = request.NovoStatus;
+                    tarefa.DataAtualizacao = DateTime.Now;
+                }
+                else if (request.Tipo == "Evento")
+                {
+                    var evento = await unitOfWork.EventoRepository.GetByIdAsync(request.Id);
+
+                    if (evento == null)
+                        throw new Exception("Evento não encontrado");
+
+                    evento.StatusGeralKanban = request.NovoStatus;
+                }
+                else
+                {
+                    throw new Exception("Tipo inválido");
+                }
+
+                await unitOfWork.CommitAsync();
+            }
+            catch
+            {
+                await unitOfWork.RollbackAsync();
+                throw;
+            }
+        }
+        public async Task AtualizarStatusTarefasAutomatico()
+        {
+            var eventos = await unitOfWork.EventoRepository.GetAllAsync();
+
+            var hoje = DateOnly.FromDateTime(DateTime.Now);
+
+            foreach (var evento in eventos)
+            {
+                if (evento.DataFinal.HasValue && evento.DataFinal < hoje)
+                {
+                    evento.StatusGeralKanban = StatusGeralKanban.Concluido;
+                }
+            }
+
+            await unitOfWork.CommitAsync();
+        }
+
+        private Guid? ObterUsuarioId()
+        {
+            var user = httpContextAccessor.HttpContext?.User;
+
+            var userId = user?.FindFirst(System.Security.Claims.ClaimTypes.Name)?.Value;
+
+            if (string.IsNullOrEmpty(userId))
+                return null;
+
+            return Guid.Parse(userId);
         }
     }
 }

@@ -35,7 +35,7 @@ namespace DeslandesApp.Domain.Models.Entities
         public List<ListaTarefa> ListasTarefa { get; set; } = new();
         public List<GrupoTarefaEnvolvido> GrupoTarefaEnvolvido { get; set; } = new();
         public TipoVinculo? TipoVinculo { get; set; }
-        public StatusTarefa Status { get; set; } = StatusTarefa.AFazer;
+        public StatusGeralKanban StatusGeralKanban { get; set; } = StatusGeralKanban.A_Fazer;
         public Guid? UsuarioCriacaoId { get; set; }
         public Usuario? UsuarioCriacao { get; set; } // ✔ nullable também
         public void ValidarVinculo()

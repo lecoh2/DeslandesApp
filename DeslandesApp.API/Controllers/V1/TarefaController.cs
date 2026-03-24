@@ -1,4 +1,5 @@
 ﻿using DeslandesApp.Domain.Interfaces.Services;
+using DeslandesApp.Domain.Models.Dtos.Requests;
 using DeslandesApp.Domain.Models.Dtos.Requests.ListaTarefas;
 using DeslandesApp.Domain.Models.Dtos.Requests.Processo;
 using DeslandesApp.Domain.Models.Dtos.Requests.Tarefa;
@@ -34,6 +35,12 @@ namespace DeslandesApp.API.Controllers.V1
         {
             await tarefaService.ReordenarListaAsync(request);
             return NoContent();
+        }
+        [HttpPatch("mover")]
+        public async Task<IActionResult> MoverCard([FromBody] MoverKanbanCardRequest request)
+        {
+            await tarefaService.MoverCardAsync(request);
+            return Ok();
         }
     }
 }

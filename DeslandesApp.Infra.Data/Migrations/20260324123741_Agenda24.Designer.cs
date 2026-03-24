@@ -4,6 +4,7 @@ using DeslandesApp.Infra.Data.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DeslandesApp.Infra.Data.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20260324123741_Agenda24")]
+    partial class Agenda24
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -256,14 +259,6 @@ namespace DeslandesApp.Infra.Data.Migrations
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("ID");
 
-                    b.Property<DateTime?>("DataAtualizacao")
-                        .HasColumnType("datetime2")
-                        .HasColumnName("DATAATUALIZACAO");
-
-                    b.Property<DateTime?>("DataCadastro")
-                        .HasColumnType("datetime2")
-                        .HasColumnName("DATACADASTRO");
-
                     b.Property<DateOnly?>("DataFimRecorrencia")
                         .HasColumnType("date")
                         .HasColumnName("DATAFIMRECORRENCIA");
@@ -317,9 +312,9 @@ namespace DeslandesApp.Infra.Data.Migrations
                         .HasColumnType("int")
                         .HasColumnName("QUANTIDADEOCORRENCIAS");
 
-                    b.Property<int>("StatusGeralKanban")
+                    b.Property<int>("Status")
                         .HasColumnType("int")
-                        .HasColumnName("STATUSKANBAN");
+                        .HasColumnName("STATUS");
 
                     b.Property<int>("TipoRecorrencia")
                         .HasColumnType("int")
@@ -1095,9 +1090,9 @@ namespace DeslandesApp.Infra.Data.Migrations
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("RESPONSAVELID");
 
-                    b.Property<int>("StatusGeralKanban")
+                    b.Property<int>("Status")
                         .HasColumnType("int")
-                        .HasColumnName("STATUSKANBAN");
+                        .HasColumnName("STATUS");
 
                     b.Property<int?>("TipoVinculo")
                         .HasColumnType("int")

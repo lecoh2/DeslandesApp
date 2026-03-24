@@ -257,7 +257,7 @@ namespace DeslandesApp.Domain.Mappings
     .ForMember(dest => dest.Titulo, opt => opt.MapFrom(src => src.Descricao))
     .ForMember(dest => dest.Data, opt => opt.MapFrom(src => DateOnly.FromDateTime(src.DataTarefa ?? src.DataCadastro)))
     .ForMember(dest => dest.Tipo, opt => opt.MapFrom(_ => "Tarefa"))
-    .ForMember(dest => dest.Status, opt => opt.MapFrom(src => (StatusAgenda)src.Status))
+    .ForMember(dest => dest.Status, opt => opt.MapFrom(src => (StatusGeralKanban)src.StatusGeralKanban))
     .ForMember(dest => dest.HoraInicio, opt => opt.Ignore())
     .ForMember(dest => dest.HoraFim, opt => opt.Ignore());
 
@@ -267,7 +267,7 @@ namespace DeslandesApp.Domain.Mappings
     .ForMember(dest => dest.HoraInicio, opt => opt.MapFrom(src => src.HoraInicial))
     .ForMember(dest => dest.HoraFim, opt => opt.MapFrom(src => src.HoraFinal))
     .ForMember(dest => dest.Tipo, opt => opt.MapFrom(_ => "Evento"))
-    .ForMember(dest => dest.Status, opt => opt.MapFrom(src => (StatusAgenda)src.Status));
+    .ForMember(dest => dest.Status, opt => opt.MapFrom(src => (StatusGeralKanban)src.StatusGeralKanban));
             #endregion
         }
     }

@@ -36,6 +36,7 @@ namespace DeslandesApp.Domain.Models.Dtos.Requests.Evento
         public List<DayOfWeek>? DiasSemana { get; init; }
         public DateOnly? DataFimRecorrencia { get; init; }
         public int? QuantidadeOcorrencias { get; init; }
-        public StatusEvento? Status { get; init; }
+        //public StatusEvento? Status { get; init; }
+        public StatusGeralKanban? StatusKaban { get; set; }
     }
 }

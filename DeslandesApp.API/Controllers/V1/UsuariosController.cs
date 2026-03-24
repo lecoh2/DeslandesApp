@@ -3,6 +3,7 @@ using DeslandesApp.Domain.Models.Dtos.Requests.Usuarios;
 using DeslandesApp.Domain.Models.Dtos.Responses.Usuarios;
 using DeslandesApp.Domain.Utils;
 using FluentValidation;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -64,6 +65,7 @@ namespace DeslandesApp.API.Controllers.V1
             var response = await usuarioService.ObterPorIdAsync(id);
             return StatusCode(200, response);
         }
+        [AllowAnonymous]
         [HttpPost("autenticar-usuario")]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]

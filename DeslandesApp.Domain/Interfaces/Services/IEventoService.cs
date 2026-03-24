@@ -10,5 +10,6 @@ namespace DeslandesApp.Domain.Interfaces.Services
 {
     public interface IEventoService : IBaseService<CriarEventoRequest, UpdateEventoRequest, CriarEventoResponse, Guid>
     {
+        Task AtualizarStatusAutomatico();
     }
 }

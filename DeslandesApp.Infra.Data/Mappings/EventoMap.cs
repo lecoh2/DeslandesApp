@@ -85,6 +85,10 @@ namespace DeslandesApp.Infra.Data.Mappings
               .WithMany()
               .HasForeignKey(e => e.UsuarioCriacaoId)
               .OnDelete(DeleteBehavior.Restrict);
+            // 🔥 STATUS KANBAN
+            builder.Property(x => x.StatusGeralKanban)
+                .HasColumnName("STATUSKANBAN")
+                .IsRequired();
         }
     }
 }

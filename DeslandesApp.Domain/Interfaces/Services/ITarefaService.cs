@@ -1,4 +1,5 @@
-﻿using DeslandesApp.Domain.Models.Dtos.Requests.ListaTarefas;
+﻿using DeslandesApp.Domain.Models.Dtos.Requests;
+using DeslandesApp.Domain.Models.Dtos.Requests.ListaTarefas;
 using DeslandesApp.Domain.Models.Dtos.Requests.Processo;
 using DeslandesApp.Domain.Models.Dtos.Requests.Tarefa;
 using DeslandesApp.Domain.Models.Dtos.Responses.Processo;
@@ -15,6 +16,8 @@ namespace DeslandesApp.Domain.Interfaces.Services
     public interface ITarefaService : IBaseService<CriarTarefaRequest, TarefaUpdateRequest, CriarTarefaResponse, Guid>
     {
         Task ReordenarListaAsync(List<ReordenarListaTarefaRequest> request);
-       
+        Task MoverCardAsync(MoverKanbanCardRequest request);
+        Task AtualizarStatusTarefasAutomatico();
+
     }
 }
