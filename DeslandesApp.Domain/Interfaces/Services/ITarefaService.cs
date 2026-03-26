@@ -5,6 +5,7 @@ using DeslandesApp.Domain.Models.Dtos.Requests.Tarefa;
 using DeslandesApp.Domain.Models.Dtos.Responses.Processo;
 using DeslandesApp.Domain.Models.Dtos.Responses.Tarefa;
 using DeslandesApp.Domain.Models.Entities;
+using DeslandesApp.Domain.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,6 +19,8 @@ namespace DeslandesApp.Domain.Interfaces.Services
         Task ReordenarListaAsync(List<ReordenarListaTarefaRequest> request);
         Task MoverCardAsync(MoverKanbanCardRequest request);
         Task AtualizarStatusTarefasAutomatico();
+        Task<PageResult<TarefaPaginacaoResponse>> ConsultarTarefaPaginacaoAsync(int pageNumber, int pageSize, string? searchTerm = null);
+
 
     }
 }

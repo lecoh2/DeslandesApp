@@ -5,6 +5,7 @@ using DeslandesApp.Domain.Models.Dtos.Requests.Atendimento;
 using DeslandesApp.Domain.Models.Dtos.Requests.Caso;
 using DeslandesApp.Domain.Models.Dtos.Responses.Atendimento;
 using DeslandesApp.Domain.Models.Dtos.Responses.Caso;
+using DeslandesApp.Domain.Models.Dtos.Responses.Processo;
 using DeslandesApp.Domain.Models.Entities;
 using DeslandesApp.Domain.Models.Enum;
 using DeslandesApp.Domain.Utils;
@@ -155,7 +156,27 @@ namespace DeslandesApp.Domain.Services
         {
             throw new NotImplementedException();
         }
+        public async Task<PageResult<AtendimentoPaginacaoResponse>> ConsultarAtendimentoPaginacaoAsync(
+     int pageNumber,
+     int pageSize,
+     string? searchTerm = null)
+        {
+            var paged = await unitOfWork.AtendimentoRepository
+                .GetAtendimentoPaginacaoAsync(pageNumber, pageSize, searchTerm);
 
+            if (paged == null || !paged.Items.Any())
+            {
+                return new PageResult<AtendimentoPaginacaoResponse>
+                {
+                    Items = new List<AtendimentoPaginacaoResponse>(),
+                    TotalCount = 0,
+                    PageNumber = pageNumber,
+                    PageSize = pageSize
+                };
+            }
+
+            return paged;
+        }
         public void Dispose()
         {
             unitOfWork.Dispose();

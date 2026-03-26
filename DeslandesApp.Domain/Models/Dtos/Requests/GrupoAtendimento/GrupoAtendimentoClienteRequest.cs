@@ -6,8 +6,9 @@ using System.Threading.Tasks;
 
 namespace DeslandesApp.Domain.Models.Dtos.Requests.GrupoAtendimento
 {
-    public record  GrupoAtendimentoClienteRequest
+    public record GrupoAtendimentoClienteRequest
     (
-        Guid IdPessoa
+        Guid IdPessoa,
+        string Nome
     );
 }

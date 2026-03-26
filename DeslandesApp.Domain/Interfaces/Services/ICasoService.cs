@@ -2,6 +2,7 @@
 using DeslandesApp.Domain.Models.Dtos.Requests.Tarefa;
 using DeslandesApp.Domain.Models.Dtos.Responses.Caso;
 using DeslandesApp.Domain.Models.Dtos.Responses.Tarefa;
+using DeslandesApp.Domain.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,5 +13,7 @@ namespace DeslandesApp.Domain.Interfaces.Services
 {
     public interface ICasoService : IBaseService<CriarCasoRequest, CasoUpdateRequest, CriarCasoResponse, Guid>
     {
+        Task<PageResult<CasoPaginacaoResponse>> ConsultarCasoPaginacaoAsync(int pageNumber, int pageSize, string? searchTerm = null);
+
     }
 }

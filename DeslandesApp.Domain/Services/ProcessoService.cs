@@ -127,6 +127,28 @@ namespace DeslandesApp.Domain.Services
             throw new NotImplementedException();
         }
 
+   
+        public async Task<PageResult<ProcessoPaginacaoResponse>> ConsultarProcessoPaginacaoAsync(
+      int pageNumber,
+      int pageSize,
+      string? searchTerm = null)
+        {
+            var paged = await unitOfWork.ProcessoRepository
+                .GetProcessoPaginacaoAsync(pageNumber, pageSize, searchTerm);
+
+            if (paged == null || !paged.Items.Any())
+            {
+                return new PageResult<ProcessoPaginacaoResponse>
+                {
+                    Items = new List<ProcessoPaginacaoResponse>(),
+                    TotalCount = 0,
+                    PageNumber = pageNumber,
+                    PageSize = pageSize
+                };
+            }
+
+            return paged;
+        }
         public void Dispose()
         {
             unitOfWork.Dispose();

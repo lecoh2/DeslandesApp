@@ -3,6 +3,7 @@ using DeslandesApp.Domain.Interfaces.Repositories;
 using DeslandesApp.Domain.Interfaces.Services;
 using DeslandesApp.Domain.Models.Dtos.Requests.Caso;
 using DeslandesApp.Domain.Models.Dtos.Responses.Caso;
+using DeslandesApp.Domain.Models.Dtos.Responses.Processo;
 using DeslandesApp.Domain.Models.Entities;
 using DeslandesApp.Domain.Utils;
 using DeslandesApp.Domain.Validators;
@@ -106,7 +107,27 @@ namespace DeslandesApp.Domain.Services
         {
             throw new NotImplementedException();
         }
+        public async Task<PageResult<CasoPaginacaoResponse>> ConsultarCasoPaginacaoAsync(
+    int pageNumber,
+    int pageSize,
+    string? searchTerm = null)
+        {
+            var paged = await unitOfWork.CasoRepository
+                .GetCasoPaginacaoAsync(pageNumber, pageSize, searchTerm);
 
+            if (paged == null || !paged.Items.Any())
+            {
+                return new PageResult<CasoPaginacaoResponse>
+                {
+                    Items = new List<CasoPaginacaoResponse>(),
+                    TotalCount = 0,
+                    PageNumber = pageNumber,
+                    PageSize = pageSize
+                };
+            }
+
+            return paged;
+        }
         public void Dispose()
         {
             unitOfWork.Dispose();

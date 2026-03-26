@@ -34,7 +34,7 @@ namespace DeslandesApp.Domain.Services
             tarefa.Descricao = tarefa.Descricao?.Trim();
             tarefa.DataCadastro = DateTime.Now;
             tarefa.DataAtualizacao = DateTime.Now;
-
+            tarefa.StatusGeralKanban = StatusGeralKanban.A_Fazer;
             // Responsável
             tarefa.ResponsavelId = request.ResponsavelId;
             tarefa.UsuarioCriacaoId = ObterUsuarioId();
@@ -189,7 +189,27 @@ namespace DeslandesApp.Domain.Services
         {
             throw new NotImplementedException();
         }
+        public async Task<PageResult<TarefaPaginacaoResponse>> ConsultarTarefaPaginacaoAsync(
+     int pageNumber,
+     int pageSize,
+     string? searchTerm = null)
+        {
+            var paged = await unitOfWork.TarefaRepository
+                .GetTarefaPaginacaoAsync(pageNumber, pageSize, searchTerm);
 
+            if (paged == null || !paged.Items.Any())
+            {
+                return new PageResult<TarefaPaginacaoResponse>
+                {
+                    Items = new List<TarefaPaginacaoResponse>(),
+                    TotalCount = 0,
+                    PageNumber = pageNumber,
+                    PageSize = pageSize
+                };
+            }
+
+            return paged;
+        }
         public void Dispose()
         {
             unitOfWork.Dispose();
