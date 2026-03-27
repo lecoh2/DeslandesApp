@@ -26,12 +26,12 @@ namespace DeslandesApp.API.Controllers.V1
                 data = response
             });
         }
-        
-     [HttpGet("consultar-processo-paginacao")]
+
+        [HttpGet("consultar-processo-paginacao")]
         public async Task<IActionResult> ConsultarProcessoPaginacao(
-    [FromQuery] int pageNumber = 1,
-    [FromQuery] int pageSize = 10,
-    [FromQuery] string? searchTerm = null)
+       [FromQuery] int pageNumber = 1,
+       [FromQuery] int pageSize = 10,
+       [FromQuery] string? searchTerm = null)
         {
             pageNumber = pageNumber <= 0 ? 1 : pageNumber;
             pageSize = pageSize <= 0 ? 10 : Math.Min(pageSize, 100);
@@ -40,6 +40,19 @@ namespace DeslandesApp.API.Controllers.V1
                 .ConsultarProcessoPaginacaoAsync(pageNumber, pageSize, searchTerm);
 
             return Ok(proessoPaged);
+        }
+    
+       [HttpPut("atualizar-processo{id}")]
+        [ProducesResponseType(typeof(ProcessoResponse), 200)]
+        public async Task<IActionResult> PutAsync(Guid id, [FromBody] ProcessoUpdateRequest request)
+        {
+            var response = await processoService.ModificarAsync(id, request);
+            return StatusCode(StatusCodes.Status201Created, new
+            {
+                success = true,
+                message = $"Proceso {response.Pasta} atualizado com sucesso.",
+                data = response
+            });
         }
     }
 }
