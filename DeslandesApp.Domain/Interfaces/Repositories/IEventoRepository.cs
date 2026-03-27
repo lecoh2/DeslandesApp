@@ -1,4 +1,7 @@
-﻿using DeslandesApp.Domain.Models.Entities;
+﻿using DeslandesApp.Domain.Models.Dtos.Responses.Caso;
+using DeslandesApp.Domain.Models.Dtos.Responses.Evento;
+using DeslandesApp.Domain.Models.Entities;
+using DeslandesApp.Domain.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,6 +12,8 @@ namespace DeslandesApp.Domain.Interfaces.Repositories
 {
     public interface IEventoRepository : IBaseRepository<Evento, Guid>
     {
+        Task<PageResult<EventoPaginacaoResponse>> GetEventoPaginacaoAsync(int pageNumber, int pageSize, string? searchTerm = null);
+
     }
 }
 

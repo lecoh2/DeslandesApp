@@ -1,6 +1,11 @@
 ﻿using DeslandesApp.Domain.Interfaces.Repositories;
+using DeslandesApp.Domain.Models.Dtos.Responses.Evento;
+using DeslandesApp.Domain.Models.Dtos.Responses.GrupoEventoResponsavel;
+using DeslandesApp.Domain.Models.Dtos.Responses.Usuarios;
 using DeslandesApp.Domain.Models.Entities;
+using DeslandesApp.Domain.Utils;
 using DeslandesApp.Infra.Data.Contexts;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,5 +16,107 @@ namespace DeslandesApp.Infra.Data.Repositories
 {
     public class EventoRepository(DataContext dataContext) : BaseRepository<Evento, Guid>(dataContext), IEventoRepository
     {
+        public async Task<PageResult<EventoPaginacaoResponse>> GetEventoPaginacaoAsync(
+       int pageNumber,
+       int pageSize,
+       string? searchTerm = null)
+        {
+            // 1️⃣ Base query (🔥 CORREÇÃO AQUI)
+            var query = dataContext.Evento
+                .AsNoTracking()
+                .Include(e => e.UsuarioCriacao) // ✅ resolve o null
+                .AsQueryable();
+
+            // 2️⃣ Filtro
+            if (!string.IsNullOrWhiteSpace(searchTerm))
+            {
+                var term = searchTerm.ToLower();
+
+                query = query.Where(e =>
+                    e.Titulo.ToLower().Contains(term) ||
+
+                    (e.Endereco != null && e.Endereco.ToLower().Contains(term)) ||
+
+                    (e.UsuarioCriacao != null &&
+                     e.UsuarioCriacao.NomeUsuario.ToLower().Contains(term)) ||
+                    dataContext.GrupoEventoResponsavel
+                        .Where(gr => gr.EventoId == e.Id)
+                        .Any(gr => gr.Usuario.NomeUsuario.ToLower().Contains(term))
+                );
+            }
+
+            // 3️⃣ Total
+            var totalCount = await query.CountAsync();
+
+            // 4️⃣ Paginação
+            var eventosPaged = await query
+                .OrderBy(e => e.DataInicial)
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+
+            var eventosIds = eventosPaged.Select(e => e.Id).ToList();
+
+            // 5️⃣ Buscar responsáveis
+            var responsaveisDb = await dataContext.GrupoEventoResponsavel
+                .Where(gr => eventosIds.Contains(gr.EventoId))
+                .Select(gr => new GrupoEventoResponsavelTemp
+                {
+                    EventoId = gr.EventoId,
+                    UsuarioId = gr.UsuarioId,
+                    NomeUsuario = gr.Usuario.NomeUsuario
+                })
+                .ToListAsync();
+
+            // 6️⃣ Agrupar
+            var responsaveisPorEvento = responsaveisDb
+                .GroupBy(r => r.EventoId)
+                .ToDictionary(g => g.Key, g => g.ToList());
+
+            // 7️⃣ Montagem final
+            var items = eventosPaged.Select(e =>
+            {
+                var responsaveis = responsaveisPorEvento.ContainsKey(e.Id)
+                    ? responsaveisPorEvento[e.Id]
+                    : new List<GrupoEventoResponsavelTemp>();
+
+                return new EventoPaginacaoResponse
+                {
+                    Titulo = e.Titulo,
+                    DataInicial = e.DataInicial,
+                    HoraInicial = e.HoraInicial,
+                    DataFinal = e.DataFinal,
+                    HoraFinal = e.HoraFinal,
+                    DiaInteiro = e.DiaInteiro,
+                    Endereco = e.Endereco,
+                    Modalidade = e.Modalidade,
+                    StatusGeralKanban = e.StatusGeralKanban,
+
+                    // ✅ AGORA NÃO VEM MAIS NULL
+                    UsuarioCriacao = e.UsuarioCriacao == null
+                        ? null
+                        : new UsuarioResumoResponse(
+                            e.UsuarioCriacao.Id,
+                            e.UsuarioCriacao.NomeUsuario
+                        ),
+
+                    GrupoEventoResponsavel = responsaveis
+                        .Select(r => new GrupoEventoResponsavelResponse(
+                            r.UsuarioId,
+                            r.NomeUsuario
+                        ))
+                        .ToList()
+                };
+            }).ToList();
+
+            // 8️⃣ Retorno
+            return new PageResult<EventoPaginacaoResponse>
+            {
+                Items = items,
+                TotalCount = totalCount,
+                PageNumber = pageNumber,
+                PageSize = pageSize
+            };
+        }
     }
 }

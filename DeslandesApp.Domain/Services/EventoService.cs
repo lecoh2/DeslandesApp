@@ -4,6 +4,7 @@ using DeslandesApp.Domain.Interfaces.Services;
 using DeslandesApp.Domain.Models.Dtos.Requests;
 using DeslandesApp.Domain.Models.Dtos.Requests.Evento;
 using DeslandesApp.Domain.Models.Dtos.Responses.Evento;
+using DeslandesApp.Domain.Models.Dtos.Responses.Processo;
 using DeslandesApp.Domain.Models.Dtos.Responses.Tarefa;
 using DeslandesApp.Domain.Models.Entities;
 using DeslandesApp.Domain.Models.Enum;
@@ -144,7 +145,27 @@ namespace DeslandesApp.Domain.Services
         {
             throw new NotImplementedException();
         }
+        public async Task<PageResult<EventoPaginacaoResponse>> ConsultarEventoPaginacaoAsync(
+     int pageNumber,
+     int pageSize,
+     string? searchTerm = null)
+        {
+            var paged = await unitOfWork.EventoRepository
+                .GetEventoPaginacaoAsync(pageNumber, pageSize, searchTerm);
 
+            if (paged == null || !paged.Items.Any())
+            {
+                return new PageResult<EventoPaginacaoResponse>
+                {
+                    Items = new List<EventoPaginacaoResponse>(),
+                    TotalCount = 0,
+                    PageNumber = pageNumber,
+                    PageSize = pageSize
+                };
+            }
+
+            return paged;
+        }
         public void Dispose()
         {
             unitOfWork.Dispose();
