@@ -14,8 +14,8 @@ namespace DeslandesApp.Domain.Models.Entities
         public Guid? IdUsuario { get; set; }
         public Guid? IdAcao { get; set; }
         public DateTime? DataAlteracao { get; set; }
-        public string? Observacoes { get; set; }
-
+        public string? Observacoes { get; set; }    
+        public Processo Processo { get; set; }
         //JSON bruto
         public string DadosAntes { get; set; } = string.Empty;
         public string DadosDepois { get; set; } = string.Empty;

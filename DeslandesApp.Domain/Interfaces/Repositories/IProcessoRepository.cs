@@ -13,6 +13,6 @@ namespace DeslandesApp.Domain.Interfaces.Repositories
     public interface IProcessoRepository : IBaseRepository<Processo, Guid>
     {
         Task<PageResult<ProcessoPaginacaoResponse>> GetProcessoPaginacaoAsync(int pageNumber, int pageSize, string? searchTerm = null);
-
+        Task<Processo> ConsultarProcessoComRelacionamentosAsync(Guid idPessoa);
     }
 }

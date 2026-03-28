@@ -27,6 +27,7 @@ namespace DeslandesApp.Infra.Data.Contexts
         public DbSet<PessoaJuridica> PessoaJuridica { get; set; }
         public DbSet<Qualificacao> Qualificacao { get; set; }
         public DbSet<PessoaHistorico> PessoaHistorico { get; set; }
+        public DbSet<ProcessoHistorico> ProcessoHistorico { get; set; }
         public DbSet<InformacoesComplementaresPessoaJuridica> InformacoesComplementaresPessoaJuridicas { get; set; }
         public DbSet<Processo> Processos{ get; set; }
         public DbSet<GrupoPessoaClientes> GrupoPessoaClientes { get; set; }
