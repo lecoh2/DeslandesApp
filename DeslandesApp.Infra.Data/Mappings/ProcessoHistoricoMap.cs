@@ -41,6 +41,12 @@ namespace DeslandesApp.Infra.Data.Mappings
                 .HasForeignKey(p => p.IdUsuario)
                 .HasConstraintName("FK_UsuarioHistorico_USuario")
                 .OnDelete(DeleteBehavior.Restrict);
+            builder.HasOne(p => p.Processo)
+    .WithMany()
+    .HasForeignKey(p => p.ProcessoId)
+    .HasConstraintName("FK_PROCESSOHISTORICO_PROCESSOS_PROCESSOID")
+    .OnDelete(DeleteBehavior.Restrict);
+
         }
     }
 }

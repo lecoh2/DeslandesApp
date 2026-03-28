@@ -3,6 +3,7 @@ using DeslandesApp.Domain.Models.Dtos.Requests.Processo;
 using DeslandesApp.Domain.Models.Dtos.Requests.Usuarios;
 using DeslandesApp.Domain.Models.Dtos.Responses.Processo;
 using DeslandesApp.Domain.Models.Dtos.Responses.Usuarios;
+using DeslandesApp.Domain.Models.Entities;
 using DeslandesApp.Domain.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -52,6 +53,83 @@ namespace DeslandesApp.API.Controllers.V1
                 success = true,
                 message = $"Proceso {response.Pasta} atualizado com sucesso.",
                 data = response
+            });
+        }
+
+        [HttpPost("adicionar-grupo-cliente/{idPessoa:guid}/{idProcesso:guid}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<IActionResult> AdicionarGrupoSetor(Guid idPessoa, Guid idProcesso)
+        {
+            await processoService.AdicionarClienteProcessoAsync(idPessoa, idProcesso);
+
+            return Ok(new
+            {
+                success = true,
+                message = "Setor adicionado ao usuário com sucesso."
+            });
+        }
+
+        [HttpDelete("remover-grupo-cliente-processo/{idPessoa:guid}/{idProcesso:guid}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<IActionResult> RemoverGrupoSetor(Guid idPessoa, Guid idProcesso)
+        {
+            await processoService.RemoverClienteProcessoAsync(idPessoa, idProcesso);
+
+            return Ok(new
+            {
+                success = true,
+                message = "Setor removido do usuário com sucesso."
+            });
+        }
+
+        [HttpPost("adicionar-grupo-envolvidos-processo/{idPessoa:guid}/{idProcesso:guid}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<IActionResult> AdicionarGrupoEnvolvidosProcesso(Guid idPessoa, Guid idProcesso)
+        {
+            await processoService.AdicionarEnvolvidosProcessoAsync(idPessoa, idProcesso);
+
+            return Ok(new
+            {
+                success = true,
+                message = "Setor adicionado ao usuário com sucesso."
+            });
+        }
+
+        [HttpDelete("remover-grupo-envolvidos-processo/{idPessoa:guid}/{idProcesso:guid}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<IActionResult> RemoverGrupoEnvolvidosProcesso(Guid idPessoa, Guid idProcesso)
+        {
+            await processoService.RemoverEnvolvidosProcessoAsync(idPessoa, idProcesso);
+
+            return Ok(new
+            {
+                success = true,
+                message = "Setor removido do usuário com sucesso."
+            });
+        }
+        [HttpPost("adicionar-grupo-etiqueta-processo/{idEtiqueta:guid}/{idProcesso:guid}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<IActionResult> AdicionarGrupoEtiqutaProcesso(Guid idEtiqueta, Guid idProcesso)
+        {
+            await processoService.AdicionarEtiquetaProcessoAsync(idEtiqueta, idProcesso);
+
+            return Ok(new
+            {
+                success = true,
+                message = "Etiquta adicionada ."
+            });
+        }
+
+        [HttpDelete("remover-grupo-etiqueta-processo/{idEtiqueta:guid}/{idProcesso:guid}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<IActionResult> RemoverGrupoEtiquetaProcesso(Guid idEtiqueta, Guid idProcesso)
+        {
+            await processoService.RemoverEtiquetaProcessoAsync(idEtiqueta, idProcesso);
+
+            return Ok(new
+            {
+                success = true,
+                message = "Etiqueta removida d."
             });
         }
     }

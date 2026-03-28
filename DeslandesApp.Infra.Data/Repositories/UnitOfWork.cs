@@ -52,6 +52,17 @@ namespace DeslandesApp.Infra.Data.Repositories
         private IEventoRepository? _eventoRepository;
         private IGrupoEventoResponsavelRepository? _grupoEventoResponsavelRepository;
         private IProcessoHistoricoRepository? _processoHistoricoRepository;
+        private IProcessoEtiquetaRepository? _processoEtiquetaRepository;
+        public IProcessoEtiquetaRepository ProcessoEtiquetaRepository
+        {
+            get
+            {
+                if (_processoEtiquetaRepository == null)
+                    _processoEtiquetaRepository = new ProcessoEtiquetaRepository(dataContext);
+
+                return _processoEtiquetaRepository;
+            }
+        }
         public IProcessoHistoricoRepository ProcessoHistoricoRepository
         {
             get

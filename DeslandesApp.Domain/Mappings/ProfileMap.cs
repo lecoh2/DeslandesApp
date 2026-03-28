@@ -192,6 +192,8 @@ namespace DeslandesApp.Domain.Mappings
      .ForCtorParam("Titulo", opt => opt.MapFrom(src => src.Titulo))
      .ForCtorParam("NumeroProcesso", opt => opt.MapFrom(src => src.NumeroProcesso))
      .ForAllMembers(opt => opt.Ignore());
+
+            CreateMap<ProcessoUpdateRequest, Processo>();
             #endregion
 
             #region Tarefas

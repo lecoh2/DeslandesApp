@@ -1,7 +1,9 @@
 ﻿using DeslandesApp.Domain.Models.Dtos.Requests.GrupoCliente;
 using DeslandesApp.Domain.Models.Dtos.Requests.GrupoEnvolvidos;
+using DeslandesApp.Domain.Models.Dtos.Requests.GrupoEtiqueta;
 using DeslandesApp.Domain.Models.Dtos.Requests.GrupoSetores;
 using DeslandesApp.Domain.Models.Dtos.Requests.Qualificacao;
+using DeslandesApp.Domain.Models.Enum;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -30,11 +32,13 @@ namespace DeslandesApp.Domain.Models.Dtos.Requests.Processo
             public DateOnly? Distribuido { get; init; }
             public decimal? ValorCondenacao { get; init; }
             public string? Observacao { get; init; }
-
+           public int? Instancia { get; set; }
+        public int? Acesso { get; set; }
             // 🔥 RELACIONAMENTOS N:N
             public List<GrupoClienteRequset>? GrupoCliente { get; init; }
             public List<GrupoEnvolvidosRequest>? GrupoEnvolvidos { get; init; }
-        }
+        public List<GrupoEtiquetaRequest> GrupoEtiquetas { get; init; } = new();
+    }
 
     }
 

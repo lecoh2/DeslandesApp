@@ -12,5 +12,6 @@ namespace DeslandesApp.Domain.Models.Entities
         public string Nome { get; set; } = string.Empty;
 
         public List<TarefaEtiqueta> TarefaEtiquetas { get; set; } = new();
+        public List<ProcessoEtiqueta> ProcessoEtiquetas { get; set; } = new();
     }
 }

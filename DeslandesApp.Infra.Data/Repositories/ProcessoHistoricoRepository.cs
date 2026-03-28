@@ -27,7 +27,7 @@ namespace DeslandesApp.Infra.Data.Repositories
 
                 .Include(h => h.Processo)
                     .ThenInclude(p => p.Acao)                
-                .Where(h => h.IdProcesso == id)//  filtro
+                .Where(h => h.ProcessoId == id)//  filtro
 
              
                 .OrderByDescending(h => h.DataAlteracao)   //  ordenação

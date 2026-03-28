@@ -35,7 +35,11 @@ namespace DeslandesApp.Domain.Services
             processo.Titulo = processo.Titulo?.Trim().ToUpper();
             processo.NumeroProcesso = processo.NumeroProcesso?.Trim();
             processo.LinkTribunal = processo.LinkTribunal?.Trim();
-
+            processo.Instancia = request.Instancia.HasValue
+     ? (Instancia?)request.Instancia.Value
+     : null;
+            processo.Acesso = request.Acesso.HasValue
+     ? (Acesso?)request.Acesso.Value : null;
             processo.DataCadastro = DateTime.Now;
 
             //  Responsável
@@ -115,7 +119,20 @@ namespace DeslandesApp.Domain.Services
                     await unitOfWork.GrupoEnvolvidosRepository.AddAsync(grupoEnvolvidos);
                 }
             }
-
+            if (request.GrupoEtiquetas != null && request.GrupoEtiquetas.Any())
+            {
+                foreach (var grupoEtiqueta in request.GrupoEtiquetas)
+                {
+                    var etiqueta = await unitOfWork.EtiquetaRepository.GetByIdAsync(grupoEtiqueta.EtiquetaId);
+                    if (etiqueta == null) throw new InvalidOperationException("Etiqueta não encontrada.");
+                    var processoEtiqueta = new ProcessoEtiqueta
+                    {
+                        ProcessoId = processo.Id,
+                        EtiquetaId = grupoEtiqueta.EtiquetaId
+                    };
+                    await unitOfWork.ProcessoEtiquetaRepository.AddAsync(processoEtiqueta);
+                }
+            }
             //  Commit único
             await unitOfWork.CommitAsync();
 
@@ -190,6 +207,8 @@ namespace DeslandesApp.Domain.Services
                 processoAntes.ValorCondenacao,
                 processoAntes.Distribuido,
                 processoAntes.Observacao,
+                Instancia = processoAntes.Instancia?.ToString(),
+                Acesso = processoAntes.Acesso?.ToString(),
 
                 Vara = processoAntes.Vara != null ? new
                 {
@@ -257,7 +276,8 @@ namespace DeslandesApp.Domain.Services
                 processoDepois.ValorCondenacao,
                 processoDepois.Distribuido,
                 processoDepois.Observacao,
-
+                Instancia = processoDepois.Instancia?.ToString(),
+                Acesso = processoDepois.Acesso?.ToString(),
                 Vara = processoDepois.Vara?.NomeVara,
                 UsuarioResponsavel = processoDepois.UsuarioResponsavel?.NomeUsuario,
                 Acao = processoDepois.Acao?.NomeAcao,
@@ -285,9 +305,12 @@ namespace DeslandesApp.Domain.Services
             };
 
             // 🧾 Histórico
+            mapper.Map(request, processo);
+            processo.UsuarioResponsavelId = request.UsuarioResponsavelId;
+
             var historico = new ProcessoHistorico
             {
-                IdProcesso = processo.Id,
+                ProcessoId = processo.Id,
                 IdUsuario = request.UsuarioResponsavelId!.Value,
                 DataAlteracao = DateTime.Now,
                 Observacoes = request.Observacao ?? "",
@@ -296,6 +319,8 @@ namespace DeslandesApp.Domain.Services
             };
 
             await unitOfWork.ProcessoHistoricoRepository.AddAsync(historico);
+
+      
 
             await unitOfWork.CommitAsync();
 

@@ -4,6 +4,7 @@ using DeslandesApp.Infra.Data.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DeslandesApp.Infra.Data.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20260328170946_ProcessoHisotrico23")]
+    partial class ProcessoHisotrico23
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -989,7 +992,7 @@ namespace DeslandesApp.Infra.Data.Migrations
                 {
                     b.Property<Guid>("ProcessoId")
                         .HasColumnType("uniqueidentifier")
-                        .HasColumnName("PROCESSOID");
+                        .HasColumnName("TPROCESSOID");
 
                     b.Property<Guid>("EtiquetaId")
                         .HasColumnType("uniqueidentifier")

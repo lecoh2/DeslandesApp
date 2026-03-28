@@ -24,9 +24,9 @@ namespace DeslandesApp.Infra.Data.Repositories
                 .Include(p => p.Vara)
                 .Include(p => p.UsuarioResponsavel)
                 .Include(p => p.Acao)
-                .Include(p => p.Etiqueta)
-                .Include(p => p.Instancia)
-                .Include(p => p.Acesso)
+               // .Include(p => p.Etiqueta)
+                //.Include(p => p.Instancia)
+               // .Include(p => p.Acesso)
                 .FirstOrDefaultAsync(p => p.Id == idProcesso);
         }
         

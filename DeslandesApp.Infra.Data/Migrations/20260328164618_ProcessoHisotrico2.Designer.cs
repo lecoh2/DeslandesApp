@@ -4,6 +4,7 @@ using DeslandesApp.Infra.Data.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DeslandesApp.Infra.Data.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20260328164618_ProcessoHisotrico2")]
+    partial class ProcessoHisotrico2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -983,25 +986,6 @@ namespace DeslandesApp.Infra.Data.Migrations
                         .HasDatabaseName("IX_PESSOAHISTORICO_USUARIO_ID");
 
                     b.ToTable("PESSOAHISTORICO", (string)null);
-                });
-
-            modelBuilder.Entity("DeslandesApp.Domain.Models.Entities.ProcessoEtiqueta", b =>
-                {
-                    b.Property<Guid>("ProcessoId")
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnName("PROCESSOID");
-
-                    b.Property<Guid>("EtiquetaId")
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnName("ETIQUETAID");
-
-                    b.HasKey("ProcessoId", "EtiquetaId")
-                        .HasName("PK_PROCESSOETIQUETA");
-
-                    b.HasIndex("EtiquetaId")
-                        .HasDatabaseName("IX_PROCESSOETIQUETA_ETIQUETAID");
-
-                    b.ToTable("PROCESSOETIQUETA", (string)null);
                 });
 
             modelBuilder.Entity("DeslandesApp.Domain.Models.Entities.ProcessoHistorico", b =>
@@ -2033,27 +2017,6 @@ namespace DeslandesApp.Infra.Data.Migrations
                     b.Navigation("Usuario");
                 });
 
-            modelBuilder.Entity("DeslandesApp.Domain.Models.Entities.ProcessoEtiqueta", b =>
-                {
-                    b.HasOne("DeslandesApp.Domain.Models.Entities.Etiqueta", "Etiqueta")
-                        .WithMany("ProcessoEtiquetas")
-                        .HasForeignKey("EtiquetaId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("FK_PROCSSOETIQUETA_PROCESSO");
-
-                    b.HasOne("Processo", "Processo")
-                        .WithMany("ProcessoEtiquetas")
-                        .HasForeignKey("ProcessoId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("FK_PROCESSOAETIQUETA_PROCESSO");
-
-                    b.Navigation("Etiqueta");
-
-                    b.Navigation("Processo");
-                });
-
             modelBuilder.Entity("DeslandesApp.Domain.Models.Entities.ProcessoHistorico", b =>
                 {
                     b.HasOne("DeslandesApp.Domain.Models.Entities.Acao", "Acao")
@@ -2202,8 +2165,6 @@ namespace DeslandesApp.Infra.Data.Migrations
 
             modelBuilder.Entity("DeslandesApp.Domain.Models.Entities.Etiqueta", b =>
                 {
-                    b.Navigation("ProcessoEtiquetas");
-
                     b.Navigation("TarefaEtiquetas");
                 });
 
@@ -2277,8 +2238,6 @@ namespace DeslandesApp.Infra.Data.Migrations
                     b.Navigation("GrupoEnvolvidos");
 
                     b.Navigation("GrupoPessoaClientes");
-
-                    b.Navigation("ProcessoEtiquetas");
                 });
 #pragma warning restore 612, 618
         }

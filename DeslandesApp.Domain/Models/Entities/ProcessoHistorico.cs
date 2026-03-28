@@ -10,8 +10,10 @@ namespace DeslandesApp.Domain.Models.Entities
     public class ProcessoHistorico : BaseEntity
     {
         //public Guid IdHistoricoPessoa { get; set; }
-        public Guid IdProcesso { get; set; }
+        public Guid Id { get; set; }
+
         public Guid? IdUsuario { get; set; }
+        public Guid ProcessoId { get; set; }
         public Guid? IdAcao { get; set; }
         public DateTime? DataAlteracao { get; set; }
         public string? Observacoes { get; set; }    
