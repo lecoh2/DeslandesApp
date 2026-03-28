@@ -46,6 +46,7 @@ namespace DeslandesApp.Domain.Interfaces.Repositories
         IGrupoEventoResponsavelRepository GrupoEventoResponsavelRepository { get; }
         IEventoRepository EventoRepository { get; }
         IProcessoEtiquetaRepository ProcessoEtiquetaRepository { get; } 
+        IGrupoClientesProcessosRepository GrupoClientesProcessosRepository { get; }
         #endregion
     }
 }

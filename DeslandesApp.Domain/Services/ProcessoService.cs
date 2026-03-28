@@ -331,5 +331,64 @@ namespace DeslandesApp.Domain.Services
         {
             throw new NotImplementedException();
         }
+        public async Task AdicionarSetorAsync(Guid idUsuario, Guid idSetor)
+        {
+            await unitOfWork.BeginTransactionAsync();
+
+            try
+            {
+                var usuario = await unitOfWork.UsuarioRepository.GetByIdAsync(idUsuario);
+                if (usuario is null)
+                    throw new ApplicationException("Usuário não encontrado.");
+
+                var setor = await unitOfWork.SetorRepository.GetByIdAsync(idSetor);
+                if (setor is null)
+                    throw new ApplicationException("Setor não encontrado.");
+
+                var existeVinculo = await unitOfWork.GrupoSetoresRepository
+                    .ExistUsuarioSetorAsync(idUsuario, idSetor);
+
+                if (existeVinculo != null)
+                    throw new ApplicationException("Este usuário já está vinculado a esse setor.");
+
+                var grupoSetor = new GrupoSetores
+                {
+                    IdUsuario = idUsuario,
+                    IdSetor = idSetor
+                };
+
+                await unitOfWork.GrupoSetoresRepository.AddAsync(grupoSetor);
+
+                await unitOfWork.CommitAsync();
+            }
+            catch
+            {
+                await unitOfWork.RollbackAsync();
+                throw;
+            }
+        }
+
+        public async Task RemoverSetorAsync(Guid idUsuario, Guid idSetor)
+        {
+            await unitOfWork.BeginTransactionAsync();
+
+            try
+            {
+                var entidade = await unitOfWork.GrupoSetoresRepository
+                    .GetByIdUSuarioIdSetor(idUsuario, idSetor);
+
+                if (entidade is null)
+                    throw new ApplicationException("Vínculo entre usuário e setor não encontrado.");
+
+                await unitOfWork.GrupoSetoresRepository.DeleteAsync(entidade);
+
+                await unitOfWork.CommitAsync();
+            }
+            catch
+            {
+                await unitOfWork.RollbackAsync();
+                throw;
+            }
+        }
     }
 }
