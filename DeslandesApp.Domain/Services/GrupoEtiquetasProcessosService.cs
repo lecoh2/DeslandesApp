@@ -2,6 +2,7 @@
 using DeslandesApp.Domain.Interfaces.Repositories;
 using DeslandesApp.Domain.Interfaces.Services;
 using DeslandesApp.Domain.Models.Dtos.Requests.GrupoEtiquetaProcesso;
+using DeslandesApp.Domain.Models.Dtos.Responses.GrupoEnvolvidosProcesso;
 using DeslandesApp.Domain.Models.Dtos.Responses.GrupoEtiquetasProcessos;
 using DeslandesApp.Domain.Models.Entities;
 using DeslandesApp.Domain.Utils;
@@ -20,7 +21,7 @@ namespace DeslandesApp.Domain.Services
             throw new NotImplementedException();
         }
 
-        public async Task AdicionarEtiquetaProcessoAsync(Guid idEtiqueta, Guid idProcesso)
+        public async Task<GrupoEtiquetasProcessosResponse> AdicionarEtiquetaProcessoAsync(Guid idEtiqueta, Guid idProcesso)
         {
             await unitOfWork.BeginTransactionAsync();
 
@@ -49,6 +50,13 @@ namespace DeslandesApp.Domain.Services
                 await unitOfWork.GrupoEtiquetasProcessosRepository.AddAsync(grupoEtiquetaProcesso);
 
                 await unitOfWork.CommitAsync();
+
+                return new GrupoEtiquetasProcessosResponse(
+                   etiqueta.Id,
+                   processo.Id,
+                   etiqueta.Nome // 👈 aqui
+
+               );
             }
             catch
             {
@@ -64,7 +72,7 @@ namespace DeslandesApp.Domain.Services
 
         public void Dispose()
         {
-            throw new NotImplementedException();
+            unitOfWork.Dispose();
         }
 
         public Task<GrupoEtiquetasProcessosResponse> ExcluirAsync(Guid id)

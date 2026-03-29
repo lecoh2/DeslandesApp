@@ -8,6 +8,7 @@ namespace DeslandesApp.Domain.Models.Dtos.Responses.GrupoEtiquetasProcessos
 {
     public record GrupoEtiquetasProcessosResponse
      (Guid idEtiqueta,
-      Guid idProcesso
+      Guid idProcesso,
+      string nome
         );
 }

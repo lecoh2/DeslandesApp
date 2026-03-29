@@ -2,6 +2,7 @@
 using DeslandesApp.Domain.Interfaces.Repositories;
 using DeslandesApp.Domain.Interfaces.Services;
 using DeslandesApp.Domain.Models.Dtos.Requests.GrupoEnvolvidosProcesso;
+using DeslandesApp.Domain.Models.Dtos.Responses.GrupoClienteProcesso;
 using DeslandesApp.Domain.Models.Dtos.Responses.GrupoEnvolvidosProcesso;
 using DeslandesApp.Domain.Models.Entities;
 using DeslandesApp.Domain.Utils;
@@ -20,7 +21,7 @@ namespace DeslandesApp.Domain.Services
             throw new NotImplementedException();
         }
 
-        public async Task AdicionarEnvolvidosProcessoAsync(Guid idPessoa, Guid idProcesso)
+        public async Task<GrupoEnvolvidosProcessoResponse> AdicionarEnvolvidosProcessoAsync(Guid idPessoa, Guid idProcesso)
         {
             await unitOfWork.BeginTransactionAsync();
 
@@ -28,17 +29,17 @@ namespace DeslandesApp.Domain.Services
             {
                 var pessoa = await unitOfWork.PessoaRepository.GetByIdAsync(idPessoa);
                 if (pessoa is null)
-                    throw new ApplicationException("Pessoa não encontrado.");
+                    throw new ApplicationException("Pessoa não encontrada.");
 
                 var processo = await unitOfWork.ProcessoRepository.GetByIdAsync(idProcesso);
                 if (processo is null)
                     throw new ApplicationException("Processo não encontrado.");
 
-                var existeVinculo = await unitOfWork.GrupoClientesProcessosRepository
-                    .ExistClienteProcessoAsync(idPessoa, idProcesso);
+                var existeVinculo = await unitOfWork.GrupoEnvolvidosProcessosRepository
+                    .ExistEnvolvidosProcessoAsync(idPessoa, idProcesso);
 
                 if (existeVinculo != null)
-                    throw new ApplicationException("Este usuário já está vinculado a esse setor.");
+                    throw new ApplicationException("Este usuário já está vinculado a esse processo.");
 
                 var grupoEnvolvidosProcesso = new GrupoEnvolvidosProcesso
                 {
@@ -49,6 +50,13 @@ namespace DeslandesApp.Domain.Services
                 await unitOfWork.GrupoEnvolvidosProcessosRepository.AddAsync(grupoEnvolvidosProcesso);
 
                 await unitOfWork.CommitAsync();
+
+                return new GrupoEnvolvidosProcessoResponse(
+                    pessoa.Id,
+                    processo.Id,
+                    pessoa.Nome // 👈 aqui
+                   
+                );
             }
             catch
             {
@@ -64,7 +72,7 @@ namespace DeslandesApp.Domain.Services
 
         public void Dispose()
         {
-            throw new NotImplementedException();
+            unitOfWork.Dispose();
         }
 
         public Task<GrupoEnvolvidosProcessoResponse> ExcluirAsync(Guid id)

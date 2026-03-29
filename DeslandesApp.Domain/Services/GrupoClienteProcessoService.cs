@@ -20,9 +20,9 @@ namespace DeslandesApp.Domain.Services
             throw new NotImplementedException();
         }
 
-      
 
-        public async Task AdicionarClienteProcessoAsync(Guid idPessoa, Guid idProcesso)
+
+        public async Task<GrupoClienteProcessoResponse> AdicionarClienteProcessoAsync(Guid idPessoa, Guid idProcesso)
         {
             await unitOfWork.BeginTransactionAsync();
 
@@ -30,7 +30,7 @@ namespace DeslandesApp.Domain.Services
             {
                 var pessoa = await unitOfWork.PessoaRepository.GetByIdAsync(idPessoa);
                 if (pessoa is null)
-                    throw new ApplicationException("Pessoa não encontrado.");
+                    throw new ApplicationException("Pessoa não encontrada.");
 
                 var processo = await unitOfWork.ProcessoRepository.GetByIdAsync(idProcesso);
                 if (processo is null)
@@ -40,7 +40,7 @@ namespace DeslandesApp.Domain.Services
                     .ExistClienteProcessoAsync(idPessoa, idProcesso);
 
                 if (existeVinculo != null)
-                    throw new ApplicationException("Este usuário já está vinculado a esse setor.");
+                    throw new ApplicationException("Este usuário já está vinculado a esse processo.");
 
                 var grupoClienteProcesso = new GrupoClienteProcesso
                 {
@@ -51,6 +51,13 @@ namespace DeslandesApp.Domain.Services
                 await unitOfWork.GrupoClientesProcessosRepository.AddAsync(grupoClienteProcesso);
 
                 await unitOfWork.CommitAsync();
+
+                return new GrupoClienteProcessoResponse(
+                    pessoa.Id,
+                     processo.Id,
+                    pessoa.Nome // 👈 aqui
+
+                );
             }
             catch
             {

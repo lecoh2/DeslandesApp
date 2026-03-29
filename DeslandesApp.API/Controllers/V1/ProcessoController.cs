@@ -1,4 +1,5 @@
-﻿using DeslandesApp.Domain.Interfaces.Services;
+﻿using Azure;
+using DeslandesApp.Domain.Interfaces.Services;
 using DeslandesApp.Domain.Models.Dtos.Requests.Processo;
 using DeslandesApp.Domain.Models.Dtos.Requests.Usuarios;
 using DeslandesApp.Domain.Models.Dtos.Responses.Processo;
@@ -63,12 +64,13 @@ namespace DeslandesApp.API.Controllers.V1
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<IActionResult> AdicionarGrupoClienteProcesso(Guid idPessoa, Guid idProcesso)
         {
-            await grupoClienteProcessoService.AdicionarClienteProcessoAsync(idPessoa, idProcesso);
+            var response = await grupoClienteProcessoService.
+                AdicionarClienteProcessoAsync(idPessoa, idProcesso);
 
             return Ok(new
             {
                 success = true,
-                message = "Setor adicionado ao usuário com sucesso."
+                message = $"Cliente {response.nome}, adicionado ao processo com sucesso."
             });
         }
 
@@ -76,12 +78,13 @@ namespace DeslandesApp.API.Controllers.V1
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<IActionResult> RemoverGrupoSetor(Guid idPessoa, Guid idProcesso)
         {
+
             await grupoClienteProcessoService.RemoverClienteProcessoAsync(idPessoa, idProcesso);
 
             return Ok(new
             {
                 success = true,
-                message = "Setor removido do usuário com sucesso."
+                message = "Cliente removido do processo com sucesso."
             });
         }
 
@@ -89,12 +92,13 @@ namespace DeslandesApp.API.Controllers.V1
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<IActionResult> AdicionarGrupoEnvolvidosProcesso(Guid idPessoa, Guid idProcesso)
         {
-            await grupoEnvolvidosProcessoService.AdicionarEnvolvidosProcessoAsync(idPessoa, idProcesso);
+            var response = await grupoEnvolvidosProcessoService
+                .AdicionarEnvolvidosProcessoAsync(idPessoa, idProcesso);
 
             return Ok(new
             {
                 success = true,
-                message = "Setor adicionado ao usuário com sucesso."
+                message = $"Envolvido {response.nome}, adicionado ao processo com sucesso."
             });
         }
 
@@ -107,19 +111,20 @@ namespace DeslandesApp.API.Controllers.V1
             return Ok(new
             {
                 success = true,
-                message = "Setor removido do usuário com sucesso."
+                message = "Envolvido removido do processo com sucesso."
             });
         }
         [HttpPost("adicionar-grupo-etiqueta-processo/{idEtiqueta:guid}/{idProcesso:guid}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<IActionResult> AdicionarGrupoEtiqutaProcesso(Guid idEtiqueta, Guid idProcesso)
         {
-            await grupoEtiquetaProcesoService.AdicionarEtiquetaProcessoAsync(idEtiqueta, idProcesso);
+            var response = await grupoEtiquetaProcesoService.AdicionarEtiquetaProcessoAsync(idEtiqueta, idProcesso);
 
             return Ok(new
             {
                 success = true,
-                message = "Etiquta adicionada ."
+                message = $"Etiqueta {response.nome}, adicionada ao processo com sucesso"
+                
             });
         }
 
@@ -132,7 +137,7 @@ namespace DeslandesApp.API.Controllers.V1
             return Ok(new
             {
                 success = true,
-                message = "Etiqueta removida d."
+                message = "Etiqueta removida do processo com sucesso."
             });
         }
     }

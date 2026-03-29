@@ -7,7 +7,9 @@ using System.Threading.Tasks;
 namespace DeslandesApp.Domain.Models.Dtos.Responses.GrupoEnvolvidosProcesso
 {
     public record GrupoEnvolvidosProcessoResponse
-    (Guid idPessoa,
-      Guid idProcesso
-        );
+    (
+      Guid idPessoa,
+      Guid idProcesso,
+      string nome
+    );
 }

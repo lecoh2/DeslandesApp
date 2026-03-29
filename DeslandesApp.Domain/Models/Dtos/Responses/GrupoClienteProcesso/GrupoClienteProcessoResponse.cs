@@ -8,6 +8,7 @@ namespace DeslandesApp.Domain.Models.Dtos.Responses.GrupoClienteProcesso
 {
     public record GrupoClienteProcessoResponse
     (Guid idPessoa,
-      Guid idProcesso
+      Guid idProcesso,
+       string nome
         );
 }
