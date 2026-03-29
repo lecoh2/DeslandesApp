@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace DeslandesApp.Domain.Interfaces.Services
 {
-    public interface IGrupoClienteProcessoService : IBaseService<GrupoClienteProcessoRequest, GrupoClienteProcessolUpdateRequest, GrupoClienteProcessoResponse, Guid>
+    public interface IGrupoClienteProcessoService : IBaseService<GrupoClienteProcessoRequest, GrupoClienteProcessoUpdateRequest, GrupoClienteProcessoResponse, Guid>
     {
         Task RemoverClienteProcessoAsync(Guid idPessoa, Guid idProcesso);
         Task AdicionarClienteProcessoAsync(Guid idPessoa, Guid idProcesso);

@@ -1,8 +1,8 @@
 ﻿using AutoMapper;
 using DeslandesApp.Domain.Interfaces.Repositories;
 using DeslandesApp.Domain.Interfaces.Services;
-using DeslandesApp.Domain.Models.Dtos.Requests.GrupoClienteProceso;
-using DeslandesApp.Domain.Models.Dtos.Responses.GrupoClienteProcesso;
+using DeslandesApp.Domain.Models.Dtos.Requests.GrupoEnvolvidosProcesso;
+using DeslandesApp.Domain.Models.Dtos.Responses.GrupoEnvolvidosProcesso;
 using DeslandesApp.Domain.Models.Entities;
 using DeslandesApp.Domain.Utils;
 using System;
@@ -13,16 +13,14 @@ using System.Threading.Tasks;
 
 namespace DeslandesApp.Domain.Services
 {
-    public class GrupoClienteProcessoService(IUnitOfWork unitOfWork, IMapper mapper) : IGrupoClienteProcessoService
+    public class GrupoEnvolvidosProcessoService(IUnitOfWork unitOfWork, IMapper mapper) : IGrupoEnvolvidosProcessoService
     {
-        public Task<GrupoClienteProcessoResponse> AdicionarAsync(GrupoClienteProcessoRequest request)
+        public Task<GrupoEnvolvidosProcessoResponse> AdicionarAsync(GrupoEnvolvidosProcessoRequest request)
         {
             throw new NotImplementedException();
         }
 
-      
-
-        public async Task AdicionarClienteProcessoAsync(Guid idPessoa, Guid idProcesso)
+        public async Task AdicionarEnvolvidosProcessoAsync(Guid idPessoa, Guid idProcesso)
         {
             await unitOfWork.BeginTransactionAsync();
 
@@ -42,13 +40,13 @@ namespace DeslandesApp.Domain.Services
                 if (existeVinculo != null)
                     throw new ApplicationException("Este usuário já está vinculado a esse setor.");
 
-                var grupoClienteProcesso = new GrupoClienteProcesso
+                var grupoEnvolvidosProcesso = new GrupoEnvolvidosProcesso
                 {
                     PessoaId = idPessoa,
                     ProcessoId = idProcesso
                 };
 
-                await unitOfWork.GrupoClientesProcessosRepository.AddAsync(grupoClienteProcesso);
+                await unitOfWork.GrupoEnvolvidosProcessosRepository.AddAsync(grupoEnvolvidosProcesso);
 
                 await unitOfWork.CommitAsync();
             }
@@ -58,19 +56,45 @@ namespace DeslandesApp.Domain.Services
                 throw;
             }
         }
-        public async Task RemoverClienteProcessoAsync(Guid idPessoa, Guid idProcesso)
+
+        public Task<PageResult<GrupoEnvolvidosProcessoResponse>> ConsultarAsync(int pageNumber, int pageSize)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Dispose()
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<GrupoEnvolvidosProcessoResponse> ExcluirAsync(Guid id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<GrupoEnvolvidosProcessoResponse> ModificarAsync(Guid id, GrupoEnvolvidosProcessoUpdateRequest request)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<GrupoEnvolvidosProcessoResponse?> ObterPorIdAsync(Guid id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public async Task RemoverEnvolvidosProcessoAsync(Guid idPessoa, Guid idProcesso)
         {
             await unitOfWork.BeginTransactionAsync();
 
             try
             {
-                var entidade = await unitOfWork.GrupoClientesProcessosRepository
-                    .GetByIdClienteProcessoAsync(idPessoa, idProcesso);
+                var entidade = await unitOfWork.GrupoEnvolvidosProcessosRepository
+                    .GetByIdEnvolvidosProcessoAsync(idPessoa, idProcesso);
 
                 if (entidade is null)
                     throw new Exception("Vínculo entre Processo e Pessoa não encontrado.");
 
-                await unitOfWork.GrupoClientesProcessosRepository.DeleteAsync(entidade);
+                await unitOfWork.GrupoEnvolvidosProcessosRepository.DeleteAsync(entidade);
 
                 await unitOfWork.CommitAsync();
             }
@@ -80,31 +104,5 @@ namespace DeslandesApp.Domain.Services
                 throw; // 🔥 ESSENCIAL pro middleware funcionar
             }
         }
-        public Task<PageResult<GrupoClienteProcessoResponse>> ConsultarAsync(int pageNumber, int pageSize)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void Dispose()
-        {
-            unitOfWork.Dispose();
-        }
-
-        public Task<GrupoClienteProcessoResponse> ExcluirAsync(Guid id)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<GrupoClienteProcessoResponse> ModificarAsync(Guid id, GrupoClienteProcessoUpdateRequest request)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<GrupoClienteProcessoResponse?> ObterPorIdAsync(Guid id)
-        {
-            throw new NotImplementedException();
-        }
-
-       
     }
 }

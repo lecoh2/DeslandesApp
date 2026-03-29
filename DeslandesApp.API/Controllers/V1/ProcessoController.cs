@@ -12,7 +12,10 @@ namespace DeslandesApp.API.Controllers.V1
 {
     [Route("api/v1/processo")]
     [ApiController]
-    public class ProcessoController(IProcessoService processoService, IGrupoClienteProcessoService grupoClienteProcessoService) : ControllerBase
+    public class ProcessoController(IProcessoService processoService,
+        IGrupoClienteProcessoService grupoClienteProcessoService,
+        IGrupoEnvolvidosProcessoService grupoEnvolvidosProcessoService,
+        IGrupoEtiquetaProcessoService grupoEtiquetaProcesoService) : ControllerBase
     {
         [HttpPost]
         [ProducesResponseType(typeof(ProcessoResponse), StatusCodes.Status201Created)]
@@ -86,7 +89,7 @@ namespace DeslandesApp.API.Controllers.V1
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<IActionResult> AdicionarGrupoEnvolvidosProcesso(Guid idPessoa, Guid idProcesso)
         {
-            //await processoService.AdicionarEnvolvidosProcessoAsync(idPessoa, idProcesso);
+            await grupoEnvolvidosProcessoService.AdicionarEnvolvidosProcessoAsync(idPessoa, idProcesso);
 
             return Ok(new
             {
@@ -99,7 +102,7 @@ namespace DeslandesApp.API.Controllers.V1
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<IActionResult> RemoverGrupoEnvolvidosProcesso(Guid idPessoa, Guid idProcesso)
         {
-           // await processoService.RemoverEnvolvidosProcessoAsync(idPessoa, idProcesso);
+            await grupoEnvolvidosProcessoService.RemoverEnvolvidosProcessoAsync(idPessoa, idProcesso);
 
             return Ok(new
             {
@@ -111,7 +114,7 @@ namespace DeslandesApp.API.Controllers.V1
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<IActionResult> AdicionarGrupoEtiqutaProcesso(Guid idEtiqueta, Guid idProcesso)
         {
-           // await processoService.AdicionarEtiquetaProcessoAsync(idEtiqueta, idProcesso);
+            await grupoEtiquetaProcesoService.AdicionarEtiquetaProcessoAsync(idEtiqueta, idProcesso);
 
             return Ok(new
             {
@@ -124,7 +127,7 @@ namespace DeslandesApp.API.Controllers.V1
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<IActionResult> RemoverGrupoEtiquetaProcesso(Guid idEtiqueta, Guid idProcesso)
         {
-           // await processoService.RemoverEtiquetaProcessoAsync(idEtiqueta, idProcesso);
+           await grupoEtiquetaProcesoService.RemoverEtiquetaProcessoAsync(idEtiqueta, idProcesso);
 
             return Ok(new
             {

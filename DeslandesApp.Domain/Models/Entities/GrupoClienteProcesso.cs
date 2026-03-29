@@ -7,8 +7,7 @@ using System.Threading.Tasks;
 namespace DeslandesApp.Domain.Models.Entities
 {
     public class GrupoClienteProcesso
-    {
-        
+    {        
             public Guid PessoaId { get; set; }
             public Guid ProcessoId { get; set; }
             // public Guid IdNivel { get; set; }

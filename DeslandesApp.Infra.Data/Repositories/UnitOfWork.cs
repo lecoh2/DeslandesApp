@@ -54,6 +54,31 @@ namespace DeslandesApp.Infra.Data.Repositories
         private IProcessoHistoricoRepository? _processoHistoricoRepository;
         private IProcessoEtiquetaRepository? _processoEtiquetaRepository;
         private IGrupoClientesProcessosRepository? _grupoClientesProcessosRepository;
+        private IGrupoEnvolvidosProcessoRepository? _grupoEnvolvidosProcessoRepository;
+        private IGrupoEtiquetasProcessosRepository? _grupoEtiquetasProcessosRepository;
+       // public IGrupoEtiquetasProcessosRepository GrupoEtiquetaProcessosRepository => throw new NotImplementedException();
+
+
+        public IGrupoEtiquetasProcessosRepository GrupoEtiquetasProcessosRepository
+        {
+            get
+            {
+                if (_grupoEtiquetasProcessosRepository == null)
+                    _grupoEtiquetasProcessosRepository = new GrupoEtiquetasProcessosRepository(dataContext);
+
+                return _grupoEtiquetasProcessosRepository;
+            }
+        }
+        public IGrupoEnvolvidosProcessoRepository GrupoEnvolvidosProcessosRepository
+        {
+            get
+            {
+                if (_grupoEnvolvidosProcessoRepository == null)
+                    _grupoEnvolvidosProcessoRepository = new GrupoEnvolvidosProcessosRepository(dataContext);
+
+                return _grupoEnvolvidosProcessoRepository;
+            }
+        }
         public IGrupoClientesProcessosRepository GrupoClientesProcessosRepository
         {
             get
@@ -370,6 +395,8 @@ namespace DeslandesApp.Infra.Data.Repositories
                 return _grupoNiveisRepository;
             }
         }
+
+       
 
 
 
