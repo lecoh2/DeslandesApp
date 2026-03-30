@@ -12,7 +12,7 @@ namespace DeslandesApp.Domain.Interfaces.Services
 {
     public interface IGrupoEtiquetaProcessoService : IBaseService<GrupoEtiquetaProcessoRequest, GrupoEtiquetaProcessoUpdateRequest, GrupoEtiquetasProcessosResponse, Guid>
     {
-        Task RemoverEtiquetaProcessoAsync(Guid idEtiqueta, Guid idProcesso);
+        Task <GrupoEtiquetasProcessosResponse>RemoverEtiquetaProcessoAsync(Guid idEtiqueta, Guid idProcesso);
         Task <GrupoEtiquetasProcessosResponse>AdicionarEtiquetaProcessoAsync(Guid idEtiqueta, Guid idProcesso);
     }
 }

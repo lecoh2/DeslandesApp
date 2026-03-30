@@ -90,7 +90,7 @@ namespace DeslandesApp.Domain.Services
             throw new NotImplementedException();
         }
 
-        public async Task RemoverEnvolvidosProcessoAsync(Guid idPessoa, Guid idProcesso)
+        public async Task<GrupoEnvolvidosProcessoResponse> RemoverEnvolvidosProcessoAsync(Guid idPessoa, Guid idProcesso)
         {
             await unitOfWork.BeginTransactionAsync();
 
@@ -105,6 +105,11 @@ namespace DeslandesApp.Domain.Services
                 await unitOfWork.GrupoEnvolvidosProcessosRepository.DeleteAsync(entidade);
 
                 await unitOfWork.CommitAsync();
+                return new GrupoEnvolvidosProcessoResponse(
+entidade.PessoaId,
+entidade.ProcessoId,
+entidade.Pessoa?.Nome
+);
             }
             catch
             {

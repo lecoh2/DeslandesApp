@@ -34,7 +34,7 @@ namespace DeslandesApp.Infra.Data.Contexts
         public DbSet<GrupoEnvolvidos> GrupoEnvolvidos { get; set; }
         public DbSet<Tarefa> Tarefas { get; set; }
         public DbSet<ListaTarefa> ListasTarefa { get; set; }
-        public DbSet<GrupoTarefaEnvolvido> GrupoTarefaEnvolvidos { get; set; }
+        public DbSet<GrupoTarefaResponsaveis> GrupoTarefaResponsveis{ get; set; }
         public DbSet<Atendimento> Atendimento { get; set; }
         public DbSet<Caso> Caso { get; set; }
         public DbSet<GrupoCasoCliente> GrupoCasoCliente { get; set; }
@@ -46,6 +46,8 @@ namespace DeslandesApp.Infra.Data.Contexts
         public DbSet<GrupoClienteProcesso> GrupoClienteProcesso { get; set; }
         public DbSet<GrupoEnvolvidosProcesso> GrupoEnvolvidosProcesso { get; set; } 
         public DbSet<GrupoEtiquetasProcessos> GrupoEtiquetasProcessos { get; set; }
+        public DbSet<GrupoTarefaResponsaveis> GrupoTarefaResponsaveis { get; set; }
+        public DbSet<GrupoEtiquetasAtendimentos> GrupoEtiquetasAtendimentos { get; set; }    
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);

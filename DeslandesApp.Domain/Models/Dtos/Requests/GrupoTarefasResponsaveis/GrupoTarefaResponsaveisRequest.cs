@@ -6,9 +6,8 @@ using System.Threading.Tasks;
 
 namespace DeslandesApp.Domain.Models.Dtos.Requests.GrupoTarefasEnvolvidos
 {
-    public record GrupoTarefaEnvolvidosRequest
-    (
-       // Guid idListaTarefaId,
+    public record GrupoTarefaResponsaveisRequest
+    (      
         Guid PessoaId
     );
 }

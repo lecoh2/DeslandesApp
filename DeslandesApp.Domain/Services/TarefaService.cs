@@ -139,20 +139,20 @@ namespace DeslandesApp.Domain.Services
             }
 
             // Envolvidos (N:N)
-            if (request.GrupoTarefaEnvolvido != null && request.GrupoTarefaEnvolvido.Any())
+            if (request.GrupoTarefaResponsaveis != null && request.GrupoTarefaResponsaveis.Any())
             {
-                foreach (var envolvido in request.GrupoTarefaEnvolvido)
+                foreach (var envolvido in request.GrupoTarefaResponsaveis)
                 {
                     var usuario = await unitOfWork.PessoaRepository.GetByIdAsync(envolvido.PessoaId);
                     if (usuario == null)
                         throw new InvalidOperationException("Usuário não encontrado.");
 
-                    var grupo = new GrupoTarefaEnvolvido
+                    var grupo = new GrupoTarefaResponsaveis
                     {
                         TarefaId = tarefa.Id,
                         PessoaId = envolvido.PessoaId
                     };
-                    await unitOfWork.GrupoTarefaEnvolvidoRepository.AddAsync(grupo);
+                    await unitOfWork.GrupoTarefaResponsaveisRepository.AddAsync(grupo);
                 }
             }
 

@@ -9,7 +9,7 @@ namespace DeslandesApp.API.Controllers.V1
 {
     [Route("api/v1/atendimento")]
     [ApiController]
-    public class AtendimentoController(IAtendimentoService atendiemntofaService) : ControllerBase
+    public class AtendimentoController(IAtendimentoService atendiemntofaService, IGrupoEtiquetaAtendimentoServices grupoEtiquetaAtendimento) : ControllerBase
     {
         [HttpPost]
         [ProducesResponseType(typeof(CriarAtendimentoClienteResponse), StatusCodes.Status201Created)]
@@ -24,12 +24,12 @@ namespace DeslandesApp.API.Controllers.V1
                 data = response
             });
         }
-    
-     [HttpGet("consultar-atendimento-paginacao")]
+
+        [HttpGet("consultar-atendimento-paginacao")]
         public async Task<IActionResult> ConsultarAtendimentoPaginacao(
-    [FromQuery] int pageNumber = 1,
-    [FromQuery] int pageSize = 10,
-    [FromQuery] string? searchTerm = null)
+       [FromQuery] int pageNumber = 1,
+       [FromQuery] int pageSize = 10,
+       [FromQuery] string? searchTerm = null)
         {
             pageNumber = pageNumber <= 0 ? 1 : pageNumber;
             pageSize = pageSize <= 0 ? 10 : Math.Min(pageSize, 100);
@@ -38,6 +38,33 @@ namespace DeslandesApp.API.Controllers.V1
                 .ConsultarAtendimentoPaginacaoAsync(pageNumber, pageSize, searchTerm);
 
             return Ok(atendimentoPaged);
+        }
+    
+    [HttpPost("adicionar-grupo-etiqueta-atendimento/{idEtiqueta:guid}/{idAtendimento:guid}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<IActionResult> AdicionarGrupoEtiqutaAtendimento(Guid idEtiqueta, Guid idAtendimento)
+        {
+             await grupoEtiquetaAtendimento.AdicionarEtiquetaAtendimentoAsync(idEtiqueta, idAtendimento);
+
+            return Ok(new
+            {
+                success = true,
+                message = $"Etiqueta adicionada ao processo com sucesso"
+
+            });
+        }
+
+        [HttpDelete("remover-grupo-etiqueta-atendimento/{idEtiqueta:guid}/{idAtendimento:guid}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<IActionResult> RemoverGrupoEtiquetaAtendimento(Guid idEtiqueta, Guid idAtendimento)
+        {
+           await grupoEtiquetaAtendimento.RemoverEtiquetaAtendimentoAsync(idEtiqueta, idAtendimento);
+
+            return Ok(new
+            {
+                success = true,
+                message = $"Etiqueta  removida do processo com sucesso."
+            });
         }
     }
 }

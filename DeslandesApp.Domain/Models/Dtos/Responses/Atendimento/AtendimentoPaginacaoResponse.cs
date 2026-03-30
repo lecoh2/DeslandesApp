@@ -1,5 +1,7 @@
 ﻿using DeslandesApp.Domain.Models.Dtos.Requests.GrupoAtendimento;
 using DeslandesApp.Domain.Models.Dtos.Requests.GrupoEtiqueta;
+using DeslandesApp.Domain.Models.Dtos.Responses.GrupoAtendimentoCliente;
+using DeslandesApp.Domain.Models.Dtos.Responses.GrupoEtiquetaAtendimento;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,6 +23,7 @@ namespace DeslandesApp.Domain.Models.Dtos.Responses.Atendimento
         public List<GrupoEtiquetaRequest> GrupoEtiquetas { get; init; } = new();
 
         // 🔥 CLIENTES (N:N)
-        public List<GrupoAtendimentoClienteRequest> GrupoAtendimentoCliente { get; init; } = new();
+        public List<GrupoAtendimentoClienteResponse> GrupoAtendimentoCliente { get; set; }
+        public List<GrupoEtiquetaAtendimentoResponse> GrupoAtendimentoEtiqueta { get; set; }
     }
 }

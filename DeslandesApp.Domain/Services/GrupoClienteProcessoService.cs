@@ -3,6 +3,7 @@ using DeslandesApp.Domain.Interfaces.Repositories;
 using DeslandesApp.Domain.Interfaces.Services;
 using DeslandesApp.Domain.Models.Dtos.Requests.GrupoClienteProceso;
 using DeslandesApp.Domain.Models.Dtos.Responses.GrupoClienteProcesso;
+using DeslandesApp.Domain.Models.Dtos.Responses.GrupoEnvolvidosProcesso;
 using DeslandesApp.Domain.Models.Entities;
 using DeslandesApp.Domain.Utils;
 using System;
@@ -65,7 +66,7 @@ namespace DeslandesApp.Domain.Services
                 throw;
             }
         }
-        public async Task RemoverClienteProcessoAsync(Guid idPessoa, Guid idProcesso)
+        public async Task<GrupoClienteProcessoResponse> RemoverClienteProcessoAsync(Guid idPessoa, Guid idProcesso)
         {
             await unitOfWork.BeginTransactionAsync();
 
@@ -80,6 +81,11 @@ namespace DeslandesApp.Domain.Services
                 await unitOfWork.GrupoClientesProcessosRepository.DeleteAsync(entidade);
 
                 await unitOfWork.CommitAsync();
+                return new GrupoClienteProcessoResponse(
+entidade.PessoaId,
+entidade.ProcessoId,
+entidade.Pessoa?.Nome
+);
             }
             catch
             {

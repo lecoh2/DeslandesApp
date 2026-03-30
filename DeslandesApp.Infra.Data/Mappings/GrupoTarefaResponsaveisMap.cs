@@ -10,22 +10,17 @@ using System.Threading.Tasks;
 namespace DeslandesApp.Infra.Data.Mappings
 {
    
-        public class GrupoTarefaEnvolvidoMap : IEntityTypeConfiguration<GrupoTarefaEnvolvido>
+        public class GrupoTarefaResponsaveisMap : IEntityTypeConfiguration<GrupoTarefaResponsaveis>
         {
-            public void Configure(EntityTypeBuilder<GrupoTarefaEnvolvido> builder)
+            public void Configure(EntityTypeBuilder<GrupoTarefaResponsaveis> builder)
             {
-                builder.ToTable("GRUPOTAREFAENVOLVIDO");
+                builder.ToTable("GRUPOTAREFARESPONSAVEIS");
 
-                // 🔑 PK
-                builder.HasKey(x => x.Id);
+            // 🔑 PK
+            builder.HasKey(x => new { x.PessoaId, x.TarefaId });
 
-                // 🔗 FK - Tarefa
-                builder.Property(x => x.TarefaId)
-                       .HasColumnName("TAREFAID")
-                       .IsRequired();
-
-                builder.HasOne(x => x.Tarefa)
-                       .WithMany(x => x.GrupoTarefaEnvolvido)
+            builder.HasOne(x => x.Tarefa)
+                       .WithMany(x => x.GrupoTarefaResponsaveis)
                        .HasForeignKey(x => x.TarefaId)
                        .OnDelete(DeleteBehavior.Cascade)
                        .HasConstraintName("FK_GRUPOTAREFA_TAREFA");
@@ -36,7 +31,7 @@ namespace DeslandesApp.Infra.Data.Mappings
                        .IsRequired();
 
                 builder.HasOne(x => x.Pessoa)
-                       .WithMany(x => x.GrupoTarefaEnvolvido)
+                       .WithMany(x => x.GrupoTarefaResponsaveis)
                        .HasForeignKey(x => x.PessoaId)
                        .OnDelete(DeleteBehavior.Restrict)
                        .HasConstraintName("FK_GRUPOTAREFA_PESSOA");

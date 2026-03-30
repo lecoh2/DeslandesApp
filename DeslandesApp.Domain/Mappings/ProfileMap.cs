@@ -201,7 +201,7 @@ namespace DeslandesApp.Domain.Mappings
             CreateMap<CriarTarefaRequest, Tarefa>()
                 .ForMember(dest => dest.ListasTarefa, opt => opt.Ignore())
                 .ForMember(dest => dest.TarefaEtiquetas, opt => opt.Ignore())
-                .ForMember(dest => dest.GrupoTarefaEnvolvido, opt => opt.Ignore());
+                .ForMember(dest => dest.GrupoTarefaResponsaveis, opt => opt.Ignore());
 
             CreateMap<Tarefa, CriarTarefaResponse>()
                 .ForMember(dest => dest.Descricao, opt => opt.MapFrom(src => src.Descricao));
@@ -235,7 +235,7 @@ namespace DeslandesApp.Domain.Mappings
 
             #region Atendiemnto
             CreateMap<CriarAtendimentoClienteRequest, Atendimento>()
-            .ForMember(dest => dest.GrupoEtiquetas, opt => opt.Ignore())
+            .ForMember(dest => dest.GrupoEtiquetasAtendimentos, opt => opt.Ignore())
             .ForMember(dest => dest.GrupoClientes, opt => opt.Ignore())
             .ForMember(dest => dest.Processo, opt => opt.Ignore())
             .ForMember(dest => dest.Caso, opt => opt.Ignore())

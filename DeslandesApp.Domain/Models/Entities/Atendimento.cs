@@ -14,9 +14,7 @@ namespace DeslandesApp.Domain.Models.Entities
         public string Registro { get; set; } = string.Empty;
 
         public DateTime DataCadastro { get; set; }
-        public DateTime? DataAtualizacao { get; set; }
-
-        public List<GrupoAtendimentoEtiqueta> GrupoEtiquetas { get; set; } = new();
+        public DateTime? DataAtualizacao { get; set; }       
 
         // 🔹 Relacionamentos possíveis
         public Guid? ProcessoId { get; set; }
@@ -31,7 +29,7 @@ namespace DeslandesApp.Domain.Models.Entities
 
         // 🔹 Clientes
         public List<GrupoAtendimentoCliente> GrupoClientes { get; set; } = new();
-
+        public List<GrupoEtiquetasAtendimentos> GrupoEtiquetasAtendimentos { get; set; } = new();
         public TipoVinculo? TipoVinculo { get; set; }
         public void ValidarVinculo()
         {

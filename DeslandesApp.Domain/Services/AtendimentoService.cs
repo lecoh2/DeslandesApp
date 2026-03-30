@@ -112,7 +112,7 @@ namespace DeslandesApp.Domain.Services
             {
                 foreach (var item in request.GrupoAtendimentoCliente)
                 {
-                    var pessoa = await unitOfWork.PessoaRepository.GetByIdAsync(item.IdPessoa);
+                    var pessoa = await unitOfWork.PessoaRepository.GetByIdAsync(item.PessoaId.Value);
 
                     if (pessoa == null)
                         throw new InvalidOperationException("Pessoa não encontrada.");
@@ -120,7 +120,7 @@ namespace DeslandesApp.Domain.Services
                     var grupoCliente = new GrupoAtendimentoCliente
                     {
                         AtendimentoId = atendimento.Id,
-                        PessoaId = item.IdPessoa
+                        PessoaId = item.PessoaId.Value
                     };
 
                     await unitOfWork.GrupoAtendimentoClienteRepository.AddAsync(grupoCliente);
@@ -137,13 +137,13 @@ namespace DeslandesApp.Domain.Services
                     if (etiqueta == null)
                         throw new InvalidOperationException("Etiqueta não encontrada.");
 
-                    var grupoEtiqueta = new GrupoAtendimentoEtiqueta
+                    var grupoEtiqueta = new GrupoEtiquetasAtendimentos
                     {
                         AtendimentoId = atendimento.Id,
                         EtiquetaId = item.EtiquetaId
                     };
 
-                    await unitOfWork.GrupoAtendimentoEtiquetaRepository.AddAsync(grupoEtiqueta);
+                    await unitOfWork.GrupoEtiquetasAtendimentoRepository.AddAsync(grupoEtiqueta);
                 }
             }
 

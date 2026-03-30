@@ -13,7 +13,7 @@ namespace DeslandesApp.Domain.Interfaces.Services
 {
     public interface IGrupoClienteProcessoService : IBaseService<GrupoClienteProcessoRequest, GrupoClienteProcessoUpdateRequest, GrupoClienteProcessoResponse, Guid>
     {
-        Task RemoverClienteProcessoAsync(Guid idPessoa, Guid idProcesso);
+        Task <GrupoClienteProcessoResponse>RemoverClienteProcessoAsync(Guid idPessoa, Guid idProcesso);
         Task<GrupoClienteProcessoResponse>AdicionarClienteProcessoAsync(Guid idPessoa, Guid idProcesso);
     }
 }

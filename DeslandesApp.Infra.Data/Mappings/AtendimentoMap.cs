@@ -43,7 +43,7 @@ namespace DeslandesApp.Infra.Data.Mappings
                    .HasConstraintName("FK_ATENDIMENTO_ATENDIMENTCLIENTE");
 
             // ✅ NOVO RELACIONAMENTO N:N
-            builder.HasMany(x => x.GrupoEtiquetas)
+            builder.HasMany(x => x.GrupoEtiquetasAtendimentos)
                    .WithOne(x => x.Atendimento)
                    .HasForeignKey(x => x.AtendimentoId)
                    .OnDelete(DeleteBehavior.Cascade)

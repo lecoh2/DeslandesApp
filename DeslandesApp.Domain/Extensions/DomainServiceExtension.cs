@@ -1,5 +1,4 @@
 ﻿using DeslandesApp.Domain.Contracts.Security;
-using DeslandesApp.Domain.Interfaces.Repositories;
 using DeslandesApp.Domain.Interfaces.Services;
 using DeslandesApp.Domain.Mappings;
 using DeslandesApp.Domain.Services;
@@ -29,9 +28,11 @@ namespace DeslandesApp.Domain.Extensions
             services.AddScoped<ICasoService, CasoService>();
             services.AddScoped<IAtendimentoService, AtendiemntoService>();
             services.AddScoped<IEventoService, EventoService>();
-            services.AddScoped< IGrupoClienteProcessoService, GrupoClienteProcessoService>();
+            services.AddScoped<IGrupoClienteProcessoService, GrupoClienteProcessoService>();
             services.AddScoped<IGrupoEnvolvidosProcessoService, GrupoEnvolvidosProcessoService>();
             services.AddScoped<IGrupoEtiquetaProcessoService, GrupoEtiquetasProcessosService>();
+            services.AddScoped<IGrupoTarefaResponsaveisService, GrupoTarefaResponsaveisServices>();
+            services.AddScoped<IGrupoEtiquetaAtendimentoServices, GrupoEtiquetaAtendimentoService>();
 
 
 

@@ -4,6 +4,7 @@ using DeslandesApp.Infra.Data.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DeslandesApp.Infra.Data.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20260330171515_GrupoEtiquetaAtendimento")]
+    partial class GrupoEtiquetaAtendimento
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -476,6 +479,25 @@ namespace DeslandesApp.Infra.Data.Migrations
                         .HasDatabaseName("IX_GRUPOATENDIMENTOCLIENTE_PESSOAID");
 
                     b.ToTable("GRUPOATENDIMENTOCLIENTE", (string)null);
+                });
+
+            modelBuilder.Entity("DeslandesApp.Domain.Models.Entities.GrupoAtendimentoEtiqueta", b =>
+                {
+                    b.Property<Guid>("AtendimentoId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("ATENDIMENTOID");
+
+                    b.Property<Guid>("EtiquetaId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("ETIQUETAID");
+
+                    b.HasKey("AtendimentoId", "EtiquetaId")
+                        .HasName("PK_GRUPOATENDIMENTOETIQUETA");
+
+                    b.HasIndex("EtiquetaId")
+                        .HasDatabaseName("IX_GRUPOATENDIMENTOETIQUETA_ETIQUETAID");
+
+                    b.ToTable("GRUPOATENDIMENTOETIQUETA", (string)null);
                 });
 
             modelBuilder.Entity("DeslandesApp.Domain.Models.Entities.GrupoCasoCliente", b =>
@@ -1781,6 +1803,27 @@ namespace DeslandesApp.Infra.Data.Migrations
                     b.Navigation("Pessoa");
                 });
 
+            modelBuilder.Entity("DeslandesApp.Domain.Models.Entities.GrupoAtendimentoEtiqueta", b =>
+                {
+                    b.HasOne("DeslandesApp.Domain.Models.Entities.Atendimento", "Atendimento")
+                        .WithMany("GrupoEtiquetas")
+                        .HasForeignKey("AtendimentoId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("FK_ATENDIMENTO_ETIQUETA");
+
+                    b.HasOne("DeslandesApp.Domain.Models.Entities.Etiqueta", "Etiqueta")
+                        .WithMany()
+                        .HasForeignKey("EtiquetaId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("FK_GRUPOATENDIMENTOETIQUETA_ETIQUETA_ETIQUETAID");
+
+                    b.Navigation("Atendimento");
+
+                    b.Navigation("Etiqueta");
+                });
+
             modelBuilder.Entity("DeslandesApp.Domain.Models.Entities.GrupoCasoCliente", b =>
                 {
                     b.HasOne("DeslandesApp.Domain.Models.Entities.Caso", "Caso")
@@ -1917,7 +1960,7 @@ namespace DeslandesApp.Infra.Data.Migrations
                         .HasForeignKey("AtendimentoId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
-                        .HasConstraintName("FK_ATENDIMENTO_ETIQUETA");
+                        .HasConstraintName("FK_GRUPOETIQUETASATENDIMENTOS_ATENDIMENTO_ATENDIMENTOID");
 
                     b.HasOne("DeslandesApp.Domain.Models.Entities.Etiqueta", "Etiqueta")
                         .WithMany("GrupoEtiquetasAtendimentos")
@@ -2309,6 +2352,8 @@ namespace DeslandesApp.Infra.Data.Migrations
             modelBuilder.Entity("DeslandesApp.Domain.Models.Entities.Atendimento", b =>
                 {
                     b.Navigation("GrupoClientes");
+
+                    b.Navigation("GrupoEtiquetas");
 
                     b.Navigation("GrupoEtiquetasAtendimentos");
                 });

@@ -28,7 +28,7 @@ namespace DeslandesApp.Domain.Models.Entities
         public ICollection<GrupoEnvolvidosProcesso> GrupoEnvolvidosProcesso { get; set; }
         public ICollection<GrupoEtiquetasProcessos> GrupoEtiquetasProcessos { get; set; }
         public ICollection<GrupoEnvolvidos> GrupoEnvolvidos { get; set; }
-        public ICollection<GrupoTarefaEnvolvido> GrupoTarefaEnvolvido { get; set; }
+        public ICollection<GrupoTarefaResponsaveis> GrupoTarefaResponsaveis { get; set; }
         public Sexo? Sexo { get; set; }
         public Usuario? Usuario { get; set; }            // Usuário vinculado
        // public Usuario? UsuarioCadastro { get; set; }    // Usuário que cadastrou

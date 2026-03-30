@@ -40,14 +40,13 @@ namespace DeslandesApp.Infra.Data.Repositories
         private IVaraRepository? _varaRepository;
         private ITarefaRepository? _tarefaRepository;
         private IListaTarefaRepository? _listaTarefaRepository;
-        private IGrupoTarefaEnvolvidoRepository? _grupoTarefaEnvolvidoRepository;
+        private IGrupoTarefaResponsaveisRepository? _grupoTarefaResponsaveisRepository;
         private ICasoRepository? _casoRepository;
         private IAtendimentoRepository? _atendimentoRepository;
         private IGrupoCasoClienteRepository? _grupoCasoClienteRepository;
         private IGrupoCasoEnvolvidosRepository? _grupoCasoEnvolvidosRepository;
         private IEtiquetaRepository? _etiquetaRepository;
-        private IGrupoAtendimentoClienteRepository? _atendimentoClienteRepository;
-        private IGrupoAtendimentoEtiquetaRepository? _grupoAtendimentoEtiquetaRepository;
+        private IGrupoAtendimentoClienteRepository? _atendimentoClienteRepository;      
         private ITarefaEtiquetaRepository? _tarefaEtiquetaRepository;
         private IEventoRepository? _eventoRepository;
         private IGrupoEventoResponsavelRepository? _grupoEventoResponsavelRepository;
@@ -56,8 +55,18 @@ namespace DeslandesApp.Infra.Data.Repositories
         private IGrupoClientesProcessosRepository? _grupoClientesProcessosRepository;
         private IGrupoEnvolvidosProcessoRepository? _grupoEnvolvidosProcessoRepository;
         private IGrupoEtiquetasProcessosRepository? _grupoEtiquetasProcessosRepository;
-       // public IGrupoEtiquetasProcessosRepository GrupoEtiquetaProcessosRepository => throw new NotImplementedException();
+        private IGrupoEtiquetasAtendimentoRepository? _grupoEtiquetasAtendimentoRepository;
 
+        public IGrupoEtiquetasAtendimentoRepository GrupoEtiquetasAtendimentoRepository
+        {
+            get
+            {
+                if (_grupoEtiquetasAtendimentoRepository == null)
+                    _grupoEtiquetasAtendimentoRepository = new GrupoEtiquetasAtendimentoRepository(dataContext);
+
+                return _grupoEtiquetasAtendimentoRepository;
+            }
+        }
 
         public IGrupoEtiquetasProcessosRepository GrupoEtiquetasProcessosRepository
         {
@@ -139,16 +148,7 @@ namespace DeslandesApp.Infra.Data.Repositories
                 return _tarefaEtiquetaRepository;
             }
         }
-        public IGrupoAtendimentoEtiquetaRepository GrupoAtendimentoEtiquetaRepository
-        {
-            get
-            {
-                if (_grupoAtendimentoEtiquetaRepository == null)
-                    _grupoAtendimentoEtiquetaRepository = new GrupoAtendimentoEtiquetaRepository(dataContext);
 
-                return _grupoAtendimentoEtiquetaRepository;
-            }
-        }
         public IGrupoAtendimentoClienteRepository GrupoAtendimentoClienteRepository
         {
             get
@@ -209,14 +209,14 @@ namespace DeslandesApp.Infra.Data.Repositories
                 return _casoRepository;
             }
         }
-        public IGrupoTarefaEnvolvidoRepository GrupoTarefaEnvolvidoRepository
+        public IGrupoTarefaResponsaveisRepository GrupoTarefaResponsaveisRepository
         {
             get
             {
-                if (_grupoTarefaEnvolvidoRepository == null)
-                    _grupoTarefaEnvolvidoRepository = new GrupoTarefaEnvolvidoRepository(dataContext);
+                if (_grupoTarefaResponsaveisRepository == null)
+                    _grupoTarefaResponsaveisRepository = new GrupoTarefaResponsaveisRepository(dataContext);
 
-                return _grupoTarefaEnvolvidoRepository;
+                return _grupoTarefaResponsaveisRepository;
             }
         }
         public IListaTarefaRepository ListaTarefaRepository
@@ -397,6 +397,8 @@ namespace DeslandesApp.Infra.Data.Repositories
         }
 
        
+
+
 
 
 

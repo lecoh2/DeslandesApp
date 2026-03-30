@@ -2,6 +2,8 @@
 using DeslandesApp.Domain.Models.Dtos.Requests.GrupoAtendimento;
 using DeslandesApp.Domain.Models.Dtos.Requests.GrupoEtiqueta;
 using DeslandesApp.Domain.Models.Dtos.Responses.Atendimento;
+using DeslandesApp.Domain.Models.Dtos.Responses.GrupoAtendimentoCliente;
+using DeslandesApp.Domain.Models.Dtos.Responses.GrupoEtiquetaAtendimento;
 using DeslandesApp.Domain.Models.Dtos.Responses.Processo;
 using DeslandesApp.Domain.Models.Entities;
 using DeslandesApp.Domain.Utils;
@@ -19,15 +21,13 @@ namespace DeslandesApp.Infra.Data.Repositories
         : BaseRepository<Atendimento, Guid>(dataContext), IAtendimentoRepository
     {
         public async Task<PageResult<AtendimentoPaginacaoResponse>> GetAtendimentoPaginacaoAsync(
-    int pageNumber,
-    int pageSize,
-    string? searchTerm = null)
+       int pageNumber,
+       int pageSize,
+       string? searchTerm = null)
         {
-            // 1️⃣ Base da consulta (sem subcollections)
             var baseQuery = dataContext.Atendimento
                 .AsNoTracking();
 
-            // 2️⃣ Filtro de busca
             if (!string.IsNullOrWhiteSpace(searchTerm))
             {
                 var term = searchTerm.ToLower();
@@ -57,17 +57,14 @@ namespace DeslandesApp.Infra.Data.Repositories
                 );
             }
 
-            // 3️⃣ Total de registros
             var totalCount = await baseQuery.CountAsync();
 
-            // 4️⃣ Paginação
             var pagedAtendimentos = await baseQuery
                 .OrderBy(r => r.Assunto)
                 .Skip((pageNumber - 1) * pageSize)
                 .Take(pageSize)
                 .ToListAsync();
 
-            // 5️⃣ Projeção dos clientes (em memória)
             var items = pagedAtendimentos.Select(r =>
             {
                 var clientes = dataContext.GrupoAtendimentoCliente
@@ -86,6 +83,15 @@ namespace DeslandesApp.Infra.Data.Repositories
                     })
                     .ToList();
 
+                var etiquetas = dataContext.GrupoEtiquetasAtendimentos
+                    .Where(ge => ge.AtendimentoId == r.Id)
+                    .Select(ge => new
+                    {
+                        ge.EtiquetaId,
+                        Nome = ge.Etiqueta.Nome
+                    })
+                    .ToList();
+
                 return new AtendimentoPaginacaoResponse
                 {
                     Assunto = r.Assunto,
@@ -94,13 +100,26 @@ namespace DeslandesApp.Infra.Data.Repositories
                     CasoId = r.CasoId,
                     AtendimentoPaiId = r.AtendimentoPaiId,
                     ResponsavelId = r.ResponsavelId,
+
                     GrupoAtendimentoCliente = clientes
-                        .Select(c => new GrupoAtendimentoClienteRequest(c.PessoaId, c.Nome))
+                        .Select(c => new GrupoAtendimentoClienteResponse
+                        {
+                            PessoaId = c.PessoaId,
+                            Nome = c.Nome
+                        })
+                        .ToList(),
+
+                    GrupoAtendimentoEtiqueta = etiquetas
+                        .Select(e => new GrupoEtiquetaAtendimentoResponse
+                        {
+                            EtiquetaId = e.EtiquetaId,
+                            Nome = e.Nome
+                        })
                         .ToList()
                 };
             }).ToList();
 
-            // 6️⃣ Retorno
+            // ✅ RETURN CORRETO (fora do Select)
             return new PageResult<AtendimentoPaginacaoResponse>
             {
                 Items = items,
@@ -110,4 +129,4 @@ namespace DeslandesApp.Infra.Data.Repositories
             };
         }
     }
-    }
+}

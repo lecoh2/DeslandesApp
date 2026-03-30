@@ -34,13 +34,12 @@ namespace DeslandesApp.Domain.Interfaces.Repositories
         IVaraRepository VaraRepository { get; }
         ITarefaRepository TarefaRepository { get; }
         IListaTarefaRepository ListaTarefaRepository { get; }
-        IGrupoTarefaEnvolvidoRepository GrupoTarefaEnvolvidoRepository { get; }
+        IGrupoTarefaResponsaveisRepository GrupoTarefaResponsaveisRepository { get; }
         IAtendimentoRepository AtendimentoRepository { get; }
         ICasoRepository CasoRepository { get; }
         IGrupoCasoClienteRepository GrupoCasoClienteRepository { get; }
         IGrupoCasoEnvolvidosRepository GrupoCasoEnvolvidosRepository { get; }
-        IGrupoAtendimentoClienteRepository GrupoAtendimentoClienteRepository { get; }
-        IGrupoAtendimentoEtiquetaRepository GrupoAtendimentoEtiquetaRepository { get; }
+        IGrupoAtendimentoClienteRepository GrupoAtendimentoClienteRepository { get; }       
         IEtiquetaRepository EtiquetaRepository { get; }
         ITarefaEtiquetaRepository TarefaEtiquetaRepository { get; }
         IGrupoEventoResponsavelRepository GrupoEventoResponsavelRepository { get; }
@@ -49,6 +48,8 @@ namespace DeslandesApp.Domain.Interfaces.Repositories
         IGrupoClientesProcessosRepository GrupoClientesProcessosRepository { get; }
         IGrupoEnvolvidosProcessoRepository GrupoEnvolvidosProcessosRepository { get; }
         IGrupoEtiquetasProcessosRepository GrupoEtiquetasProcessosRepository { get; }
+        IGrupoEtiquetasAtendimentoRepository GrupoEtiquetasAtendimentoRepository { get;  }
+
         #endregion
     }
 }

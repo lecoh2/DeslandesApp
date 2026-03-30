@@ -76,11 +76,11 @@ namespace DeslandesApp.Infra.Data.Mappings
                    .HasConstraintName("FK_TAREFA_LISTATAREFA");
 
             // 👥 Envolvidos
-            builder.HasMany(x => x.GrupoTarefaEnvolvido)
+            builder.HasMany(x => x.GrupoTarefaResponsaveis)
                    .WithOne(x => x.Tarefa)
                    .HasForeignKey(x => x.TarefaId)
                    .OnDelete(DeleteBehavior.Cascade)
-                   .HasConstraintName("FK_TAREFA_ENVOLVIDO");
+                   .HasConstraintName("FK_TAREFA_RESPONSAVEIS");
             builder.HasOne(e => e.UsuarioCriacao)
                 .WithMany()
                 .HasForeignKey(e => e.UsuarioCriacaoId)
