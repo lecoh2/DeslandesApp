@@ -13,6 +13,7 @@ namespace DeslandesApp.Domain.Interfaces.Repositories
     public interface IAtendimentoRepository : IBaseRepository<Atendimento, Guid>
     {
         Task<PageResult<AtendimentoPaginacaoResponse>> GetAtendimentoPaginacaoAsync(int pageNumber, int pageSize, string? searchTerm = null);
+        Task<Atendimento> ConsultarAtendimentoComRelacionamentosAsync(Guid idAtendimento);
 
     }
 }

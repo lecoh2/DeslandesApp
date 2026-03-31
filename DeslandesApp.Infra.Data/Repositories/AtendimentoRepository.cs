@@ -20,6 +20,19 @@ namespace DeslandesApp.Infra.Data.Repositories
     public class AtendimentoRepository(DataContext dataContext)
         : BaseRepository<Atendimento, Guid>(dataContext), IAtendimentoRepository
     {
+        public async Task<Atendimento> ConsultarAtendimentoComRelacionamentosAsync(Guid idAtendimento)
+        
+               
+        {
+            return await dataContext.Atendimento
+                .Include(p => p.Caso)
+                .Include(p => p.Responsavel)
+                .Include(p => p.Processo)
+                .Include(p => p.AtendimentoPai)               
+                .FirstOrDefaultAsync(p => p.Id == idAtendimento);
+        }
+        
+
         public async Task<PageResult<AtendimentoPaginacaoResponse>> GetAtendimentoPaginacaoAsync(
        int pageNumber,
        int pageSize,

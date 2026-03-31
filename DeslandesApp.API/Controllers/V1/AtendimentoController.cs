@@ -1,6 +1,8 @@
 ﻿using DeslandesApp.Domain.Interfaces.Services;
 using DeslandesApp.Domain.Models.Dtos.Requests.Atendimento;
+using DeslandesApp.Domain.Models.Dtos.Requests.Processo;
 using DeslandesApp.Domain.Models.Dtos.Responses.Atendimento;
+using DeslandesApp.Domain.Models.Dtos.Responses.Processo;
 using DeslandesApp.Domain.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -24,7 +26,18 @@ namespace DeslandesApp.API.Controllers.V1
                 data = response
             });
         }
-
+        [HttpPut("atualizar-atenndimento{id}")]
+        [ProducesResponseType(typeof(CriarAtendimentoClienteResponse), 200)]
+        public async Task<IActionResult> PutAsync(Guid id, [FromBody] AtendimentoClienteUpdateRequest request)
+        {
+            var response = await atendiemntofaService.ModificarAsync(id, request);
+            return StatusCode(StatusCodes.Status201Created, new
+            {
+                success = true,
+                message = $"Proceso {response.Assunto} atualizado com sucesso.",
+                data = response
+            });
+        }
         [HttpGet("consultar-atendimento-paginacao")]
         public async Task<IActionResult> ConsultarAtendimentoPaginacao(
        [FromQuery] int pageNumber = 1,

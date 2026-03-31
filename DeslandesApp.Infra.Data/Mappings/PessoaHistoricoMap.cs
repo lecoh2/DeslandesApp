@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace DeslandesApp.Infra.Data.Mappings
 {
-    internal class PessoaHistoricoMap : IEntityTypeConfiguration<PessoaHistorico>
+    public class PessoaHistoricoMap : IEntityTypeConfiguration<PessoaHistorico>
     {
         public void Configure(EntityTypeBuilder<PessoaHistorico> builder)
         {

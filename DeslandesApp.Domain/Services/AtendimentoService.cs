@@ -11,6 +11,7 @@ using DeslandesApp.Domain.Models.Enum;
 using DeslandesApp.Domain.Utils;
 using DeslandesApp.Domain.Validators;
 using FluentValidation;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -187,10 +188,135 @@ namespace DeslandesApp.Domain.Services
             throw new NotImplementedException();
         }
 
-        public Task<CriarAtendimentoClienteResponse> ModificarAsync(Guid id, AtendimentoClienteUpdateRequest request)
+        public async Task<CriarAtendimentoClienteResponse> ModificarAsync(Guid id, AtendimentoClienteUpdateRequest request)
         {
-            throw new NotImplementedException();
+             await unitOfWork.BeginTransactionAsync();
+
+            var atendimento = await unitOfWork.AtendimentoRepository.GetByIdAsync(id);
+            if (atendimento == null)
+                throw new ApplicationException("Atendimento não encontrado.");
+
+            var usuario = await unitOfWork.UsuarioRepository.GetByIdAsync(request.ResponsavelId!.Value);
+            if (usuario == null)
+                throw new ApplicationException("Usuário informado não encontrado.");
+
+            // 🔎 Antes (com relacionamentos)
+            var atendimentoAntes = await unitOfWork.AtendimentoRepository
+                .ConsultarAtendimentoComRelacionamentosAsync(id);
+
+            if (atendimentoAntes == null)
+                throw new ApplicationException("Atendimento para histórico não encontrado.");
+
+            var dadosAntes = new
+            {
+                atendimentoAntes.Assunto,
+                atendimentoAntes.Registro,
+                atendimentoAntes.DataCadastro,
+
+                Processo = atendimentoAntes.Processo != null ? new
+                {
+                    atendimentoAntes.Processo.Id
+                    // adicione mais campos se quiser
+                } : null,
+
+                Caso = atendimentoAntes.Caso != null ? new
+                {
+                    atendimentoAntes.Caso.Id
+                } : null,
+
+                Responsavel = atendimentoAntes.Responsavel != null ? new
+                {
+                    atendimentoAntes.Responsavel.Id,
+                    atendimentoAntes.Responsavel.NomeUsuario
+                } : null,
+
+                AtendimentoPai = atendimentoAntes.AtendimentoPai != null ? new
+                {
+                    atendimentoAntes.AtendimentoPai.Id
+                } : null,
+
+                Clientes = atendimentoAntes.GrupoClientes?
+                    .Select(c => c.Pessoa?.Nome)
+                    .Where(n => n != null)
+                    .ToList(),
+
+                Etiquetas = atendimentoAntes.GrupoEtiquetasAtendimentos?
+                    .Select(e => e.Etiqueta?.Nome)
+                    .Where(n => n != null)
+                    .ToList(),
+
+                Usuario = new
+                {
+                    usuario.Id,
+                    usuario.Login,
+                    usuario.NomeUsuario
+                }
+            };
+
+            // 🔄 Atualiza entidade
+            mapper.Map(request, atendimento);
+            atendimento.ResponsavelId = request.ResponsavelId;
+            atendimento.DataAtualizacao = DateTime.Now;
+
+            atendimento.ValidarVinculo();
+
+            await unitOfWork.AtendimentoRepository.UpdateAsync(atendimento);
+
+            // 🔎 Depois (já atualizado)
+            var atendimentoDepois = await unitOfWork.AtendimentoRepository
+                .ConsultarAtendimentoComRelacionamentosAsync(id);
+
+            if (atendimentoDepois == null)
+                throw new ApplicationException("Atendimento atualizado não encontrado.");
+
+            var dadosDepois = new
+            {
+                atendimentoDepois.Assunto,
+                atendimentoDepois.Registro,
+                atendimentoDepois.DataCadastro,
+                atendimentoDepois.DataAtualizacao,
+
+                Processo = atendimentoDepois.Processo?.Id,
+                Caso = atendimentoDepois.Caso?.Id,
+                Responsavel = atendimentoDepois.Responsavel?.NomeUsuario,
+                AtendimentoPai = atendimentoDepois.AtendimentoPai?.Id,
+
+                Clientes = atendimentoDepois.GrupoClientes?
+                    .Select(c => c.Pessoa?.Nome)
+                    .Where(n => n != null)
+                    .ToList(),
+
+                Etiquetas = atendimentoDepois.GrupoEtiquetasAtendimentos?
+                    .Select(e => e.Etiqueta?.Nome)
+                    .Where(n => n != null)
+                    .ToList(),
+
+                Usuario = new
+                {
+                    usuario.Id,
+                    usuario.Login,
+                    usuario.NomeUsuario
+                }
+            };
+
+            // 🧾 Histórico
+            var historico = new AtendimentoHistorico
+            {
+                AtendimentoId = atendimento.Id,
+                IdUsuario = request.ResponsavelId!.Value,
+                DataAlteracao = DateTime.Now,
+                Observacao = request.Observacao ?? "",
+                DadosAntes = JsonConvert.SerializeObject(dadosAntes),
+                DadosDepois = JsonConvert.SerializeObject(dadosDepois)
+            };
+
+            await unitOfWork.AtendimentoHistoricoRepository.AddAsync(historico);
+
+            await unitOfWork.CommitAsync();
+
+            return mapper.Map<CriarAtendimentoClienteResponse>(atendimentoDepois);
         }
+        
 
         public Task<CriarAtendimentoClienteResponse?> ObterPorIdAsync(Guid id)
         {
