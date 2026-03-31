@@ -80,7 +80,7 @@ namespace DeslandesApp.Infra.Data.Repositories
                 {
                     CasoId = gc.CasoId,
                     PessoaId = gc.PessoaId,
-                    QualificacaoId = gc.QualificacaoId,
+                    //QualificacaoId = gc.QualificacaoId,
 
                     Nome = dataContext.PessoasFisicas
                         .Where(pf => pf.Id == gc.PessoaId)
@@ -91,10 +91,10 @@ namespace DeslandesApp.Infra.Data.Repositories
                             .Select(pj => pj.Nome)
                             .FirstOrDefault(),
 
-                    NomeQualificacao = dataContext.Qualificacao
-                        .Where(q => q.Id == gc.QualificacaoId)
-                        .Select(q => q.NomeQualificacao)
-                        .FirstOrDefault()
+                    //NomeQualificacao = dataContext.Qualificacao
+                    //    .Where(q => q.Id == gc.QualificacaoId)
+                    //    .Select(q => q.NomeQualificacao)
+                    //    .FirstOrDefault()
                 })
                 .ToListAsync();
 
@@ -127,9 +127,10 @@ namespace DeslandesApp.Infra.Data.Repositories
                     GrupoCasoClientes = envolvidos
                         .Select(c => new GrupoCasoClienteResponse(
                             c.PessoaId,
-                            c.Nome,
-                            c.QualificacaoId ?? Guid.Empty,
-                            c.NomeQualificacao
+                            c.CasoId,
+                            c.Nome
+                            //c.QualificacaoId ?? Guid.Empty,
+                            //c.NomeQualificacao
                         ))
                         .ToList(),
 

@@ -12,7 +12,7 @@ namespace DeslandesApp.Domain.Models.Entities
         public Caso? Caso { get; set; } = null!;
         public Guid PessoaId { get; set; }
         public Pessoa? Pessoa { get; set; } = null!;
-        public Guid? QualificacaoId { get; set; } // 🔥 ESSENCIAL
-        public Qualificacao? QualificacaoCliente { get; set; }
+        //public Guid? QualificacaoId { get; set; } // 🔥 ESSENCIAL
+        //public Qualificacao? QualificacaoCliente { get; set; }
     }
 }

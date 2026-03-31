@@ -9,7 +9,10 @@ namespace DeslandesApp.API.Controllers.V1
 {
     [Route("api/v1/caso")]
     [ApiController]
-    public class CasoController(ICasoService casoService) : ControllerBase
+    public class CasoController(ICasoService casoService,
+        IGrupoCasoClienteService grupoCasoClienteservice,
+        IGrupoCasoEnvovidoService grupoCasoEnvovidoService,
+        IGrupoEtiquetaCasoService grupoCasoEtiquetaService) : ControllerBase
     {
         [HttpPost]
         [ProducesResponseType(typeof(CriarCasoResponse), StatusCodes.Status201Created)]
@@ -37,6 +40,88 @@ namespace DeslandesApp.API.Controllers.V1
                 .ConsultarCasoPaginacaoAsync(pageNumber, pageSize, searchTerm);
 
             return Ok(proessoPaged);
+        }
+
+
+        [HttpPost("adicionar-grupo-cliente-caso/{idPessoa:guid}/{idCaso:guid}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<IActionResult> AdicionarGrupoClienteProcesso(Guid idPessoa, Guid idCaso)
+        {
+            var response = await grupoCasoClienteservice.
+                AdicionarGrupoCasoClienteAsync(idPessoa, idCaso);
+
+            return Ok(new
+            {
+                success = true,
+                message = $"Cliente {response.Nome}, adicionado ao processo com sucesso."
+            });
+        }
+
+        [HttpDelete("remover-grupo-cliente-caso/{idPessoa:guid}/{idCaso:guid}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<IActionResult> RemoverGrupoSetor(Guid idPessoa, Guid idCaso)
+        {
+
+            await grupoCasoClienteservice.RemoverGrupoCasoClienteAsync(idPessoa, idCaso);
+
+            return Ok(new
+            {
+                success = true,
+                message = "Cliente removido do processo com sucesso."
+            });
+        }
+
+        [HttpPost("adicionar-grupo-envolvidos-casao/{idPessoa:guid}/{idCaso:guid}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<IActionResult> AdicionarGrupoEnvolvidosProcesso(Guid idPessoa, Guid idCaso)
+        {
+          var response = await grupoCasoEnvovidoService
+                .AdicionarGrupoCasoEnvolvidoAsync(idPessoa, idCaso);
+
+            return Ok(new
+            {
+                success = true,
+               message = $"Envolvido {response.Nome}, adicionado ao processo com sucesso."
+            });
+        }
+
+        [HttpDelete("remover-grupo-envolvidos-processo/{idPessoa:guid}/{idCaso:guid}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<IActionResult> RemoverGrupoEnvolvidosProcesso(Guid idPessoa, Guid idCaso)
+        {
+           await grupoCasoEnvovidoService.RemoverGrupoCasoEnvolvidoAsync(idPessoa, idCaso);
+
+            return Ok(new
+            {
+                success = true,
+                message = "Envolvido removido do processo com sucesso."
+            });
+        }
+        [HttpPost("adicionar-grupo-etiqueta-caso/{idEtiqueta:guid}/{idCaso:guid}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<IActionResult> AdicionarGrupoEtiqutaProcesso(Guid idEtiqueta, Guid idCaso)
+        {
+            var response = await grupoCasoEtiquetaService.AdicionarEtiquetaCasoAsync(idEtiqueta, idCaso);
+
+            return Ok(new
+            {
+                success = true,
+               // message = $"Etiqueta {response.nome}, adicionada ao processo com sucesso"
+
+            });
+        }
+
+        [HttpDelete("remover-grupo-etiqueta-etiqueta/{idEtiqueta:guid}/{idProcesso:guid}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<IActionResult> RemoverGrupoEtiquetaProcesso(Guid idEtiqueta, Guid idProcesso)
+        {
+           await grupoCasoEtiquetaService.RemoverEtiquetaCasoAsync(idEtiqueta, idProcesso);
+
+            return Ok(new
+            {
+                success = true,
+                message = "Etiqueta removida do processo com sucesso."
+            });
         }
     }
 }

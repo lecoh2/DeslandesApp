@@ -9,6 +9,8 @@ namespace DeslandesApp.Domain.Interfaces.Repositories
 {
     public interface IGrupoCasoClienteRepository : IBaseRepository<GrupoCasoCliente, Guid>
     {
+        Task<GrupoCasoCliente> GetByIdClienteAsync(Guid idPessoa, Guid idCaso );
+        Task<GrupoCasoCliente> ExistCasoClienteAsync(Guid idPessoa, Guid idCaso);
     }
 }
 

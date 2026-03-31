@@ -1,6 +1,7 @@
 ﻿using DeslandesApp.Domain.Contracts.Security;
 using DeslandesApp.Domain.Interfaces.Services;
 using DeslandesApp.Domain.Mappings;
+using DeslandesApp.Domain.Models.Entities;
 using DeslandesApp.Domain.Services;
 using Microsoft.Extensions.DependencyInjection;
 using System;
@@ -33,7 +34,9 @@ namespace DeslandesApp.Domain.Extensions
             services.AddScoped<IGrupoEtiquetaProcessoService, GrupoEtiquetasProcessosService>();
             services.AddScoped<IGrupoTarefaResponsaveisService, GrupoTarefaResponsaveisServices>();
             services.AddScoped<IGrupoEtiquetaAtendimentoServices, GrupoEtiquetaAtendimentoService>();
-
+            services.AddScoped<IGrupoEtiquetaCasoService, GrupoEtiquetaCasoService>();
+            services.AddScoped<IGrupoCasoClienteService, GrupoCasoClientesServices>();
+            services.AddScoped<IGrupoCasoEnvovidoService, GrupoCasoEnvolvidoService>();
 
 
             //services.AddTransient<IGrupoNiveisServices, GrupoNiveisService>();

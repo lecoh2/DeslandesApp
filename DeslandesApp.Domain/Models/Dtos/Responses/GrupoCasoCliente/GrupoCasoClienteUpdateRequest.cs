@@ -6,12 +6,7 @@ using System.Threading.Tasks;
 
 namespace DeslandesApp.Domain.Models.Dtos.Responses.GrupoCasoCliente
 {
-    public record GrupoCasoClienteResponse
-  (
-       Guid PessoaId,
-       Guid CasoId,
-    string Nome
-   // Guid QualificacaoId,
-   // string NomeQualificacao
-  );
+    public class GrupoCasoClienteUpdateRequest
+    {
+    }
 }

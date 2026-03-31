@@ -72,7 +72,7 @@ namespace DeslandesApp.Domain.Services
                     var grupoCliente = new GrupoCasoCliente
                     {
                         CasoId = caso.Id,
-                        QualificacaoId = grupos.IdQualificacao,
+                       // QualificacaoId = grupos.IdQualificacao,
                         PessoaId = grupos.IdPessoa
                     };
 

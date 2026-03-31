@@ -9,6 +9,6 @@ namespace DeslandesApp.Domain.Models.Dtos.Requests.GrupoCasoCliente
     public record GrupoCasoClienteRequest
     (
         Guid IdPessoa,
-        Guid IdQualificacao
+        Guid IdCaso
     );
 }

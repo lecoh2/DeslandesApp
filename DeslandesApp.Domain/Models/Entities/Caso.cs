@@ -25,6 +25,7 @@ namespace DeslandesApp.Domain.Models.Entities
         // Clientes e Envolvidos
         public List<GrupoCasoCliente> GrupoCasoCliente { get; set; } = new List<GrupoCasoCliente>();
         public List<GrupoCasoEnvolvido> GrupoCasoEnvolvido { get; set; } = new List<GrupoCasoEnvolvido>();
+        public List<GrupoEtiquetaCasos> GrupoEtiquetaCasos { get; set; } = new List<GrupoEtiquetaCasos>();
 
     }
 }

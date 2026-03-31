@@ -4,6 +4,7 @@ using DeslandesApp.Infra.Data.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DeslandesApp.Infra.Data.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20260331120928_GrupoCasoCliente")]
+    partial class GrupoCasoCliente
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -589,25 +592,6 @@ namespace DeslandesApp.Infra.Data.Migrations
                         .HasDatabaseName("IX_GRUPOENVOLVIDOSPROCESSO_PROCESSOID");
 
                     b.ToTable("GRUPOENVOLVIDOSPROCESSO");
-                });
-
-            modelBuilder.Entity("DeslandesApp.Domain.Models.Entities.GrupoEtiquetaCasos", b =>
-                {
-                    b.Property<Guid>("EtiquetaId")
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnName("ETIQUETAID");
-
-                    b.Property<Guid>("CasoId")
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnName("CASOID");
-
-                    b.HasKey("EtiquetaId", "CasoId")
-                        .HasName("PK_GRUPOETIQUETACASOS");
-
-                    b.HasIndex("CasoId")
-                        .HasDatabaseName("IX_GRUPOETIQUETACASOS_CASOID");
-
-                    b.ToTable("GRUPOETIQUETACASOS");
                 });
 
             modelBuilder.Entity("DeslandesApp.Domain.Models.Entities.GrupoEtiquetasAtendimentos", b =>
@@ -1915,27 +1899,6 @@ namespace DeslandesApp.Infra.Data.Migrations
                     b.Navigation("Processo");
                 });
 
-            modelBuilder.Entity("DeslandesApp.Domain.Models.Entities.GrupoEtiquetaCasos", b =>
-                {
-                    b.HasOne("DeslandesApp.Domain.Models.Entities.Caso", "Caso")
-                        .WithMany("GrupoEtiquetaCasos")
-                        .HasForeignKey("CasoId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("FK_GRUPOETIQUETACASOS_CASO_CASOID");
-
-                    b.HasOne("DeslandesApp.Domain.Models.Entities.Etiqueta", "Etiqueta")
-                        .WithMany("GrupoEtiquetasCasos")
-                        .HasForeignKey("EtiquetaId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("FK_GRUPOETIQUETACASOS_ETIQUETA_ETIQUETAID");
-
-                    b.Navigation("Caso");
-
-                    b.Navigation("Etiqueta");
-                });
-
             modelBuilder.Entity("DeslandesApp.Domain.Models.Entities.GrupoEtiquetasAtendimentos", b =>
                 {
                     b.HasOne("DeslandesApp.Domain.Models.Entities.Atendimento", "Atendimento")
@@ -2344,15 +2307,11 @@ namespace DeslandesApp.Infra.Data.Migrations
                     b.Navigation("GrupoCasoCliente");
 
                     b.Navigation("GrupoCasoEnvolvido");
-
-                    b.Navigation("GrupoEtiquetaCasos");
                 });
 
             modelBuilder.Entity("DeslandesApp.Domain.Models.Entities.Etiqueta", b =>
                 {
                     b.Navigation("GrupoEtiquetasAtendimentos");
-
-                    b.Navigation("GrupoEtiquetasCasos");
 
                     b.Navigation("GrupoEtiquetasProcessos");
 

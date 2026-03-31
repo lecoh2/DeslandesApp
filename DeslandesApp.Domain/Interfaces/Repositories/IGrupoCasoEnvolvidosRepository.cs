@@ -9,5 +9,7 @@ namespace DeslandesApp.Domain.Interfaces.Repositories
 {
     public interface IGrupoCasoEnvolvidosRepository : IBaseRepository<GrupoCasoEnvolvido, Guid>
     {
+        Task<GrupoCasoEnvolvido> GetByIdEnvolvidoAsync(Guid idPessoa, Guid idCaso);
+        Task<GrupoCasoEnvolvido> ExistCasoEnvolvidoAsync(Guid idPessoa, Guid idCaso);
     }
 }
