@@ -30,7 +30,7 @@ namespace DeslandesApp.Domain.Models.Entities
         // 🔹 Clientes
         public List<GrupoAtendimentoCliente> GrupoClientes { get; set; } = new();
         public List<GrupoEtiquetasAtendimentos> GrupoEtiquetasAtendimentos { get; set; } = new();
-        public TipoVinculo? TipoVinculo { get; set; }
+        public TipoVinculo? TipoVinculoId { get; set; }
         public void ValidarVinculo()
         {
             int count = 0;
@@ -41,6 +41,49 @@ namespace DeslandesApp.Domain.Models.Entities
 
             if (count > 1)
                 throw new Exception("O atendimento não pode ter mais de um vínculo.");
+
+            if (TipoVinculoId == TipoVinculo.Processo && !ProcessoId.HasValue)
+                throw new Exception("TipoVinculo Processo inválido.");
+
+            if (TipoVinculoId == TipoVinculo.Caso && !CasoId.HasValue)
+                throw new Exception("TipoVinculo Caso inválido.");
+
+            if (TipoVinculoId == TipoVinculo.Atendimento && !AtendimentoPaiId.HasValue)
+                throw new Exception("TipoVinculo Atendimento inválido.");
+        }
+        public void DefinirVinculo(Guid? processoId, Guid? casoId, Guid? atendimentoPaiId)
+        {
+            ProcessoId = null;
+            Processo = null;
+
+            CasoId = null;
+            Caso = null;
+
+            AtendimentoPaiId = null;
+            AtendimentoPai = null;
+
+            if (processoId.HasValue)
+            {
+                ProcessoId = processoId;
+                TipoVinculoId = TipoVinculo.Processo;
+                return;
+            }
+
+            if (casoId.HasValue)
+            {
+                CasoId = casoId;
+                TipoVinculoId = TipoVinculo.Caso;
+                return;
+            }
+
+            if (atendimentoPaiId.HasValue)
+            {
+                AtendimentoPaiId = atendimentoPaiId;
+                TipoVinculoId = TipoVinculo.Atendimento; // ✅ correto
+                return;
+            }
+
+            TipoVinculoId = null;
         }
     }
 

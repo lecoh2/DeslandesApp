@@ -1,5 +1,7 @@
 ﻿using DeslandesApp.Domain.Interfaces.Services;
+using DeslandesApp.Domain.Models.Dtos.Requests.Atendimento;
 using DeslandesApp.Domain.Models.Dtos.Requests.Caso;
+using DeslandesApp.Domain.Models.Dtos.Responses.Atendimento;
 using DeslandesApp.Domain.Models.Dtos.Responses.Caso;
 
 using Microsoft.AspNetCore.Http;
@@ -41,7 +43,18 @@ namespace DeslandesApp.API.Controllers.V1
 
             return Ok(proessoPaged);
         }
-
+        [HttpPut("atualizar-caso{id}")]
+        [ProducesResponseType(typeof(CriarCasoResponse), 200)]
+        public async Task<IActionResult> PutAsync(Guid id, [FromBody] CasoUpdateRequest request)
+        {
+            var response = await casoService.ModificarAsync(id, request);
+            return StatusCode(StatusCodes.Status201Created, new
+            {
+                success = true,
+                message = $"Proceso {response.Titulo} atualizado com sucesso.",
+                data = response
+            });
+        }
 
         [HttpPost("adicionar-grupo-cliente-caso/{idPessoa:guid}/{idCaso:guid}")]
         [ProducesResponseType(StatusCodes.Status200OK)]

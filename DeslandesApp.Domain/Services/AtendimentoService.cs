@@ -57,7 +57,7 @@ namespace DeslandesApp.Domain.Services
                     throw new InvalidOperationException("Processo não encontrado.");
 
                 atendimento.ProcessoId = processo.Id;
-                atendimento.TipoVinculo = TipoVinculo.Processo;
+                atendimento.TipoVinculoId = TipoVinculo.Processo;
             }
             else if (request.CasoId.HasValue)
             {
@@ -67,7 +67,7 @@ namespace DeslandesApp.Domain.Services
                     throw new InvalidOperationException("Caso não encontrado.");
 
                 atendimento.CasoId = caso.Id;
-                atendimento.TipoVinculo = TipoVinculo.Caso;
+                atendimento.TipoVinculoId = TipoVinculo.Caso;
             }
             else if (request.AtendimentoPaiId.HasValue)
             {
@@ -77,12 +77,12 @@ namespace DeslandesApp.Domain.Services
                     throw new InvalidOperationException("Atendimento pai não encontrado.");
 
                 atendimento.AtendimentoPaiId = atendimentoPai.Id;
-                atendimento.TipoVinculo = TipoVinculo.Atendimento;
+                atendimento.TipoVinculoId = TipoVinculo.Atendimento;
             }
             else
             {
                 //  Sem vínculo
-                atendimento.TipoVinculo = null; // IMPORTANTE: TipoVinculo deve ser nullable
+                atendimento.TipoVinculoId = null; // IMPORTANTE: TipoVinculo deve ser nullable
             }
 
             //  VALIDA REGRA DE DOMÍNIO
@@ -190,7 +190,7 @@ namespace DeslandesApp.Domain.Services
 
         public async Task<CriarAtendimentoClienteResponse> ModificarAsync(Guid id, AtendimentoClienteUpdateRequest request)
         {
-             await unitOfWork.BeginTransactionAsync();
+            await unitOfWork.BeginTransactionAsync();
 
             var atendimento = await unitOfWork.AtendimentoRepository.GetByIdAsync(id);
             if (atendimento == null)
@@ -200,7 +200,7 @@ namespace DeslandesApp.Domain.Services
             if (usuario == null)
                 throw new ApplicationException("Usuário informado não encontrado.");
 
-            // 🔎 Antes (com relacionamentos)
+            // 🔎 ANTES (histórico)
             var atendimentoAntes = await unitOfWork.AtendimentoRepository
                 .ConsultarAtendimentoComRelacionamentosAsync(id);
 
@@ -213,26 +213,14 @@ namespace DeslandesApp.Domain.Services
                 atendimentoAntes.Registro,
                 atendimentoAntes.DataCadastro,
 
-                Processo = atendimentoAntes.Processo != null ? new
-                {
-                    atendimentoAntes.Processo.Id
-                    // adicione mais campos se quiser
-                } : null,
-
-                Caso = atendimentoAntes.Caso != null ? new
-                {
-                    atendimentoAntes.Caso.Id
-                } : null,
+                Processo = atendimentoAntes.Processo?.Id,
+                Caso = atendimentoAntes.Caso?.Id,
+                AtendimentoPai = atendimentoAntes.AtendimentoPai?.Id,
 
                 Responsavel = atendimentoAntes.Responsavel != null ? new
                 {
                     atendimentoAntes.Responsavel.Id,
                     atendimentoAntes.Responsavel.NomeUsuario
-                } : null,
-
-                AtendimentoPai = atendimentoAntes.AtendimentoPai != null ? new
-                {
-                    atendimentoAntes.AtendimentoPai.Id
                 } : null,
 
                 Clientes = atendimentoAntes.GrupoClientes?
@@ -253,16 +241,27 @@ namespace DeslandesApp.Domain.Services
                 }
             };
 
-            // 🔄 Atualiza entidade
+            // 🔄 ATUALIZAÇÃO
+
+            // ⚠️ IMPORTANTE: evitar sobrescrever vínculos pelo AutoMapper
             mapper.Map(request, atendimento);
+
+            // 🔥 REGRA CENTRAL DE VÍNCULO
+            atendimento.DefinirVinculo(
+                request.ProcessoId,
+                request.CasoId,
+                request.AtendimentoPaiId
+            );
+
             atendimento.ResponsavelId = request.ResponsavelId;
             atendimento.DataAtualizacao = DateTime.Now;
 
+            // 🔒 valida consistência
             atendimento.ValidarVinculo();
 
             await unitOfWork.AtendimentoRepository.UpdateAsync(atendimento);
 
-            // 🔎 Depois (já atualizado)
+            // 🔎 DEPOIS (histórico)
             var atendimentoDepois = await unitOfWork.AtendimentoRepository
                 .ConsultarAtendimentoComRelacionamentosAsync(id);
 
@@ -278,8 +277,9 @@ namespace DeslandesApp.Domain.Services
 
                 Processo = atendimentoDepois.Processo?.Id,
                 Caso = atendimentoDepois.Caso?.Id,
-                Responsavel = atendimentoDepois.Responsavel?.NomeUsuario,
                 AtendimentoPai = atendimentoDepois.AtendimentoPai?.Id,
+
+                Responsavel = atendimentoDepois.Responsavel?.NomeUsuario,
 
                 Clientes = atendimentoDepois.GrupoClientes?
                     .Select(c => c.Pessoa?.Nome)
@@ -299,7 +299,7 @@ namespace DeslandesApp.Domain.Services
                 }
             };
 
-            // 🧾 Histórico
+            // 🧾 HISTÓRICO
             var historico = new AtendimentoHistorico
             {
                 AtendimentoId = atendimento.Id,
@@ -316,7 +316,7 @@ namespace DeslandesApp.Domain.Services
 
             return mapper.Map<CriarAtendimentoClienteResponse>(atendimentoDepois);
         }
-        
+
 
         public Task<CriarAtendimentoClienteResponse?> ObterPorIdAsync(Guid id)
         {

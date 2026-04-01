@@ -29,6 +29,8 @@ namespace DeslandesApp.Infra.Data.Mappings
 
             builder.Property(x => x.ProcessoId)
                    .HasColumnName("PROCESSOID");
+            builder.Property(x => x.TipoVinculoId)
+             .HasColumnName("TIPOVINCULO");
 
             builder.HasOne(x => x.Processo)
                    .WithMany()

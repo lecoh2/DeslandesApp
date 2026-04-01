@@ -4,6 +4,7 @@ using DeslandesApp.Infra.Data.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DeslandesApp.Infra.Data.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20260401145454_AtendimentoTipoVincvulo")]
+    partial class AtendimentoTipoVincvulo
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -211,55 +214,6 @@ namespace DeslandesApp.Infra.Data.Migrations
                         .HasDatabaseName("IX_CASO_RESPONSAVELID");
 
                     b.ToTable("CASO", (string)null);
-                });
-
-            modelBuilder.Entity("DeslandesApp.Domain.Models.Entities.CasoHistorico", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnName("ID");
-
-                    b.Property<Guid>("CasoId")
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnName("CASO_ID");
-
-                    b.Property<string>("DadosAntes")
-                        .HasMaxLength(250)
-                        .IsUnicode(false)
-                        .HasColumnType("VARCHAR(MAX)")
-                        .HasColumnName("DADOSANTES");
-
-                    b.Property<string>("DadosDepois")
-                        .HasMaxLength(250)
-                        .IsUnicode(false)
-                        .HasColumnType("VARCHAR(MAX)")
-                        .HasColumnName("DADOSDEPOIS");
-
-                    b.Property<DateTime?>("DataAlteracao")
-                        .HasColumnType("datetime2")
-                        .HasColumnName("DATAALTERACAO");
-
-                    b.Property<Guid?>("IdUsuario")
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnName("USUARIO_ID");
-
-                    b.Property<string>("Observacao")
-                        .HasMaxLength(250)
-                        .IsUnicode(false)
-                        .HasColumnType("VARCHAR(255)")
-                        .HasColumnName("OBSERVACAO");
-
-                    b.HasKey("Id")
-                        .HasName("PK_CASOHISTORICO");
-
-                    b.HasIndex("CasoId")
-                        .HasDatabaseName("IX_CASOHISTORICO_CASO_ID");
-
-                    b.HasIndex("IdUsuario")
-                        .HasDatabaseName("IX_CASOHISTORICO_USUARIO_ID");
-
-                    b.ToTable("CASOHISTORICO", (string)null);
                 });
 
             modelBuilder.Entity("DeslandesApp.Domain.Models.Entities.Endereco", b =>
@@ -1846,26 +1800,6 @@ namespace DeslandesApp.Infra.Data.Migrations
                         .HasConstraintName("FK_CASO_USUARIO");
 
                     b.Navigation("Responsavel");
-                });
-
-            modelBuilder.Entity("DeslandesApp.Domain.Models.Entities.CasoHistorico", b =>
-                {
-                    b.HasOne("DeslandesApp.Domain.Models.Entities.Caso", "Caso")
-                        .WithMany()
-                        .HasForeignKey("CasoId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired()
-                        .HasConstraintName("FK_CASOHISTORICO_CASO");
-
-                    b.HasOne("DeslandesApp.Domain.Models.Entities.Usuario", "Usuario")
-                        .WithMany()
-                        .HasForeignKey("IdUsuario")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .HasConstraintName("FK_CASOHISTORICO_USUARIO");
-
-                    b.Navigation("Caso");
-
-                    b.Navigation("Usuario");
                 });
 
             modelBuilder.Entity("DeslandesApp.Domain.Models.Entities.Endereco", b =>

@@ -242,6 +242,15 @@ namespace DeslandesApp.Domain.Mappings
             .ForMember(dest => dest.AtendimentoPai, opt => opt.Ignore())
             .ForMember(dest => dest.Responsavel, opt => opt.Ignore());
             CreateMap<Atendimento, CriarAtendimentoClienteResponse>();
+
+            CreateMap<AtendimentoClienteUpdateRequest, Atendimento>()
+    .ForMember(dest => dest.GrupoEtiquetasAtendimentos, opt => opt.Ignore())
+    .ForMember(dest => dest.GrupoClientes, opt => opt.Ignore())
+    .ForMember(dest => dest.Processo, opt => opt.Ignore())
+    .ForMember(dest => dest.Caso, opt => opt.Ignore())
+    .ForMember(dest => dest.AtendimentoPai, opt => opt.Ignore())
+    .ForMember(dest => dest.Responsavel, opt => opt.Ignore())
+    .ForMember(dest => dest.DataCadastro, opt => opt.Ignore()); // 🔥 importante
             #endregion
 
             #region Evento

@@ -155,5 +155,13 @@ namespace DeslandesApp.Infra.Data.Repositories
                 PageSize = pageSize
             };
         }
+
+        public async Task<Caso> ConsultarCasoComRelacionamentosAsync(Guid idCaso)
+        {
+            return await dataContext.Caso              
+                .Include(p => p.Responsavel)
+              
+                .FirstOrDefaultAsync(p => p.Id == idCaso);
+        }
     }
 }
