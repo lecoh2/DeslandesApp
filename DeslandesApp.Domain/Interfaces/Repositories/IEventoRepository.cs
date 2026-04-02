@@ -13,6 +13,7 @@ namespace DeslandesApp.Domain.Interfaces.Repositories
     public interface IEventoRepository : IBaseRepository<Evento, Guid>
     {
         Task<PageResult<EventoPaginacaoResponse>> GetEventoPaginacaoAsync(int pageNumber, int pageSize, string? searchTerm = null);
+        Task<Evento> ConsultarEventoComRelacionamentosAsync(Guid idEvento);
 
     }
 }

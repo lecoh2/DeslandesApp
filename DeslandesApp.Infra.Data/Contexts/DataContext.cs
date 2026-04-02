@@ -50,7 +50,7 @@ namespace DeslandesApp.Infra.Data.Contexts
         public DbSet<GrupoEtiquetaCasos> GrupoEtiquetaCasos { get; set; }
         public DbSet<GrupoTarefaResponsaveis> GrupoTarefaResponsaveis { get; set; }
         public DbSet<GrupoEtiquetasAtendimentos> GrupoEtiquetasAtendimentos { get; set; } 
-
+        public DbSet<EventoHistorico> EventoHistorico { get; set; }
       public DbSet<CasoHistorico> CasoHistorico { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

@@ -53,6 +53,8 @@ namespace DeslandesApp.Domain.Interfaces.Repositories
         IGrupoEtiquetaCasoRepository GrupoEtiquetaCasoRepository { get; }
         IAtendimentoHistoricoRepository AtendimentoHistoricoRepository { get; }
         ICasoHistoricoRepository CasoHistoricoRepository { get; }
+        IEventoHistoricoRepository EventoHistoricoRepository { get;  }
+
         #endregion
     }
 }

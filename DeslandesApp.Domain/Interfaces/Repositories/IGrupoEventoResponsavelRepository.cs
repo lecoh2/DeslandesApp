@@ -9,5 +9,7 @@ namespace DeslandesApp.Domain.Interfaces.Repositories
 {
     public interface IGrupoEventoResponsavelRepository : IBaseRepository<GrupoEventoResponsavel, Guid>
     {
+        Task<GrupoEventoResponsavel> GetByIdEventoResponsaveisAsync(Guid idEvento, Guid idUsuario);
+        Task<GrupoEventoResponsavel> ExistEventoResponsaveisAsync(Guid idEvento, Guid idUsuario);
     }
 }

@@ -16,6 +16,15 @@ namespace DeslandesApp.Infra.Data.Repositories
 {
     public class EventoRepository(DataContext dataContext) : BaseRepository<Evento, Guid>(dataContext), IEventoRepository
     {
+        public async Task<Evento?> ConsultarEventoComRelacionamentosAsync(Guid idEvento)
+       
+        {
+            return await dataContext.Evento               
+                .Include(p => p.UsuarioCriacao)             
+             
+                .FirstOrDefaultAsync(p => p.Id == idEvento);        } 
+        
+
         public async Task<PageResult<EventoPaginacaoResponse>> GetEventoPaginacaoAsync(
        int pageNumber,
        int pageSize,

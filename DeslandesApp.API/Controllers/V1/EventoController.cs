@@ -10,7 +10,7 @@ namespace DeslandesApp.API.Controllers.V1
 {
     [Route("api/v1/evento")]
     [ApiController]
-    public class EventoController(IEventoService eventoService) : ControllerBase
+    public class EventoController(IEventoService eventoService, IGrupoEventoResponsaveisService grupoEventoResponsaveisService) : ControllerBase
     {
         [HttpPost]
         [ProducesResponseType(typeof(CriarEventoResponse), StatusCodes.Status201Created)]
@@ -39,6 +39,45 @@ namespace DeslandesApp.API.Controllers.V1
                 .ConsultarEventoPaginacaoAsync(pageNumber, pageSize, searchTerm);
 
             return Ok(eventoPaged);
+        }
+        [HttpPut("atualizar-evento{id}")]
+        [ProducesResponseType(typeof(CriarEventoResponse), 200)]
+        public async Task<IActionResult> PutAsync(Guid id, [FromBody] UpdateEventoRequest request)
+        {
+            var response = await eventoService.ModificarAsync(id, request);
+            return StatusCode(StatusCodes.Status201Created, new
+            {
+                success = true,
+                message = $"Proceso {response.Titulo} atualizado com sucesso.",
+                data = response
+            });
+        }
+        [HttpPost("adicionar-grupo-evento-responsaves/{idEvento:guid}/{idUsuario:guid}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<IActionResult> AdicionarGrupoClienteProcesso(Guid idEvento, Guid idUsuario)
+        {
+            var response = await grupoEventoResponsaveisService.
+                AdicionarEventoResponsaveisAsync(idEvento, idUsuario);
+
+            return Ok(new
+            {
+                success = true,
+                message = $"Responável adicionado ao processo com sucesso."
+            });
+        }
+
+        [HttpDelete("remover-grupo-evento-responsaves/{idUsuario:guid}/{idEvento:guid}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<IActionResult> RemoverGrupoSetor(Guid idUsuario, Guid idEvento)
+        {
+
+            await grupoEventoResponsaveisService.RemoverGrupoEventoResponsaveisAsync(idUsuario, idEvento);
+
+            return Ok(new
+            {
+                success = true,
+                message = "Responsável removido do processo com sucesso."
+            });
         }
     }
 }
