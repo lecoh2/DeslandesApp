@@ -310,6 +310,23 @@ namespace DeslandesApp.Domain.Services
                 throw;
             }
         }
+        public async Task<UsuariosResponse> ConsultarUsuariosPerfil(Guid id)
+        {
+            var u = await unitOfWork.UsuarioRepository.GetUsuariosComRelacionamentosPerfilAsync(id);
+
+            if (u == null)
+                throw new ApplicationException("Usuário não encontrado.");
+
+            return new UsuariosResponse(
+                u.Id,
+                u.NomeUsuario,
+                u.Login,
+                u.DataCadastro!.Value,
+                u.Status,
+                u.ValorEmail != null ? u.ValorEmail.EnderecoEmail : ""
+            );
+        }
+
         public void Dispose()
         {
             unitOfWork.Dispose();
@@ -337,6 +354,6 @@ namespace DeslandesApp.Domain.Services
             return paged;
         }
 
-
+      
     }
 }

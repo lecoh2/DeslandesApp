@@ -66,12 +66,12 @@ namespace DeslandesApp.API.Controllers.V1
             });
         }
 
-        [HttpDelete("remover-grupo-evento-responsaves/{idUsuario:guid}/{idEvento:guid}")]
+        [HttpDelete("remover-grupo-evento-responsaves/{idEvento:guid}/{idUsuario:guid}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<IActionResult> RemoverGrupoSetor(Guid idUsuario, Guid idEvento)
+        public async Task<IActionResult> RemoverGrupoSetor(Guid idEvento, Guid idUsuario)
         {
 
-            await grupoEventoResponsaveisService.RemoverGrupoEventoResponsaveisAsync(idUsuario, idEvento);
+            await grupoEventoResponsaveisService.RemoverGrupoEventoResponsaveisAsync(idEvento, idUsuario);
 
             return Ok(new
             {

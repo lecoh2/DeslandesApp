@@ -95,5 +95,20 @@ namespace DeslandesApp.Infra.Data.Repositories
                 .Include(u => u.Fotos)
                 .FirstOrDefaultAsync(u => u.Login == login);
         }
+        public async Task<Usuario?> GetUsuariosComRelacionamentosPerfilAsync(Guid id)
+        {
+            return await dataContext.Usuario
+                .Include(u => u.Pessoa)
+                    .ThenInclude(p => p.Endereco) // ✅ Inclui o endereço da pessoa
+                .Include(u => u.Pessoa)
+                    .ThenInclude(p => p.Sexo) // ✅ Inclui o sexo da pessoa
+                .Include(u => u.GrupoSetores)
+                    .ThenInclude(gs => gs.Setor)
+                .Include(u => u.GrupoNiveis)
+                    .ThenInclude(gn => gn.Niveis)
+                .Include(u => u.Fotos) // ✅ traz a foto se houver
+                .FirstOrDefaultAsync(u => u.Id == id);
+        }
+
     }
 }

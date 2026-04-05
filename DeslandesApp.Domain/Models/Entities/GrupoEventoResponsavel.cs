@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace DeslandesApp.Domain.Models.Entities
 {
-    public class GrupoEventoResponsavel : BaseEntity
+    public class GrupoEventoResponsavel 
     {
         public Guid EventoId { get; set; }
         public Evento Evento { get; set; } = null!;

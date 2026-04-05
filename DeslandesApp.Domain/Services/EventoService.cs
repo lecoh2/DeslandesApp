@@ -39,7 +39,10 @@ namespace DeslandesApp.Domain.Services
                 // =========================
                 // 🧠 STATUS KANBAN
                 // =========================
-                evento.StatusGeralKanban = request.StatusKaban ?? StatusGeralKanban.A_Fazer;
+                if (request.StatusKaban.HasValue)
+                {
+                    evento.StatusGeralKanban = request.StatusKaban.Value;
+                }
 
                 // 🔥 STATUS AUTOMÁTICO (INTELIGENTE)
                 if (evento.DataFinal.HasValue && evento.DataFinal.Value < hoje)

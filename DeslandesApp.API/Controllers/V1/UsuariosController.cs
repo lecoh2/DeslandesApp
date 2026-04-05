@@ -57,8 +57,28 @@ namespace DeslandesApp.API.Controllers.V1
             var response = await usuarioService.ConsultarAsync(pageNumber, pageSize);
             return StatusCode(200, response);
         }
-
-       [HttpGet("{id}")]
+        [HttpGet("consultar-usuarios-por-id-perfil/{id}")]
+        [ProducesResponseType(typeof(PageResult<UsuariosResponse>), 201)]
+        public async Task<IActionResult> ConsultarUsuariosPerfil(Guid id)
+        {
+            try
+            {
+                var usuario = await usuarioService.ConsultarUsuariosPerfil(id);
+                //HTTP 200 (OK)
+                return StatusCode(200, usuario);
+            }
+            catch (ApplicationException e)
+            {
+                //HTTP 400 (BAD REQUEST)
+                return StatusCode(400, new { e.Message });
+            }
+            catch (Exception e)
+            {
+                //HTTP 500 (INTERNAL SERVER ERROR)
+                return StatusCode(500, new { e.Message });
+            }
+        }
+        [HttpGet("{id}")]
         [ProducesResponseType(typeof(UsuariosResponse),200)]
         public async Task<IActionResult>GetByIdAsync(Guid id)
         {

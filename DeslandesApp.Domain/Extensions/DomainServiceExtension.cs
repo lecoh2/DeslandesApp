@@ -37,7 +37,7 @@ namespace DeslandesApp.Domain.Extensions
             services.AddScoped<IGrupoEtiquetaCasoService, GrupoEtiquetaCasoService>();
             services.AddScoped<IGrupoCasoClienteService, GrupoCasoClientesServices>();
             services.AddScoped<IGrupoCasoEnvovidoService, GrupoCasoEnvolvidoService>();
-
+            services.AddScoped<IGrupoEventoResponsaveisService, GrupoEventoResponsavelService>();
 
             //services.AddTransient<IGrupoNiveisServices, GrupoNiveisService>();
             //services.AddTransient<IGrupoSetoresService, GrupoSetoresService>()

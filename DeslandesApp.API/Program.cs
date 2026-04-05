@@ -1,7 +1,7 @@
 ﻿using DeslandesApp.API.Configurations;
 using DeslandesApp.API.Middlewares;
-using DeslandesApp.Domain.Interfaces.Services;
 using DeslandesApp.Domain.Extensions;
+using DeslandesApp.Domain.Interfaces.Services;
 using DeslandesApp.Infra.Data.Extensions;
 using Hangfire;
 using Hangfire.SqlServer;
@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
+using System.Text.Json;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -31,7 +32,11 @@ builder.Services.AddControllers(config =>
                      .RequireAuthenticatedUser()
                      .Build();
     config.Filters.Add(new Microsoft.AspNetCore.Mvc.Authorization.AuthorizeFilter(policy));
-});
+}).AddJsonOptions(options =>
+{
+    options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
+    options.JsonSerializerOptions.DictionaryKeyPolicy = JsonNamingPolicy.CamelCase;
+}); ;
 
 // ===== Swagger / OpenAPI =====
 builder.Services.AddEndpointsApiExplorer();

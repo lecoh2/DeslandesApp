@@ -15,6 +15,6 @@ namespace DeslandesApp.Domain.Interfaces.Repositories
     {
         Task<Usuario?> GetUsuarioByLoginAsync(string login);
         Task<PageResult<UsuarioPaginacaoResponse>> GetUsuariosComPaginadoAsync(int pageNumber, int pageSize, string? searchTerm = null);
-
+        Task<Usuario> GetUsuariosComRelacionamentosPerfilAsync(Guid id);
     }
 }

@@ -256,6 +256,7 @@ namespace DeslandesApp.Domain.Mappings
             #region Evento
             CreateMap<CriarEventoRequest, Evento>();
             CreateMap<Evento, CriarEventoResponse>();
+            CreateMap<UpdateEventoRequest, Evento>();
 
             #endregion
             #region GrupoEvento
