@@ -79,15 +79,34 @@ namespace DeslandesApp.Domain.Services
             }
 
             // INFORMAÇÕES COMPLEMENTARES
-            // INFORMAÇÕES COMPLEMENTARES
             if (TemAlgumValor(request.InformacoesComplementares))
             {
                 pessoa.InformacoesComplementares =
                     _mapper.Map<InformacoesComplementaresPessoaFisica>(request.InformacoesComplementares);
             }
 
-            // SALVA TUDO JUNTO
+            // SALVA PESSOA PRIMEIRO (IMPORTANTE!)
             await _unitOfWork.PessoaRepository.AddAsync(pessoa);
+
+            // N:N - ETIQUETAS (OPCIONAL)
+            if (request.GrupoPessoasEtiquetas != null && request.GrupoPessoasEtiquetas.Any())
+            {
+                foreach (var item in request.GrupoPessoasEtiquetas)
+                {
+                    var etiqueta = await _unitOfWork.GrupoPessoasEtiquetasRepository.GetByIdAsync(item.idEtiqueta);
+
+                    if (etiqueta == null)
+                        throw new InvalidOperationException("Etiqueta não encontrada.");
+
+                    var grupoEtiqueta = new GrupoPessoasEtiquetas
+                    {
+                        EtiquetaId = etiqueta.EtiquetaId,
+                        PessoaId = pessoa.Id // ⚠️ corrigido aqui
+                    };
+
+                    await _unitOfWork.GrupoPessoasEtiquetasRepository.AddAsync(grupoEtiqueta);
+                }
+            }
 
             await _unitOfWork.CommitAsync();
 

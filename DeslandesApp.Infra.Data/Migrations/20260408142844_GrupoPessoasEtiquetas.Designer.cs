@@ -4,6 +4,7 @@ using DeslandesApp.Infra.Data.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DeslandesApp.Infra.Data.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20260408142844_GrupoPessoasEtiquetas")]
+    partial class GrupoPessoasEtiquetas
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -260,60 +263,6 @@ namespace DeslandesApp.Infra.Data.Migrations
                         .HasDatabaseName("IX_CASOHISTORICO_USUARIO_ID");
 
                     b.ToTable("CASOHISTORICO", (string)null);
-                });
-
-            modelBuilder.Entity("DeslandesApp.Domain.Models.Entities.ContaBancaria", b =>
-                {
-                    b.Property<string>("NumeroConta")
-                        .HasMaxLength(250)
-                        .IsUnicode(false)
-                        .HasColumnType("varchar(250)")
-                        .HasColumnName("NUMEROCONTA");
-
-                    b.Property<string>("Agencia")
-                        .IsRequired()
-                        .HasMaxLength(20)
-                        .IsUnicode(false)
-                        .HasColumnType("varchar(20)")
-                        .HasColumnName("AGENCIA");
-
-                    b.Property<int>("Id")
-                        .HasColumnType("int")
-                        .HasColumnName("ID");
-
-                    b.Property<string>("NomeBanco")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .IsUnicode(false)
-                        .HasColumnType("varchar(100)")
-                        .HasColumnName("NOMEBANCO");
-
-                    b.Property<Guid>("PessoaId")
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnName("PESSOAID");
-
-                    b.Property<string>("Pix")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .IsUnicode(false)
-                        .HasColumnType("varchar(100)")
-                        .HasColumnName("PIX");
-
-                    b.Property<int?>("TipoConta")
-                        .HasColumnType("int")
-                        .HasColumnName("TIPOCONTA");
-
-                    b.Property<int?>("TipoContaId")
-                        .HasColumnType("int")
-                        .HasColumnName("TIPOCONTAID");
-
-                    b.HasKey("NumeroConta")
-                        .HasName("PK_CONTABANCARIA");
-
-                    b.HasIndex("PessoaId")
-                        .HasDatabaseName("IX_CONTABANCARIA_PESSOAID");
-
-                    b.ToTable("CONTABANCARIA", (string)null);
                 });
 
             modelBuilder.Entity("DeslandesApp.Domain.Models.Entities.Endereco", b =>
@@ -1986,18 +1935,6 @@ namespace DeslandesApp.Infra.Data.Migrations
                     b.Navigation("Usuario");
                 });
 
-            modelBuilder.Entity("DeslandesApp.Domain.Models.Entities.ContaBancaria", b =>
-                {
-                    b.HasOne("DeslandesApp.Domain.Models.Entities.Pessoa", "Pessoa")
-                        .WithMany("ContasBancarias")
-                        .HasForeignKey("PessoaId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired()
-                        .HasConstraintName("FK_CONTABANCARIA_PESSOA_PESSOAID");
-
-                    b.Navigation("Pessoa");
-                });
-
             modelBuilder.Entity("DeslandesApp.Domain.Models.Entities.Endereco", b =>
                 {
                     b.HasOne("DeslandesApp.Domain.Models.Entities.Pessoa", "Pessoa")
@@ -2682,8 +2619,6 @@ namespace DeslandesApp.Infra.Data.Migrations
 
             modelBuilder.Entity("DeslandesApp.Domain.Models.Entities.Pessoa", b =>
                 {
-                    b.Navigation("ContasBancarias");
-
                     b.Navigation("Endereco");
 
                     b.Navigation("GrupoClienteProcesso");

@@ -60,7 +60,17 @@ namespace DeslandesApp.Infra.Data.Repositories
         private IAtendimentoHistoricoRepository? _atendimentoHistoricoRepository;
         private ICasoHistoricoRepository? _casoHistoricoRepository;
         public IEventoHistoricoRepository? _eventoHistoricoRepository;
-      
+      public IGrupoPessoasEtiquetasRepository? _grupoPessoasEtiquetasRepository;
+        public IGrupoPessoasEtiquetasRepository GrupoPessoasEtiquetasRepository
+        {
+            get
+            {
+                if (_grupoPessoasEtiquetasRepository == null)
+                    _grupoPessoasEtiquetasRepository = new GrupoPessoasEtiquetasRepository(dataContext);
+
+                return _grupoPessoasEtiquetasRepository;
+            }
+        }
 
         public IEventoHistoricoRepository EventoHistoricoRepository
         {

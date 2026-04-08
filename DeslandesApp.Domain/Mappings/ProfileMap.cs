@@ -18,6 +18,7 @@ using DeslandesApp.Domain.Models.Dtos.Responses.Agenda;
 using DeslandesApp.Domain.Models.Dtos.Responses.Atendimento;
 using DeslandesApp.Domain.Models.Dtos.Responses.Caso;
 using DeslandesApp.Domain.Models.Dtos.Responses.EnderecoEndereco;
+using DeslandesApp.Domain.Models.Dtos.Responses.Etiquetas;
 using DeslandesApp.Domain.Models.Dtos.Responses.Evento;
 using DeslandesApp.Domain.Models.Dtos.Responses.GrupoNiveis;
 using DeslandesApp.Domain.Models.Dtos.Responses.GrupoSetores;
@@ -31,6 +32,7 @@ using DeslandesApp.Domain.Models.Dtos.Responses.Usuarios;
 using DeslandesApp.Domain.Models.Entities;
 using DeslandesApp.Domain.Models.Enum;
 using DeslandesApp.Domain.ValueObjects;
+using System.Runtime.ConstrainedExecution;
 
 namespace DeslandesApp.Domain.Mappings
 {
@@ -280,6 +282,11 @@ namespace DeslandesApp.Domain.Mappings
     .ForMember(dest => dest.HoraFim, opt => opt.MapFrom(src => src.HoraFinal))
     .ForMember(dest => dest.Tipo, opt => opt.MapFrom(_ => "Evento"))
     .ForMember(dest => dest.Status, opt => opt.MapFrom(src => (StatusGeralKanban)src.StatusGeralKanban));
+            #endregion
+            #region etiqutas
+            CreateMap<Etiqueta, EtiquetasResponse>()
+
+     .ConstructUsing(src => new EtiquetasResponse(src.Id, src.Nome, src.Cor));
             #endregion
         }
     }

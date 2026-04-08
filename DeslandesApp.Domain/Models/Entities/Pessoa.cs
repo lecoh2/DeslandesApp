@@ -29,6 +29,7 @@ namespace DeslandesApp.Domain.Models.Entities
         public ICollection<GrupoEtiquetasProcessos> GrupoEtiquetasProcessos { get; set; }
         public ICollection<GrupoEnvolvidos> GrupoEnvolvidos { get; set; }
         public ICollection<GrupoTarefaResponsaveis> GrupoTarefaResponsaveis { get; set; }
+        public ICollection<ContaBancaria> ContasBancarias { get; set; } = new List<ContaBancaria>();
         public Sexo? Sexo { get; set; }
         public Usuario? Usuario { get; set; }            // Usuário vinculado
        // public Usuario? UsuarioCadastro { get; set; }    // Usuário que cadastrou
@@ -36,9 +37,9 @@ namespace DeslandesApp.Domain.Models.Entities
         #endregion
 
         #region ENUMERADO STATUS
-        public Etiqueta? Etiqueta { get; set; }
+        public List<GrupoPessoasEtiquetas> GrupoPessoasEtiquetas { get; set; } = new();
         public Perfil? Perfil { get; set; }
-        public TipoConta? TipoEmail { get; set; }
+        public TipoConta? TipoConta { get; set; }
 
         #endregion
 
