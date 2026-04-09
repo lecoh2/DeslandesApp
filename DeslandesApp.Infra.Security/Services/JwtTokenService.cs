@@ -3,12 +3,9 @@ using DeslandesApp.Domain.Models.Entities;
 using DeslandesApp.Infra.Security.Settings;
 using Microsoft.IdentityModel.Tokens;
 using System;
-using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
 using System.Security.Claims;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace DeslandesApp.Infra.Security.Services
 {
@@ -16,32 +13,32 @@ namespace DeslandesApp.Infra.Security.Services
     {
         public string GenerateToken(Usuario usuario)
         {
-            //capturando a chave para assinar o token
+            var key = Encoding.UTF8.GetBytes(JwtTokenSettings.SecretKey);
             var tokenHandler = new JwtSecurityTokenHandler();
-            var key = Encoding.ASCII.GetBytes(JwtTokenSettings.SecretKey);
 
-            //gerando o conteudo do token
-            var tokenDescritor = new SecurityTokenDescriptor
+            var tokenDescriptor = new SecurityTokenDescriptor
             {
-                //identificação do usuário autendicadoteste
-                Subject = new ClaimsIdentity(new Claim[]
+                Subject = new ClaimsIdentity(new[]
                 {
-                    new Claim(ClaimTypes.Name, usuario.Id.ToString())
+                    // Use "unique_name" para NameClaimType
+                    new Claim("unique_name", usuario.Id.ToString()),
+                    new Claim("name", usuario.NomeUsuario),
+                    new Claim("login", usuario.Login)
                 }),
-                //data de expiração do token
                 Expires = DateTime.UtcNow.AddHours(JwtTokenSettings.ExpirationInHours),
-                //criptografando a chave para assinatura do token
-                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
+                SigningCredentials = new SigningCredentials(
+                    new SymmetricSecurityKey(key),
+                    SecurityAlgorithms.HmacSha256Signature
+                )
             };
-            //gerando e retornando o token
-            var token = tokenHandler.CreateToken(tokenDescritor);
+
+            var token = tokenHandler.CreateToken(tokenDescriptor);
             return tokenHandler.WriteToken(token);
         }
+
         public DateTime GenerateExpirationDate()
         {
-            return DateTime.UtcNow.AddHours
-            (JwtTokenSettings.ExpirationInHours);
+            return DateTime.UtcNow.AddHours(JwtTokenSettings.ExpirationInHours);
         }
-
     }
 }

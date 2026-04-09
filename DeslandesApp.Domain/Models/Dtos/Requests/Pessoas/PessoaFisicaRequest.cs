@@ -1,4 +1,5 @@
-﻿using DeslandesApp.Domain.Models.Dtos.Requests.EnderecoPessoa;
+﻿using DeslandesApp.Domain.Models.Dtos.Requests.ContaBancaria;
+using DeslandesApp.Domain.Models.Dtos.Requests.EnderecoPessoa;
 using DeslandesApp.Domain.Models.Dtos.Requests.GrupoEtiquetaProcesso;
 using DeslandesApp.Domain.Models.Dtos.Requests.GrupoPessoasEtiquetas;
 using DeslandesApp.Domain.Models.Dtos.Requests.InformacoesComplementares;
@@ -23,12 +24,13 @@ namespace DeslandesApp.Domain.Models.Dtos.Requests.Pessoas
         public string? CertidaoReservista { get; init; }
         public string? Telefone { get; init; }
         public Guid? IdUsuario { get; init; }
-        public Guid? IdSexo { get; init; }
+       // public Guid? IdSexo { get; init; }
 
         #region Relacionamentos
         public EnderecoRequest? Endereco { get; init; }
         public InformacoesComplementaresRequest? InformacoesComplementares { get; init; }
         public List<GrupoPessoasEtiquetasRequest> GrupoPessoasEtiquetas { get; init; } = new();
+        public ContaBancariaRequest? ContaBancaria { get; set; }
         #endregion
     }
 }

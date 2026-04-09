@@ -1,48 +1,47 @@
 ﻿using DeslandesApp.Domain.Models.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace DeslandesApp.Infra.Data.Mappings
+public class ContaBancariaMap : IEntityTypeConfiguration<ContaBancaria>
 {
-    public class ContaBancariaMap : IEntityTypeConfiguration<ContaBancaria>
+    public void Configure(EntityTypeBuilder<ContaBancaria> builder)
     {
-        public void Configure(EntityTypeBuilder<ContaBancaria> builder)
-        {
-            // Nome da tabela
-            builder.ToTable("CONTABANCARIA");
+        builder.ToTable("CONTABANCARIA");
 
-            // Chave primária
-            builder.HasKey(c => c.NumeroConta);
+        // ✅ PK (vem do BaseEntity)
+        builder.HasKey(c => c.Id);
 
-            // Propriedades
-            builder.Property(c => c.NomeBanco)
-                   .HasMaxLength(100)
-                   .IsRequired();
+        builder.Property(c => c.Id)
+               .ValueGeneratedOnAdd();
 
-            builder.Property(c => c.Agencia)
-                   .HasMaxLength(20)
-                   .IsRequired();
+        // ================= CAMPOS =================
 
-            builder.Property(c => c.Pix)
-                   .HasMaxLength(100);
+        builder.Property(c => c.NomeBanco)
+               .HasMaxLength(100)
+               .IsRequired(false);
 
-            // Enum TipoConta como coluna
-            builder.Property(c => c.TipoConta)
-                   .HasColumnName("TipoConta")
-                   .HasConversion<int>(); // salva enum como int
+        builder.Property(c => c.Agencia)
+               .HasMaxLength(20)
+               .IsRequired(false);
 
-            // Relacionamentos
+        builder.Property(c => c.NumeroConta)
+               .HasMaxLength(50)
+               .IsRequired(false);
 
-            // Pessoa (opcional)
-            builder.HasOne(c => c.Pessoa)
-                   .WithMany(p => p.ContasBancarias)
-                   .HasForeignKey("PessoaId")
-                   .OnDelete(DeleteBehavior.Restrict);
-        }
+        builder.Property(c => c.Pix)
+               .HasMaxLength(100)
+               .IsRequired(false);
+
+        // ✅ ENUM CORRETO (SEM RELACIONAMENTO)
+        builder.Property(c => c.TipoContaId)
+               .HasColumnName("TIPO_CONTA_ID")
+               .IsRequired(false);
+
+        // ================= RELACIONAMENTO =================
+
+        builder.HasOne(c => c.Pessoa)
+               .WithMany(p => p.ContasBancarias)
+               .HasForeignKey(c => c.PessoaId)
+               .OnDelete(DeleteBehavior.Restrict);
     }
 }

@@ -33,9 +33,9 @@ namespace DeslandesApp.Infra.Data.Mappings
                 .HasColumnName("DATAATUALIZACAO")
                 .IsRequired(false);
 
-            builder.Property(p => p.IdSexo)
-                .HasColumnName("SEXO_ID")
-                .IsRequired(false);
+            //builder.Property(p => p.IdSexo)
+            //    .HasColumnName("SEXO_ID")
+            //    .IsRequired(false);
 
             builder.Property(p => p.IdUsuario)
                 .HasColumnName("USUARIO_ID")
@@ -51,11 +51,11 @@ namespace DeslandesApp.Infra.Data.Mappings
 
 
 
-            // RELACIONAMENTO SEXO
-            builder.HasOne(s => s.Sexo)
-         .WithMany(p => p.Pessoa)
-         .HasForeignKey(s => s.IdSexo).IsRequired(false)
-         .OnDelete(DeleteBehavior.Restrict);
+         //   // RELACIONAMENTO SEXO
+         //   builder.HasOne(s => s.Sexo)
+         //.WithMany(p => p.Pessoa)
+         //.HasForeignKey(s => s.IdSexo).IsRequired(false)
+         //.OnDelete(DeleteBehavior.Restrict);
 
             // RELACIONAMENTO USUARIO
             builder.HasOne(p => p.Usuario)

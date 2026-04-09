@@ -2,6 +2,7 @@
 using DeslandesApp.Domain.Helpers;
 using DeslandesApp.Domain.Interfaces.Repositories;
 using DeslandesApp.Domain.Interfaces.Services;
+using DeslandesApp.Domain.Models.Dtos.Requests.ContaBancaria;
 using DeslandesApp.Domain.Models.Dtos.Requests.InformacoesComplementares;
 using DeslandesApp.Domain.Models.Dtos.Requests.Pessoas;
 using DeslandesApp.Domain.Models.Dtos.Responses.Pessoas;
@@ -61,7 +62,7 @@ namespace DeslandesApp.Domain.Services
             pessoa.RG = rg;
             pessoa.Telefone = FunctionsHelper.RemovePontosTracosTelefone(pessoa.Telefone);
             pessoa.DataCadastro = DateTime.Now;
-            pessoa.IdSexo = request.IdSexo;
+            //pessoa.IdSexo = request.IdSexo;
 
             pessoa.ValorEmail = string.IsNullOrWhiteSpace(pessoa.ValorEmail?.EnderecoEmail)
                 ? new ValorEmail($"nadaconsta{cpf}@email.com")
@@ -107,7 +108,15 @@ namespace DeslandesApp.Domain.Services
                     await _unitOfWork.GrupoPessoasEtiquetasRepository.AddAsync(grupoEtiqueta);
                 }
             }
+            // CONTA BANCÁRIA (OPCIONAL)
+            if (request.ContaBancaria != null && TemDadosConta(request.ContaBancaria))
+            {
+                var conta = _mapper.Map<ContaBancaria>(request.ContaBancaria);
 
+                conta.PessoaId = pessoa.Id; // vínculo com a pessoa
+
+                await _unitOfWork.ContaBancariaRepository.AddAsync(conta);
+            }
             await _unitOfWork.CommitAsync();
 
             return _mapper.Map<PessoaFisicaResponse>(pessoa);
@@ -282,6 +291,14 @@ namespace DeslandesApp.Domain.Services
         public Task<PessoaFisicaResponse?> ObterPorIdAsync(Guid id)
         {
             throw new NotImplementedException();
+        }
+        private bool TemDadosConta(ContaBancariaRequest conta)
+        {
+            return !string.IsNullOrWhiteSpace(conta.NomeBanco)
+                || !string.IsNullOrWhiteSpace(conta.Agencia)
+                || !string.IsNullOrWhiteSpace(conta.NumeroConta)
+                || !string.IsNullOrWhiteSpace(conta.Pix)
+                || conta.TipoContaId.HasValue;
         }
         private bool TemAlgumValor(InformacoesComplementaresRequest info)
         {

@@ -20,7 +20,7 @@ namespace DeslandesApp.Infra.Data.Contexts
         public DbSet<FailedLoginAttempt> FailedLoginAttempt { get; set; }
         public DbSet<Niveis> Niveis { get; set; }
         public DbSet<GrupoNiveis> GrupoNiveis { get; set; }
-        public DbSet<GrupoSetores> GrupoSetores { get; set; } 
+        public DbSet<GrupoSetores> GrupoSetores { get; set; }
         public DbSet<Endereco> Endereco { get; set; }
         public DbSet<InformacoesComplementaresPessoaFisica> InformacoesComplementaresPessoaFisicas { get; set; }
         public DbSet<PessoaFisica> PessoasFisicas { get; set; }
@@ -30,12 +30,12 @@ namespace DeslandesApp.Infra.Data.Contexts
         public DbSet<ProcessoHistorico> ProcessoHistorico { get; set; }
         public DbSet<AtendimentoHistorico> AtendimentoHistorico { get; set; }
         public DbSet<InformacoesComplementaresPessoaJuridica> InformacoesComplementaresPessoaJuridicas { get; set; }
-        public DbSet<Processo> Processos{ get; set; }
+        public DbSet<Processo> Processos { get; set; }
         public DbSet<GrupoPessoaClientes> GrupoPessoaClientes { get; set; }
         public DbSet<GrupoEnvolvidos> GrupoEnvolvidos { get; set; }
         public DbSet<Tarefa> Tarefas { get; set; }
         public DbSet<ListaTarefa> ListasTarefa { get; set; }
-        public DbSet<GrupoTarefaResponsaveis> GrupoTarefaResponsveis{ get; set; }
+        public DbSet<GrupoTarefaResponsaveis> GrupoTarefaResponsveis { get; set; }
         public DbSet<Atendimento> Atendimento { get; set; }
         public DbSet<Caso> Caso { get; set; }
         public DbSet<GrupoCasoCliente> GrupoCasoCliente { get; set; }
@@ -45,14 +45,15 @@ namespace DeslandesApp.Infra.Data.Contexts
         public DbSet<Etiqueta> Etiqueta { get; set; }
         public DbSet<Evento> Evento { get; set; }
         public DbSet<GrupoClienteProcesso> GrupoClienteProcesso { get; set; }
-        public DbSet<GrupoEnvolvidosProcesso> GrupoEnvolvidosProcesso { get; set; } 
+        public DbSet<GrupoEnvolvidosProcesso> GrupoEnvolvidosProcesso { get; set; }
         public DbSet<GrupoEtiquetasProcessos> GrupoEtiquetasProcessos { get; set; }
         public DbSet<GrupoEtiquetaCasos> GrupoEtiquetaCasos { get; set; }
         public DbSet<GrupoTarefaResponsaveis> GrupoTarefaResponsaveis { get; set; }
-        public DbSet<GrupoEtiquetasAtendimentos> GrupoEtiquetasAtendimentos { get; set; } 
+        public DbSet<GrupoEtiquetasAtendimentos> GrupoEtiquetasAtendimentos { get; set; }
         public DbSet<EventoHistorico> EventoHistorico { get; set; }
-      public DbSet<CasoHistorico> CasoHistorico { get; set; }
+        public DbSet<CasoHistorico> CasoHistorico { get; set; }
         public DbSet<GrupoPessoasEtiquetas> GrupoPessoasEtiquetas { get; set; }
+        public DbSet<ContaBancaria> ContaBancaria { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);

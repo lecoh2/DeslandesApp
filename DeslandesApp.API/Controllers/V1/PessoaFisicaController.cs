@@ -20,7 +20,7 @@ namespace DeslandesApp.API.Controllers.V1
             _pessoaService = pessoaService;
         }
 
-        [HttpPost]
+        [HttpPost("cadastrar-pessoa-fisica")]
         public async Task<IActionResult> PostPessoaFisicaAsync([FromBody] PessoaFisicaRequest request)
         {
             var response = await _pessoaService.AdicionarAsync(request);

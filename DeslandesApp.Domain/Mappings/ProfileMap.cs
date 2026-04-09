@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using DeslandesApp.Domain.Models.Dtos.Requests.Atendimento;
 using DeslandesApp.Domain.Models.Dtos.Requests.Caso;
+using DeslandesApp.Domain.Models.Dtos.Requests.ContaBancaria;
 using DeslandesApp.Domain.Models.Dtos.Requests.EnderecoPessoa;
 using DeslandesApp.Domain.Models.Dtos.Requests.Evento;
 using DeslandesApp.Domain.Models.Dtos.Requests.GrupoCasoCliente;
@@ -287,6 +288,9 @@ namespace DeslandesApp.Domain.Mappings
             CreateMap<Etiqueta, EtiquetasResponse>()
 
      .ConstructUsing(src => new EtiquetasResponse(src.Id, src.Nome, src.Cor));
+            #endregion
+            #region Conta bancaria
+            CreateMap<ContaBancariaRequest, ContaBancaria>();
             #endregion
         }
     }

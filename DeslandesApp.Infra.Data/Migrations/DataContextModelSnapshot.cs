@@ -264,36 +264,34 @@ namespace DeslandesApp.Infra.Data.Migrations
 
             modelBuilder.Entity("DeslandesApp.Domain.Models.Entities.ContaBancaria", b =>
                 {
-                    b.Property<string>("NumeroConta")
-                        .HasMaxLength(250)
-                        .IsUnicode(false)
-                        .HasColumnType("varchar(250)")
-                        .HasColumnName("NUMEROCONTA");
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("ID");
 
                     b.Property<string>("Agencia")
-                        .IsRequired()
                         .HasMaxLength(20)
                         .IsUnicode(false)
                         .HasColumnType("varchar(20)")
                         .HasColumnName("AGENCIA");
 
-                    b.Property<int>("Id")
-                        .HasColumnType("int")
-                        .HasColumnName("ID");
-
                     b.Property<string>("NomeBanco")
-                        .IsRequired()
                         .HasMaxLength(100)
                         .IsUnicode(false)
                         .HasColumnType("varchar(100)")
                         .HasColumnName("NOMEBANCO");
 
-                    b.Property<Guid>("PessoaId")
+                    b.Property<string>("NumeroConta")
+                        .HasMaxLength(50)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(50)")
+                        .HasColumnName("NUMEROCONTA");
+
+                    b.Property<Guid?>("PessoaId")
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("PESSOAID");
 
                     b.Property<string>("Pix")
-                        .IsRequired()
                         .HasMaxLength(100)
                         .IsUnicode(false)
                         .HasColumnType("varchar(100)")
@@ -305,9 +303,9 @@ namespace DeslandesApp.Infra.Data.Migrations
 
                     b.Property<int?>("TipoContaId")
                         .HasColumnType("int")
-                        .HasColumnName("TIPOCONTAID");
+                        .HasColumnName("TIPO_CONTA_ID");
 
-                    b.HasKey("NumeroConta")
+                    b.HasKey("Id")
                         .HasName("PK_CONTABANCARIA");
 
                     b.HasIndex("PessoaId")
@@ -1155,10 +1153,6 @@ namespace DeslandesApp.Infra.Data.Migrations
                         .HasColumnType("datetime2")
                         .HasColumnName("DATACADASTRO");
 
-                    b.Property<Guid?>("IdSexo")
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnName("SEXO_ID");
-
                     b.Property<Guid>("IdUsuario")
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("USUARIO_ID");
@@ -1174,8 +1168,11 @@ namespace DeslandesApp.Infra.Data.Migrations
                         .HasColumnType("int")
                         .HasColumnName("PERFIL");
 
+                    b.Property<Guid?>("SexoId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("SEXOID");
+
                     b.Property<string>("Site")
-                        .IsRequired()
                         .HasMaxLength(250)
                         .IsUnicode(false)
                         .HasColumnType("varchar(250)")
@@ -1189,15 +1186,10 @@ namespace DeslandesApp.Infra.Data.Migrations
                         .HasColumnName("TIPO");
 
                     b.Property<string>("Telefone")
-                        .IsRequired()
                         .HasMaxLength(250)
                         .IsUnicode(false)
                         .HasColumnType("varchar(250)")
                         .HasColumnName("TELEFONE");
-
-                    b.Property<int?>("TipoConta")
-                        .HasColumnType("int")
-                        .HasColumnName("TIPOCONTA");
 
                     b.Property<string>("ValorEmail")
                         .HasMaxLength(150)
@@ -1207,11 +1199,11 @@ namespace DeslandesApp.Infra.Data.Migrations
                     b.HasKey("Id")
                         .HasName("PK_PESSOA");
 
-                    b.HasIndex("IdSexo")
-                        .HasDatabaseName("IX_PESSOA_SEXO_ID");
-
                     b.HasIndex("IdUsuario")
                         .HasDatabaseName("IX_PESSOA_USUARIO_ID");
+
+                    b.HasIndex("SexoId")
+                        .HasDatabaseName("IX_PESSOA_SEXOID");
 
                     b.ToTable("PESSOA", (string)null);
 
@@ -1992,7 +1984,6 @@ namespace DeslandesApp.Infra.Data.Migrations
                         .WithMany("ContasBancarias")
                         .HasForeignKey("PessoaId")
                         .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired()
                         .HasConstraintName("FK_CONTABANCARIA_PESSOA_PESSOAID");
 
                     b.Navigation("Pessoa");
@@ -2443,18 +2434,17 @@ namespace DeslandesApp.Infra.Data.Migrations
 
             modelBuilder.Entity("DeslandesApp.Domain.Models.Entities.Pessoa", b =>
                 {
-                    b.HasOne("DeslandesApp.Domain.Models.Entities.Sexo", "Sexo")
-                        .WithMany("Pessoa")
-                        .HasForeignKey("IdSexo")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .HasConstraintName("FK_PESSOA_SEXO_SEXO_ID");
-
                     b.HasOne("DeslandesApp.Domain.Models.Entities.Usuario", "Usuario")
                         .WithMany("Pessoa")
                         .HasForeignKey("IdUsuario")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired()
                         .HasConstraintName("FK_PESSOA_USUARIOS_USUARIO_ID");
+
+                    b.HasOne("DeslandesApp.Domain.Models.Entities.Sexo", "Sexo")
+                        .WithMany("Pessoa")
+                        .HasForeignKey("SexoId")
+                        .HasConstraintName("FK_PESSOA_SEXO_SEXOID");
 
                     b.Navigation("Sexo");
 

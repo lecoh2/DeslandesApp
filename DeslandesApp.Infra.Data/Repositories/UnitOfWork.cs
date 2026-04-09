@@ -46,7 +46,7 @@ namespace DeslandesApp.Infra.Data.Repositories
         private IGrupoCasoClienteRepository? _grupoCasoClienteRepository;
         private IGrupoCasoEnvolvidosRepository? _grupoCasoEnvolvidosRepository;
         private IEtiquetaRepository? _etiquetaRepository;
-        private IGrupoAtendimentoClienteRepository? _atendimentoClienteRepository;      
+        private IGrupoAtendimentoClienteRepository? _atendimentoClienteRepository;
         private ITarefaEtiquetaRepository? _tarefaEtiquetaRepository;
         private IEventoRepository? _eventoRepository;
         private IGrupoEventoResponsavelRepository? _grupoEventoResponsavelRepository;
@@ -60,7 +60,7 @@ namespace DeslandesApp.Infra.Data.Repositories
         private IAtendimentoHistoricoRepository? _atendimentoHistoricoRepository;
         private ICasoHistoricoRepository? _casoHistoricoRepository;
         public IEventoHistoricoRepository? _eventoHistoricoRepository;
-      public IGrupoPessoasEtiquetasRepository? _grupoPessoasEtiquetasRepository;
+        public IGrupoPessoasEtiquetasRepository? _grupoPessoasEtiquetasRepository;
         public IGrupoPessoasEtiquetasRepository GrupoPessoasEtiquetasRepository
         {
             get
@@ -71,7 +71,6 @@ namespace DeslandesApp.Infra.Data.Repositories
                 return _grupoPessoasEtiquetasRepository;
             }
         }
-
         public IEventoHistoricoRepository EventoHistoricoRepository
         {
             get
@@ -82,7 +81,6 @@ namespace DeslandesApp.Infra.Data.Repositories
                 return _eventoHistoricoRepository;
             }
         }
-
         public ICasoHistoricoRepository CasoHistoricoRepository
         {
             get
@@ -114,6 +112,17 @@ namespace DeslandesApp.Infra.Data.Repositories
             }
         }
         private IQualificacaoRepository? _qualificacaoRepository;
+        private IContaBancariaRepository? _contaBancariaRepository;
+        public IContaBancariaRepository ContaBancariaRepository
+        {
+            get
+            {
+                if (_contaBancariaRepository == null)
+                    _contaBancariaRepository = new ContaBancariaRepository(dataContext);
+
+                return _contaBancariaRepository;
+            }
+        }
         public IQualificacaoRepository QualificacaoRepository
         {
             get
@@ -463,7 +472,7 @@ namespace DeslandesApp.Infra.Data.Repositories
             }
         }
 
-       
+
 
 
 
