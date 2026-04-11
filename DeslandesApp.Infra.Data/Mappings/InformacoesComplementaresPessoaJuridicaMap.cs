@@ -19,24 +19,11 @@ namespace DeslandesApp.Infra.Data.Mappings
             builder.Property(e => e.Cargo)
                 .HasColumnName("CARGO")
                 .HasMaxLength(250).IsRequired(false);
-            
+      
 
-            builder.Property(e => e.NomeBanco)
-                .HasColumnName("NOMEBANCO")
-                .HasMaxLength(250).IsRequired(false);
-
-            builder.Property(e => e.Agencia)
-                .HasColumnName("AGENCIA")
-                .HasMaxLength(100).IsRequired(false);
-
-            builder.Property(e => e.NumeroConta)
-                .HasColumnName("NUMEROCONTA")
-                .HasMaxLength(100).IsRequired(false);
-            builder.Property(e => e.Pix).HasColumnName("PIX").HasMaxLength(255).IsRequired(false);
-            builder.Property(e => e.TipoConta)
-    .HasColumnName("TIPOCONTA")
-    .HasConversion<int>()
-    .IsRequired(false);
+            builder.Property(e => e.Comentario)
+                .HasColumnName("COMENTARIO")
+               .IsRequired(false);
         }
     }
 }

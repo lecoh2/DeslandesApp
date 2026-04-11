@@ -19,7 +19,7 @@ namespace DeslandesApp.Infra.Data.Repositories
                 return await dataContext.PessoaHistorico
                     .Include(h => h.Usuario)
                     .ThenInclude(h => h.Pessoa)
-                    .Include(h => (h.Pessoa as PessoaFisica).Sexo)
+                   // .Include(h => (h.Pessoa as PessoaFisica).Sexo)
                     .Include(h => (h.Pessoa as PessoaFisica).Endereco)
                     .Where(h => h.Pessoa is PessoaFisica && h.IdPessoa == id)
                     .OrderByDescending(h => h.DataAlteracao)

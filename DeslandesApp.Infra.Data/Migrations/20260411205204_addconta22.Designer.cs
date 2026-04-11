@@ -4,6 +4,7 @@ using DeslandesApp.Infra.Data.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DeslandesApp.Infra.Data.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20260411205204_addconta22")]
+    partial class addconta22
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1707,10 +1710,6 @@ namespace DeslandesApp.Infra.Data.Migrations
                         .HasColumnType("varchar(250)")
                         .HasColumnName("PROFISSAO");
 
-                    b.Property<int?>("Tratamento")
-                        .HasColumnType("int")
-                        .HasColumnName("TRATAMENTO");
-
                     b.ToTable("INFORMACOESCOMPLEMENTARES");
 
                     b.HasDiscriminator().HasValue("PF");
@@ -1719,6 +1718,12 @@ namespace DeslandesApp.Infra.Data.Migrations
             modelBuilder.Entity("DeslandesApp.Domain.Models.Entities.InformacoesComplementaresPessoaJuridica", b =>
                 {
                     b.HasBaseType("DeslandesApp.Domain.Models.Entities.InformacoesComplementares");
+
+                    b.Property<string>("Agencia")
+                        .HasMaxLength(100)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(100)")
+                        .HasColumnName("AGENCIA");
 
                     b.Property<string>("Cargo")
                         .HasMaxLength(250)
@@ -1731,6 +1736,28 @@ namespace DeslandesApp.Infra.Data.Migrations
                         .IsUnicode(false)
                         .HasColumnType("varchar(250)")
                         .HasColumnName("CONTATO");
+
+                    b.Property<string>("NomeBanco")
+                        .HasMaxLength(250)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(250)")
+                        .HasColumnName("NOMEBANCO");
+
+                    b.Property<string>("NumeroConta")
+                        .HasMaxLength(100)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(100)")
+                        .HasColumnName("NUMEROCONTA");
+
+                    b.Property<string>("Pix")
+                        .HasMaxLength(255)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(255)")
+                        .HasColumnName("PIX");
+
+                    b.Property<int?>("TipoConta")
+                        .HasColumnType("int")
+                        .HasColumnName("TIPOCONTA");
 
                     b.ToTable("INFORMACOESCOMPLEMENTARES");
 

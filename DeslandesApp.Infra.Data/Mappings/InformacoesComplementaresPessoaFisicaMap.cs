@@ -34,5 +34,9 @@ public class InformacoesComplementaresPessoaFisicaMap
         builder.Property(e => e.Nacionalidade)
             .HasColumnName("NACIONALIDADE")
             .HasMaxLength(100).IsRequired(false);
+        builder.Property(e => e.Tratamento)
+    .HasColumnName("TRATAMENTO")
+    .HasConversion<int>() // <-- ESSENCIAL
+    .IsRequired(false);
     }
 }

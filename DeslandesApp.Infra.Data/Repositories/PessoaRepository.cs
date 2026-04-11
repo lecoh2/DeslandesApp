@@ -185,7 +185,7 @@ public class PessoaRepository(DataContext dataContext)
     {
         return await dataContext.PessoasFisicas            
             .Include(p => p.Endereco)
-            .Include(p => p.Sexo)
+            //.Include(p => p.Sexo)
             .Include(p => p.InformacoesComplementares)
             .FirstOrDefaultAsync(p => p.Id == idPessoa);
     }

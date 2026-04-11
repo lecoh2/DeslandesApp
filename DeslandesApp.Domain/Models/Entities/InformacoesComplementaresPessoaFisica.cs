@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DeslandesApp.Domain.Models.Enum;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -17,6 +18,7 @@ namespace DeslandesApp.Domain.Models.Entities
         public string? NomeMae { get; set; } = string.Empty;
         public string? Naturalidade { get; set; } = string.Empty;
         public string? Nacionalidade { get; set; } = string.Empty;
-       
+        public Tratamento? Tratamento { get; set; }
+
     }
 }

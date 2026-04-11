@@ -49,6 +49,11 @@ namespace DeslandesApp.Domain.Services
             if (!string.IsNullOrWhiteSpace(rg) &&
                 await _unitOfWork.PessoaRepository.RgInUseAsync(rg))
                 throw new InvalidOperationException("RG já cadastrado.");
+            if (request.Perfil.HasValue &&
+    !Enum.IsDefined(typeof(Perfil), request.Perfil.Value))
+            {
+                throw new ApplicationException("Perfil inválido.");
+            }
 
             var pessoa = _mapper.Map<PessoaFisica>(request);
 
@@ -62,6 +67,7 @@ namespace DeslandesApp.Domain.Services
             pessoa.RG = rg;
             pessoa.Telefone = FunctionsHelper.RemovePontosTracosTelefone(pessoa.Telefone);
             pessoa.DataCadastro = DateTime.Now;
+
             //pessoa.IdSexo = request.IdSexo;
 
             pessoa.ValorEmail = string.IsNullOrWhiteSpace(pessoa.ValorEmail?.EnderecoEmail)
@@ -186,7 +192,7 @@ namespace DeslandesApp.Domain.Services
                     pessoaAntes.CPF,
                     pessoaAntes.RG,
 
-                    Sexo = pessoaAntes.Sexo?.NomeSexo,
+                    //Sexo = pessoaAntes.Sexo?.NomeSexo,
 
                     Usuario = pessoaAntes.Usuario != null ? new
                     {
@@ -258,7 +264,7 @@ namespace DeslandesApp.Domain.Services
                     pessoaDepois.Site,
                     pessoaDepois.CPF,
                     pessoaDepois.RG,
-                    Sexo = pessoaDepois.Sexo?.NomeSexo,
+                    // Sexo = pessoaDepois.Sexo?.NomeSexo,
                     pessoaDepois.DataAtualizacao
                 };
 
@@ -298,7 +304,7 @@ namespace DeslandesApp.Domain.Services
                 || !string.IsNullOrWhiteSpace(conta.Agencia)
                 || !string.IsNullOrWhiteSpace(conta.NumeroConta)
                 || !string.IsNullOrWhiteSpace(conta.Pix)
-                || conta.TipoContaId.HasValue;
+               || conta.TipoConta.HasValue;
         }
         private bool TemAlgumValor(InformacoesComplementaresRequest info)
         {

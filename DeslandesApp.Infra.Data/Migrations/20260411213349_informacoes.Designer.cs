@@ -4,6 +4,7 @@ using DeslandesApp.Infra.Data.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DeslandesApp.Infra.Data.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20260411213349_informacoes")]
+    partial class informacoes
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1706,10 +1709,6 @@ namespace DeslandesApp.Infra.Data.Migrations
                         .IsUnicode(false)
                         .HasColumnType("varchar(250)")
                         .HasColumnName("PROFISSAO");
-
-                    b.Property<int?>("Tratamento")
-                        .HasColumnType("int")
-                        .HasColumnName("TRATAMENTO");
 
                     b.ToTable("INFORMACOESCOMPLEMENTARES");
 

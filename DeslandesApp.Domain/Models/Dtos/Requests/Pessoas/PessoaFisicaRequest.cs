@@ -10,10 +10,11 @@ namespace DeslandesApp.Domain.Models.Dtos.Requests.Pessoas
     {
         public string? Nome { get; init; }
         public string? Apelido { get; init; }
-       
+
         public string? Email { get; init; }
         public string? Site { get; init; }
-        public int? IdPerfil { get; init; }
+        public int? Perfil { get; init; } 
+      //  public int? IdPerfil { get; init; }
         public string? Rg { get; init; }
         public string? Cpf { get; init; }
         public string? TituloEleitor { get; init; }

@@ -139,8 +139,8 @@ namespace DeslandesApp.Domain.Services
                     infoAntes.Comentario,
                     infoAntes.Contato,
                     infoAntes.Cargo,
-                    infoAntes.Agencia,
-                    infoAntes.NumeroConta,                   
+                   // infoAntesAgencia,
+                    //infoAntes.NumeroConta,                   
 
                     Usuario = pessoaAntes.Usuario != null ? new
                     {
@@ -165,8 +165,8 @@ namespace DeslandesApp.Domain.Services
                         pessoaAntes.InformacoesComplementares.Comentario,
                         infoAntes.Contato,
                         infoAntes.Cargo,
-                        infoAntes.Agencia,
-                        infoAntes.NumeroConta
+                       // infoAntes.Agencia,
+                      //  infoAntes.NumeroConta
 
                         
     } : null,

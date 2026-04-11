@@ -4,6 +4,7 @@ using DeslandesApp.Infra.Data.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DeslandesApp.Infra.Data.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20260411204918_addconta2")]
+    partial class addconta2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1164,6 +1167,10 @@ namespace DeslandesApp.Infra.Data.Migrations
                         .HasColumnType("int")
                         .HasColumnName("PERFIL");
 
+                    b.Property<Guid?>("SexoId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("SEXOID");
+
                     b.Property<string>("Site")
                         .HasMaxLength(250)
                         .IsUnicode(false)
@@ -1193,6 +1200,9 @@ namespace DeslandesApp.Infra.Data.Migrations
 
                     b.HasIndex("IdUsuario")
                         .HasDatabaseName("IX_PESSOA_USUARIO_ID");
+
+                    b.HasIndex("SexoId")
+                        .HasDatabaseName("IX_PESSOA_SEXOID");
 
                     b.ToTable("PESSOA", (string)null);
 
@@ -1363,6 +1373,30 @@ namespace DeslandesApp.Infra.Data.Migrations
                         .HasName("PK_SETORES");
 
                     b.ToTable("SETORES", (string)null);
+                });
+
+            modelBuilder.Entity("DeslandesApp.Domain.Models.Entities.Sexo", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("ID");
+
+                    b.Property<string>("NomeSexo")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(100)")
+                        .HasColumnName("NOMESEXO");
+
+                    b.HasKey("Id")
+                        .HasName("PK_SEXO");
+
+                    b.HasIndex("NomeSexo")
+                        .IsUnique()
+                        .HasDatabaseName("IX_SEXO_NOMESEXO");
+
+                    b.ToTable("SEXO", (string)null);
                 });
 
             modelBuilder.Entity("DeslandesApp.Domain.Models.Entities.Tarefa", b =>
@@ -1707,10 +1741,6 @@ namespace DeslandesApp.Infra.Data.Migrations
                         .HasColumnType("varchar(250)")
                         .HasColumnName("PROFISSAO");
 
-                    b.Property<int?>("Tratamento")
-                        .HasColumnType("int")
-                        .HasColumnName("TRATAMENTO");
-
                     b.ToTable("INFORMACOESCOMPLEMENTARES");
 
                     b.HasDiscriminator().HasValue("PF");
@@ -1719,6 +1749,12 @@ namespace DeslandesApp.Infra.Data.Migrations
             modelBuilder.Entity("DeslandesApp.Domain.Models.Entities.InformacoesComplementaresPessoaJuridica", b =>
                 {
                     b.HasBaseType("DeslandesApp.Domain.Models.Entities.InformacoesComplementares");
+
+                    b.Property<string>("Agencia")
+                        .HasMaxLength(100)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(100)")
+                        .HasColumnName("AGENCIA");
 
                     b.Property<string>("Cargo")
                         .HasMaxLength(250)
@@ -1731,6 +1767,28 @@ namespace DeslandesApp.Infra.Data.Migrations
                         .IsUnicode(false)
                         .HasColumnType("varchar(250)")
                         .HasColumnName("CONTATO");
+
+                    b.Property<string>("NomeBanco")
+                        .HasMaxLength(250)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(250)")
+                        .HasColumnName("NOMEBANCO");
+
+                    b.Property<string>("NumeroConta")
+                        .HasMaxLength(100)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(100)")
+                        .HasColumnName("NUMEROCONTA");
+
+                    b.Property<string>("Pix")
+                        .HasMaxLength(255)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(255)")
+                        .HasColumnName("PIX");
+
+                    b.Property<int?>("TipoConta")
+                        .HasColumnType("int")
+                        .HasColumnName("TIPOCONTA");
 
                     b.ToTable("INFORMACOESCOMPLEMENTARES");
 
@@ -2382,6 +2440,11 @@ namespace DeslandesApp.Infra.Data.Migrations
                         .IsRequired()
                         .HasConstraintName("FK_PESSOA_USUARIOS_USUARIO_ID");
 
+                    b.HasOne("DeslandesApp.Domain.Models.Entities.Sexo", null)
+                        .WithMany("Pessoa")
+                        .HasForeignKey("SexoId")
+                        .HasConstraintName("FK_PESSOA_SEXO_SEXOID");
+
                     b.Navigation("Usuario");
                 });
 
@@ -2630,6 +2693,11 @@ namespace DeslandesApp.Infra.Data.Migrations
             modelBuilder.Entity("DeslandesApp.Domain.Models.Entities.Setor", b =>
                 {
                     b.Navigation("GrupoSetores");
+                });
+
+            modelBuilder.Entity("DeslandesApp.Domain.Models.Entities.Sexo", b =>
+                {
+                    b.Navigation("Pessoa");
                 });
 
             modelBuilder.Entity("DeslandesApp.Domain.Models.Entities.Tarefa", b =>

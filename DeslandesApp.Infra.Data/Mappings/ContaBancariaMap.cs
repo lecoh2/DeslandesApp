@@ -33,8 +33,8 @@ public class ContaBancariaMap : IEntityTypeConfiguration<ContaBancaria>
                .IsRequired(false);
 
         // ✅ ENUM CORRETO (SEM RELACIONAMENTO)
-        builder.Property(c => c.TipoContaId)
-               .HasColumnName("TIPO_CONTA_ID")
+        builder.Property(c => c.TipoConta)
+               .HasColumnName("TIPOCONTA")
                .IsRequired(false);
 
         // ================= RELACIONAMENTO =================

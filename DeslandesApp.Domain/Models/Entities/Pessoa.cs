@@ -30,7 +30,7 @@ namespace DeslandesApp.Domain.Models.Entities
         public ICollection<GrupoEnvolvidos>? GrupoEnvolvidos { get; set; }
         public ICollection<GrupoTarefaResponsaveis>? GrupoTarefaResponsaveis { get; set; }
         public ICollection<ContaBancaria>? ContasBancarias { get; set; } = new List<ContaBancaria>();
-        public Sexo? Sexo { get; set; }
+       // public Sexo? Sexo { get; set; }
         public Usuario? Usuario { get; set; }            // Usuário vinculado
        // public Usuario? UsuarioCadastro { get; set; }    // Usuário que cadastrou
         public ValorEmail? ValorEmail { get; set; }              // Email principal vinculado

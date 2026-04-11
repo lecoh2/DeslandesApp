@@ -290,7 +290,8 @@ namespace DeslandesApp.Domain.Mappings
      .ConstructUsing(src => new EtiquetasResponse(src.Id, src.Nome, src.Cor));
             #endregion
             #region Conta bancaria
-            CreateMap<ContaBancariaRequest, ContaBancaria>();
+            CreateMap<ContaBancariaRequest, ContaBancaria>()
+     .ForMember(dest => dest.TipoConta, opt => opt.MapFrom(src => src.TipoConta));
             #endregion
         }
     }
