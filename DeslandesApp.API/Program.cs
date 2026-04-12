@@ -130,7 +130,7 @@ RecurringJob.AddOrUpdate<ITarefaService>(
     x => x.AtualizarStatusTarefasAutomatico(),
     Cron.Hourly
 );
-
+//app.MapFallbackToFile("index.html");
 // ===== Run =====
 app.Run();
 

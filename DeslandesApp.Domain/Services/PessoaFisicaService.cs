@@ -100,15 +100,16 @@ namespace DeslandesApp.Domain.Services
             {
                 foreach (var item in request.GrupoPessoasEtiquetas)
                 {
-                    var etiqueta = await _unitOfWork.GrupoPessoasEtiquetasRepository.GetByIdAsync(item.idEtiqueta);
+                    // 🔥 CORRETO: buscar na tabela de ETIQUETA
+                    var etiqueta = await _unitOfWork.EtiquetaRepository.GetByIdAsync(item.idEtiqueta);
 
                     if (etiqueta == null)
                         throw new InvalidOperationException("Etiqueta não encontrada.");
 
                     var grupoEtiqueta = new GrupoPessoasEtiquetas
                     {
-                        EtiquetaId = etiqueta.EtiquetaId,
-                        PessoaId = pessoa.Id // ⚠️ corrigido aqui
+                        EtiquetaId = etiqueta.Id, // 👈 aqui é Id da etiqueta
+                        PessoaId = pessoa.Id
                     };
 
                     await _unitOfWork.GrupoPessoasEtiquetasRepository.AddAsync(grupoEtiqueta);

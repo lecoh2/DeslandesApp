@@ -22,6 +22,7 @@ using DeslandesApp.Domain.Models.Dtos.Responses.EnderecoEndereco;
 using DeslandesApp.Domain.Models.Dtos.Responses.Etiquetas;
 using DeslandesApp.Domain.Models.Dtos.Responses.Evento;
 using DeslandesApp.Domain.Models.Dtos.Responses.GrupoNiveis;
+using DeslandesApp.Domain.Models.Dtos.Responses.GrupoPessoasEtiquetas;
 using DeslandesApp.Domain.Models.Dtos.Responses.GrupoSetores;
 using DeslandesApp.Domain.Models.Dtos.Responses.InformacoesComplementares;
 using DeslandesApp.Domain.Models.Dtos.Responses.Nivel;
@@ -109,21 +110,23 @@ namespace DeslandesApp.Domain.Mappings
             #region PESSOA JURIDICA
 
             CreateMap<PessoaJuridicaRequest, PessoaJuridica>()
-                .ForMember(dest => dest.ValorEmail,
-                    opt => opt.MapFrom(src =>
-                        string.IsNullOrEmpty(src.Email)
-                            ? null
-                            : new ValorEmail(src.Email)))
-                .ForMember(dest => dest.InformacoesComplementares, opt => opt.Ignore());
+       .ForMember(dest => dest.ValorEmail,
+           opt => opt.MapFrom(src =>
+               string.IsNullOrEmpty(src.Email)
+                   ? null
+                   : ValorEmail.Create(src.Email)))
+       .ForMember(dest => dest.InformacoesComplementares, opt => opt.Ignore())
+       .ForMember(dest => dest.GrupoPessoasEtiquetas, opt => opt.Ignore()); // 🔥 PADRÃO
 
             CreateMap<PessoaJuridicaUpdateRequest, PessoaJuridica>()
                 .ForMember(dest => dest.ValorEmail,
                     opt => opt.MapFrom(src =>
                         string.IsNullOrEmpty(src.Email)
                             ? null
-                            : new ValorEmail(src.Email)))
+                            : ValorEmail.Create(src.Email)))
                 .ForMember(dest => dest.InformacoesComplementares, opt => opt.Ignore())
-                .ForMember(dest => dest.Endereco, opt => opt.Ignore());
+                .ForMember(dest => dest.Endereco, opt => opt.Ignore())
+                .ForMember(dest => dest.GrupoPessoasEtiquetas, opt => opt.Ignore()); // 🔥 PADRÃO
 
             CreateMap<PessoaJuridica, PessoaJuridicaResponse>()
                 .ForCtorParam("Email",
@@ -143,11 +146,18 @@ namespace DeslandesApp.Domain.Mappings
                         string.IsNullOrEmpty(src.Email)
                             ? null
                             : new ValorEmail(src.Email)))
-                .ForMember(dest => dest.InformacoesComplementares, opt => opt.Ignore());
+                .ForMember(dest => dest.InformacoesComplementares, opt => opt.Ignore())
+                .ForMember(dest => dest.GrupoPessoasEtiquetas, opt => opt.Ignore()); // 🔥 AQUI
 
             CreateMap<PessoaFisicaUpdateRequest, PessoaFisica>()
+                 .ForMember(dest => dest.ValorEmail,
+        opt => opt.MapFrom(src =>
+            string.IsNullOrEmpty(src.Email)
+                ? null
+                : ValorEmail.Create(src.Email))) // 🔥 FALTAVA ISSO
                 .ForMember(dest => dest.InformacoesComplementares, opt => opt.Ignore())
-                .ForMember(dest => dest.Endereco, opt => opt.Ignore());
+                .ForMember(dest => dest.Endereco, opt => opt.Ignore())
+                .ForMember(dest => dest.GrupoPessoasEtiquetas, opt => opt.Ignore()); // 🔥 BOA PRÁTICA
 
             CreateMap<PessoaFisica, PessoaFisicaResponse>()
                 .ForCtorParam("Email",
@@ -292,6 +302,12 @@ namespace DeslandesApp.Domain.Mappings
             #region Conta bancaria
             CreateMap<ContaBancariaRequest, ContaBancaria>()
      .ForMember(dest => dest.TipoConta, opt => opt.MapFrom(src => src.TipoConta));
+            #endregion
+            #region Pesoas Etiquetas
+            CreateMap<GrupoPessoasEtiquetas, GrupoPessoasEtiquetasResponse>()
+    .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.EtiquetaId))
+    .ForMember(dest => dest.Nome, opt => opt.MapFrom(src => src.Etiqueta.Nome))
+    .ForMember(dest => dest.Cor, opt => opt.MapFrom(src => src.Etiqueta.Cor));
             #endregion
         }
     }

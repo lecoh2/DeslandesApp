@@ -17,7 +17,7 @@ namespace DeslandesApp.API.Controllers.V1
             _pessoaService = pessoaService;
         }
 
-        [HttpPost]
+        [HttpPost("cadastrar-pessoa-juridica")]
         public async Task<IActionResult> PostPessoaJuridicaAsync([FromBody] PessoaJuridicaRequest request)
         {
             try

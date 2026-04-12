@@ -2,6 +2,7 @@
 using DeslandesApp.Domain.Helpers;
 using DeslandesApp.Domain.Interfaces.Repositories;
 using DeslandesApp.Domain.Interfaces.Services;
+using DeslandesApp.Domain.Models.Dtos.Requests.ContaBancaria;
 using DeslandesApp.Domain.Models.Dtos.Requests.InformacoesComplementares;
 using DeslandesApp.Domain.Models.Dtos.Requests.Pessoas;
 using DeslandesApp.Domain.Models.Dtos.Responses.Pessoas;
@@ -35,64 +36,118 @@ namespace DeslandesApp.Domain.Services
         {
             await _unitOfWork.BeginTransactionAsync();
 
-            var cnpj = FunctionsHelper.RemovePontosTracos(request.Cnpj);
-            var incricaoEstadual = FunctionsHelper.RemovePontosTracos(request.InscricaoEstadual);
-
-            if (!FunctionsHelper.ValidadorCNPJ(cnpj))
-                throw new ApplicationException("Cnpj inválido.");
-
-            if (await _unitOfWork.PessoaRepository.CnpjInUseAsync(cnpj))
-                throw new InvalidOperationException("CNPJ já cadastrado.");
-
-            if (!string.IsNullOrWhiteSpace(incricaoEstadual) &&
-                await _unitOfWork.PessoaRepository.IncricaoEstadualInUseAsync(incricaoEstadual))
-                throw new InvalidOperationException("RG já cadastrado.");
-
-            var pessoa = _mapper.Map<PessoaJuridica>(request);
-
-            var validator = new PessoaJuridicaValidator();
-            var result = validator.Validate(pessoa);
-
-            if (!result.IsValid)
-                throw new ValidationException(result.Errors);
-
-            pessoa.CNPJ = cnpj;
-            pessoa.InscricaoEstadual = incricaoEstadual;
-            pessoa.Telefone = FunctionsHelper.RemovePontosTracosTelefone(pessoa.Telefone);
-            pessoa.DataCadastro = DateTime.Now;
-
-
-            pessoa.ValorEmail = string.IsNullOrWhiteSpace(pessoa.ValorEmail?.EnderecoEmail)
-                ? new ValorEmail($"nadaconsta{cnpj}@email.com")
-                : pessoa.ValorEmail;
-
-            if (await _unitOfWork.PessoaRepository.EmailInUseAsync(pessoa.ValorEmail.EnderecoEmail))
-                throw new InvalidOperationException("Email já cadastrado.");
-
-            // ENDEREÇO
-            if (request.Endereco != null)
+            try
             {
-                pessoa.Endereco = _mapper.Map<Endereco>(request.Endereco);
-                pessoa.Endereco.Cep = FunctionsHelper.RemovePontosTracos(pessoa.Endereco.Cep);
-                pessoa.Endereco.Complemento ??= "";
-            }
+                var cnpj = FunctionsHelper.RemovePontosTracos(request.Cnpj);
+                var inscricaoEstadual = FunctionsHelper.RemovePontosTracos(request.InscricaoEstadual);
 
-            // INFORMAÇÕES COMPLEMENTARES
-            // INFORMAÇÕES COMPLEMENTARES
-            if (request.InformacoesComplementares != null &&
-    TemAlgumValor(request.InformacoesComplementares))
+                // ================== VALIDAÇÕES ==================
+
+                if (!FunctionsHelper.ValidadorCNPJ(cnpj))
+                    throw new ApplicationException("CNPJ inválido.");
+
+                if (await _unitOfWork.PessoaRepository.CnpjInUseAsync(cnpj))
+                    throw new InvalidOperationException("CNPJ já cadastrado.");
+
+                if (!string.IsNullOrWhiteSpace(inscricaoEstadual) &&
+                    await _unitOfWork.PessoaRepository.IncricaoEstadualInUseAsync(inscricaoEstadual))
+                    throw new InvalidOperationException("Inscrição Estadual já cadastrada.");
+
+                // ================== MAPEAMENTO ==================
+
+                var pessoa = _mapper.Map<PessoaJuridica>(request);
+
+                // ================== VALIDAÇÃO DOMAIN ==================
+
+                var validator = new PessoaJuridicaValidator();
+                var result = validator.Validate(pessoa);
+
+                if (!result.IsValid)
+                    throw new ValidationException(result.Errors);
+
+                // ================== NORMALIZAÇÕES ==================
+
+                pessoa.CNPJ = cnpj;
+                pessoa.InscricaoEstadual = inscricaoEstadual;
+                pessoa.Telefone = FunctionsHelper.RemovePontosTracosTelefone(pessoa.Telefone);
+
+                pessoa.DataCadastro = DateTime.Now;
+
+                // ================== EMAIL ==================
+
+                pessoa.ValorEmail = string.IsNullOrWhiteSpace(pessoa.ValorEmail?.EnderecoEmail)
+                    ? new ValorEmail($"nadaconsta{cnpj}@sistema.local")
+                    : pessoa.ValorEmail;
+
+                if (await _unitOfWork.PessoaRepository.EmailInUseAsync(pessoa.ValorEmail.EnderecoEmail))
+                    throw new InvalidOperationException("Email já cadastrado.");
+
+                // ================== ENDEREÇO ==================
+
+                if (request.Endereco != null)
+                {
+                    pessoa.Endereco = _mapper.Map<Endereco>(request.Endereco);
+                    pessoa.Endereco.Cep = FunctionsHelper.RemovePontosTracos(pessoa.Endereco.Cep);
+                    pessoa.Endereco.Complemento ??= "";
+                }
+
+                // ================== INFORMAÇÕES COMPLEMENTARES ==================
+
+                if (request.InformacoesComplementares != null &&
+                    TemAlgumValor(request.InformacoesComplementares))
+                {
+                    pessoa.InformacoesComplementares =
+                        _mapper.Map<InformacoesComplementaresPessoaJuridica>(
+                            request.InformacoesComplementares);
+                }
+
+                // ================== SALVAR PESSOA (ANTES DAS RELAÇÕES) ==================
+
+                await _unitOfWork.PessoaRepository.AddAsync(pessoa);
+
+                // ================== ETIQUETAS (N:N) ==================
+
+                if (request.GrupoPessoasEtiquetas != null && request.GrupoPessoasEtiquetas.Any())
+                {
+                    foreach (var item in request.GrupoPessoasEtiquetas)
+                    {
+                        var etiqueta = await _unitOfWork.EtiquetaRepository.GetByIdAsync(item.idEtiqueta);
+
+                        if (etiqueta == null)
+                            throw new InvalidOperationException("Etiqueta não encontrada.");
+
+                        var grupoEtiqueta = new GrupoPessoasEtiquetas
+                        {
+                            EtiquetaId = etiqueta.Id,
+                            PessoaId = pessoa.Id
+                        };
+
+                        await _unitOfWork.GrupoPessoasEtiquetasRepository.AddAsync(grupoEtiqueta);
+                    }
+                }
+
+                // ================== CONTA BANCÁRIA ==================
+
+                if (request.ContaBancaria != null && TemDadosConta(request.ContaBancaria))
+                {
+                    var conta = _mapper.Map<ContaBancaria>(request.ContaBancaria);
+
+                    conta.PessoaId = pessoa.Id;
+
+                    await _unitOfWork.ContaBancariaRepository.AddAsync(conta);
+                }
+
+                // ================== COMMIT ==================
+
+                await _unitOfWork.CommitAsync();
+
+                return _mapper.Map<PessoaJuridicaResponse>(pessoa);
+            }
+            catch
             {
-                pessoa.InformacoesComplementares =
-                    _mapper.Map<InformacoesComplementaresPessoaJuridica>(
-                        request.InformacoesComplementares);
+                await _unitOfWork.RollbackAsync();
+                throw;
             }
-
-            // SALVA TUDO JUNTO
-            await _unitOfWork.PessoaRepository.AddAsync(pessoa);
-
-            await _unitOfWork.CommitAsync();
-
-            return _mapper.Map<PessoaJuridicaResponse>(pessoa);
         }
 
         public Task<PageResult<PessoaJuridicaResponse>> ConsultarAsync(int pageNumber, int pageSize)
@@ -104,7 +159,14 @@ namespace DeslandesApp.Domain.Services
         {
             _unitOfWork.Dispose();
         }
-
+        private bool TemDadosConta(ContaBancariaRequest conta)
+        {
+            return !string.IsNullOrWhiteSpace(conta.NomeBanco)
+                || !string.IsNullOrWhiteSpace(conta.Agencia)
+                || !string.IsNullOrWhiteSpace(conta.NumeroConta)
+                || !string.IsNullOrWhiteSpace(conta.Pix)
+               || conta.TipoConta.HasValue;
+        }
         public Task<PessoaJuridicaResponse> ExcluirAsync(Guid id)
         {
             throw new NotImplementedException();
