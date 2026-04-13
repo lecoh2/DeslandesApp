@@ -12,9 +12,10 @@ namespace DeslandesApp.Domain.Models.Dtos.Responses.Pessoas
     public record PessoaJuridicaPaginacaoResponse
    (
     Guid? Id,
+    int? Perfil,
     string? Nome,
     string? Cnpj,
-    string? IncricaoEstadual,
+    string? InscricaoEstadual,
     string? Email,
     string? Telefone
    );

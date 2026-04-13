@@ -58,12 +58,12 @@ public class PessoaRepository(DataContext dataContext)
              .AnyAsync(p => p.CNPJ == cnpj);
     }
 
-    public async Task<bool> IncricaoEstadualInUseAsync(string incricaoEstadual)
+    public async Task<bool> IncricaoEstadualInUseAsync(string inscricaoEstadual)
     {
         return await dataContext
             .Set<PessoaJuridica>()
             .AsNoTracking()
-            .AnyAsync(p => p.InscricaoEstadual == incricaoEstadual);
+            .AnyAsync(p => p.InscricaoEstadual == inscricaoEstadual);
     }
 
     public async Task<PageResult<PessoaFisicaPaginacaoResponse>> PessoaFisicaComPaginacaoAsync(
@@ -75,6 +75,7 @@ public class PessoaRepository(DataContext dataContext)
             .Select(p => new
             {
                 p.Id,
+                p.Perfil,
                 p.Nome,             
                 p.CPF,
                 p.RG,
@@ -105,6 +106,7 @@ public class PessoaRepository(DataContext dataContext)
           .Take(pageSize)
           .Select(p => new PessoaFisicaPaginacaoResponse(
               p.Id,
+            p.Perfil.HasValue ? (int?)p.Perfil.Value : null,
               p.Nome,
               p.CPF,
               p.RG,
@@ -132,6 +134,7 @@ public class PessoaRepository(DataContext dataContext)
             .Select(p => new
             {
                 p.Id,
+                p.Perfil,
                 p.Nome,              
                 p.CNPJ,
                 p.InscricaoEstadual,
@@ -162,6 +165,7 @@ public class PessoaRepository(DataContext dataContext)
           .Take(pageSize)
           .Select(p => new PessoaJuridicaPaginacaoResponse(
               p.Id,
+           p.Perfil.HasValue ? (int?)p.Perfil.Value : null,
               p.Nome,
               p.CNPJ,
               p.InscricaoEstadual,

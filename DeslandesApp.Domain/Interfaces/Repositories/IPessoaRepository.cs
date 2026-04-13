@@ -19,7 +19,7 @@ namespace DeslandesApp.Domain.Interfaces.Repositories
         Task<bool> RgInUseAsync(string cpf);
         Task<PessoaFisica> GetByCpfAsync(string cpf);
         Task<bool> CnpjInUseAsync(string cnpj);
-        Task<bool> IncricaoEstadualInUseAsync(string incricaoEstadual);
+        Task<bool> IncricaoEstadualInUseAsync(string inscricaoEstadual);
         Task<PageResult<PessoaFisicaPaginacaoResponse>> PessoaFisicaComPaginacaoAsync(
      int pageNumber, int pageSize, string? searchTerm = null);
         Task<PageResult<PessoaJuridicaPaginacaoResponse>> ConsultarPessoaJuridicaComPaginacaoAsync(

@@ -1,6 +1,7 @@
 ﻿using DeslandesApp.Domain.Interfaces.Services;
 using DeslandesApp.Domain.Models.Dtos.Requests.Usuarios;
 using DeslandesApp.Domain.Models.Dtos.Responses.Usuarios;
+using DeslandesApp.Domain.Services;
 using DeslandesApp.Domain.Utils;
 using FluentValidation;
 using Microsoft.AspNetCore.Authorization;
@@ -39,6 +40,12 @@ namespace DeslandesApp.API.Controllers.V1
                 message = $"Usuário {response.NomeUsuario} atualizado com sucesso.",
                 data = response
             });
+        }
+        [HttpGet("consultar-usaurio-responsavel")]
+        public async Task<IActionResult> GetAllAsync()
+        {
+            var result = await usuarioService.ConsultarAsync();
+            return Ok(result);
         }
 
         [HttpDelete("{id}")]

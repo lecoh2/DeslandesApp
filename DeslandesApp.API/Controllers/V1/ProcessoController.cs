@@ -18,7 +18,7 @@ namespace DeslandesApp.API.Controllers.V1
         IGrupoEnvolvidosProcessoService grupoEnvolvidosProcessoService,
         IGrupoEtiquetaProcessoService grupoEtiquetaProcesoService) : ControllerBase
     {
-        [HttpPost]
+        [HttpPost("cadastrar-processo")]
         [ProducesResponseType(typeof(ProcessoResponse), StatusCodes.Status201Created)]
         public async Task<IActionResult> PostAsync([FromBody] ProcessoRequest request)
         {

@@ -31,6 +31,7 @@ using DeslandesApp.Domain.Models.Dtos.Responses.Processo;
 using DeslandesApp.Domain.Models.Dtos.Responses.Setor;
 using DeslandesApp.Domain.Models.Dtos.Responses.Tarefa;
 using DeslandesApp.Domain.Models.Dtos.Responses.Usuarios;
+using DeslandesApp.Domain.Models.Dtos.Responses.Vara;
 using DeslandesApp.Domain.Models.Entities;
 using DeslandesApp.Domain.Models.Enum;
 using DeslandesApp.Domain.ValueObjects;
@@ -308,6 +309,16 @@ namespace DeslandesApp.Domain.Mappings
     .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.EtiquetaId))
     .ForMember(dest => dest.Nome, opt => opt.MapFrom(src => src.Etiqueta.Nome))
     .ForMember(dest => dest.Cor, opt => opt.MapFrom(src => src.Etiqueta.Cor));
+            #endregion
+            #region vara
+            CreateMap<Vara, VaraResponse>()
+     .ForCtorParam("IdVara", opt => opt.MapFrom(src => src.Id))
+     .ForCtorParam("NomeVara", opt => opt.MapFrom(src => src.NomeVara));
+            #endregion
+            #region Acao
+            CreateMap<Acao, AcaoResponse>()
+     .ForCtorParam("IdAcao", opt => opt.MapFrom(src => src.Id))
+     .ForCtorParam("NomeAcao", opt => opt.MapFrom(src => src.NomeAcao));
             #endregion
         }
     }

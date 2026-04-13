@@ -113,6 +113,17 @@ namespace DeslandesApp.Infra.Data.Repositories
         }
         private IQualificacaoRepository? _qualificacaoRepository;
         private IContaBancariaRepository? _contaBancariaRepository;
+        private IAcaoRepository? _acaoRepository;
+        public IAcaoRepository AcaoRepository
+        {
+            get
+            {
+                if (_acaoRepository == null)
+                    _acaoRepository = new AcaoRepository(dataContext);
+
+                return _acaoRepository;
+            }
+        }
         public IContaBancariaRepository ContaBancariaRepository
         {
             get

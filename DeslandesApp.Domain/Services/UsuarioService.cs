@@ -7,6 +7,7 @@ using DeslandesApp.Domain.Models.Dtos.Requests.Usuarios;
 using DeslandesApp.Domain.Models.Dtos.Responses.Nivel;
 using DeslandesApp.Domain.Models.Dtos.Responses.Setor;
 using DeslandesApp.Domain.Models.Dtos.Responses.Usuarios;
+using DeslandesApp.Domain.Models.Dtos.Responses.Vara;
 using DeslandesApp.Domain.Models.Entities;
 using DeslandesApp.Domain.Models.Enum;
 using DeslandesApp.Domain.Utils;
@@ -353,7 +354,14 @@ namespace DeslandesApp.Domain.Services
 
             return paged;
         }
+        public async Task<List<UsuariosResponse>> ConsultarAsync()
+        {
+            var usuario = await unitOfWork.UsuarioRepository.GetAllAsync();
 
-      
+            var response = mapper.Map<List<UsuariosResponse>>(usuario);
+
+            return response;
+        }
+
     }
 }

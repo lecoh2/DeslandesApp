@@ -12,6 +12,7 @@ namespace DeslandesApp.Domain.Models.Dtos.Responses.Pessoas
     public record PessoaFisicaPaginacaoResponse
    (
     Guid? Id,
+    int? Perfil,
     string? Nome,
     string? CPF,
     string? RG,
