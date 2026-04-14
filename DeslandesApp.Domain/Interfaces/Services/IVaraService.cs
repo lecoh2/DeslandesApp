@@ -11,6 +11,8 @@ using System.Threading.Tasks;
 namespace DeslandesApp.Domain.Interfaces.Services
 {
     public interface IVaraService : IBaseService<VaraRequest, VaraUpdateRequest, VaraResponse, Guid>
-    { Task<List<VaraResponse>> ConsultarAsync(); }
+    { 
+        Task<List<VaraResponse>> ConsultarAsync();
+    }
 }
 

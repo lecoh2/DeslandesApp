@@ -201,5 +201,43 @@ public class PessoaRepository(DataContext dataContext)
            .Include(p => p.InformacoesComplementares)
            .FirstOrDefaultAsync(p => p.Id == idPessoa);
     }
+    public async Task<List<PessoaResumoResponse>> ConsultarResumoAsync(string? termo = null)
+    {
+        var fisicasQuery = dataContext.Set<PessoaFisica>()
+            .AsNoTracking()
+            .Select(p => new PessoaResumoResponse
+            {
+                Id = p.Id,
+                Nome = p.Nome,
+                Documento = p.CPF,
+                Tipo = "Fisica"
+            });
+
+        var juridicasQuery = dataContext.Set<PessoaJuridica>()
+            .AsNoTracking()
+            .Select(p => new PessoaResumoResponse
+            {
+                Id = p.Id,
+                Nome = p.Nome,
+                Documento = p.CNPJ,
+                Tipo = "Juridica"
+            });
+
+        var query = fisicasQuery.Union(juridicasQuery);
+
+        if (!string.IsNullOrWhiteSpace(termo))
+        {
+            termo = termo.Trim();
+
+            query = query.Where(p =>
+                EF.Functions.Like(p.Nome, $"%{termo}%") ||
+                EF.Functions.Like(p.Documento, $"%{termo}%")
+            );
+        }
+
+        return await query
+            .OrderBy(p => p.Nome)
+            .ToListAsync();
+    }
 }
 

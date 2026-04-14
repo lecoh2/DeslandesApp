@@ -7,6 +7,7 @@ using DeslandesApp.Domain.Models.Dtos.Requests.InformacoesComplementares;
 using DeslandesApp.Domain.Models.Dtos.Requests.Pessoas;
 using DeslandesApp.Domain.Models.Dtos.Responses.Pessoas;
 using DeslandesApp.Domain.Models.Dtos.Responses.Usuarios;
+using DeslandesApp.Domain.Models.Dtos.Responses.Vara;
 using DeslandesApp.Domain.Models.Entities;
 using DeslandesApp.Domain.Models.Enum;
 using DeslandesApp.Domain.Utils;
@@ -136,7 +137,7 @@ namespace DeslandesApp.Domain.Services
         }
 
 
-
+      
         public async Task<PageResult<PessoaFisicaPaginacaoResponse>> ConsultarPessoaFisicaPaginacaoAsync(int pageNumber, int pageSize, string? searchTerm = null)
         {
             var paged = await _unitOfWork.PessoaRepository.PessoaFisicaComPaginacaoAsync

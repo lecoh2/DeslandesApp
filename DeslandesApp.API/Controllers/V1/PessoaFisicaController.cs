@@ -59,6 +59,7 @@ namespace DeslandesApp.API.Controllers.V1
                 data = response
             });
         }
+      
     }
 }
 

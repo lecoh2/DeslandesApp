@@ -28,6 +28,7 @@ using DeslandesApp.Domain.Models.Dtos.Responses.InformacoesComplementares;
 using DeslandesApp.Domain.Models.Dtos.Responses.Nivel;
 using DeslandesApp.Domain.Models.Dtos.Responses.Pessoas;
 using DeslandesApp.Domain.Models.Dtos.Responses.Processo;
+using DeslandesApp.Domain.Models.Dtos.Responses.Qualificacao;
 using DeslandesApp.Domain.Models.Dtos.Responses.Setor;
 using DeslandesApp.Domain.Models.Dtos.Responses.Tarefa;
 using DeslandesApp.Domain.Models.Dtos.Responses.Usuarios;
@@ -138,7 +139,15 @@ namespace DeslandesApp.Domain.Mappings
 
             #endregion
 
+            #region pessoas pf pj
+            CreateMap<PessoaFisica, PessoaResumoResponse>()
+    .ForMember(dest => dest.Documento, opt => opt.MapFrom(src => src.CPF))
+    .ForMember(dest => dest.Tipo, opt => opt.MapFrom(src => "Fisica"));
 
+            CreateMap<PessoaJuridica, PessoaResumoResponse>()
+                .ForMember(dest => dest.Documento, opt => opt.MapFrom(src => src.CNPJ))
+                .ForMember(dest => dest.Tipo, opt => opt.MapFrom(src => "Juridica"));
+            #endregion
             #region PESSOA FISICA
 
             CreateMap<PessoaFisicaRequest, PessoaFisica>()
@@ -319,6 +328,11 @@ namespace DeslandesApp.Domain.Mappings
             CreateMap<Acao, AcaoResponse>()
      .ForCtorParam("IdAcao", opt => opt.MapFrom(src => src.Id))
      .ForCtorParam("NomeAcao", opt => opt.MapFrom(src => src.NomeAcao));
+            #endregion
+            #region Qualificacao
+            CreateMap<Qualificacao, QualificacaoResponse>()
+     .ForCtorParam("IdQualificacao", opt => opt.MapFrom(src => src.Id))
+     .ForCtorParam("NomeQualificacao", opt => opt.MapFrom(src => src.NomeQualificacao));
             #endregion
         }
     }

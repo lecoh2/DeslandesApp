@@ -2,6 +2,7 @@
 using DeslandesApp.Domain.Interfaces.Services;
 using DeslandesApp.Domain.Models.Dtos.Requests.Qualificacao;
 using DeslandesApp.Domain.Models.Dtos.Responses.Qualificacao;
+using DeslandesApp.Domain.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -23,6 +24,12 @@ namespace DeslandesApp.API.Controllers.V1
                 message = $"Qualificaçao {response.NomeQualificacao} cadastrado com sucesso.",
                 data = response
             });
+        }
+        [HttpGet("consultar-qualidicacao")]
+        public async Task<IActionResult> GetAllAsync()
+        {
+            var result = await qualificacaoService.ConsultarAsync();
+            return Ok(result);
         }
     }
 }

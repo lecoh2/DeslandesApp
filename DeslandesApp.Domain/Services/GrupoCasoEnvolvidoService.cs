@@ -77,7 +77,7 @@ namespace DeslandesApp.Domain.Services
 
         public void Dispose()
         {
-            throw new NotImplementedException();
+            unitOfWork.Dispose();
         }
 
         public Task<GrupoCasoEnvolvidosResponse> ExcluirAsync(Guid id)
