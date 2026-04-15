@@ -217,6 +217,7 @@ namespace DeslandesApp.Domain.Mappings
      .ForAllMembers(opt => opt.Ignore());
 
             CreateMap<ProcessoUpdateRequest, Processo>();
+          
             #endregion
 
             #region Tarefas
@@ -321,8 +322,8 @@ namespace DeslandesApp.Domain.Mappings
             #endregion
             #region vara
             CreateMap<Vara, VaraResponse>()
-     .ForCtorParam("IdVara", opt => opt.MapFrom(src => src.Id))
-     .ForCtorParam("NomeVara", opt => opt.MapFrom(src => src.NomeVara));
+         .ForMember(dest => dest.NomeForo,
+             opt => opt.MapFrom(src => src.Foro.NomeForo));
             #endregion
             #region Acao
             CreateMap<Acao, AcaoResponse>()

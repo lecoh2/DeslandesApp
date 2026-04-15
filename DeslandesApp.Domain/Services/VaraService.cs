@@ -3,6 +3,7 @@ using DeslandesApp.Domain.Interfaces.Repositories;
 using DeslandesApp.Domain.Interfaces.Services;
 using DeslandesApp.Domain.Models.Dtos.Requests.Vara;
 using DeslandesApp.Domain.Models.Dtos.Responses.Vara;
+using DeslandesApp.Domain.Models.Entities;
 using DeslandesApp.Domain.Utils;
 using System;
 using System.Collections.Generic;
@@ -21,11 +22,9 @@ namespace DeslandesApp.Domain.Services
 
         public async Task<List<VaraResponse>> ConsultarAsync()
         {
-            var varas = await unitOfWork.VaraRepository.GetAllAsync();
+            var varas = await unitOfWork.VaraRepository.GetAllWithForoAsync();
 
-            var response = mapper.Map<List<VaraResponse>>(varas);
-
-            return response;
+            return mapper.Map<List<VaraResponse>>(varas);
         }
 
         public Task<PageResult<VaraResponse>> ConsultarAsync(int pageNumber, int pageSize)
@@ -42,6 +41,8 @@ namespace DeslandesApp.Domain.Services
         {
             throw new NotImplementedException();
         }
+
+      
 
         public Task<VaraResponse> ModificarAsync(Guid id, VaraUpdateRequest request)
         {

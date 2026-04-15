@@ -9,6 +9,6 @@ namespace DeslandesApp.Domain.Interfaces.Repositories
 {
     public interface IVaraRepository : IBaseRepository<Vara, Guid>
     {
-
+        Task<List<Vara>> GetAllWithForoAsync();
     }
 }

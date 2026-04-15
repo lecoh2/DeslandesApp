@@ -37,8 +37,9 @@ namespace DeslandesApp.Domain.Services
         public async Task<PessoaFisicaResponse> AdicionarAsync(PessoaFisicaRequest request)
         {
             await _unitOfWork.BeginTransactionAsync();
-
-            var cpf = FunctionsHelper.RemovePontosTracos(request.Cpf);
+            try
+            {
+                var cpf = FunctionsHelper.RemovePontosTracos(request.Cpf);
             var rg = FunctionsHelper.RemovePontosTracos(request.Rg);
 
             if (!FunctionsHelper.ValidadorCPF(cpf))
@@ -128,6 +129,12 @@ namespace DeslandesApp.Domain.Services
             await _unitOfWork.CommitAsync();
 
             return _mapper.Map<PessoaFisicaResponse>(pessoa);
+        }
+            catch
+    {
+                await _unitOfWork.RollbackAsync(); // 🔥 ESSENCIAL
+                throw; // middleware trata
+            }
         }
 
 
