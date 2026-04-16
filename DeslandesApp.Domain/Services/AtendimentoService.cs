@@ -129,9 +129,9 @@ namespace DeslandesApp.Domain.Services
             }
 
             //  N:N - ETIQUETAS (OPCIONAL)
-            if (request.GrupoEtiquetas != null && request.GrupoEtiquetas.Any())
+            if (request.GrupoAtendimentoEtiquetas != null && request.GrupoAtendimentoEtiquetas.Any())
             {
-                foreach (var item in request.GrupoEtiquetas)
+                foreach (var item in request.GrupoAtendimentoEtiquetas)
                 {
                     var etiqueta = await unitOfWork.EtiquetaRepository.GetByIdAsync(item.EtiquetaId);
 
@@ -322,7 +322,10 @@ namespace DeslandesApp.Domain.Services
         {
             throw new NotImplementedException();
         }
+        public async Task<List<AtendimentoAutoComplete>> ConsultarAtendimentoAutoCompleteAsync(string? termo = null)
+        {
+            return await unitOfWork.AtendimentoRepository.ConsultarAtendimentoAutoCompleteAsync(termo);
+        }
 
-        
     }
 }

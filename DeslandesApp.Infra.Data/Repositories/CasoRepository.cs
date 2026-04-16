@@ -4,6 +4,7 @@ using DeslandesApp.Domain.Models.Dtos.Requests.GrupoCasoEnvolvidos;
 using DeslandesApp.Domain.Models.Dtos.Responses.Caso;
 using DeslandesApp.Domain.Models.Dtos.Responses.GrupoCasoCliente;
 using DeslandesApp.Domain.Models.Dtos.Responses.GrupoCasoEnvolvidos;
+using DeslandesApp.Domain.Models.Dtos.Responses.Pessoas;
 using DeslandesApp.Domain.Models.Dtos.Responses.Processo;
 using DeslandesApp.Domain.Models.Dtos.Responses.Tarefa;
 using DeslandesApp.Domain.Models.Dtos.Responses.Usuarios;
@@ -129,8 +130,8 @@ namespace DeslandesApp.Infra.Data.Repositories
                             c.PessoaId,
                             c.CasoId,
                             c.Nome
-                            //c.QualificacaoId ?? Guid.Empty,
-                            //c.NomeQualificacao
+                        //c.QualificacaoId ?? Guid.Empty,
+                        //c.NomeQualificacao
                         ))
                         .ToList(),
 
@@ -158,10 +159,27 @@ namespace DeslandesApp.Infra.Data.Repositories
 
         public async Task<Caso> ConsultarCasoComRelacionamentosAsync(Guid idCaso)
         {
-            return await dataContext.Caso              
+            return await dataContext.Caso
                 .Include(p => p.Responsavel)
-              
+
                 .FirstOrDefaultAsync(p => p.Id == idCaso);
+        }
+
+        public async Task<List<CasoAutoComplete>> ConsultarCasoAutoCompleteAsync(string? termo = null)
+        {
+
+            var query = dataContext.Set<Caso>()
+                .AsNoTracking()
+                .Select(p => new CasoAutoComplete
+                {
+                    Id = p.Id,
+                    Titulo = p.Titulo,
+
+                });
+            return await query
+                .OrderBy(p => p.Titulo)
+                .ToListAsync();
         }
     }
 }
+

@@ -13,7 +13,7 @@ namespace DeslandesApp.API.Controllers.V1
     [ApiController]
     public class AtendimentoController(IAtendimentoService atendiemntofaService, IGrupoEtiquetaAtendimentoServices grupoEtiquetaAtendimento) : ControllerBase
     {
-        [HttpPost]
+        [HttpPost("cadastrar-atendimento")]
         [ProducesResponseType(typeof(CriarAtendimentoClienteResponse), StatusCodes.Status201Created)]
         public async Task<IActionResult> PostAsync([FromBody] CriarAtendimentoClienteRequest request)
         {
@@ -78,6 +78,13 @@ namespace DeslandesApp.API.Controllers.V1
                 success = true,
                 message = $"Etiqueta  removida do processo com sucesso."
             });
+        }
+        [HttpGet("consultar-atendiemnto-autocomplete")]
+        public async Task<IActionResult> ConsultarResumo([FromQuery] string? termo = null)
+        {
+            var result = await atendiemntofaService.ConsultarAtendimentoAutoCompleteAsync(termo);
+
+            return Ok(result);
         }
     }
 }

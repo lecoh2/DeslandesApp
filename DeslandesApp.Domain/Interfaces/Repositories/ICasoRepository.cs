@@ -1,4 +1,5 @@
 ﻿using DeslandesApp.Domain.Models.Dtos.Responses.Caso;
+using DeslandesApp.Domain.Models.Dtos.Responses.Pessoas;
 using DeslandesApp.Domain.Models.Dtos.Responses.Tarefa;
 using DeslandesApp.Domain.Models.Entities;
 using DeslandesApp.Domain.Utils;
@@ -14,5 +15,6 @@ namespace DeslandesApp.Domain.Interfaces.Repositories
     {
         Task<PageResult<CasoPaginacaoResponse>> GetCasoPaginacaoAsync(int pageNumber, int pageSize, string? searchTerm = null);
          Task<Caso> ConsultarCasoComRelacionamentosAsync(Guid idCaso);
+        Task<List<CasoAutoComplete>> ConsultarCasoAutoCompleteAsync(string? termo = null);
     }
 }

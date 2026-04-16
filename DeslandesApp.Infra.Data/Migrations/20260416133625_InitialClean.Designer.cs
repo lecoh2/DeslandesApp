@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DeslandesApp.Infra.Data.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20260411205204_addconta22")]
-    partial class addconta22
+    [Migration("20260416133625_InitialClean")]
+    partial class InitialClean
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -742,11 +742,18 @@ namespace DeslandesApp.Infra.Data.Migrations
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("PROCESSOID");
 
-                    b.HasKey("PessoaId", "ProcessoId")
+                    b.Property<Guid>("QualificacaoId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("QUALIFICACAOID");
+
+                    b.HasKey("PessoaId", "ProcessoId", "QualificacaoId")
                         .HasName("PK_GRUPOCLIENTEPROCESSO");
 
                     b.HasIndex("ProcessoId")
                         .HasDatabaseName("IX_GRUPOCLIENTEPROCESSO_PROCESSOID");
+
+                    b.HasIndex("QualificacaoId")
+                        .HasDatabaseName("IX_GRUPOCLIENTEPROCESSO_QUALIFICACAOID");
 
                     b.ToTable("GRUPOCLIENTEPROCESSO");
                 });
@@ -787,11 +794,18 @@ namespace DeslandesApp.Infra.Data.Migrations
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("PROCESSOID");
 
-                    b.HasKey("PessoaId", "ProcessoId")
+                    b.Property<Guid>("QualificacaoId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("QUALIFICACAOID");
+
+                    b.HasKey("PessoaId", "ProcessoId", "QualificacaoId")
                         .HasName("PK_GRUPOENVOLVIDOSPROCESSO");
 
                     b.HasIndex("ProcessoId")
                         .HasDatabaseName("IX_GRUPOENVOLVIDOSPROCESSO_PROCESSOID");
+
+                    b.HasIndex("QualificacaoId")
+                        .HasDatabaseName("IX_GRUPOENVOLVIDOSPROCESSO_QUALIFICACAOID");
 
                     b.ToTable("GRUPOENVOLVIDOSPROCESSO");
                 });
@@ -1253,25 +1267,6 @@ namespace DeslandesApp.Infra.Data.Migrations
                     b.ToTable("PESSOAHISTORICO", (string)null);
                 });
 
-            modelBuilder.Entity("DeslandesApp.Domain.Models.Entities.ProcessoEtiqueta", b =>
-                {
-                    b.Property<Guid>("ProcessoId")
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnName("PROCESSOID");
-
-                    b.Property<Guid>("EtiquetaId")
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnName("ETIQUETAID");
-
-                    b.HasKey("ProcessoId", "EtiquetaId")
-                        .HasName("PK_PROCESSOETIQUETA");
-
-                    b.HasIndex("EtiquetaId")
-                        .HasDatabaseName("IX_PROCESSOETIQUETA_ETIQUETAID");
-
-                    b.ToTable("PROCESSOETIQUETA", (string)null);
-                });
-
             modelBuilder.Entity("DeslandesApp.Domain.Models.Entities.ProcessoHistorico", b =>
                 {
                     b.Property<Guid>("Id")
@@ -1710,6 +1705,10 @@ namespace DeslandesApp.Infra.Data.Migrations
                         .HasColumnType("varchar(250)")
                         .HasColumnName("PROFISSAO");
 
+                    b.Property<int?>("Tratamento")
+                        .HasColumnType("int")
+                        .HasColumnName("TRATAMENTO");
+
                     b.ToTable("INFORMACOESCOMPLEMENTARES");
 
                     b.HasDiscriminator().HasValue("PF");
@@ -1718,12 +1717,6 @@ namespace DeslandesApp.Infra.Data.Migrations
             modelBuilder.Entity("DeslandesApp.Domain.Models.Entities.InformacoesComplementaresPessoaJuridica", b =>
                 {
                     b.HasBaseType("DeslandesApp.Domain.Models.Entities.InformacoesComplementares");
-
-                    b.Property<string>("Agencia")
-                        .HasMaxLength(100)
-                        .IsUnicode(false)
-                        .HasColumnType("varchar(100)")
-                        .HasColumnName("AGENCIA");
 
                     b.Property<string>("Cargo")
                         .HasMaxLength(250)
@@ -1736,28 +1729,6 @@ namespace DeslandesApp.Infra.Data.Migrations
                         .IsUnicode(false)
                         .HasColumnType("varchar(250)")
                         .HasColumnName("CONTATO");
-
-                    b.Property<string>("NomeBanco")
-                        .HasMaxLength(250)
-                        .IsUnicode(false)
-                        .HasColumnType("varchar(250)")
-                        .HasColumnName("NOMEBANCO");
-
-                    b.Property<string>("NumeroConta")
-                        .HasMaxLength(100)
-                        .IsUnicode(false)
-                        .HasColumnType("varchar(100)")
-                        .HasColumnName("NUMEROCONTA");
-
-                    b.Property<string>("Pix")
-                        .HasMaxLength(255)
-                        .IsUnicode(false)
-                        .HasColumnType("varchar(255)")
-                        .HasColumnName("PIX");
-
-                    b.Property<int?>("TipoConta")
-                        .HasColumnType("int")
-                        .HasColumnName("TIPOCONTA");
 
                     b.ToTable("INFORMACOESCOMPLEMENTARES");
 
@@ -2106,9 +2077,18 @@ namespace DeslandesApp.Infra.Data.Migrations
                         .IsRequired()
                         .HasConstraintName("FK_GRUPOCLIENTEPROCESSO_PROCESSOS_PROCESSOID");
 
+                    b.HasOne("DeslandesApp.Domain.Models.Entities.Qualificacao", "QualificacaoCliente")
+                        .WithMany()
+                        .HasForeignKey("QualificacaoId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("FK_GRUPOCLIENTEPROCESSO_QUALIFICACAO_QUALIFICACAOID");
+
                     b.Navigation("Pessoa");
 
                     b.Navigation("Processo");
+
+                    b.Navigation("QualificacaoCliente");
                 });
 
             modelBuilder.Entity("DeslandesApp.Domain.Models.Entities.GrupoEnvolvidos", b =>
@@ -2157,9 +2137,18 @@ namespace DeslandesApp.Infra.Data.Migrations
                         .IsRequired()
                         .HasConstraintName("FK_GRUPOENVOLVIDOSPROCESSO_PROCESSOS_PROCESSOID");
 
+                    b.HasOne("DeslandesApp.Domain.Models.Entities.Qualificacao", "QualificacaoEnvolvidos")
+                        .WithMany()
+                        .HasForeignKey("QualificacaoId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("FK_GRUPOENVOLVIDOSPROCESSO_QUALIFICACAO_QUALIFICACAOID");
+
                     b.Navigation("Pessoa");
 
                     b.Navigation("Processo");
+
+                    b.Navigation("QualificacaoEnvolvidos");
                 });
 
             modelBuilder.Entity("DeslandesApp.Domain.Models.Entities.GrupoEtiquetaCasos", b =>
@@ -2432,27 +2421,6 @@ namespace DeslandesApp.Infra.Data.Migrations
                     b.Navigation("Usuario");
                 });
 
-            modelBuilder.Entity("DeslandesApp.Domain.Models.Entities.ProcessoEtiqueta", b =>
-                {
-                    b.HasOne("DeslandesApp.Domain.Models.Entities.Etiqueta", "Etiqueta")
-                        .WithMany("ProcessoEtiquetas")
-                        .HasForeignKey("EtiquetaId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("FK_PROCSSOETIQUETA_PROCESSO");
-
-                    b.HasOne("Processo", "Processo")
-                        .WithMany("ProcessoEtiquetas")
-                        .HasForeignKey("ProcessoId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("FK_PROCESSOAETIQUETA_PROCESSO");
-
-                    b.Navigation("Etiqueta");
-
-                    b.Navigation("Processo");
-                });
-
             modelBuilder.Entity("DeslandesApp.Domain.Models.Entities.ProcessoHistorico", b =>
                 {
                     b.HasOne("DeslandesApp.Domain.Models.Entities.Acao", "Acao")
@@ -2611,8 +2579,6 @@ namespace DeslandesApp.Infra.Data.Migrations
 
                     b.Navigation("GrupoPessoasEtiquetas");
 
-                    b.Navigation("ProcessoEtiquetas");
-
                     b.Navigation("TarefaEtiquetas");
                 });
 
@@ -2697,8 +2663,6 @@ namespace DeslandesApp.Infra.Data.Migrations
                     b.Navigation("GrupoEtiquetasProcessos");
 
                     b.Navigation("GrupoPessoaClientes");
-
-                    b.Navigation("ProcessoEtiquetas");
                 });
 #pragma warning restore 612, 618
         }

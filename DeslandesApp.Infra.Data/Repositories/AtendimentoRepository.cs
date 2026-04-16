@@ -2,6 +2,7 @@
 using DeslandesApp.Domain.Models.Dtos.Requests.GrupoAtendimento;
 using DeslandesApp.Domain.Models.Dtos.Requests.GrupoEtiqueta;
 using DeslandesApp.Domain.Models.Dtos.Responses.Atendimento;
+using DeslandesApp.Domain.Models.Dtos.Responses.Caso;
 using DeslandesApp.Domain.Models.Dtos.Responses.GrupoAtendimentoCliente;
 using DeslandesApp.Domain.Models.Dtos.Responses.GrupoEtiquetaAtendimento;
 using DeslandesApp.Domain.Models.Dtos.Responses.Processo;
@@ -140,6 +141,22 @@ namespace DeslandesApp.Infra.Data.Repositories
                 PageNumber = pageNumber,
                 PageSize = pageSize
             };
+        }
+
+        public async Task<List<AtendimentoAutoComplete>> ConsultarAtendimentoAutoCompleteAsync(string? termo = null)
+        {
+
+            var query = dataContext.Set<Atendimento>()
+                .AsNoTracking()
+                .Select(p => new AtendimentoAutoComplete
+                {
+                    Id = p.Id,
+                    Assunto = p.Assunto,
+
+                });
+            return await query
+                .OrderBy(p => p.Assunto)
+                .ToListAsync();
         }
     }
 }

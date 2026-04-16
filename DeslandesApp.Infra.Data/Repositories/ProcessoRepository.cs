@@ -1,4 +1,5 @@
 ﻿using DeslandesApp.Domain.Interfaces.Repositories;
+using DeslandesApp.Domain.Models.Dtos.Responses.Atendimento;
 using DeslandesApp.Domain.Models.Dtos.Responses.GrupoNiveis;
 using DeslandesApp.Domain.Models.Dtos.Responses.GrupoSetores;
 using DeslandesApp.Domain.Models.Dtos.Responses.Processo;
@@ -17,64 +18,83 @@ namespace DeslandesApp.Infra.Data.Repositories
 {
     public class ProcessoRepository(DataContext dataContext) : BaseRepository<Processo, Guid>(dataContext), IProcessoRepository
     {
-       
-           public async Task<Processo?> ConsultarProcessoComRelacionamentosAsync(Guid idProcesso)
+
+        public async Task<Processo?> ConsultarProcessoComRelacionamentosAsync(Guid idProcesso)
         {
             return await dataContext.Processos
                 .Include(p => p.Vara)
                 .Include(p => p.UsuarioResponsavel)
                 .Include(p => p.Acao)
-               // .Include(p => p.Etiqueta)
+                // .Include(p => p.Etiqueta)
                 //.Include(p => p.Instancia)
-               // .Include(p => p.Acesso)
+                // .Include(p => p.Acesso)
                 .FirstOrDefaultAsync(p => p.Id == idProcesso);
         }
-        
+
 
         public async Task<PageResult<ProcessoPaginacaoResponse>> GetProcessoPaginacaoAsync(int pageNumber, int pageSize, string? searchTerm = null)
         {
-          
-                var query = dataContext.Processos
-           .AsNoTracking()        
-          
-           .AsQueryable();
 
-                // --- filtro ---
-                if (!string.IsNullOrWhiteSpace(searchTerm))
-                {
-                    var term = searchTerm.ToLower();
+            var query = dataContext.Processos
+       .AsNoTracking()
 
-                    query = query.Where(p =>
-                        p.Pasta.ToLower().Contains(term) ||
-                        p.Titulo.ToLower().Contains(term) ||
-                        p.NumeroProcesso.Contains(term)                     
-                     
-                    );
-                }
+       .AsQueryable();
 
-                // --- total ---
-                var totalCount = await query.CountAsync();
+            // --- filtro ---
+            if (!string.IsNullOrWhiteSpace(searchTerm))
+            {
+                var term = searchTerm.ToLower();
 
-                var items = await query
-           .OrderBy(u => u.Pasta)
-           .Skip((pageNumber - 1) * pageSize)
-           .Take(pageSize)
-           .Select(u => new ProcessoPaginacaoResponse(
-               u.Id,
-               u.Pasta,
-               u.Titulo,
-               u.NumeroProcesso
-           ))
-           .ToListAsync();
+                query = query.Where(p =>
+                    p.Pasta.ToLower().Contains(term) ||
+                    p.Titulo.ToLower().Contains(term) ||
+                    p.NumeroProcesso.Contains(term)
 
-
-                return new PageResult<ProcessoPaginacaoResponse>
-                {
-                    Items = items,
-                    TotalCount = totalCount,
-                    PageNumber = pageNumber,
-                    PageSize = pageSize
-                };
+                );
             }
+
+            // --- total ---
+            var totalCount = await query.CountAsync();
+
+            var items = await query
+       .OrderBy(u => u.Pasta)
+       .Skip((pageNumber - 1) * pageSize)
+       .Take(pageSize)
+       .Select(u => new ProcessoPaginacaoResponse(
+           u.Id,
+           u.Pasta,
+           u.Titulo,
+           u.NumeroProcesso
+       ))
+       .ToListAsync();
+
+
+            return new PageResult<ProcessoPaginacaoResponse>
+            {
+                Items = items,
+                TotalCount = totalCount,
+                PageNumber = pageNumber,
+                PageSize = pageSize
+            };
+        }
+
+        public async Task<List<ProcessoAutoComplete>> ConsultarProcessoAutoCompleteAsync(string? termo = null)
+        {
+
+            var query = dataContext.Set<Processo>()
+                .AsNoTracking()
+                .Select(p => new ProcessoAutoComplete
+                {
+                    Id = p.Id,
+                    Pasta = p.Pasta,
+                    NumeroProcesso = p.NumeroProcesso,
+                    Titulo = p.Titulo
+
+
+                });
+            return await query
+                .OrderBy(p => p.Pasta)
+                .ToListAsync();
         }
     }
+}

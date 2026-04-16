@@ -118,6 +118,6 @@ entidade.Pessoa?.Nome
             throw new NotImplementedException();
         }
 
-       
+
     }
 }

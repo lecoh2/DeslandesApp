@@ -30,6 +30,7 @@ namespace DeslandesApp.Domain.Interfaces.Repositories
         IProcessoHistoricoRepository ProcessoHistoricoRepository { get; }
         IProcessoRepository ProcessoRepository { get; }
         IGrupoClientesRepository GrupoClientesRepository { get; }
+        IGrupoClientesProcessosRepository GrupoClientesProcessosRepository { get; }
         IGrupoEnvolvidosRepository GrupoEnvolvidosRepository { get; }
         IVaraRepository VaraRepository { get; }
         ITarefaRepository TarefaRepository { get; }
@@ -45,8 +46,7 @@ namespace DeslandesApp.Domain.Interfaces.Repositories
         ITarefaEtiquetaRepository TarefaEtiquetaRepository { get; }
         IGrupoEventoResponsavelRepository GrupoEventoResponsavelRepository { get; }
         IEventoRepository EventoRepository { get; }
-        IProcessoEtiquetaRepository ProcessoEtiquetaRepository { get; } 
-        IGrupoClientesProcessosRepository GrupoClientesProcessosRepository { get; }
+            
         IGrupoEnvolvidosProcessoRepository GrupoEnvolvidosProcessosRepository { get; }
         IGrupoEtiquetasProcessosRepository GrupoEtiquetasProcessosRepository { get; }
         IGrupoEtiquetasAtendimentoRepository GrupoEtiquetasAtendimentoRepository { get;  }

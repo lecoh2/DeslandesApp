@@ -140,5 +140,12 @@ namespace DeslandesApp.API.Controllers.V1
                 message = "Etiqueta removida do processo com sucesso."
             });
         }
+        [HttpGet("consultar-processo-autocomplete")]
+        public async Task<IActionResult> ConsultarResumo([FromQuery] string? termo = null)
+        {
+            var result = await processoService.ConsultarProcessoAutoCompleteAsync(termo);
+
+            return Ok(result);
+        }
     }
 }

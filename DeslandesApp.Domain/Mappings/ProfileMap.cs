@@ -208,8 +208,8 @@ namespace DeslandesApp.Domain.Mappings
       .ForMember(dest => dest.Vara, opt => opt.Ignore())
       .ForMember(dest => dest.UsuarioResponsavel, opt => opt.Ignore())
       .ForMember(dest => dest.Acao, opt => opt.Ignore())
-      .ForMember(dest => dest.GrupoPessoaClientes, opt => opt.Ignore())
-      .ForMember(dest => dest.GrupoEnvolvidos, opt => opt.Ignore());
+      .ForMember(dest => dest.GrupoClienteProcesso, opt => opt.Ignore())
+      .ForMember(dest => dest.GrupoEnvolvidosProcesso, opt => opt.Ignore());
             CreateMap<Processo, ProcessoResponse>()
      .ForCtorParam("Pasta", opt => opt.MapFrom(src => src.Pasta))
      .ForCtorParam("Titulo", opt => opt.MapFrom(src => src.Titulo))

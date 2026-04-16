@@ -136,5 +136,13 @@ namespace DeslandesApp.API.Controllers.V1
                 message = "Etiqueta removida do processo com sucesso."
             });
         }
+
+        [HttpGet("consultar-caso-autocpmplete")]
+        public async Task<IActionResult> ConsultarCasoAutoComplete([FromQuery] string? termo = null)
+        {
+            var result = await casoService.ConsultarCasoAutoCompleteAsync(termo);
+
+            return Ok(result);
+        }
     }
 }

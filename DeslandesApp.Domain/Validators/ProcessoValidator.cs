@@ -13,9 +13,9 @@ namespace DeslandesApp.Domain.Validators
         public ProcessoValidator()
         {
            
-            RuleFor(x => x.NumeroProcesso)
-     .Matches(@"^\d{7}-\d{2}\.\d{4}\.\d{1}\.\d{2}\.\d{4}$")
-     .WithMessage("Número de processo inválido. Use o padrão CNJ: 0000000-00.0000.0.00.0000");
+     //       RuleFor(x => x.NumeroProcesso)
+     //.Matches(@"^\d{7}-\d{2}\.\d{4}\.\d{1}\.\d{2}\.\d{4}$")
+     //.WithMessage("Número de processo inválido. Use o padrão CNJ: 0000000-00.0000.0.00.0000");
             RuleFor(x => x.Titulo)
          .NotEmpty()
          .Matches(@"^[\p{L}\p{N}\s\.\-\,\/ºª:]+$")

@@ -89,48 +89,48 @@ namespace DeslandesApp.Domain.Services
             await unitOfWork.ProcessoRepository.AddAsync(processo);
 
             //  N:N - Clientes
-            if (request.GrupoCliente != null && request.GrupoCliente.Any())
+            if (request.GrupoClienteProcesso != null && request.GrupoClienteProcesso.Any())
             {
-                foreach (var grupos in request.GrupoCliente)
+                foreach (var grupos in request.GrupoClienteProcesso)
                 {
-                    var grupoCliente = new GrupoPessoaClientes
+                    var grupoClienteProcesso = new GrupoClienteProcesso
                     {
                         ProcessoId = processo.Id,
                         QualificacaoId = grupos.IdQualificacao,
-                        PessoaId = grupos.IdPessoa
+                        PessoaId = grupos.IdPessoa.Value
                     };
 
-                    await unitOfWork.GrupoClientesRepository.AddAsync(grupoCliente);
+                    await unitOfWork.GrupoClientesProcessosRepository.AddAsync(grupoClienteProcesso);
                 }
             }
 
             //  N:N - Envolvidos
-            if (request.GrupoEnvolvidos != null && request.GrupoEnvolvidos.Any())
+            if (request.GrupoEnvolvidosProcesso != null && request.GrupoEnvolvidosProcesso.Any())
             {
-                foreach (var grupos in request.GrupoEnvolvidos)
+                foreach (var grupos in request.GrupoEnvolvidosProcesso)
                 {
-                    var grupoEnvolvidos = new GrupoEnvolvidos
+                    var grupoEnvolvidos = new GrupoEnvolvidosProcesso
                     {
                         ProcessoId = processo.Id,
                         QualificacaoId = grupos.IdQualificacao,
                         PessoaId = grupos.IdPessoa
                     };
 
-                    await unitOfWork.GrupoEnvolvidosRepository.AddAsync(grupoEnvolvidos);
+                    await unitOfWork.GrupoEnvolvidosProcessosRepository.AddAsync(grupoEnvolvidos);
                 }
             }
-            if (request.GrupoEtiquetas != null && request.GrupoEtiquetas.Any())
+            if (request.GrupoEtiquetasProcesso != null && request.GrupoEtiquetasProcesso.Any())
             {
-                foreach (var grupoEtiqueta in request.GrupoEtiquetas)
+                foreach (var grupoEtiqueta in request.GrupoEtiquetasProcesso)
                 {
                     var etiqueta = await unitOfWork.EtiquetaRepository.GetByIdAsync(grupoEtiqueta.EtiquetaId);
                     if (etiqueta == null) throw new InvalidOperationException("Etiqueta não encontrada.");
-                    var processoEtiqueta = new ProcessoEtiqueta
+                    var processoEtiqueta = new GrupoEtiquetasProcessos
                     {
                         ProcessoId = processo.Id,
                         EtiquetaId = grupoEtiqueta.EtiquetaId
                     };
-                    await unitOfWork.ProcessoEtiquetaRepository.AddAsync(processoEtiqueta);
+                    await unitOfWork.GrupoEtiquetasProcessosRepository.AddAsync(processoEtiqueta);
                 }
             }
             //  Commit único
@@ -389,6 +389,11 @@ namespace DeslandesApp.Domain.Services
                 await unitOfWork.RollbackAsync();
                 throw;
             }
+        }
+
+        public async Task<List<ProcessoAutoComplete>> ConsultarProcessoAutoCompleteAsync(string? termo = null)
+        {
+            return await unitOfWork.ProcessoRepository.ConsultarProcessoAutoCompleteAsync(termo);
         }
     }
 }

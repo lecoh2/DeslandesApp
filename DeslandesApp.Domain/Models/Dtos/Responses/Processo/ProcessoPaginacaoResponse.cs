@@ -11,6 +11,6 @@ namespace DeslandesApp.Domain.Models.Dtos.Responses.Processo
         Guid Id,
              string? Pasta,
              string NumeroProcesso,
-             string? Tirulo
+             string? Titulo
     );
 }

@@ -8,7 +8,7 @@ namespace DeslandesApp.Domain.Models.Dtos.Requests.GrupoEtiquetaProcesso
 {
     public record GrupoEtiquetaProcessoRequest
     (
-      Guid idPessoa
+      Guid EtiquetaId
     // Guid IdUsuario
     );
 }

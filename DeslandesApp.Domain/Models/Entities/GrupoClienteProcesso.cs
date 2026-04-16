@@ -7,14 +7,16 @@ using System.Threading.Tasks;
 namespace DeslandesApp.Domain.Models.Entities
 {
     public class GrupoClienteProcesso
-    {        
+    {
+       
             public Guid PessoaId { get; set; }
             public Guid ProcessoId { get; set; }
-            // public Guid IdNivel { get; set; }
+            public Guid? QualificacaoId { get; set; }
 
             public Pessoa Pessoa { get; set; }
             public Processo Processo { get; set; }
-        // public Niveis Nivel { get; set; }
-       
+        public Qualificacao? QualificacaoCliente { get; set; }
     }
-}
+
+    }
+

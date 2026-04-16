@@ -13,7 +13,7 @@ namespace DeslandesApp.Infra.Data.Mappings
     {
         public void Configure(EntityTypeBuilder<GrupoClienteProcesso> builder)
         {
-            builder.HasKey(x => new { x.PessoaId, x.ProcessoId });
+            builder.HasKey(x => new { x.PessoaId, x.ProcessoId, x.QualificacaoId });
 
             builder.HasOne(x => x.Pessoa)
                 .WithMany(p => p.GrupoClienteProcesso)
@@ -22,7 +22,12 @@ namespace DeslandesApp.Infra.Data.Mappings
             builder.HasOne(x => x.Processo)
                 .WithMany(p => p.GrupoClienteProcesso)
                 .HasForeignKey(x => x.ProcessoId);
-            
+
+            builder.HasOne(x => x.QualificacaoCliente)
+            .WithMany()
+            .HasForeignKey(x => x.QualificacaoId)
+            .OnDelete(DeleteBehavior.Restrict);
+
         }
     }
 }

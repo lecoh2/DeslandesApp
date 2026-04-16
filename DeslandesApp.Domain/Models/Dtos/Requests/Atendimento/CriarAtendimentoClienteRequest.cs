@@ -25,7 +25,7 @@ namespace DeslandesApp.Domain.Models.Dtos.Requests.Atendimento
        
 
         // 🔥 ETIQUETAS (N:N)
-        public List<GrupoEtiquetaAtendimentoRequest> GrupoEtiquetas { get; init; } = new();
+        public List<GrupoEtiquetaAtendimentoRequest> GrupoAtendimentoEtiquetas { get; init; } = new();
 
         // 🔥 CLIENTES (N:N)
         public List<GrupoAtendimentoClienteRequest> GrupoAtendimentoCliente { get; init; } = new();

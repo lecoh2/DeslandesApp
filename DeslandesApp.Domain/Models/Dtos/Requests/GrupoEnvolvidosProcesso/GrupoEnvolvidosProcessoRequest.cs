@@ -9,8 +9,9 @@ namespace DeslandesApp.Domain.Models.Dtos.Requests.GrupoEnvolvidosProcesso
     public record GrupoEnvolvidosProcessoRequest
     
         (
-      Guid idPessoa
-    // Guid IdUsuario
+     Guid IdPessoa,
+
+    Guid IdQualificacao
     );
     
 }

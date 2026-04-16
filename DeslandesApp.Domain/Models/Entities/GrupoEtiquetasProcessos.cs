@@ -8,11 +8,10 @@ namespace DeslandesApp.Domain.Models.Entities
 {
     public class GrupoEtiquetasProcessos
     {
-        public Guid EtiquetaId { get; set; }
         public Guid ProcessoId { get; set; }
-        // public Guid IdNivel { get; set; }
+        public Processo Processo { get; set; } = null!;
 
-        public Etiqueta Etiqueta{ get; set; }
-        public Processo Processo { get; set; }
+        public Guid EtiquetaId { get; set; }
+        public Etiqueta Etiqueta { get; set; } = null!;
     }
 }
