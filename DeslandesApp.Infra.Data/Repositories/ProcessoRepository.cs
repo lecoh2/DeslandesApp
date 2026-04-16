@@ -80,20 +80,30 @@ namespace DeslandesApp.Infra.Data.Repositories
 
         public async Task<List<ProcessoAutoComplete>> ConsultarProcessoAutoCompleteAsync(string? termo = null)
         {
-
             var query = dataContext.Set<Processo>()
-                .AsNoTracking()
+                .AsNoTracking();
+
+            if (!string.IsNullOrWhiteSpace(termo))
+            {
+                termo = termo.Trim();
+
+                query = query.Where(p =>
+                    p.NumeroProcesso.Contains(termo) ||
+                    p.Titulo.Contains(termo) ||
+                    p.Pasta.Contains(termo)
+                );
+            }
+
+            return await query
                 .Select(p => new ProcessoAutoComplete
                 {
                     Id = p.Id,
                     Pasta = p.Pasta,
                     NumeroProcesso = p.NumeroProcesso,
                     Titulo = p.Titulo
-
-
-                });
-            return await query
+                })
                 .OrderBy(p => p.Pasta)
+                .Take(20)
                 .ToListAsync();
         }
     }

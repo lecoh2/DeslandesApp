@@ -167,17 +167,27 @@ namespace DeslandesApp.Infra.Data.Repositories
 
         public async Task<List<CasoAutoComplete>> ConsultarCasoAutoCompleteAsync(string? termo = null)
         {
-
             var query = dataContext.Set<Caso>()
-                .AsNoTracking()
+                .AsNoTracking();
+
+            if (!string.IsNullOrWhiteSpace(termo))
+            {
+                termo = termo.Trim();
+
+                query = query.Where(p =>
+                    p.Titulo != null &&
+                    p.Titulo.Contains(termo)
+                );
+            }
+
+            return await query
                 .Select(p => new CasoAutoComplete
                 {
                     Id = p.Id,
-                    Titulo = p.Titulo,
-
-                });
-            return await query
+                    Titulo = p.Titulo
+                })
                 .OrderBy(p => p.Titulo)
+                .Take(20)
                 .ToListAsync();
         }
     }
