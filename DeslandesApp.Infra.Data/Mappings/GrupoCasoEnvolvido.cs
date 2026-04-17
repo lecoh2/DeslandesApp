@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace DeslandesApp.Infra.Data.Mappings
 {
-    internal class GrupoCasoEnvolvidoMap : IEntityTypeConfiguration<GrupoCasoEnvolvido>
+    public class GrupoCasoEnvolvidoMap : IEntityTypeConfiguration<GrupoCasoEnvolvido>
     {
         public void Configure(EntityTypeBuilder<GrupoCasoEnvolvido> builder)
         {
@@ -22,7 +22,7 @@ namespace DeslandesApp.Infra.Data.Mappings
             builder.Property(x => x.QualificacaoId).HasColumnName("QUALIFICACAOID");
 
             builder.HasOne(x => x.Caso)
-                   .WithMany(x => x.GrupoCasoEnvolvido)
+                   .WithMany(x => x.GrupoCasoEnvolvidos)
                    .HasForeignKey(x => x.CasoId)
                    .OnDelete(DeleteBehavior.Cascade);
 

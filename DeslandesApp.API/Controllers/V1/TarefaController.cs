@@ -1,7 +1,7 @@
 ﻿using Azure;
 using DeslandesApp.Domain.Interfaces.Repositories;
 using DeslandesApp.Domain.Interfaces.Services;
-using DeslandesApp.Domain.Models.Dtos.Requests;
+using DeslandesApp.Domain.Models.Dtos.Requests.Kaban;
 using DeslandesApp.Domain.Models.Dtos.Requests.ListaTarefas;
 using DeslandesApp.Domain.Models.Dtos.Requests.Processo;
 using DeslandesApp.Domain.Models.Dtos.Requests.Tarefa;

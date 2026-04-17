@@ -16,7 +16,7 @@ namespace DeslandesApp.API.Controllers.V1
         IGrupoCasoEnvovidoService grupoCasoEnvovidoService,
         IGrupoEtiquetaCasoService grupoCasoEtiquetaService) : ControllerBase
     {
-        [HttpPost]
+        [HttpPost("cadatrar-caso")]
         [ProducesResponseType(typeof(CriarCasoResponse), StatusCodes.Status201Created)]
         public async Task<IActionResult> PostAsync([FromBody] CriarCasoRequest request)
         {

@@ -20,5 +20,6 @@ namespace DeslandesApp.Domain.Interfaces.Services
         Task<PageResult<UsuarioPaginacaoResponse>> ConsultarUsuariosComPaginacaoAsync(int pageNumber, int pageSize, string? searchTerm = null);
         Task<UsuariosResponse> ConsultarUsuariosPerfil(Guid id);
         Task<List<UsuariosResponse>> ConsultarAsync();
+
     }
 }

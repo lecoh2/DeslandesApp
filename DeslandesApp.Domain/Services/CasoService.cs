@@ -96,7 +96,29 @@ namespace DeslandesApp.Domain.Services
 
                     await unitOfWork.GrupoCasoEnvolvidosRepository.AddAsync(grupoEnvolvido);
                 }
-            }
+            } //  N:N - ETIQUETAS (OPCIONAL)
+            if (request.GrupoEtiquetaCasos != null && request.GrupoEtiquetaCasos.Any())
+            {
+                foreach (var item in request.GrupoEtiquetaCasos)
+                {
+                    if (item.EtiquetaId == Guid.Empty)
+                        continue; // ou throw controlado
+
+                    var etiqueta = await unitOfWork.EtiquetaRepository.GetByIdAsync(item.EtiquetaId);
+
+                    if (etiqueta == null)
+                        continue; // ou logar, ou ignorar
+
+                    var grupoEtiqueta = new GrupoEtiquetaCasos
+                    {
+                        CasoId = caso.Id,
+                        EtiquetaId = item.EtiquetaId
+                    };
+
+                    await unitOfWork.GrupoEtiquetaCasoRepository.AddAsync(grupoEtiqueta);
+                }
+            
+        }
 
             //  Commit
             await unitOfWork.CommitAsync();

@@ -332,7 +332,14 @@ namespace DeslandesApp.Domain.Services
         {
             unitOfWork.Dispose();
         }
+        public async Task<List<UsuariosResponse>> ConsultarAsync()
+        {
+            var acao = await unitOfWork.UsuarioRepository.GetAllAsync();
 
+            var response = mapper.Map<List<UsuariosResponse>>(acao);
+
+            return response;
+        }
         public async Task<PageResult<UsuarioPaginacaoResponse>> ConsultarUsuariosComPaginacaoAsync(
         int pageNumber,
         int pageSize,
@@ -354,14 +361,7 @@ namespace DeslandesApp.Domain.Services
 
             return paged;
         }
-        public async Task<List<UsuariosResponse>> ConsultarAsync()
-        {
-            var usuario = await unitOfWork.UsuarioRepository.GetAllAsync();
-
-            var response = mapper.Map<List<UsuariosResponse>>(usuario);
-
-            return response;
-        }
+     
 
     }
 }

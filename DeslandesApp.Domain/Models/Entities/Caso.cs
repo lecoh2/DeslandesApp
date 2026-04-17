@@ -17,15 +17,17 @@ namespace DeslandesApp.Domain.Models.Entities
         public DateTime? DataCadastro { get; set; }
         // Responsável
         public Guid? ResponsavelId { get; set; }
+        public Guid? UsuarioCadastroId { get; set; }
+        public Usuario? UsuarioCadastro { get; set; }
         public Usuario? Responsavel { get; set; }
 
         // Acesso
         public AcessoCaso Acesso { get; set; } = AcessoCaso.Publico;
 
         // Clientes e Envolvidos
-        public List<GrupoCasoCliente> GrupoCasoCliente { get; set; } = new List<GrupoCasoCliente>();
-        public List<GrupoCasoEnvolvido> GrupoCasoEnvolvido { get; set; } = new List<GrupoCasoEnvolvido>();
-        public List<GrupoEtiquetaCasos> GrupoEtiquetaCasos { get; set; } = new List<GrupoEtiquetaCasos>();
+        public List<GrupoCasoCliente> GrupoCasoClientes { get; set; } = new();
+        public List<GrupoCasoEnvolvido> GrupoCasoEnvolvidos { get; set; } = new();
+        public List<GrupoEtiquetaCasos> GrupoEtiquetaCasos { get; set; } = new();
 
     }
 }

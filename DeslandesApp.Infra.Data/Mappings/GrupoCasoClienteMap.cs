@@ -21,7 +21,7 @@ namespace DeslandesApp.Infra.Data.Mappings
             builder.Property(x => x.PessoaId).HasColumnName("PESSOAID");
 
             builder.HasOne(x => x.Caso)
-                   .WithMany(x => x.GrupoCasoCliente)
+                   .WithMany(x => x.GrupoCasoClientes)
                    .HasForeignKey(x => x.CasoId)
                    .OnDelete(DeleteBehavior.Cascade);
 

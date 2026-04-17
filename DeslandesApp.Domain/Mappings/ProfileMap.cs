@@ -237,8 +237,9 @@ namespace DeslandesApp.Domain.Mappings
 
             // 🔁 Request -> Entidade
             CreateMap<CriarCasoRequest, Caso>()
-                .ForMember(dest => dest.GrupoCasoCliente, opt => opt.Ignore())
-                .ForMember(dest => dest.GrupoCasoEnvolvido, opt => opt.Ignore());
+                .ForMember(dest => dest.GrupoCasoClientes, opt => opt.Ignore())
+                .ForMember(dest => dest.GrupoCasoEnvolvidos, opt => opt.Ignore())
+              .ForMember(dest => dest.GrupoEtiquetaCasos, opt => opt.Ignore()); // 🔥 FALTAVA ESSA
 
             // 🔁 Entidade -> Response
             CreateMap<Caso, CriarCasoResponse>();

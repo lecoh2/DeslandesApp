@@ -145,5 +145,8 @@ namespace DeslandesApp.API.Controllers.V1
 
             return Ok(usuarioPaged);
         }
+       
+        
+        }
     }
-}
+

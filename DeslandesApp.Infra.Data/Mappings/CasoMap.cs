@@ -36,13 +36,20 @@ namespace DeslandesApp.Infra.Data.Mappings
                    .HasMaxLength(2000)
                    .IsUnicode(false)
                    .HasColumnName("OBSERVACAO");
-            builder.Property(x => x.DataCadastro).HasColumnName("DATACADASTRO").IsRequired(false);
+
+            builder.Property(x => x.DataCadastro)
+                   .HasColumnName("DATACADASTRO")
+                   .IsRequired(false);
 
             builder.Property(x => x.ResponsavelId)
                    .HasColumnName("RESPONSAVELID");
 
+            builder.Property(x => x.UsuarioCadastroId)
+                   .HasColumnName("USUARIOCADASTROID");
+
             builder.Property(x => x.Acesso)
-                   .HasColumnName("ACESSO");
+                   .HasColumnName("ACESSO")
+                   .HasConversion<int>();
 
             builder.HasOne(x => x.Responsavel)
                    .WithMany()
@@ -50,17 +57,23 @@ namespace DeslandesApp.Infra.Data.Mappings
                    .OnDelete(DeleteBehavior.Restrict)
                    .HasConstraintName("FK_CASO_USUARIO");
 
-            builder.HasMany(x => x.GrupoCasoCliente)
+            builder.HasMany(x => x.GrupoCasoClientes)
                    .WithOne(x => x.Caso)
                    .HasForeignKey(x => x.CasoId)
                    .OnDelete(DeleteBehavior.Cascade)
                    .HasConstraintName("FK_CASO_CASOCLIENTE");
 
-            builder.HasMany(x => x.GrupoCasoEnvolvido)
+            builder.HasMany(x => x.GrupoCasoEnvolvidos)
                    .WithOne(x => x.Caso)
                    .HasForeignKey(x => x.CasoId)
                    .OnDelete(DeleteBehavior.Cascade)
                    .HasConstraintName("FK_CASO_CASOENVOLVIDO");
+
+            builder.HasMany(x => x.GrupoEtiquetaCasos)
+                   .WithOne(x => x.Caso)
+                   .HasForeignKey(x => x.CasoId)
+                   .OnDelete(DeleteBehavior.Cascade)
+                   .HasConstraintName("FK_CASO_ETIQUETA");
         }
     }
 }

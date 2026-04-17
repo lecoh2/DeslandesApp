@@ -175,7 +175,7 @@ namespace DeslandesApp.Infra.Data.Repositories
                 termo = termo.Trim();
 
                 query = query.Where(p =>
-                    p.Titulo != null &&
+                    p.Pasta.Contains(termo) ||
                     p.Titulo.Contains(termo)
                 );
             }

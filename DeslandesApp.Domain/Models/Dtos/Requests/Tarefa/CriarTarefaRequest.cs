@@ -16,17 +16,20 @@ namespace DeslandesApp.Domain.Models.Dtos.Requests.Tarefa
 
         public DateTime? DataTarefa { get; init; }
 
-        // 🔗 Vínculo (opcional)
-       // public Guid? VinculoId { get; init; }
-      //  public TipoVinculo? TipoVinculo { get; init; }
-
-        // 👤 Responsável (opcional)
+        // 🔗 Vinculos
         public Guid? ProcessoId { get; init; }
         public Guid? CasoId { get; init; }
         public Guid? AtendimentoId { get; init; }
+
         public Guid? ResponsavelId { get; init; }
 
         public PrioridadeTarefa Prioridade { get; init; }
+
+        // 🔥 ADICIONAR
+        public TipoVinculo? TipoVinculo { get; init; }
+
+        // 🔥 CORRIGIR
+        public StatusGeralKanban StatusGeralKanban { get; init; }
 
         // 🏷️ Etiquetas
         public List<GrupoEtiquetaRequest> Etiquetas { get; init; } = new();
@@ -35,7 +38,6 @@ namespace DeslandesApp.Domain.Models.Dtos.Requests.Tarefa
         public List<CriarListaTarefaRequest> ListasTarefa { get; init; } = new();
 
         // 👥 Envolvidos
-        public List<GrupoTarefaResponsaveisRequest> GrupoTarefaResponsaveis{ get; init; } = new();
-        public StatusTarefa? Status { get; init; }
+        public List<GrupoTarefaResponsaveisRequest> GrupoTarefaResponsaveis { get; init; } = new();
     }
 }
