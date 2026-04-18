@@ -6,6 +6,6 @@ using System.Threading.Tasks;
 
 namespace DeslandesApp.Domain.Models.Dtos.Requests.GrupoEtiqueta
 {
-    public record GrupoEtiquetaRequest
+    public record GrupoTarefasEtiquetasRequest
    (Guid EtiquetaId);
 }

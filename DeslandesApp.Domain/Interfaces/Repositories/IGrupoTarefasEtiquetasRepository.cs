@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace DeslandesApp.Domain.Interfaces.Repositories
 {
-    public interface ITarefaEtiquetaRepository : IBaseRepository<TarefaEtiqueta, Guid>
+    public interface IGrupoTarefasEtiquetasRepository : IBaseRepository<GrupoTarefasEtiquetas, Guid>
     {
     }
 }

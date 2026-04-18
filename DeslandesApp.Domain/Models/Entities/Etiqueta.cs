@@ -11,7 +11,7 @@ namespace DeslandesApp.Domain.Models.Entities
     {
         public string Nome { get; set; } = string.Empty;
         public string Cor { get; set; }
-        public List<TarefaEtiqueta> TarefaEtiquetas { get; set; } = new();
+        public List<GrupoTarefasEtiquetas> GrupoTarefasEtiquetas { get; set; } = new();
         
         public ICollection<GrupoEtiquetasProcessos> GrupoEtiquetasProcessos { get; set; }
         public ICollection<GrupoEtiquetasAtendimentos> GrupoEtiquetasAtendimentos { get; set; }

@@ -16,13 +16,13 @@ namespace DeslandesApp.Infra.Data.Mappings
             builder.ToTable("GRUPOTAREFARESPONSAVEIS");
 
 
-            builder.HasKey(x => new { x.PessoaId,  x.TarefaId });
+            builder.HasKey(x => new { x.UsuarioId,  x.TarefaId });
 
-            builder.HasOne(x => x.Pessoa)
+            builder.HasOne(x => x.Usuario)
                    .WithMany(x => x.GrupoTarefaResponsaveis)
-                   .HasForeignKey(x => x.PessoaId)
+                   .HasForeignKey(x => x.UsuarioId)
                    .OnDelete(DeleteBehavior.Restrict)
-                   .HasConstraintName("FK_TAREFARESPONSAVEIS_PESSOA");
+                   .HasConstraintName("FK_TAREFARESPONSAVEIS_Usuario");
 
             builder.HasOne(x => x.Tarefa)
                    .WithMany(x => x.GrupoTarefaResponsaveis)
@@ -31,7 +31,7 @@ namespace DeslandesApp.Infra.Data.Mappings
                    .HasConstraintName("FK_TAREFARESPONSAVEIS_TAREFA");
 
             // 🔥 Evita duplicidade
-            builder.HasIndex(x => new { x.TarefaId, x.PessoaId })
+            builder.HasIndex(x => new { x.TarefaId, x.UsuarioId })
                    .IsUnique();
         }
     }

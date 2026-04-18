@@ -1,8 +1,8 @@
 ﻿using AutoMapper;
 using DeslandesApp.Domain.Interfaces.Repositories;
 using DeslandesApp.Domain.Interfaces.Services;
-using DeslandesApp.Domain.Models.Dtos.Requests;
 using DeslandesApp.Domain.Models.Dtos.Requests.Evento;
+using DeslandesApp.Domain.Models.Dtos.Requests.Kaban;
 using DeslandesApp.Domain.Models.Dtos.Responses.Evento;
 using DeslandesApp.Domain.Models.Dtos.Responses.Processo;
 using DeslandesApp.Domain.Models.Dtos.Responses.Tarefa;

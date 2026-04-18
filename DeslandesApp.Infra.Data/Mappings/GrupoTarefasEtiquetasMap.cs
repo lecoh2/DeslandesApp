@@ -9,11 +9,11 @@ using System.Threading.Tasks;
 
 namespace DeslandesApp.Infra.Data.Mappings
 {
-    public class TarefaEtiquetaMap : IEntityTypeConfiguration<TarefaEtiqueta>
+    public class GrupoTarefasEtiquetasMap : IEntityTypeConfiguration<GrupoTarefasEtiquetas>
     {
-        public void Configure(EntityTypeBuilder<TarefaEtiqueta> builder)
+        public void Configure(EntityTypeBuilder<GrupoTarefasEtiquetas> builder)
         {
-            builder.ToTable("TAREFAETIQUETA");
+            builder.ToTable("GRUPOTAREFASETIQUETAS");
 
             builder.HasKey(x => new { x.TarefaId, x.EtiquetaId });
 
@@ -24,13 +24,13 @@ namespace DeslandesApp.Infra.Data.Mappings
                    .HasColumnName("ETIQUETAID");
 
             builder.HasOne(x => x.Tarefa)
-                   .WithMany(x => x.TarefaEtiquetas)
+                   .WithMany(x => x.GrupoTarefasEtiquetas)
                    .HasForeignKey(x => x.TarefaId)
                    .OnDelete(DeleteBehavior.Cascade)
                    .HasConstraintName("FK_TAREFAETIQUETA_TAREFA");
 
             builder.HasOne(x => x.Etiqueta)
-                   .WithMany(x => x.TarefaEtiquetas)
+                   .WithMany(x => x.GrupoTarefasEtiquetas)
                    .HasForeignKey(x => x.EtiquetaId)
                    .OnDelete(DeleteBehavior.Cascade)
                    .HasConstraintName("FK_TAREFAETIQUETA_ETIQUETA");

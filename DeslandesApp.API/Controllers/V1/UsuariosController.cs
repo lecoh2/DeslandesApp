@@ -41,7 +41,7 @@ namespace DeslandesApp.API.Controllers.V1
                 data = response
             });
         }
-        [HttpGet("consultar-usaurio-responsavel")]
+        [HttpGet("consultar-usuario-responsavel")]
         public async Task<IActionResult> GetAllAsync()
         {
             var result = await usuarioService.ConsultarAsync();

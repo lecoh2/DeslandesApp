@@ -17,7 +17,7 @@ namespace DeslandesApp.Infra.Data.Mappings
                 builder.ToTable("GRUPOTAREFARESPONSAVEIS");
 
             // 🔑 PK
-            builder.HasKey(x => new { x.PessoaId, x.TarefaId });
+            builder.HasKey(x => new { x.UsuarioId, x.TarefaId });
 
             builder.HasOne(x => x.Tarefa)
                        .WithMany(x => x.GrupoTarefaResponsaveis)
@@ -26,15 +26,15 @@ namespace DeslandesApp.Infra.Data.Mappings
                        .HasConstraintName("FK_GRUPOTAREFA_TAREFA");
 
                 // 🔗 FK - Pessoa
-                builder.Property(x => x.PessoaId)
-                       .HasColumnName("PESSOAID")
+                builder.Property(x => x.UsuarioId)
+                       .HasColumnName("USUARIOID")
                        .IsRequired();
 
-                builder.HasOne(x => x.Pessoa)
+                builder.HasOne(x => x.Usuario)
                        .WithMany(x => x.GrupoTarefaResponsaveis)
-                       .HasForeignKey(x => x.PessoaId)
+                       .HasForeignKey(x => x.UsuarioId)
                        .OnDelete(DeleteBehavior.Restrict)
-                       .HasConstraintName("FK_GRUPOTAREFA_PESSOA");
+                       .HasConstraintName("FK_GRUPOTAREFA_Usuarios");
             }
         }
     }

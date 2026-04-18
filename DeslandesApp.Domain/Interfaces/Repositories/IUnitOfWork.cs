@@ -43,7 +43,7 @@ namespace DeslandesApp.Domain.Interfaces.Repositories
         IQualificacaoRepository QualificacaoRepository { get; }
         IGrupoAtendimentoClienteRepository GrupoAtendimentoClienteRepository { get; }       
         IEtiquetaRepository EtiquetaRepository { get; }
-        ITarefaEtiquetaRepository TarefaEtiquetaRepository { get; }
+        IGrupoTarefasEtiquetasRepository GrupoTarefasEtiquetasRepository { get; }
         IGrupoEventoResponsavelRepository GrupoEventoResponsavelRepository { get; }
         IEventoRepository EventoRepository { get; }
             

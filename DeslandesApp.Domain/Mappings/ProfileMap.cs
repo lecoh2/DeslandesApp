@@ -224,7 +224,7 @@ namespace DeslandesApp.Domain.Mappings
 
             CreateMap<CriarTarefaRequest, Tarefa>()
                 .ForMember(dest => dest.ListasTarefa, opt => opt.Ignore())
-                .ForMember(dest => dest.TarefaEtiquetas, opt => opt.Ignore())
+                .ForMember(dest => dest.GrupoTarefasEtiquetas, opt => opt.Ignore())
                 .ForMember(dest => dest.GrupoTarefaResponsaveis, opt => opt.Ignore());
 
             CreateMap<Tarefa, CriarTarefaResponse>()

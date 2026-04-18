@@ -9,8 +9,8 @@ using System.Threading.Tasks;
 
 namespace DeslandesApp.Infra.Data.Repositories
 {
-    public class TarefaEtiquetaRepository(DataContext dataContext)
-        : BaseRepository<TarefaEtiqueta, Guid>(dataContext), ITarefaEtiquetaRepository
+    public class GrupoTarefasEtiquetasRepository(DataContext dataContext)
+        : BaseRepository<GrupoTarefasEtiquetas, Guid>(dataContext), IGrupoTarefasEtiquetasRepository
     {
     }
 }

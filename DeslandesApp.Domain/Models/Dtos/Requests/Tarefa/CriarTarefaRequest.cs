@@ -21,7 +21,7 @@ namespace DeslandesApp.Domain.Models.Dtos.Requests.Tarefa
         public Guid? CasoId { get; init; }
         public Guid? AtendimentoId { get; init; }
 
-        public Guid? ResponsavelId { get; init; }
+        public Guid? UsuarioCriacaoId { get; init; }
 
         public PrioridadeTarefa Prioridade { get; init; }
 
@@ -32,7 +32,7 @@ namespace DeslandesApp.Domain.Models.Dtos.Requests.Tarefa
         public StatusGeralKanban StatusGeralKanban { get; init; }
 
         // 🏷️ Etiquetas
-        public List<GrupoEtiquetaRequest> Etiquetas { get; init; } = new();
+        public List<GrupoTarefasEtiquetasRequest> GrupoTarefasEtiquetas { get; init; } = new();
 
         // 📋 Checklist
         public List<CriarListaTarefaRequest> ListasTarefa { get; init; } = new();

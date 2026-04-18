@@ -28,6 +28,7 @@ namespace DeslandesApp.Domain.Models.Entities
         public virtual Fotos? Fotos { get; set; }
         public ValorEmail? ValorEmail { get; set; }
         public ICollection<Processo> ProcessosResponsaveis { get; set; }
+        public ICollection<GrupoTarefaResponsaveis>? GrupoTarefaResponsaveis { get; set; }
         #endregion
     }
 }

@@ -56,14 +56,14 @@ namespace DeslandesApp.Infra.Data.Mappings
                    .OnDelete(DeleteBehavior.Restrict)
                    .HasConstraintName("FK_TAREFA_ATENDIMENTO");
             // 👤 Responsável
-            builder.Property(x => x.ResponsavelId)
-                   .HasColumnName("RESPONSAVELID");
+            //builder.Property(x => x.ResponsavelId)
+            //       .HasColumnName("RESPONSAVELID");
 
-            builder.HasOne(x => x.Responsavel)
-                   .WithMany()
-                   .HasForeignKey(x => x.ResponsavelId)
-                   .OnDelete(DeleteBehavior.Restrict)
-                   .HasConstraintName("FK_TAREFA_USUARIO");
+            //builder.HasOne(x => x.Responsavel)
+            //       .WithMany()
+            //       .HasForeignKey(x => x.ResponsavelId)
+            //       .OnDelete(DeleteBehavior.Restrict)
+            //       .HasConstraintName("FK_TAREFA_USUARIO");
 
             builder.Property(x => x.Prioridade)
                    .HasColumnName("PRIORIDADE");

@@ -46,12 +46,10 @@ namespace DeslandesApp.Infra.Data.Repositories
         private IGrupoCasoClienteRepository? _grupoCasoClienteRepository;
         private IGrupoCasoEnvolvidosRepository? _grupoCasoEnvolvidosRepository;
         private IEtiquetaRepository? _etiquetaRepository;
-        private IGrupoAtendimentoClienteRepository? _atendimentoClienteRepository;
-        private ITarefaEtiquetaRepository? _tarefaEtiquetaRepository;
+        private IGrupoAtendimentoClienteRepository? _atendimentoClienteRepository;       
         private IEventoRepository? _eventoRepository;
         private IGrupoEventoResponsavelRepository? _grupoEventoResponsavelRepository;
-        private IProcessoHistoricoRepository? _processoHistoricoRepository;
-      
+        private IProcessoHistoricoRepository? _processoHistoricoRepository;      
         private IGrupoClientesProcessosRepository? _grupoClientesProcessosRepository;
         private IGrupoEnvolvidosProcessoRepository? _grupoEnvolvidosProcessoRepository;
         private IGrupoEtiquetasProcessosRepository? _grupoEtiquetasProcessosRepository;
@@ -61,7 +59,6 @@ namespace DeslandesApp.Infra.Data.Repositories
         private ICasoHistoricoRepository? _casoHistoricoRepository;
         public IEventoHistoricoRepository? _eventoHistoricoRepository;
         public IGrupoPessoasEtiquetasRepository? _grupoPessoasEtiquetasRepository;
-
         public IGrupoPessoasEtiquetasRepository GrupoPessoasEtiquetasRepository
         {
             get
@@ -101,8 +98,7 @@ namespace DeslandesApp.Infra.Data.Repositories
 
                 return _atendimentoHistoricoRepository;
             }
-        }
-       
+        }       
         public IGrupoEtiquetaCasoRepository GrupoEtiquetaCasoRepository
         {
             get
@@ -156,7 +152,6 @@ namespace DeslandesApp.Infra.Data.Repositories
                 return _grupoEtiquetasAtendimentoRepository;
             }
         }
-
         public IGrupoEtiquetasProcessosRepository GrupoEtiquetasProcessosRepository
         {
             get
@@ -186,8 +181,7 @@ namespace DeslandesApp.Infra.Data.Repositories
 
                 return _grupoClientesProcessosRepository;
             }
-        }
-       
+        }       
         public IProcessoHistoricoRepository ProcessoHistoricoRepository
         {
             get
@@ -218,14 +212,15 @@ namespace DeslandesApp.Infra.Data.Repositories
                 return _eventoRepository;
             }
         }
-        public ITarefaEtiquetaRepository TarefaEtiquetaRepository
+         private IGrupoTarefasEtiquetasRepository? _grupoTarefasEtiquetasRepository;
+        public IGrupoTarefasEtiquetasRepository GrupoTarefasEtiquetasRepository
         {
             get
             {
-                if (_tarefaEtiquetaRepository == null)
-                    _tarefaEtiquetaRepository = new TarefaEtiquetaRepository(dataContext);
+                if (_grupoTarefasEtiquetasRepository == null)
+                    _grupoTarefasEtiquetasRepository = new GrupoTarefasEtiquetasRepository(dataContext);
 
-                return _tarefaEtiquetaRepository;
+                return _grupoTarefasEtiquetasRepository;
             }
         }
 

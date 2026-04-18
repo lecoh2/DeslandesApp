@@ -22,13 +22,13 @@ namespace DeslandesApp.Domain.Services
             throw new NotImplementedException();
         }
 
-        public async Task<GrupoTarefaResponsaveisResponse> AdicionarTarefaResponaveisAsync(Guid idPessoa, Guid idTarefa)
+        public async Task<GrupoTarefaResponsaveisResponse> AdicionarTarefaResponaveisAsync(Guid idUsuario, Guid idTarefa)
         {
             await unitOfWork.BeginTransactionAsync();
 
             try
             {
-                var pessoa = await unitOfWork.PessoaRepository.GetByIdAsync(idPessoa);
+                var pessoa = await unitOfWork.UsuarioRepository.GetByIdAsync(idUsuario);
                 if (pessoa is null)
                     throw new ApplicationException("Pessoa não encontrado.");
 
@@ -37,7 +37,7 @@ namespace DeslandesApp.Domain.Services
                     throw new ApplicationException("Tarefa não encontrado.");
 
                 var existeVinculo = await unitOfWork.GrupoTarefaResponsaveisRepository
-                    .ExistTarefaResponsaveisAsync(idPessoa, idTarefa);
+                    .ExistTarefaResponsaveisAsync(idUsuario, idTarefa);
 
                 if (existeVinculo != null)
                     throw new ApplicationException("Esta tarefa já está vinculada a essa pessoa.");
@@ -45,7 +45,7 @@ namespace DeslandesApp.Domain.Services
                 var grupoTarefaResponsaveis = new GrupoTarefaResponsaveis
                 {
                     TarefaId = idTarefa,
-                    PessoaId = idPessoa
+                    UsuarioId = idUsuario
                 };
 
                 await unitOfWork.GrupoTarefaResponsaveisRepository.AddAsync(grupoTarefaResponsaveis);
@@ -55,7 +55,7 @@ namespace DeslandesApp.Domain.Services
                 return new GrupoTarefaResponsaveisResponse(
                    pessoa.Id,
                    tarefa.Id,
-                   pessoa.Nome // 👈 aqui
+                   pessoa.NomeUsuario // 👈 aqui
 
                );
             }
@@ -73,7 +73,7 @@ namespace DeslandesApp.Domain.Services
 
         public void Dispose()
         {
-            throw new NotImplementedException();
+            unitOfWork.Dispose();
         }
 
         public Task<GrupoTarefaResponsaveisResponse> ExcluirAsync(Guid id)
@@ -107,9 +107,9 @@ namespace DeslandesApp.Domain.Services
 
                 await unitOfWork.CommitAsync();
                 return new GrupoTarefaResponsaveisResponse(
-    entidade.PessoaId,
+    entidade.UsuarioId,
     entidade.TarefaId,
-    entidade.Pessoa?.Nome
+    entidade.Usuario?.NomeUsuario
 );
             }
             catch

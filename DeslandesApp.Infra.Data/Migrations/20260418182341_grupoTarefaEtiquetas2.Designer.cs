@@ -4,6 +4,7 @@ using DeslandesApp.Infra.Data.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DeslandesApp.Infra.Data.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20260418182341_grupoTarefaEtiquetas2")]
+    partial class grupoTarefaEtiquetas2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -982,20 +985,20 @@ namespace DeslandesApp.Infra.Data.Migrations
 
             modelBuilder.Entity("DeslandesApp.Domain.Models.Entities.GrupoTarefaResponsaveis", b =>
                 {
-                    b.Property<Guid>("UsuarioId")
+                    b.Property<Guid>("PessoaId")
                         .HasColumnType("uniqueidentifier")
-                        .HasColumnName("USUARIOID");
+                        .HasColumnName("PESSOAID");
 
                     b.Property<Guid>("TarefaId")
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("TAREFAID");
 
-                    b.HasKey("UsuarioId", "TarefaId")
+                    b.HasKey("PessoaId", "TarefaId")
                         .HasName("PK_GRUPOTAREFARESPONSAVEIS");
 
-                    b.HasIndex("TarefaId", "UsuarioId")
+                    b.HasIndex("TarefaId", "PessoaId")
                         .IsUnique()
-                        .HasDatabaseName("IX_GRUPOTAREFARESPONSAVEIS_TAREFAID_USUARIOID");
+                        .HasDatabaseName("IX_GRUPOTAREFARESPONSAVEIS_TAREFAID_PESSOAID");
 
                     b.ToTable("GRUPOTAREFARESPONSAVEIS", (string)null);
                 });
@@ -2346,6 +2349,13 @@ namespace DeslandesApp.Infra.Data.Migrations
 
             modelBuilder.Entity("DeslandesApp.Domain.Models.Entities.GrupoTarefaResponsaveis", b =>
                 {
+                    b.HasOne("DeslandesApp.Domain.Models.Entities.Pessoa", "Pessoa")
+                        .WithMany("GrupoTarefaResponsaveis")
+                        .HasForeignKey("PessoaId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("FK_TAREFARESPONSAVEIS_PESSOA");
+
                     b.HasOne("DeslandesApp.Domain.Models.Entities.Tarefa", "Tarefa")
                         .WithMany("GrupoTarefaResponsaveis")
                         .HasForeignKey("TarefaId")
@@ -2353,16 +2363,9 @@ namespace DeslandesApp.Infra.Data.Migrations
                         .IsRequired()
                         .HasConstraintName("FK_TAREFARESPONSAVEIS_TAREFA");
 
-                    b.HasOne("DeslandesApp.Domain.Models.Entities.Usuario", "Usuario")
-                        .WithMany("GrupoTarefaResponsaveis")
-                        .HasForeignKey("UsuarioId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired()
-                        .HasConstraintName("FK_TAREFARESPONSAVEIS_USUARIO");
+                    b.Navigation("Pessoa");
 
                     b.Navigation("Tarefa");
-
-                    b.Navigation("Usuario");
                 });
 
             modelBuilder.Entity("DeslandesApp.Domain.Models.Entities.GrupoTarefasEtiquetas", b =>
@@ -2504,7 +2507,8 @@ namespace DeslandesApp.Infra.Data.Migrations
                     b.HasOne("DeslandesApp.Domain.Models.Entities.Usuario", "Responsavel")
                         .WithMany()
                         .HasForeignKey("ResponsavelId")
-                        .HasConstraintName("FK_TAREFA_USUARIOS_RESPONSAVELID");
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .HasConstraintName("FK_TAREFA_USUARIO");
 
                     b.HasOne("DeslandesApp.Domain.Models.Entities.Usuario", "UsuarioCriacao")
                         .WithMany()
@@ -2625,6 +2629,8 @@ namespace DeslandesApp.Infra.Data.Migrations
 
                     b.Navigation("GrupoPessoasEtiquetas");
 
+                    b.Navigation("GrupoTarefaResponsaveis");
+
                     b.Navigation("InformacoesComplementares");
                 });
 
@@ -2649,8 +2655,6 @@ namespace DeslandesApp.Infra.Data.Migrations
                     b.Navigation("GrupoNiveis");
 
                     b.Navigation("GrupoSetores");
-
-                    b.Navigation("GrupoTarefaResponsaveis");
 
                     b.Navigation("Pessoa");
 

@@ -8,6 +8,6 @@ namespace DeslandesApp.Domain.Models.Dtos.Requests.GrupoTarefasEnvolvidos
 {
     public record GrupoTarefaResponsaveisRequest
     (      
-        Guid PessoaId
+        Guid UsuarioId
     );
 }

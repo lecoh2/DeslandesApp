@@ -26,12 +26,12 @@ namespace DeslandesApp.Domain.Models.Entities
         public Guid? AtendimentoId { get; set; }
         public Atendimento? Atendimento { get; set; }
 
-        public Guid? ResponsavelId { get; set; }
+      
         public Usuario? Responsavel { get; set; }
 
         public PrioridadeTarefa Prioridade { get; set; }
 
-        public List<TarefaEtiqueta> TarefaEtiquetas { get; set; } = new();
+        public List<GrupoTarefasEtiquetas> GrupoTarefasEtiquetas { get; set; } = new();
         public List<ListaTarefa> ListasTarefa { get; set; } = new();
         public List<GrupoTarefaResponsaveis> GrupoTarefaResponsaveis { get; set; } = new();
         public TipoVinculo? TipoVinculo { get; set; }

@@ -17,7 +17,7 @@ namespace DeslandesApp.API.Controllers.V1
     [ApiController]
     public class TarefaController(ITarefaService tarefaService, IGrupoTarefaResponsaveisService grupoTarefaResponsaveisService) : ControllerBase
     {
-        [HttpPost]
+        [HttpPost("cadastrar-tarefa")]
         [ProducesResponseType(typeof(CriarTarefaResponse), StatusCodes.Status201Created)]
         public async Task<IActionResult> PostAsync([FromBody] CriarTarefaRequest request)
         {

@@ -13,18 +13,18 @@ namespace DeslandesApp.Infra.Data.Repositories
     public class GrupoTarefaResponsaveisRepository(DataContext dataContext)
         : BaseRepository<GrupoTarefaResponsaveis, Guid>(dataContext), IGrupoTarefaResponsaveisRepository
     {
-        public async Task<GrupoTarefaResponsaveis> ExistTarefaResponsaveisAsync(Guid idPessoa, Guid idTarefa)
+        public async Task<GrupoTarefaResponsaveis> ExistTarefaResponsaveisAsync(Guid idUsuario, Guid idTarefa)
         {
             return await dataContext.GrupoTarefaResponsaveis
-                .FirstOrDefaultAsync(gr => gr.PessoaId == idPessoa && gr.TarefaId == idTarefa);
+                .FirstOrDefaultAsync(gr => gr.UsuarioId == idUsuario && gr.TarefaId == idTarefa);
         }
         
 
-        public async Task<GrupoTarefaResponsaveis> GetByIdTarefaResponsaveisAsync(Guid idPessoa, Guid idTarefa)
+        public async Task<GrupoTarefaResponsaveis> GetByIdTarefaResponsaveisAsync(Guid idUsuario, Guid idTarefa)
         {
             return await dataContext.GrupoTarefaResponsaveis
 
-        .Where(gc => gc.PessoaId == idPessoa && gc.TarefaId == idTarefa )
+        .Where(gc => gc.UsuarioId == idUsuario && gc.TarefaId == idTarefa )
         .FirstOrDefaultAsync();
         }
     }

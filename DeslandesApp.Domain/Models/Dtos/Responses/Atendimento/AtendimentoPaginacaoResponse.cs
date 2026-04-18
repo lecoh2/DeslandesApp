@@ -20,7 +20,7 @@ namespace DeslandesApp.Domain.Models.Dtos.Responses.Atendimento
         public Guid? AtendimentoPaiId { get; init; }
         public Guid? ResponsavelId { get; init; }
  
-        public List<GrupoEtiquetaRequest> GrupoEtiquetas { get; init; } = new();
+        public List<GrupoTarefasEtiquetasRequest> GrupoTarefasEtiquetas { get; init; } = new();
 
         // 🔥 CLIENTES (N:N)
         public List<GrupoAtendimentoClienteResponse> GrupoAtendimentoCliente { get; set; }

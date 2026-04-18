@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace DeslandesApp.Domain.Models.Entities
 {
 
-    public class TarefaEtiqueta
+    public class GrupoTarefasEtiquetas
     {
         public Guid TarefaId { get; set; }
         public Tarefa Tarefa { get; set; } = null!;

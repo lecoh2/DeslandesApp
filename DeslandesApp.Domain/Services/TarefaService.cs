@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
 using DeslandesApp.Domain.Interfaces.Repositories;
 using DeslandesApp.Domain.Interfaces.Services;
-using DeslandesApp.Domain.Models.Dtos.Requests;
 using DeslandesApp.Domain.Models.Dtos.Requests.ListaTarefas;
 using DeslandesApp.Domain.Models.Dtos.Requests.Processo;
 using DeslandesApp.Domain.Models.Dtos.Requests.Tarefa;
@@ -18,6 +17,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
+using DeslandesApp.Domain.Models.Dtos.Requests.Kaban;
 
 namespace DeslandesApp.Domain.Services
 {
@@ -36,7 +36,7 @@ namespace DeslandesApp.Domain.Services
             tarefa.DataAtualizacao = DateTime.Now;
             tarefa.StatusGeralKanban = StatusGeralKanban.A_Fazer;
             // Responsável
-            tarefa.ResponsavelId = request.ResponsavelId;
+           // tarefa.ResponsavelId = request.ResponsavelId;
             tarefa.UsuarioCriacaoId = ObterUsuarioId();
 
             // 🔗 VALIDAÇÃO DE VÍNCULOS OPCIONAIS
@@ -88,9 +88,9 @@ namespace DeslandesApp.Domain.Services
                 throw new ValidationException(result.Errors);
 
             // Valida responsável
-            if (tarefa.ResponsavelId.HasValue)
+            if (tarefa.UsuarioCriacaoId.HasValue)
             {
-                var usuario = await unitOfWork.UsuarioRepository.GetByIdAsync(tarefa.ResponsavelId.Value);
+                var usuario = await unitOfWork.UsuarioRepository.GetByIdAsync(tarefa.UsuarioCriacaoId.Value);
                 if (usuario == null)
                     throw new InvalidOperationException("Responsável não encontrado.");
             }
@@ -123,18 +123,18 @@ namespace DeslandesApp.Domain.Services
 
             // Etiquetas (N:N)
             // 🏷️ ETIQUETAS (N:N)
-            if (request.Etiquetas != null && request.Etiquetas.Any())
+            if (request.GrupoTarefasEtiquetas != null && request.GrupoTarefasEtiquetas.Any())
             {
-                foreach (var grupoEtiqueta in request.Etiquetas)
+                foreach (var grupoEtiqueta in request.GrupoTarefasEtiquetas)
                 {
                     var etiqueta = await unitOfWork.EtiquetaRepository.GetByIdAsync(grupoEtiqueta.EtiquetaId);
                     if (etiqueta == null) throw new InvalidOperationException("Etiqueta não encontrada.");
-                    var tarefaEtiqueta = new TarefaEtiqueta
+                    var grupotarefasEtiquetas = new GrupoTarefasEtiquetas
                     {
                         TarefaId = tarefa.Id,
                         EtiquetaId = grupoEtiqueta.EtiquetaId
                     };
-                    await unitOfWork.TarefaEtiquetaRepository.AddAsync(tarefaEtiqueta);
+                    await unitOfWork.GrupoTarefasEtiquetasRepository.AddAsync(grupotarefasEtiquetas);
                 }
             }
 
@@ -143,14 +143,14 @@ namespace DeslandesApp.Domain.Services
             {
                 foreach (var envolvido in request.GrupoTarefaResponsaveis)
                 {
-                    var usuario = await unitOfWork.PessoaRepository.GetByIdAsync(envolvido.PessoaId);
+                    var usuario = await unitOfWork.UsuarioRepository.GetByIdAsync(envolvido.UsuarioId);
                     if (usuario == null)
                         throw new InvalidOperationException("Usuário não encontrado.");
 
                     var grupo = new GrupoTarefaResponsaveis
                     {
                         TarefaId = tarefa.Id,
-                        PessoaId = envolvido.PessoaId
+                        UsuarioId = envolvido.UsuarioId
                     };
                     await unitOfWork.GrupoTarefaResponsaveisRepository.AddAsync(grupo);
                 }

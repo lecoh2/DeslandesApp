@@ -31,8 +31,8 @@ namespace DeslandesApp.Infra.Data.Repositories
                 query = query.Where(p =>
                        p.Descricao.ToLower().Contains(term) ||
 
-                       (p.Responsavel != null &&
-                        p.Responsavel.NomeUsuario.ToLower().Contains(term)) ||
+                      // (p.Responsavel != null &&
+                      //  p.Responsavel.NomeUsuario.ToLower().Contains(term)) ||
                        p.StatusGeralKanban.ToString().ToLower().Contains(term)
 
                                );
