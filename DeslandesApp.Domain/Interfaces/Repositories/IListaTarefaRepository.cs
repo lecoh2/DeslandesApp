@@ -1,4 +1,5 @@
-﻿using DeslandesApp.Domain.Models.Entities;
+﻿using DeslandesApp.Domain.Models.Dtos.Responses.ListaTarefas;
+using DeslandesApp.Domain.Models.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,5 +12,6 @@ namespace DeslandesApp.Domain.Interfaces.Repositories
     {
         Task<int?> ObterMaiorOrdemPorTarefaId(Guid tarefaId);
         Task<List<ListaTarefa>> ObterPorIdsAsync(List<Guid> ids);
+        Task<List<ListaTarefasResponse>> ConsultarListaTarefaAutoCompleteAsync(string? termo = null);
     }
 }

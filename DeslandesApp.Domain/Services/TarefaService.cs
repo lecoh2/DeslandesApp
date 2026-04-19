@@ -18,6 +18,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using DeslandesApp.Domain.Models.Dtos.Requests.Kaban;
+using DeslandesApp.Domain.Models.Dtos.Responses.ListaTarefas;
 
 namespace DeslandesApp.Domain.Services
 {
@@ -294,6 +295,10 @@ namespace DeslandesApp.Domain.Services
                 return null;
 
             return Guid.Parse(userId);
+        }
+        public async Task<List<ListaTarefasResponse>> ConsultarListaTarefaAutoCompleteAsync(string? termo = null)
+        {
+            return await unitOfWork.ListaTarefaRepository.ConsultarListaTarefaAutoCompleteAsync(termo);
         }
     }
 }

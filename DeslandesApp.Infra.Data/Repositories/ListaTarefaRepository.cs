@@ -1,4 +1,5 @@
 ﻿using DeslandesApp.Domain.Interfaces.Repositories;
+using DeslandesApp.Domain.Models.Dtos.Responses.ListaTarefas;
 using DeslandesApp.Domain.Models.Entities;
 using DeslandesApp.Infra.Data.Contexts;
 using Microsoft.EntityFrameworkCore;
@@ -24,5 +25,39 @@ namespace DeslandesApp.Infra.Data.Repositories
                 .Where(x => ids.Contains(x.Id))
                 .ToListAsync();
         }
+
+        public async Task<List<ListaTarefasResponse>> ConsultarListaTarefaAutoCompleteAsync(string? termo = null)
+        {
+            var query = dataContext.ListaTarefa
+                .AsNoTracking();
+
+            if (!string.IsNullOrWhiteSpace(termo))
+            {
+                termo = termo.Trim();
+
+                query = query.Where(x =>
+                    x.Descricao.Contains(termo)
+                );
+            }
+
+            var dados = await query
+                .GroupBy(x => x.Descricao)
+                .Select(g => new
+                {
+                    Descricao = g.Key,
+                    Quantidade = g.Count()
+                })
+                .OrderByDescending(x => x.Quantidade)
+                .Take(20)
+                .ToListAsync();
+
+            return dados
+                .Select(x => new ListaTarefasResponse(
+                    x.Descricao,
+                    x.Quantidade
+                ))
+                .ToList();
+        }
     }
-}
+    }
+

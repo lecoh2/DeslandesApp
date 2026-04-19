@@ -85,5 +85,14 @@ namespace DeslandesApp.API.Controllers.V1
                 message = $"Responsavável {response.nome}, excluido(a) da tarefa com sucesso."
             });
         }
+
+        
+        [HttpGet("consultar-lista-tarefaautocomplete")]
+        public async Task<IActionResult> ConsultarResumo([FromQuery] string? termo = null)
+        {
+            var result = await tarefaService.ConsultarListaTarefaAutoCompleteAsync(termo);
+
+            return Ok(result);
+        }
     }
 }

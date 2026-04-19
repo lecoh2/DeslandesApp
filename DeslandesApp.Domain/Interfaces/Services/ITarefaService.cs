@@ -2,6 +2,7 @@
 using DeslandesApp.Domain.Models.Dtos.Requests.ListaTarefas;
 using DeslandesApp.Domain.Models.Dtos.Requests.Processo;
 using DeslandesApp.Domain.Models.Dtos.Requests.Tarefa;
+using DeslandesApp.Domain.Models.Dtos.Responses.ListaTarefas;
 using DeslandesApp.Domain.Models.Dtos.Responses.Processo;
 using DeslandesApp.Domain.Models.Dtos.Responses.Tarefa;
 using DeslandesApp.Domain.Models.Entities;
@@ -20,7 +21,7 @@ namespace DeslandesApp.Domain.Interfaces.Services
         Task MoverCardAsync(MoverKanbanCardRequest request);
         Task AtualizarStatusTarefasAutomatico();
         Task<PageResult<TarefaPaginacaoResponse>> ConsultarTarefaPaginacaoAsync(int pageNumber, int pageSize, string? searchTerm = null);
-
+        Task<List<ListaTarefasResponse>> ConsultarListaTarefaAutoCompleteAsync(string? termo = null);
 
     }
 }
