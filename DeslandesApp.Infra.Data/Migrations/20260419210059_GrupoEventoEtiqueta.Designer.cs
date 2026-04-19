@@ -4,6 +4,7 @@ using DeslandesApp.Infra.Data.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DeslandesApp.Infra.Data.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20260419210059_GrupoEventoEtiqueta")]
+    partial class GrupoEventoEtiqueta
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -416,14 +419,6 @@ namespace DeslandesApp.Infra.Data.Migrations
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("ID");
 
-                    b.Property<Guid?>("AtendimentoId")
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnName("ATENDIMENTOID");
-
-                    b.Property<Guid?>("CasoId")
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnName("CASOID");
-
                     b.Property<DateTime?>("DataAtualizacao")
                         .HasColumnType("datetime2")
                         .HasColumnName("DATAATUALIZACAO");
@@ -481,10 +476,6 @@ namespace DeslandesApp.Infra.Data.Migrations
                         .HasColumnType("varchar(2000)")
                         .HasColumnName("OBSERVACAO");
 
-                    b.Property<Guid?>("ProcessoId")
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnName("PROCESSOID");
-
                     b.Property<int?>("QuantidadeOcorrencias")
                         .HasColumnType("int")
                         .HasColumnName("QUANTIDADEOCORRENCIAS");
@@ -496,10 +487,6 @@ namespace DeslandesApp.Infra.Data.Migrations
                     b.Property<int>("TipoRecorrencia")
                         .HasColumnType("int")
                         .HasColumnName("TIPORECORRENCIA");
-
-                    b.Property<int?>("TipoVinculo")
-                        .HasColumnType("int")
-                        .HasColumnName("TIPOVINCULO");
 
                     b.Property<string>("Titulo")
                         .IsRequired()
@@ -514,15 +501,6 @@ namespace DeslandesApp.Infra.Data.Migrations
 
                     b.HasKey("Id")
                         .HasName("PK_EVENTO");
-
-                    b.HasIndex("AtendimentoId")
-                        .HasDatabaseName("IX_EVENTO_ATENDIMENTOID");
-
-                    b.HasIndex("CasoId")
-                        .HasDatabaseName("IX_EVENTO_CASOID");
-
-                    b.HasIndex("ProcessoId")
-                        .HasDatabaseName("IX_EVENTO_PROCESSOID");
 
                     b.HasIndex("UsuarioCriacaoId")
                         .HasDatabaseName("IX_EVENTO_USUARIOCRIACAOID");
@@ -1997,35 +1975,11 @@ namespace DeslandesApp.Infra.Data.Migrations
 
             modelBuilder.Entity("DeslandesApp.Domain.Models.Entities.Evento", b =>
                 {
-                    b.HasOne("DeslandesApp.Domain.Models.Entities.Atendimento", "Atendimento")
-                        .WithMany()
-                        .HasForeignKey("AtendimentoId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .HasConstraintName("FK_EVENTO_ATENDIMENTO");
-
-                    b.HasOne("DeslandesApp.Domain.Models.Entities.Caso", "Caso")
-                        .WithMany()
-                        .HasForeignKey("CasoId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .HasConstraintName("FK_EVENTO_CASO");
-
-                    b.HasOne("Processo", "Processo")
-                        .WithMany()
-                        .HasForeignKey("ProcessoId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .HasConstraintName("FK_EVENTO_PROCESSO");
-
                     b.HasOne("DeslandesApp.Domain.Models.Entities.Usuario", "UsuarioCriacao")
                         .WithMany()
                         .HasForeignKey("UsuarioCriacaoId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .HasConstraintName("FK_EVENTO_USUARIOS_USUARIOCRIACAOID");
-
-                    b.Navigation("Atendimento");
-
-                    b.Navigation("Caso");
-
-                    b.Navigation("Processo");
 
                     b.Navigation("UsuarioCriacao");
                 });

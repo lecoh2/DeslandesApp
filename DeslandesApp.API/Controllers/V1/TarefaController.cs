@@ -87,7 +87,7 @@ namespace DeslandesApp.API.Controllers.V1
         }
 
         
-        [HttpGet("consultar-lista-tarefaautocomplete")]
+        [HttpGet("consultar-lista-tarefa-autocomplete")]
         public async Task<IActionResult> ConsultarResumo([FromQuery] string? termo = null)
         {
             var result = await tarefaService.ConsultarListaTarefaAutoCompleteAsync(termo);

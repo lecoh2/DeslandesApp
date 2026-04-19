@@ -1,5 +1,5 @@
 ﻿using DeslandesApp.Domain.Models.Dtos.Requests.GrupoAtendimento;
-using DeslandesApp.Domain.Models.Dtos.Requests.GrupoEtiqueta;
+
 using DeslandesApp.Domain.Models.Dtos.Requests.GrupoEtiquetaProcesso;
 using DeslandesApp.Domain.Models.Entities;
 using DeslandesApp.Domain.Models.Enum;

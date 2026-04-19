@@ -89,6 +89,30 @@ namespace DeslandesApp.Infra.Data.Mappings
             builder.Property(x => x.StatusGeralKanban)
                 .HasColumnName("STATUSKANBAN")
                 .IsRequired();
+
+            builder.Property(x => x.TipoVinculo)
+               .HasColumnName("TIPOVINCULO");
+
+            builder.Property(x => x.ProcessoId).HasColumnName("PROCESSOID");
+            builder.HasOne(x => x.Processo)
+                   .WithMany()
+                   .HasForeignKey(x => x.ProcessoId)
+                   .OnDelete(DeleteBehavior.Restrict)
+                   .HasConstraintName("FK_EVENTO_PROCESSO");
+
+            builder.Property(x => x.CasoId).HasColumnName("CASOID");
+            builder.HasOne(x => x.Caso)
+                   .WithMany()
+                   .HasForeignKey(x => x.CasoId)
+                   .OnDelete(DeleteBehavior.Restrict)
+                   .HasConstraintName("FK_EVENTO_CASO");
+
+            builder.Property(x => x.AtendimentoId).HasColumnName("ATENDIMENTOID");
+            builder.HasOne(x => x.Atendimento)
+                   .WithMany()
+                   .HasForeignKey(x => x.AtendimentoId)
+                   .OnDelete(DeleteBehavior.Restrict)
+                   .HasConstraintName("FK_EVENTO_ATENDIMENTO");
         }
     }
 }

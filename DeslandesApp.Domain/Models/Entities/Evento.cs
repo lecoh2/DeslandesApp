@@ -28,7 +28,7 @@ namespace DeslandesApp.Domain.Models.Entities
 
         // 👥 Responsáveis (N:N)
         public List<GrupoEventoResponsavel> GrupoEventoResponsavel { get; set; } = new();
-
+        public List<GrupoEventoEtiquetas> GrupoEventoEtiquetas { get; set; } = new();
         // 🔁 Recorrência
         public TipoRecorrencia TipoRecorrencia { get; set; } = TipoRecorrencia.Nenhuma;
 
@@ -45,5 +45,26 @@ namespace DeslandesApp.Domain.Models.Entities
         public Usuario? UsuarioCriacao { get; set; } // ✔ nullable também
         public DateTime? DataCadastro { get; set; }
         public DateTime? DataAtualizacao { get; set; }
+        public TipoVinculo? TipoVinculo { get; set; }
+        public Guid? ProcessoId { get; set; }
+        public Processo? Processo { get; set; }
+
+        public Guid? CasoId { get; set; }
+        public Caso? Caso { get; set; }
+
+        public Guid? AtendimentoId { get; set; }
+        public Atendimento? Atendimento { get; set; }
+        public void ValidarVinculo()
+        {
+            int count = 0;
+
+            if (ProcessoId.HasValue) count++;
+            if (CasoId.HasValue) count++;
+            if (AtendimentoId.HasValue) count++;
+
+            if (count > 1)
+                throw new Exception("O atendimento não pode ter mais de um vínculo.");
+        }
+
     }
 }

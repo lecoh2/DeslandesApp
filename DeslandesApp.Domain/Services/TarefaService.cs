@@ -36,11 +36,9 @@ namespace DeslandesApp.Domain.Services
             tarefa.DataCadastro = DateTime.Now;
             tarefa.DataAtualizacao = DateTime.Now;
             tarefa.StatusGeralKanban = StatusGeralKanban.A_Fazer;
-            // Responsável
-           // tarefa.ResponsavelId = request.ResponsavelId;
             tarefa.UsuarioCriacaoId = ObterUsuarioId();
 
-            // 🔗 VALIDAÇÃO DE VÍNCULOS OPCIONAIS
+            // 🔗 VALIDAÇÃO DE VÍNCULOS
             int count = 0;
             if (request.ProcessoId.HasValue) count++;
             if (request.CasoId.HasValue) count++;
@@ -49,7 +47,7 @@ namespace DeslandesApp.Domain.Services
             if (count > 1)
                 throw new InvalidOperationException("A tarefa não pode ter mais de um vínculo.");
 
-            // RESOLVE VÍNCULO AUTOMATICAMENTE
+            // VÍNCULOS
             if (request.ProcessoId.HasValue)
             {
                 var processo = await unitOfWork.ProcessoRepository.GetByIdAsync(request.ProcessoId.Value);
@@ -70,28 +68,31 @@ namespace DeslandesApp.Domain.Services
             }
             else if (request.AtendimentoId.HasValue)
             {
-                var atendimentoPai = await unitOfWork.AtendimentoRepository.GetByIdAsync(request.AtendimentoId.Value);
-                if (atendimentoPai == null)
-                    throw new InvalidOperationException("Atendimento pai não encontrado.");
+                var atendimento = await unitOfWork.AtendimentoRepository.GetByIdAsync(request.AtendimentoId.Value);
+                if (atendimento == null)
+                    throw new InvalidOperationException("Atendimento não encontrado.");
 
-                tarefa.AtendimentoId = atendimentoPai.Id;
+                tarefa.AtendimentoId = atendimento.Id;
                 tarefa.TipoVinculo = TipoVinculo.Atendimento;
             }
             else
             {
-                tarefa.TipoVinculo = null; // TipoVinculo agora deve ser nullable
+                tarefa.TipoVinculo = null;
             }
 
             // Validação Fluent
             var validator = new TarefaValidator();
             var result = validator.Validate(tarefa);
+
             if (!result.IsValid)
                 throw new ValidationException(result.Errors);
 
-            // Valida responsável
+            // Responsável
             if (tarefa.UsuarioCriacaoId.HasValue)
             {
-                var usuario = await unitOfWork.UsuarioRepository.GetByIdAsync(tarefa.UsuarioCriacaoId.Value);
+                var usuario = await unitOfWork.UsuarioRepository
+                    .GetByIdAsync(tarefa.UsuarioCriacaoId.Value);
+
                 if (usuario == null)
                     throw new InvalidOperationException("Responsável não encontrado.");
             }
@@ -99,61 +100,74 @@ namespace DeslandesApp.Domain.Services
             // Salva tarefa
             await unitOfWork.TarefaRepository.AddAsync(tarefa);
 
-            // Checklist
+            // =========================
+            // CHECKLIST
+            // =========================
             if (request.ListasTarefa != null && request.ListasTarefa.Any())
             {
                 var ultimaOrdem = await unitOfWork.ListaTarefaRepository
-     .ObterMaiorOrdemPorTarefaId(tarefa.Id) ?? 0;
+                    .ObterMaiorOrdemPorTarefaId(tarefa.Id) ?? 0;
 
                 int incremento = 0;
 
                 foreach (var item in request.ListasTarefa)
                 {
+                    var descricao = item.Descricao?.Trim();
+
+                    if (string.IsNullOrWhiteSpace(descricao))
+                        continue;
+
                     incremento += 10;
 
                     var lista = new ListaTarefa
                     {
                         TarefaId = tarefa.Id,
-                        Descricao = item.Descricao?.Trim(),
-                        Ordem = ultimaOrdem + incremento
+                        Descricao = descricao,
+                        Ordem = ultimaOrdem + incremento,
+
+                        // ✔ CORRETO conforme sua entidade
+                        Concluida = false,
+                        DataConclusao = null
                     };
 
                     await unitOfWork.ListaTarefaRepository.AddAsync(lista);
                 }
             }
-
-            // Etiquetas (N:N)
-            // 🏷️ ETIQUETAS (N:N)
+            // Etiquetas
             if (request.GrupoTarefasEtiquetas != null && request.GrupoTarefasEtiquetas.Any())
             {
                 foreach (var grupoEtiqueta in request.GrupoTarefasEtiquetas)
                 {
-                    var etiqueta = await unitOfWork.EtiquetaRepository.GetByIdAsync(grupoEtiqueta.EtiquetaId);
-                    if (etiqueta == null) throw new InvalidOperationException("Etiqueta não encontrada.");
-                    var grupotarefasEtiquetas = new GrupoTarefasEtiquetas
+                    var etiqueta = await unitOfWork.EtiquetaRepository
+                        .GetByIdAsync(grupoEtiqueta.EtiquetaId);
+
+                    if (etiqueta == null)
+                        throw new InvalidOperationException("Etiqueta não encontrada.");
+
+                    await unitOfWork.GrupoTarefasEtiquetasRepository.AddAsync(new GrupoTarefasEtiquetas
                     {
                         TarefaId = tarefa.Id,
                         EtiquetaId = grupoEtiqueta.EtiquetaId
-                    };
-                    await unitOfWork.GrupoTarefasEtiquetasRepository.AddAsync(grupotarefasEtiquetas);
+                    });
                 }
             }
 
-            // Envolvidos (N:N)
+            // Responsáveis
             if (request.GrupoTarefaResponsaveis != null && request.GrupoTarefaResponsaveis.Any())
             {
                 foreach (var envolvido in request.GrupoTarefaResponsaveis)
                 {
-                    var usuario = await unitOfWork.UsuarioRepository.GetByIdAsync(envolvido.UsuarioId);
+                    var usuario = await unitOfWork.UsuarioRepository
+                        .GetByIdAsync(envolvido.UsuarioId);
+
                     if (usuario == null)
                         throw new InvalidOperationException("Usuário não encontrado.");
 
-                    var grupo = new GrupoTarefaResponsaveis
+                    await unitOfWork.GrupoTarefaResponsaveisRepository.AddAsync(new GrupoTarefaResponsaveis
                     {
                         TarefaId = tarefa.Id,
                         UsuarioId = envolvido.UsuarioId
-                    };
-                    await unitOfWork.GrupoTarefaResponsaveisRepository.AddAsync(grupo);
+                    });
                 }
             }
 

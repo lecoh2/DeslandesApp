@@ -1,5 +1,6 @@
 ﻿using DeslandesApp.Domain.Models.Dtos.Requests.GrupoAtendimento;
-using DeslandesApp.Domain.Models.Dtos.Requests.GrupoEtiqueta;
+
+using DeslandesApp.Domain.Models.Dtos.Requests.GrupoTarefasEtiquetas;
 using DeslandesApp.Domain.Models.Dtos.Responses.GrupoAtendimentoCliente;
 using DeslandesApp.Domain.Models.Dtos.Responses.GrupoEtiquetaAtendimento;
 using System;

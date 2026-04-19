@@ -1,5 +1,6 @@
-﻿using DeslandesApp.Domain.Models.Dtos.Requests.GrupoEtiqueta;
+﻿
 using DeslandesApp.Domain.Models.Dtos.Requests.GrupoTarefasEnvolvidos;
+using DeslandesApp.Domain.Models.Dtos.Requests.GrupoTarefasEtiquetas;
 using DeslandesApp.Domain.Models.Entities;
 using DeslandesApp.Domain.Models.Enum;
 using System;

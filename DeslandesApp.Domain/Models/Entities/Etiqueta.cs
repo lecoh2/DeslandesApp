@@ -17,6 +17,7 @@ namespace DeslandesApp.Domain.Models.Entities
         public ICollection<GrupoEtiquetasAtendimentos> GrupoEtiquetasAtendimentos { get; set; }
         public ICollection<GrupoEtiquetaCasos> GrupoEtiquetasCasos { get; set; }
         public ICollection<GrupoPessoasEtiquetas> GrupoPessoasEtiquetas { get; set; }
+        public ICollection<GrupoEventoEtiquetas> GrupoEventoEtiquetas { get; set; }
 
     }
 }

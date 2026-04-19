@@ -97,7 +97,47 @@ namespace DeslandesApp.Domain.Services
                     evento.DataFimRecorrencia = null;
                     evento.QuantidadeOcorrencias = null;
                 }
+                // 🔗 VALIDAÇÃO DE VÍNCULOS
+                int count = 0;
+                if (request.ProcessoId.HasValue) count++;
+                if (request.CasoId.HasValue) count++;
+                if (request.AtendimentoId.HasValue) count++;
 
+                if (count > 1)
+                    throw new InvalidOperationException("A tarefa não pode ter mais de um vínculo.");
+
+                // VÍNCULOS
+                if (request.ProcessoId.HasValue)
+                {
+                    var processo = await unitOfWork.ProcessoRepository.GetByIdAsync(request.ProcessoId.Value);
+                    if (processo == null)
+                        throw new InvalidOperationException("Processo não encontrado.");
+
+                    evento.ProcessoId = processo.Id;
+                    evento.TipoVinculo = TipoVinculo.Processo;
+                }
+                else if (request.CasoId.HasValue)
+                {
+                    var caso = await unitOfWork.CasoRepository.GetByIdAsync(request.CasoId.Value);
+                    if (caso == null)
+                        throw new InvalidOperationException("Caso não encontrado.");
+
+                    evento.CasoId = caso.Id;
+                    evento.TipoVinculo = TipoVinculo.Caso;
+                }
+                else if (request.AtendimentoId.HasValue)
+                {
+                    var atendimento = await unitOfWork.AtendimentoRepository.GetByIdAsync(request.AtendimentoId.Value);
+                    if (atendimento == null)
+                        throw new InvalidOperationException("Atendimento não encontrado.");
+
+                    evento.AtendimentoId = atendimento.Id;
+                    evento.TipoVinculo = TipoVinculo.Atendimento;
+                }
+                else
+                {
+                    evento.TipoVinculo = null;
+                }
                 // =========================
                 // ✅ VALIDAÇÃO
                 // =========================
@@ -131,6 +171,23 @@ namespace DeslandesApp.Domain.Services
                         };
 
                         await unitOfWork.GrupoEventoResponsavelRepository.AddAsync(grupo);
+                    }
+                } // Etiquetas
+                if (request.GrupoEventoEtiquestas != null && request.GrupoEventoEtiquestas.Any())
+                {
+                    foreach (var grupoEtiqueta in request.GrupoEventoEtiquestas)
+                    {
+                        var etiqueta = await unitOfWork.EtiquetaRepository
+                            .GetByIdAsync(grupoEtiqueta.EtiquetaId);
+
+                        if (etiqueta == null)
+                            throw new InvalidOperationException("Etiqueta não encontrada.");
+
+                        await unitOfWork.GrupoEventoEtiquetasRepository.AddAsync(new GrupoEventoEtiquetas
+                        {
+                            EventoId = evento.Id,
+                            EtiquetaId = grupoEtiqueta.EtiquetaId
+                        });
                     }
                 }
 

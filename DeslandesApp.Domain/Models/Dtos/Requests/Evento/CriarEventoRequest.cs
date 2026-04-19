@@ -1,4 +1,5 @@
 ﻿using DeslandesApp.Domain.Models.Dtos.Requests.GrupoEnvolvidos;
+using DeslandesApp.Domain.Models.Dtos.Requests.GrupoEventoEtiquetas;
 using DeslandesApp.Domain.Models.Entities;
 using DeslandesApp.Domain.Models.Enum;
 using System;
@@ -29,7 +30,7 @@ namespace DeslandesApp.Domain.Models.Dtos.Requests.Evento
 
         // 👥 SOMENTE IDS (CORRETO)
         public List<GrupoEventoResponsavelRequest>? GrupoEventoResponsavel { get; init; }
-
+        public List<GrupoEventoEtiquetasRequest>? GrupoEventoEtiquestas { get; init; }
         // 🔁 Recorrência
         public TipoRecorrencia TipoRecorrencia { get; init; }
         public int IntervaloRecorrencia { get; init; }
@@ -38,5 +39,9 @@ namespace DeslandesApp.Domain.Models.Dtos.Requests.Evento
         public int? QuantidadeOcorrencias { get; init; }
         //public StatusEvento? Status { get; init; }
         public StatusGeralKanban? StatusKaban { get; set; }
+        public Guid? ProcessoId { get; init; }
+        public Guid? CasoId { get; init; }
+        public Guid? AtendimentoId { get; init; }
+        public TipoVinculo? TipoVinculo { get; init; }
     }
 }

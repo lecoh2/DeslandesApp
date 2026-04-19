@@ -12,7 +12,7 @@ namespace DeslandesApp.API.Controllers.V1
     [ApiController]
     public class EventoController(IEventoService eventoService, IGrupoEventoResponsaveisService grupoEventoResponsaveisService) : ControllerBase
     {
-        [HttpPost]
+        [HttpPost("cadastrar-evento")]
         [ProducesResponseType(typeof(CriarEventoResponse), StatusCodes.Status201Created)]
         public async Task<IActionResult> PostAsync([FromBody] CriarEventoRequest request)
         {
