@@ -8,8 +8,8 @@ using System.Threading.Tasks;
 
 namespace DeslandesApp.Domain.Interfaces.Services
 {
-    public interface IEtiquetasService : IBaseService<EtiquetasRequest,EtiquetasUpdateRequest, EtiquetasResponse, Guid>
+    public interface IEtiquetasService : IBaseService<EtiquetasRequest,EtiquetasUpdateRequest, EtiquetaResponse, Guid>
     {
-         Task<IEnumerable<EtiquetasResponse>> ConsultarAsync();
+         Task<IEnumerable<EtiquetaResponse>> ConsultarAsync();
     }
 }

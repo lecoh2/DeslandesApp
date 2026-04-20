@@ -43,6 +43,8 @@ namespace DeslandesApp.Domain.Extensions
             services.AddScoped<IAcaoService, AcaoService>();
             services.AddScoped<IPessoaService, PessoaService>();
             services.AddScoped<IQualidicacaoService, QualificacaoService>();
+            services.AddScoped<IKanbanService, KanbanService>();
+            services.AddScoped<IDetalheAtividadeService, DetalheAtividadeService>();
 
             //services.AddTransient<IGrupoNiveisServices, GrupoNiveisService>();
             //services.AddTransient<IGrupoSetoresService, GrupoSetoresService>()

@@ -15,19 +15,19 @@ namespace DeslandesApp.Domain.Services
 {
     public class EtiquetasService(IUnitOfWork unitOfWork, IMapper mapper) : IEtiquetasService
     {
-        public Task<EtiquetasResponse> AdicionarAsync(EtiquetasRequest request)
+        public Task<EtiquetaResponse> AdicionarAsync(EtiquetasRequest request)
         {
             throw new NotImplementedException();
         }
 
-        public async Task<IEnumerable<EtiquetasResponse>> ConsultarAsync()
+        public async Task<IEnumerable<EtiquetaResponse>> ConsultarAsync()
         {
             var etiquetas = await unitOfWork.EtiquetaRepository.GetAllAsync();
 
-            return mapper.Map<IEnumerable<EtiquetasResponse>>(etiquetas);
+            return mapper.Map<IEnumerable<EtiquetaResponse>>(etiquetas);
         }
 
-        public Task<PageResult<EtiquetasResponse>> ConsultarAsync(int pageNumber, int pageSize)
+        public Task<PageResult<EtiquetaResponse>> ConsultarAsync(int pageNumber, int pageSize)
         {
             throw new NotImplementedException();
         }
@@ -37,17 +37,17 @@ namespace DeslandesApp.Domain.Services
             unitOfWork.Dispose();
         }
 
-        public Task<EtiquetasResponse> ExcluirAsync(Guid id)
+        public Task<EtiquetaResponse> ExcluirAsync(Guid id)
         {
             throw new NotImplementedException();
         }
 
-        public Task<EtiquetasResponse> ModificarAsync(Guid id, EtiquetasUpdateRequest request)
+        public Task<EtiquetaResponse> ModificarAsync(Guid id, EtiquetasUpdateRequest request)
         {
             throw new NotImplementedException();
         }
 
-        public Task<EtiquetasResponse?> ObterPorIdAsync(Guid id)
+        public Task<EtiquetaResponse?> ObterPorIdAsync(Guid id)
         {
             throw new NotImplementedException();
         }

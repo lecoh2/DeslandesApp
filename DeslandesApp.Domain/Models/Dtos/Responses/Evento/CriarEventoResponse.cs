@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 namespace DeslandesApp.Domain.Models.Dtos.Responses.Evento
 {
     public record CriarEventoResponse
-    (string Titulo
+    (string Titulo,
+        string StatusGeralKanban
         );
 }

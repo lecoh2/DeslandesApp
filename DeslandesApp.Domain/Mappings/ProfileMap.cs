@@ -6,6 +6,7 @@ using DeslandesApp.Domain.Models.Dtos.Requests.EnderecoPessoa;
 using DeslandesApp.Domain.Models.Dtos.Requests.Evento;
 using DeslandesApp.Domain.Models.Dtos.Requests.GrupoCasoCliente;
 using DeslandesApp.Domain.Models.Dtos.Requests.GrupoCasoEnvolvidos;
+using DeslandesApp.Domain.Models.Dtos.Requests.GrupoEventoEtiquetas;
 using DeslandesApp.Domain.Models.Dtos.Requests.GrupoNiveis;
 using DeslandesApp.Domain.Models.Dtos.Requests.GrupoSetores;
 using DeslandesApp.Domain.Models.Dtos.Requests.InformacoesComplementares;
@@ -279,9 +280,23 @@ namespace DeslandesApp.Domain.Mappings
             #endregion
 
             #region Evento
-            CreateMap<CriarEventoRequest, Evento>();
-            CreateMap<Evento, CriarEventoResponse>();
-            CreateMap<UpdateEventoRequest, Evento>();
+
+            CreateMap<CriarEventoRequest, Evento>()
+                .ForMember(dest => dest.GrupoEventoEtiquetas, opt => opt.Ignore())
+                .ForMember(dest => dest.GrupoEventoResponsaveis, opt => opt.Ignore());
+
+           
+
+            CreateMap<UpdateEventoRequest, Evento>()
+                .ForMember(dest => dest.GrupoEventoEtiquetas, opt => opt.Ignore())
+                .ForMember(dest => dest.GrupoEventoResponsaveis, opt => opt.Ignore());
+            CreateMap<Evento, CriarEventoResponse>()
+          .ForCtorParam("Titulo",
+              opt => opt.MapFrom(src => src.Titulo))
+          .ForCtorParam("StatusGeralKanban",
+              opt => opt.MapFrom(src => src.StatusGeralKanban
+                  .ToString()
+                  .Replace("_", " ")));
 
             #endregion
             #region GrupoEvento
@@ -307,9 +322,9 @@ namespace DeslandesApp.Domain.Mappings
     .ForMember(dest => dest.Status, opt => opt.MapFrom(src => (StatusGeralKanban)src.StatusGeralKanban));
             #endregion
             #region etiqutas
-            CreateMap<Etiqueta, EtiquetasResponse>()
+            CreateMap<Etiqueta, EtiquetaResponse>()
 
-     .ConstructUsing(src => new EtiquetasResponse(src.Id, src.Nome, src.Cor));
+     .ConstructUsing(src => new EtiquetaResponse(src.Id, src.Nome, src.Cor));
             #endregion
             #region Conta bancaria
             CreateMap<ContaBancariaRequest, ContaBancaria>()

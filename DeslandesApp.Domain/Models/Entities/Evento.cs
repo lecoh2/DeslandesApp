@@ -22,12 +22,12 @@ namespace DeslandesApp.Domain.Models.Entities
 
         public string? Endereco { get; set; }
 
-        public ModalidadeEvento Modalidade { get; set; } = ModalidadeEvento.NaoSeAplica;
+        public ModalidadeEvento Modalidade { get; set; } 
 
         public string? Observacao { get; set; }
 
         // 👥 Responsáveis (N:N)
-        public List<GrupoEventoResponsavel> GrupoEventoResponsavel { get; set; } = new();
+        public List<GrupoEventoResponsavel> GrupoEventoResponsaveis { get; set; } = new();
         public List<GrupoEventoEtiquetas> GrupoEventoEtiquetas { get; set; } = new();
         // 🔁 Recorrência
         public TipoRecorrencia TipoRecorrencia { get; set; } = TipoRecorrencia.Nenhuma;
@@ -39,13 +39,14 @@ namespace DeslandesApp.Domain.Models.Entities
         public DateOnly? DataFimRecorrencia { get; set; }
 
         public int? QuantidadeOcorrencias { get; set; }
-        public StatusGeralKanban StatusGeralKanban { get; set; } = StatusGeralKanban.A_Fazer;
+        public StatusGeralKanban StatusGeralKanban { get; set; } 
         // 🔥 FUNDAMENTAL
         public Guid? UsuarioCriacaoId { get; set; }
         public Usuario? UsuarioCriacao { get; set; } // ✔ nullable também
         public DateTime? DataCadastro { get; set; }
         public DateTime? DataAtualizacao { get; set; }
         public TipoVinculo? TipoVinculo { get; set; }
+       
         public Guid? ProcessoId { get; set; }
         public Processo? Processo { get; set; }
 

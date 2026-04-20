@@ -38,6 +38,7 @@ namespace DeslandesApp.Domain.Models.Entities
         public StatusGeralKanban StatusGeralKanban { get; set; } 
         public Guid? UsuarioCriacaoId { get; set; }
         public Usuario? UsuarioCriacao { get; set; } // ✔ nullable também
+
         public void ValidarVinculo()
         {
             int count = 0;

@@ -29,8 +29,8 @@ namespace DeslandesApp.Domain.Models.Dtos.Requests.Evento
         public string? Observacao { get; init; }
 
         // 👥 SOMENTE IDS (CORRETO)
-        public List<GrupoEventoResponsavelRequest>? GrupoEventoResponsavel { get; init; }
-        public List<GrupoEventoEtiquetasRequest>? GrupoEventoEtiquestas { get; init; }
+        public List<GrupoEventoResponsavelRequest>? GrupoEventoResponsaveis { get; init; }
+        public List<GrupoEventoEtiquetasRequest>? GrupoEventoEtiquetas { get; init; }
         // 🔁 Recorrência
         public TipoRecorrencia TipoRecorrencia { get; init; }
         public int IntervaloRecorrencia { get; init; }
@@ -38,7 +38,7 @@ namespace DeslandesApp.Domain.Models.Dtos.Requests.Evento
         public DateOnly? DataFimRecorrencia { get; init; }
         public int? QuantidadeOcorrencias { get; init; }
         //public StatusEvento? Status { get; init; }
-        public StatusGeralKanban? StatusKaban { get; set; }
+        public StatusGeralKanban? statusGeralKanban { get; set; }
         public Guid? ProcessoId { get; init; }
         public Guid? CasoId { get; init; }
         public Guid? AtendimentoId { get; init; }

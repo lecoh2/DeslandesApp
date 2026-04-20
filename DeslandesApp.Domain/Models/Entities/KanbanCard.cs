@@ -13,7 +13,7 @@ namespace DeslandesApp.Domain.Models.Entities
         public string Titulo { get; set; } = string.Empty;
         public DateTime? Data { get; set; }
         public string Tipo { get; set; } = string.Empty;
-
+        public StatusGeralKanban Status { get; set; }
         public string? Responsavel { get; set; }
         public Guid? ResponsavelId { get; set; }
 

@@ -11,7 +11,7 @@ namespace DeslandesApp.API.Controllers.V1
     public class EtiquetasControllers(IEtiquetasService etiquetasService) : ControllerBase
     {
         [HttpGet("consultar-etiquetas")]
-        [ProducesResponseType(typeof(IEnumerable<EtiquetasResponse>), 200)]
+        [ProducesResponseType(typeof(IEnumerable<EtiquetaResponse>), 200)]
         public async Task<IActionResult> GetAllAsync()
         {
             var response = await etiquetasService.ConsultarAsync();

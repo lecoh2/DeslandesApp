@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace DeslandesApp.Domain.Models.Dtos.Responses.Etiquetas
 {
-    public record EtiquetasResponse 
+    public record EtiquetaResponse 
     (
         Guid? Id,
 

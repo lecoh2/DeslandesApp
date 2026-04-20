@@ -39,9 +39,9 @@ namespace DeslandesApp.Domain.Services
                 // =========================
                 // 🧠 STATUS KANBAN
                 // =========================
-                if (request.StatusKaban.HasValue)
+                if (request.statusGeralKanban.HasValue)
                 {
-                    evento.StatusGeralKanban = request.StatusKaban.Value;
+                    evento.StatusGeralKanban = request.statusGeralKanban.Value;
                 }
 
                 // 🔥 STATUS AUTOMÁTICO (INTELIGENTE)
@@ -155,9 +155,9 @@ namespace DeslandesApp.Domain.Services
                 // =========================
                 // 👥 RESPONSÁVEIS (N:N)
                 // =========================
-                if (request.GrupoEventoResponsavel != null && request.GrupoEventoResponsavel.Any())
+                if (request.GrupoEventoResponsaveis != null && request.GrupoEventoResponsaveis.Any())
                 {
-                    foreach (var item in request.GrupoEventoResponsavel)
+                    foreach (var item in request.GrupoEventoResponsaveis)
                     {
                         var usuario = await unitOfWork.UsuarioRepository.GetByIdAsync(item.UsuarioId);
 
@@ -173,9 +173,9 @@ namespace DeslandesApp.Domain.Services
                         await unitOfWork.GrupoEventoResponsavelRepository.AddAsync(grupo);
                     }
                 } // Etiquetas
-                if (request.GrupoEventoEtiquestas != null && request.GrupoEventoEtiquestas.Any())
+                if (request.GrupoEventoEtiquetas != null && request.GrupoEventoEtiquetas.Any())
                 {
-                    foreach (var grupoEtiqueta in request.GrupoEventoEtiquestas)
+                    foreach (var grupoEtiqueta in request.GrupoEventoEtiquetas)
                     {
                         var etiqueta = await unitOfWork.EtiquetaRepository
                             .GetByIdAsync(grupoEtiqueta.EtiquetaId);
@@ -272,7 +272,7 @@ namespace DeslandesApp.Domain.Services
                     eventoAntes.Modalidade,
                     eventoAntes.StatusGeralKanban,
 
-                    Responsaveis = eventoAntes.GrupoEventoResponsavel?
+                    Responsaveis = eventoAntes.GrupoEventoResponsaveis?
                         .Select(r => r.Usuario?.NomeUsuario)
                         .Where(n => n != null)
                         .ToList()
@@ -392,7 +392,7 @@ namespace DeslandesApp.Domain.Services
                     eventoDepois.Modalidade,
                     eventoDepois.StatusGeralKanban,
 
-                    Responsaveis = eventoDepois.GrupoEventoResponsavel?
+                    Responsaveis = eventoDepois.GrupoEventoResponsaveis?
                         .Select(r => r.Usuario?.NomeUsuario)
                         .Where(n => n != null)
                         .ToList()

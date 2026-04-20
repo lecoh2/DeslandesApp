@@ -76,7 +76,7 @@ namespace DeslandesApp.Infra.Data.Mappings
                    ));
 
             // 👥 Responsáveis (N:N)
-            builder.HasMany(x => x.GrupoEventoResponsavel)
+            builder.HasMany(x => x.GrupoEventoResponsaveis)
                    .WithOne(x => x.Evento)
                    .HasForeignKey(x => x.EventoId)
                    .OnDelete(DeleteBehavior.Cascade)
