@@ -1,4 +1,5 @@
 ﻿using DeslandesApp.Domain.Models.Dtos.Responses.Atividades;
+using DeslandesApp.Domain.Models.Enum;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,6 +10,6 @@ namespace DeslandesApp.Domain.Interfaces.Services
 {
     public interface IDetalheAtividadeService
     {
-        Task<DetalheAtividadeResponse> ObterDetalhesAsync(Guid id, string tipo);
+        Task<DetalheAtividadeResponse> ObterDetalhesAsync(Guid id, TipoAtividade tipo);
     }
 }

@@ -13,6 +13,7 @@ namespace DeslandesApp.Domain.Interfaces.Repositories
     public interface ITarefaRepository : IBaseRepository<Tarefa, Guid>
     {
         Task<PageResult<TarefaPaginacaoResponse>> GetTarefaPaginacaoAsync(int pageNumber, int pageSize, string? searchTerm = null);
-
+        Task<Tarefa?> ConsultarComRelacionamentosAsync(Guid id);
+        Task<List<Tarefa>> GetKanbanAsync();
     }
 }

@@ -69,6 +69,21 @@ namespace DeslandesApp.Infra.Data.Repositories
                 PageSize = pageSize
             };
         }
-
+        public async Task<Tarefa?> ConsultarComRelacionamentosAsync(Guid id)
+        {
+            return await dataContext.Tarefas
+                .Include(t => t.UsuarioCriacao)
+                .Include(t => t.GrupoTarefaResponsaveis)
+                    .ThenInclude(r => r.Usuario)
+                .Include(t => t.GrupoTarefasEtiquetas)
+                    .ThenInclude(e => e.Etiqueta)
+                .FirstOrDefaultAsync(t => t.Id == id);
+        }
+        public async Task<List<Tarefa>> GetKanbanAsync()
+        {
+            return await dataContext.Tarefas
+                .Include(t => t.UsuarioCriacao)
+                .ToListAsync();
+        }
     }
 }

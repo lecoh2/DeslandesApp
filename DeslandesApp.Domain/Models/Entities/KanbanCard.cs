@@ -18,5 +18,7 @@ namespace DeslandesApp.Domain.Models.Entities
         public Guid? ResponsavelId { get; set; }
 
         public Guid? UsuarioCriacaoId { get; set; }
+        public string? UsuarioCriacaoNome { get; set; }
     }
 }
+

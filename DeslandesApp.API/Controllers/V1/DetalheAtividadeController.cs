@@ -1,4 +1,5 @@
 ﻿using DeslandesApp.Domain.Interfaces.Services;
+using DeslandesApp.Domain.Models.Enum;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -15,8 +16,8 @@ namespace DeslandesApp.API.Controllers.V1
             _detalheAtividadeService = detalheAtividadeService;
         }
 
-        [HttpGet("{id:guid}/detalhes")]
-        public async Task<IActionResult> ObterDetalhes(Guid id, [FromQuery] string tipo)
+        [HttpGet("{id:guid}/detalhes/{tipo}")]
+        public async Task<IActionResult> ObterDetalhes(Guid id, TipoAtividade tipo)
         {
             var result = await _detalheAtividadeService.ObterDetalhesAsync(id, tipo);
             return Ok(result);

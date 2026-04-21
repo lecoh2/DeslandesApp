@@ -21,67 +21,80 @@ namespace DeslandesApp.Domain.Services
             _unitOfWork = unitOfWork;
         }
 
-        public async Task<DetalheAtividadeResponse> ObterDetalhesAsync(Guid id, string tipo)
+        public async Task<DetalheAtividadeResponse> ObterDetalhesAsync(Guid id, TipoAtividade tipo)
         {
-            if (tipo == "Tarefa")
+            return tipo switch
             {
-                var t = await _unitOfWork.TarefaRepository.GetByIdAsync(id);
+                TipoAtividade.Tarefa => await ObterTarefaAsync(id),
+                TipoAtividade.Evento => await ObterEventoAsync(id),
+                _ => throw new ArgumentOutOfRangeException(nameof(tipo), "Tipo inválido")
+            };
+        }
+        private async Task<DetalheAtividadeResponse> ObterTarefaAsync(Guid id)
+        {
+            var t = await _unitOfWork.TarefaRepository.ConsultarComRelacionamentosAsync(id);
 
-                if (t == null)
-                    throw new Exception("Tarefa não encontrada");
+            if (t == null)
+                throw new KeyNotFoundException("Tarefa não encontrada");
 
-                return new DetalheAtividadeResponse(
-                    t.Id,
-                    t.Descricao,
-                    t.StatusGeralKanban.ToString(),
-                    t.DataTarefa,
-                    null,
-                    null,
-                    null,
-                    t.UsuarioCriacao?.NomeUsuario,
-                    t.GrupoTarefaResponsaveis?
-                        .Select(r => new UsuarioResumoResponse(
-                            r.Usuario.Id,
-                            r.Usuario.NomeUsuario
-                        ))
-                        .ToList() ?? new List<UsuarioResumoResponse>(),
+            return new DetalheAtividadeResponse
+            {
+                Id = t.Id,
+                Titulo = t.Descricao,
+                Status = t.StatusGeralKanban.ToString(),
+                DataInicio = t.DataTarefa,
+                CriadoPor = t.UsuarioCriacao?.NomeUsuario,
+                Prioridade = t.Prioridade,
+                Tipo = TipoAtividade.Tarefa.ToString(),
+                Responsaveis = t.GrupoTarefaResponsaveis?
+    .Select(r => new UsuarioResumoResponse(
+        r.Usuario.Id,
+        r.Usuario.NomeUsuario
+    ))
+    .ToList() ?? new(),
 
-                    new List<EtiquetaResponse>()
-                );
-            }
-
+                Etiquetas = t.GrupoTarefasEtiquetas?
+    .Select(x => new EtiquetaResponse(
+        x.Etiqueta.Id,
+        x.Etiqueta.Nome,
+        x.Etiqueta.Cor
+    ))
+    .ToList() ?? new()
+            };
+        }
+        private async Task<DetalheAtividadeResponse> ObterEventoAsync(Guid id)
+        {
             var e = await _unitOfWork.EventoRepository.ConsultarEventoComRelacionamentosAsync(id);
 
             if (e == null)
-                throw new Exception("Evento não encontrado");
+                throw new KeyNotFoundException("Evento não encontrado");
 
-            var responsaveis = e.GrupoEventoResponsaveis?
-                .Select(r => new UsuarioResumoResponse(
-                    r.Usuario.Id,
-                    r.Usuario.NomeUsuario
-                ))
-                .ToList() ?? new List<UsuarioResumoResponse>();
-
-            var etiquetas = e.GrupoEventoEtiquetas?
-                .Select(x => new EtiquetaResponse(
-                    x.Etiqueta.Id,
-                    x.Etiqueta.Nome,
-                    x.Etiqueta.Cor
-                ))
-                .ToList() ?? new List<EtiquetaResponse>();
-
-            return new DetalheAtividadeResponse(
-                e.Id,
-                e.Titulo,
-                e.StatusGeralKanban.ToString(),
-                e.DataInicial.ToDateTime(TimeOnly.MinValue),
-                e.DataFinal?.ToDateTime(TimeOnly.MinValue),
-                e.Modalidade.ToString(),
-                e.Endereco,
-                e.UsuarioCriacao?.NomeUsuario,
-                responsaveis,
-                etiquetas
-            );
+            return new DetalheAtividadeResponse
+            {
+                Id = e.Id,
+                Titulo = e.Titulo,
+                Status = e.StatusGeralKanban.ToString(),
+                DataInicio = e.DataInicial.ToDateTime(TimeOnly.MinValue),
+                DataFim = e.DataFinal?.ToDateTime(TimeOnly.MinValue),
+                Modalidade = e.Modalidade.ToString(),
+                Endereco = e.Endereco,
+               
+                CriadoPor = e.UsuarioCriacao?.NomeUsuario,
+                Tipo = TipoAtividade.Evento.ToString(),
+                Responsaveis = e.GrupoEventoResponsaveis?
+                    .Select(r => new UsuarioResumoResponse(
+                        r.Usuario.Id,
+                        r.Usuario.NomeUsuario
+                    ))
+                    .ToList() ?? new(),
+                Etiquetas = e.GrupoEventoEtiquetas?
+                    .Select(x => new EtiquetaResponse(
+                        x.Etiqueta.Id,
+                        x.Etiqueta.Nome,
+                        x.Etiqueta.Cor
+                    ))
+                    .ToList() ?? new()
+            };
         }
     }
 }

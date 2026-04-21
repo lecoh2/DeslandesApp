@@ -14,7 +14,7 @@ namespace DeslandesApp.Domain.Interfaces.Repositories
     {
         Task<PageResult<EventoPaginacaoResponse>> GetEventoPaginacaoAsync(int pageNumber, int pageSize, string? searchTerm = null);
         Task<Evento> ConsultarEventoComRelacionamentosAsync(Guid idEvento);
-
+        Task<List<Evento>> GetKanbanAsync();
     }
 }
 

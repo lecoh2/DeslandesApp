@@ -22,8 +22,8 @@ namespace DeslandesApp.Domain.Services
         public async Task<List<KanbanColuna>> ObterKanbanAsync()
         {
             // 🔹 Busca dados do banco
-            var tarefas = await _unitOfWork.TarefaRepository.GetAllAsync();
-            var eventos = await _unitOfWork.EventoRepository.GetAllAsync();
+            var tarefas = await _unitOfWork.TarefaRepository.GetKanbanAsync();
+            var eventos = await _unitOfWork.EventoRepository.GetKanbanAsync();
 
             // 🔹 Lista de cards
             var cards = new List<KanbanCard>();
@@ -40,7 +40,8 @@ namespace DeslandesApp.Domain.Services
                     Data = t.DataTarefa,
                     Tipo = "Tarefa",
                     Status = t.StatusGeralKanban,
-                    UsuarioCriacaoId = t.UsuarioCriacaoId
+                    UsuarioCriacaoId = t.UsuarioCriacaoId,
+                    UsuarioCriacaoNome = t.UsuarioCriacao?.NomeUsuario
                 });
             }
 
@@ -56,7 +57,8 @@ namespace DeslandesApp.Domain.Services
                     Data = e.DataInicial.ToDateTime(TimeOnly.MinValue),
                     Tipo = "Evento",
                     Status = e.StatusGeralKanban,
-                    UsuarioCriacaoId = e.UsuarioCriacaoId
+                    UsuarioCriacaoId = e.UsuarioCriacaoId,
+                    UsuarioCriacaoNome = e.UsuarioCriacao?.NomeUsuario
                 });
             }
 
