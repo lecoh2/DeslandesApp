@@ -46,7 +46,7 @@ namespace DeslandesApp.Domain.Extensions
             services.AddScoped<IKanbanService, KanbanService>();
             services.AddScoped<IDetalheAtividadeService, DetalheAtividadeService>();
             services.AddScoped<IComentarioService, ComentarioService>();
-
+            services.AddScoped<IHistoricoGeralService, HistoricoGeralService>();
             //services.AddTransient<IGrupoNiveisServices, GrupoNiveisService>();
             //services.AddTransient<IGrupoSetoresService, GrupoSetoresService>()
 

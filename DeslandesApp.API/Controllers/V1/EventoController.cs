@@ -40,15 +40,16 @@ namespace DeslandesApp.API.Controllers.V1
 
             return Ok(eventoPaged);
         }
-        [HttpPut("atualizar-evento{id}")]
+        [HttpPut("atualizar-evento/{id}")]
         [ProducesResponseType(typeof(CriarEventoResponse), 200)]
         public async Task<IActionResult> PutAsync(Guid id, [FromBody] UpdateEventoRequest request)
         {
             var response = await eventoService.ModificarAsync(id, request);
-            return StatusCode(StatusCodes.Status201Created, new
+
+            return Ok(new
             {
                 success = true,
-                message = $"Proceso {response.Titulo} atualizado com sucesso.",
+                message = $"Evento {response.Titulo} atualizado com sucesso.",
                 data = response
             });
         }
@@ -79,5 +80,6 @@ namespace DeslandesApp.API.Controllers.V1
                 message = "Responsável removido do processo com sucesso."
             });
         }
+
     }
 }

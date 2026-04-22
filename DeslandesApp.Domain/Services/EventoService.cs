@@ -21,7 +21,8 @@ using System.Threading.Tasks;
 
 namespace DeslandesApp.Domain.Services
 {
-    public class EventoService(IUnitOfWork unitOfWork, IMapper mapper, IHttpContextAccessor httpContextAccessor) : IEventoService
+    public class EventoService(IUnitOfWork unitOfWork, IMapper mapper,
+        IHttpContextAccessor httpContextAccessor, IHistoricoGeralService historicoGeralService) : IEventoService
     {
         public async Task<CriarEventoResponse> AdicionarAsync(CriarEventoRequest request)
         {
@@ -237,6 +238,192 @@ namespace DeslandesApp.Domain.Services
             throw new NotImplementedException();
         }
 
+        //public async Task<CriarEventoResponse> ModificarAsync(Guid id, UpdateEventoRequest request)
+        //{
+        //    await unitOfWork.BeginTransactionAsync();
+
+        //    try
+        //    {
+        //        var evento = await unitOfWork.EventoRepository.GetByIdAsync(id);
+
+        //        if (evento == null)
+        //            throw new ApplicationException("Evento não encontrado.");
+
+        //        var usuarioId = ObterUsuarioId();
+
+        //        // =========================
+        //        // ANTES (COM RELACIONAMENTOS)
+        //        // =========================
+        //        var eventoAntes = await unitOfWork.EventoRepository
+        //            .ConsultarEventoComRelacionamentosAsync(id);
+
+        //        if (eventoAntes == null)
+        //            throw new ApplicationException("Evento para histórico não encontrado.");
+
+        //        var dadosAntes = new
+        //        {
+        //            eventoAntes.Titulo,
+        //            eventoAntes.DataInicial,
+        //            eventoAntes.HoraInicial,
+        //            eventoAntes.DataFinal,
+        //            eventoAntes.HoraFinal,
+        //            eventoAntes.DiaInteiro,
+        //            eventoAntes.Endereco,
+        //            eventoAntes.Observacao,
+        //            eventoAntes.Modalidade,
+        //            eventoAntes.StatusGeralKanban,
+
+        //            Responsaveis = eventoAntes.GrupoEventoResponsaveis?
+        //                .Select(r => r.Usuario?.NomeUsuario)
+        //                .Where(n => n != null)
+        //                .ToList()
+        //        };
+
+        //        //  =========================
+        //        // ATUALIZAÇÃO
+        //        // =========================
+        //        mapper.Map(request, evento);
+
+        //        var agora = DateTime.Now;
+        //        var hoje = DateOnly.FromDateTime(agora);
+        //        var horaAtual = TimeOnly.FromDateTime(agora);
+
+        //        //  STATUS
+        //        evento.StatusGeralKanban = request.StatusKaban ?? evento.StatusGeralKanban;
+
+        //        if (evento.DataFinal.HasValue && evento.DataFinal.Value < hoje)
+        //        {
+        //            evento.StatusGeralKanban = StatusGeralKanban.Concluido;
+        //        }
+        //        else if (evento.DataInicial == hoje &&
+        //                 evento.HoraInicial <= horaAtual &&
+        //                 (evento.HoraFinal == null || evento.HoraFinal >= horaAtual))
+        //        {
+        //            evento.StatusGeralKanban = StatusGeralKanban.Em_Andamento;
+        //        }
+
+        //        //  NORMALIZAÇÃO
+        //        evento.Titulo = evento.Titulo.Trim();
+        //        evento.Endereco = evento.Endereco?.Trim();
+        //        evento.Observacao = evento.Observacao?.Trim();
+
+        //        //  DIA INTEIRO
+        //        if (evento.DiaInteiro)
+        //        {
+        //            evento.HoraInicial = TimeOnly.MinValue;
+        //            evento.HoraFinal = TimeOnly.MaxValue;
+        //        }
+
+        //        //  RECORRÊNCIA
+        //        if (evento.IntervaloRecorrencia < 1)
+        //            throw new InvalidOperationException("Intervalo da recorrência deve ser maior ou igual a 1.");
+
+        //        if (evento.TipoRecorrencia != TipoRecorrencia.Nenhuma)
+        //        {
+        //            if (evento.DataFimRecorrencia.HasValue && evento.QuantidadeOcorrencias.HasValue)
+        //                throw new InvalidOperationException("Informe apenas DataFimRecorrencia ou QuantidadeOcorrencias.");
+
+        //            if (!evento.DataFimRecorrencia.HasValue && !evento.QuantidadeOcorrencias.HasValue)
+        //                throw new InvalidOperationException("Recorrência precisa de um critério de término.");
+
+        //            if (evento.TipoRecorrencia == TipoRecorrencia.Semanal &&
+        //                (evento.DiasSemana == null || !evento.DiasSemana.Any()))
+        //                throw new InvalidOperationException("Informe ao menos um dia da semana.");
+        //        }
+        //        else
+        //        {
+        //            evento.IntervaloRecorrencia = 1;
+        //            evento.DiasSemana = new List<DayOfWeek>();
+        //            evento.DataFimRecorrencia = null;
+        //            evento.QuantidadeOcorrencias = null;
+        //        }
+
+        //        //  VALIDAÇÃO
+        //        var validator = new EventoValidator();
+        //        var result = validator.Validate(evento);
+
+        //        if (!result.IsValid)
+        //            throw new ValidationException(result.Errors);
+
+        //        await unitOfWork.EventoRepository.UpdateAsync(evento);
+
+        //        //  =========================
+        //        // RESPONSÁVEIS (SE FOR ATUALIZAR)
+        //        // =========================
+        //        /*
+        //        await unitOfWork.GrupoEventoResponsavelRepository.DeleteByEventoIdAsync(id);
+
+        //        if (request.GrupoEventoResponsavel != null && request.GrupoEventoResponsavel.Any())
+        //        {
+        //            foreach (var item in request.GrupoEventoResponsavel)
+        //            {
+        //                var usuario = await unitOfWork.UsuarioRepository.GetByIdAsync(item.UsuarioId);
+
+        //                if (usuario == null)
+        //                    throw new InvalidOperationException($"Usuário {item.UsuarioId} não encontrado.");
+
+        //                await unitOfWork.GrupoEventoResponsavelRepository.AddAsync(new GrupoEventoResponsavel
+        //                {
+        //                    EventoId = evento.Id,
+        //                    UsuarioId = item.UsuarioId
+        //                });
+        //            }
+        //        }
+        //        */
+
+        //        //  =========================
+        //        // DEPOIS
+        //        // =========================
+        //        var eventoDepois = await unitOfWork.EventoRepository
+        //            .ConsultarEventoComRelacionamentosAsync(id);
+
+        //        if (eventoDepois == null)
+        //            throw new ApplicationException("Evento atualizado não encontrado.");
+
+        //        var dadosDepois = new
+        //        {
+        //            eventoDepois.Titulo,
+        //            eventoDepois.DataInicial,
+        //            eventoDepois.HoraInicial,
+        //            eventoDepois.DataFinal,
+        //            eventoDepois.HoraFinal,
+        //            eventoDepois.DiaInteiro,
+        //            eventoDepois.Endereco,
+        //            eventoDepois.Observacao,
+        //            eventoDepois.Modalidade,
+        //            eventoDepois.StatusGeralKanban,
+
+        //            Responsaveis = eventoDepois.GrupoEventoResponsaveis?
+        //                .Select(r => r.Usuario?.NomeUsuario)
+        //                .Where(n => n != null)
+        //                .ToList()
+        //        };
+
+        //        // 🧾 =========================
+        //        // HISTÓRICO
+        //        // =========================
+        //        var historico = new EventoHistorico
+        //        {
+        //            EventoId = evento.Id,
+        //            UsuarioId = usuarioId,
+        //            DataAlteracao = DateTime.Now,
+        //            Observacao = request.Observacao ?? "",
+        //            DadosAntes = JsonConvert.SerializeObject(dadosAntes),
+        //            DadosDepois = JsonConvert.SerializeObject(dadosDepois)
+        //        };
+
+        //        await unitOfWork.EventoHistoricoRepository.AddAsync(historico);
+
+        //        await unitOfWork.CommitAsync();
+
+        //        return mapper.Map<CriarEventoResponse>(eventoDepois);
+        //    }
+        //    catch
+        //    {
+        //        await unitOfWork.RollbackAsync();
+        //        throw;
+        //    }
+        //}
         public async Task<CriarEventoResponse> ModificarAsync(Guid id, UpdateEventoRequest request)
         {
             await unitOfWork.BeginTransactionAsync();
@@ -251,13 +438,10 @@ namespace DeslandesApp.Domain.Services
                 var usuarioId = ObterUsuarioId();
 
                 // =========================
-                // ANTES (COM RELACIONAMENTOS)
+                // ANTES
                 // =========================
                 var eventoAntes = await unitOfWork.EventoRepository
                     .ConsultarEventoComRelacionamentosAsync(id);
-
-                if (eventoAntes == null)
-                    throw new ApplicationException("Evento para histórico não encontrado.");
 
                 var dadosAntes = new
                 {
@@ -278,7 +462,7 @@ namespace DeslandesApp.Domain.Services
                         .ToList()
                 };
 
-                //  =========================
+                // =========================
                 // ATUALIZAÇÃO
                 // =========================
                 mapper.Map(request, evento);
@@ -287,7 +471,6 @@ namespace DeslandesApp.Domain.Services
                 var hoje = DateOnly.FromDateTime(agora);
                 var horaAtual = TimeOnly.FromDateTime(agora);
 
-                //  STATUS
                 evento.StatusGeralKanban = request.StatusKaban ?? evento.StatusGeralKanban;
 
                 if (evento.DataFinal.HasValue && evento.DataFinal.Value < hoje)
@@ -301,19 +484,16 @@ namespace DeslandesApp.Domain.Services
                     evento.StatusGeralKanban = StatusGeralKanban.Em_Andamento;
                 }
 
-                //  NORMALIZAÇÃO
                 evento.Titulo = evento.Titulo.Trim();
                 evento.Endereco = evento.Endereco?.Trim();
                 evento.Observacao = evento.Observacao?.Trim();
 
-                //  DIA INTEIRO
                 if (evento.DiaInteiro)
                 {
                     evento.HoraInicial = TimeOnly.MinValue;
                     evento.HoraFinal = TimeOnly.MaxValue;
                 }
 
-                //  RECORRÊNCIA
                 if (evento.IntervaloRecorrencia < 1)
                     throw new InvalidOperationException("Intervalo da recorrência deve ser maior ou igual a 1.");
 
@@ -337,7 +517,6 @@ namespace DeslandesApp.Domain.Services
                     evento.QuantidadeOcorrencias = null;
                 }
 
-                //  VALIDAÇÃO
                 var validator = new EventoValidator();
                 var result = validator.Validate(evento);
 
@@ -346,38 +525,11 @@ namespace DeslandesApp.Domain.Services
 
                 await unitOfWork.EventoRepository.UpdateAsync(evento);
 
-                //  =========================
-                // RESPONSÁVEIS (SE FOR ATUALIZAR)
                 // =========================
-                /*
-                await unitOfWork.GrupoEventoResponsavelRepository.DeleteByEventoIdAsync(id);
-
-                if (request.GrupoEventoResponsavel != null && request.GrupoEventoResponsavel.Any())
-                {
-                    foreach (var item in request.GrupoEventoResponsavel)
-                    {
-                        var usuario = await unitOfWork.UsuarioRepository.GetByIdAsync(item.UsuarioId);
-
-                        if (usuario == null)
-                            throw new InvalidOperationException($"Usuário {item.UsuarioId} não encontrado.");
-
-                        await unitOfWork.GrupoEventoResponsavelRepository.AddAsync(new GrupoEventoResponsavel
-                        {
-                            EventoId = evento.Id,
-                            UsuarioId = item.UsuarioId
-                        });
-                    }
-                }
-                */
-
-                //  =========================
                 // DEPOIS
                 // =========================
                 var eventoDepois = await unitOfWork.EventoRepository
                     .ConsultarEventoComRelacionamentosAsync(id);
-
-                if (eventoDepois == null)
-                    throw new ApplicationException("Evento atualizado não encontrado.");
 
                 var dadosDepois = new
                 {
@@ -399,19 +551,16 @@ namespace DeslandesApp.Domain.Services
                 };
 
                 // 🧾 =========================
-                // HISTÓRICO
+                // HISTÓRICO (NOVO PADRÃO)
                 // =========================
-                var historico = new EventoHistorico
-                {
-                    EventoId = evento.Id,
-                    UsuarioId = usuarioId,
-                    DataAlteracao = DateTime.Now,
-                    Observacao = request.Observacao ?? "",
-                    DadosAntes = JsonConvert.SerializeObject(dadosAntes),
-                    DadosDepois = JsonConvert.SerializeObject(dadosDepois)
-                };
-
-                await unitOfWork.EventoHistoricoRepository.AddAsync(historico);
+                await historicoGeralService.RegistrarAsync(
+                    TipoEntidade.Evento,
+                    evento.Id,
+                    usuarioId,
+                    dadosAntes,
+                    dadosDepois,
+                    request.Observacao
+                );
 
                 await unitOfWork.CommitAsync();
 
@@ -423,7 +572,6 @@ namespace DeslandesApp.Domain.Services
                 throw;
             }
         }
-
         public Task<CriarEventoResponse?> ObterPorIdAsync(Guid id)
         {
             throw new NotImplementedException();
