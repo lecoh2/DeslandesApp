@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using DeslandesApp.Domain.Models.Dtos.Requests.Atendimento;
 using DeslandesApp.Domain.Models.Dtos.Requests.Caso;
+using DeslandesApp.Domain.Models.Dtos.Requests.Comentarios;
 using DeslandesApp.Domain.Models.Dtos.Requests.ContaBancaria;
 using DeslandesApp.Domain.Models.Dtos.Requests.EnderecoPessoa;
 using DeslandesApp.Domain.Models.Dtos.Requests.Evento;
@@ -350,6 +351,17 @@ namespace DeslandesApp.Domain.Mappings
             CreateMap<Qualificacao, QualificacaoResponse>()
      .ForCtorParam("IdQualificacao", opt => opt.MapFrom(src => src.Id))
      .ForCtorParam("NomeQualificacao", opt => opt.MapFrom(src => src.NomeQualificacao));
+            #endregion
+            #region comentario
+
+
+            CreateMap<CriarComentarioRequest, Comentario>()
+            .ForMember(dest => dest.Id, opt => opt.Ignore())
+            .ForMember(dest => dest.UsuarioId, opt => opt.Ignore())
+            .ForMember(dest => dest.DataCriacao, opt => opt.MapFrom(_ => DateTime.Now))
+            .ForMember(dest => dest.Texto, opt => opt.MapFrom(src => src.Texto.Trim()));
+
+
             #endregion
         }
     }

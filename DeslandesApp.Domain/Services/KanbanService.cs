@@ -2,6 +2,7 @@
 using DeslandesApp.Domain.Interfaces.Repositories;
 using DeslandesApp.Domain.Interfaces.Services;
 using DeslandesApp.Domain.Models.Entities;
+using DeslandesApp.Domain.Models.Enum;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -39,6 +40,8 @@ namespace DeslandesApp.Domain.Services
                     Titulo = t.Descricao,
                     Data = t.DataTarefa,
                     Tipo = "Tarefa",
+                    Prioridade = t.Prioridade,
+                    PrioridadeDescricao = t.Prioridade.ToString(),
                     Status = t.StatusGeralKanban,
                     UsuarioCriacaoId = t.UsuarioCriacaoId,
                     UsuarioCriacaoNome = t.UsuarioCriacao?.NomeUsuario
@@ -54,7 +57,16 @@ namespace DeslandesApp.Domain.Services
                 {
                     Id = e.Id,
                     Titulo = e.Titulo,
+
                     Data = e.DataInicial.ToDateTime(TimeOnly.MinValue),
+
+                    // 🔥 CORRIGIDO
+                    DataInicial = e.DataInicial.ToDateTime(e.HoraInicial),
+                    DataFinal = e.DataFinal?.ToDateTime(e.HoraFinal ?? TimeOnly.MinValue),
+
+                    HoraInicial = e.HoraInicial,
+                    HoraFinal = e.HoraFinal,
+
                     Tipo = "Evento",
                     Status = e.StatusGeralKanban,
                     UsuarioCriacaoId = e.UsuarioCriacaoId,

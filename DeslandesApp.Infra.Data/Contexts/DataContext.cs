@@ -59,6 +59,7 @@ namespace DeslandesApp.Infra.Data.Contexts
         public DbSet<GrupoClienteProcesso> GrupoClientesProcesso { get; set; }
         public DbSet<ListaTarefa> ListaTarefa { get; set; }
         public DbSet<GrupoEventoEtiquetas> GrupoEventoEtiquetas { get; set; }
+        public DbSet<Comentario> Comentario { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);

@@ -58,6 +58,7 @@ namespace DeslandesApp.Domain.Interfaces.Repositories
         IContaBancariaRepository ContaBancariaRepository { get; }
         IAcaoRepository AcaoRepository { get; }
         IGrupoEventoEtiquetasRepository GrupoEventoEtiquetasRepository { get; }
+        IComentarioRepository ComentarioRepository { get; }
         #endregion
     }
 }

@@ -90,6 +90,17 @@ namespace DeslandesApp.Infra.Data.Repositories
             }
         }
         private IGrupoEventoEtiquetasRepository? _grupoEventoEtiquetasRepository;
+        private IComentarioRepository? _comentarioRepository;
+        public IComentarioRepository ComentarioRepository
+        {
+            get
+            {
+                if (_comentarioRepository == null)
+                    _comentarioRepository = new ComentarioRepository(dataContext);
+
+                return _comentarioRepository;
+            }
+        }
         public IGrupoEventoEtiquetasRepository GrupoEventoEtiquetasRepository
         {
             get
