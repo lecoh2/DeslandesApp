@@ -12,5 +12,6 @@ namespace DeslandesApp.Domain.Interfaces.Repositories
     public interface IComentarioRepository : IBaseRepository<Comentario, Guid>
     {
         Task<List<Comentario>> ObterComentarios(Guid? tarefaId, Guid? eventoId);
+        Task<Dictionary<Guid, int>> ContarComentariosPorCard();
     }
 }

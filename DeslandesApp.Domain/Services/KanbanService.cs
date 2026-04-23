@@ -3,6 +3,8 @@ using DeslandesApp.Domain.Interfaces.Repositories;
 using DeslandesApp.Domain.Interfaces.Services;
 using DeslandesApp.Domain.Models.Entities;
 using DeslandesApp.Domain.Models.Enum;
+using Microsoft.AspNetCore.Http;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,10 +16,12 @@ namespace DeslandesApp.Domain.Services
     public class KanbanService : IKanbanService
     {
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public KanbanService(IUnitOfWork unitOfWork)
+        public KanbanService(IUnitOfWork unitOfWork, IHttpContextAccessor httpContextAccessor)
         {
             _unitOfWork = unitOfWork;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         public async Task<List<KanbanColuna>> ObterKanbanAsync()
@@ -25,7 +29,7 @@ namespace DeslandesApp.Domain.Services
             // 🔹 Busca dados do banco
             var tarefas = await _unitOfWork.TarefaRepository.GetKanbanAsync();
             var eventos = await _unitOfWork.EventoRepository.GetKanbanAsync();
-
+            var comentarios = await _unitOfWork.ComentarioRepository.ContarComentariosPorCard();
             // 🔹 Lista de cards
             var cards = new List<KanbanCard>();
 
@@ -44,7 +48,10 @@ namespace DeslandesApp.Domain.Services
                     PrioridadeDescricao = t.Prioridade.ToString(),
                     Status = t.StatusGeralKanban,
                     UsuarioCriacaoId = t.UsuarioCriacaoId,
-                    UsuarioCriacaoNome = t.UsuarioCriacao?.NomeUsuario
+                    UsuarioCriacaoNome = t.UsuarioCriacao?.NomeUsuario,
+                    QuantidadeComentarios = comentarios.TryGetValue(t.Id, out var qtd)
+            ? qtd
+            : 0
                 });
             }
 
@@ -70,7 +77,10 @@ namespace DeslandesApp.Domain.Services
                     Tipo = "Evento",
                     Status = e.StatusGeralKanban,
                     UsuarioCriacaoId = e.UsuarioCriacaoId,
-                    UsuarioCriacaoNome = e.UsuarioCriacao?.NomeUsuario
+                    UsuarioCriacaoNome = e.UsuarioCriacao?.NomeUsuario,
+                    QuantidadeComentarios = comentarios.TryGetValue(e.Id, out var qtd)
+            ? qtd
+            : 0
                 });
             }
 
@@ -97,10 +107,36 @@ namespace DeslandesApp.Domain.Services
         public async Task AtualizarStatusAsync(Guid id, StatusGeralKanban status)
         {
             var tarefa = await _unitOfWork.TarefaRepository.GetByIdAsync(id);
-
+            var usuarioId = ObterUsuarioId();
             if (tarefa != null)
             {
+                // 🔥 ANTES
+                var dadosAntes = new
+                {
+                    StatusGeralKanban = tarefa.StatusGeralKanban
+                };
+
+                // 🔥 ALTERA
                 tarefa.StatusGeralKanban = status;
+
+                // 🔥 DEPOIS
+                var dadosDepois = new
+                {
+                    StatusGeralKanban = tarefa.StatusGeralKanban
+                };
+
+                // 🔥 SALVA HISTÓRICO
+                await _unitOfWork.HistoricoGeralRepository.AddAsync(new HistoricoGeral
+                {
+                    Entidade = TipoEntidade.Tarefa,
+                    EntidadeId = tarefa.Id,
+                    UsuarioId = usuarioId,
+                    Observacao = "Status alterado",
+
+                    DadosAntes = JsonConvert.SerializeObject(dadosAntes),
+                    DadosDepois = JsonConvert.SerializeObject(dadosDepois)
+                });
+
                 await _unitOfWork.CommitAsync();
                 return;
             }
@@ -109,12 +145,46 @@ namespace DeslandesApp.Domain.Services
 
             if (evento != null)
             {
+                var dadosAntes = new
+                {
+                    StatusGeralKanban = evento.StatusGeralKanban
+                };
+
                 evento.StatusGeralKanban = status;
+
+                var dadosDepois = new
+                {
+                    StatusGeralKanban = evento.StatusGeralKanban
+                };
+
+                await _unitOfWork.HistoricoGeralRepository.AddAsync(new HistoricoGeral
+                {
+                    Entidade = TipoEntidade.Evento,
+                    EntidadeId = evento.Id,
+                    UsuarioId = usuarioId,
+                    Observacao = "Status alterado",
+
+                    DadosAntes = JsonConvert.SerializeObject(dadosAntes),
+                    DadosDepois = JsonConvert.SerializeObject(dadosDepois)
+                });
+
                 await _unitOfWork.CommitAsync();
                 return;
             }
 
             throw new Exception("Item não encontrado");
+        }
+
+        private Guid? ObterUsuarioId()
+        {
+            var user = _httpContextAccessor.HttpContext?.User;
+
+            var userId = user?.FindFirst(System.Security.Claims.ClaimTypes.Name)?.Value;
+
+            if (string.IsNullOrEmpty(userId))
+                return null;
+
+            return Guid.Parse(userId);
         }
     }
 }

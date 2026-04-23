@@ -15,7 +15,7 @@ namespace DeslandesApp.API.Controllers.V1
     TipoEntidade entidade,
     Guid entidadeId)
         {
-            var historico = await historicoGeralService.ObterAsync(entidade, entidadeId);
+            var historico = await historicoGeralService.ObterPorEntidadeAsync(entidade, entidadeId);
             return Ok(historico);
         }
     }

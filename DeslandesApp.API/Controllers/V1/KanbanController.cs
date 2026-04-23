@@ -22,8 +22,8 @@ namespace DeslandesApp.API.Controllers.V1
             var result = await _kanbanService.ObterKanbanAsync();
             return Ok(result);
         }
-        [HttpPut("kanban{id}/status")]
-        public async Task<IActionResult> AtualizarStatus(Guid id, [FromBody] int status)
+        [HttpPut("kanban/{id}/status")]
+        public async Task<IActionResult> AtualizarStatus(Guid id, [FromBody] StatusGeralKanban status)
         {
             await _kanbanService.AtualizarStatusAsync(id, (StatusGeralKanban)status);
             return NoContent();

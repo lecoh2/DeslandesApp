@@ -12,6 +12,7 @@ namespace DeslandesApp.Domain.Interfaces.Services
     public interface IComentarioService : IBaseService<CriarComentarioRequest, UpdateComentarioRequest, ComentarioResponse, Guid>
     {
         Task<Comentario> CriarComentario(CriarComentarioRequest request);
-        Task<List<Comentario>> ObterComentarios(Guid? tarefaId, Guid? eventoId);
+        Task<List<ComentarioResponse>> ObterComentarios(Guid? tarefaId, Guid? eventoId);
+
     }
 }

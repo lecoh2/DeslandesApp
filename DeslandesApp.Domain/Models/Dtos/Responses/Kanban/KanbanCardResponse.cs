@@ -13,5 +13,6 @@ namespace DeslandesApp.Domain.Models.Dtos.Responses.Kanban
         public DateTime? Data { get; init; }
         public string Tipo { get; init; } = string.Empty;
         public int Status { get; init; }
+        public int QuantidadeComentarios { get; init; }
     }
 }

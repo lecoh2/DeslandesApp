@@ -17,9 +17,10 @@ namespace DeslandesApp.Infra.Data.Repositories
         public async Task<List<HistoricoGeral>> ObterPorEntidadeAsync(TipoEntidade entidade, Guid entidadeId)
         {
             return await dataContext.Set<HistoricoGeral>()
-                .Where(x => x.Entidade == entidade && x.EntidadeId == entidadeId)
-                .OrderByDescending(x => x.DataAlteracao)
-                .ToListAsync();
+    .Include(x => x.Usuario) 
+    .Where(x => x.Entidade == entidade && x.EntidadeId == entidadeId)
+    .OrderByDescending(x => x.DataAlteracao)
+    .ToListAsync();
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using DeslandesApp.Domain.Models.Entities;
+﻿using DeslandesApp.Domain.Models.Dtos.Responses.HistoricoGeral;
+using DeslandesApp.Domain.Models.Entities;
 using DeslandesApp.Domain.Models.Enum;
 using System;
 using System.Collections.Generic;
@@ -18,6 +19,6 @@ namespace DeslandesApp.Domain.Interfaces.Services
             object dadosDepois,
             string? observacao = null
         );
-        Task<List<HistoricoGeral>> ObterAsync(TipoEntidade entidade, Guid entidadeId);
+        Task<List<HistoricoGeralResponse>> ObterPorEntidadeAsync(TipoEntidade entidade, Guid entidadeId);
     }
 }

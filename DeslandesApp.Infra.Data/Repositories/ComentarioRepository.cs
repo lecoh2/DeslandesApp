@@ -14,17 +14,21 @@ namespace DeslandesApp.Infra.Data.Repositories
     {
         public async Task<List<Comentario>> ObterComentarios(Guid? tarefaId, Guid? eventoId)
         {
-            var query = dataContext.Comentario.AsQueryable();
-
-            if (tarefaId.HasValue)
-                query = query.Where(c => c.TarefaId == tarefaId);
-
-            if (eventoId.HasValue)
-                query = query.Where(c => c.EventoId == eventoId);
-
-            return await query
+            return await dataContext.Comentario
+                .Include(c => c.Usuario) // 🔥 AQUI
+                .Where(c =>
+                    (tarefaId.HasValue && c.TarefaId == tarefaId) ||
+                    (eventoId.HasValue && c.EventoId == eventoId)
+                )
                 .OrderByDescending(c => c.DataCriacao)
                 .ToListAsync();
+        }
+        public async Task<Dictionary<Guid, int>> ContarComentariosPorCard()
+        {
+            return await dataContext.Comentario
+                .Where(c => c.TarefaId != null || c.EventoId != null)
+                .GroupBy(c => c.TarefaId ?? c.EventoId)
+                .ToDictionaryAsync(g => g.Key!.Value, g => g.Count());
         }
     }
 }

@@ -12,5 +12,6 @@ namespace DeslandesApp.Domain.Models.Dtos.Responses.Comentarios
         public string Texto { get; init; } = string.Empty;
         public DateTime DataCriacao { get; init; }
         public string UsuarioNome { get; init; } = string.Empty;
+
     }
 }

@@ -1,5 +1,6 @@
 ﻿using DeslandesApp.Domain.Interfaces.Repositories;
 using DeslandesApp.Domain.Interfaces.Services;
+using DeslandesApp.Domain.Models.Dtos.Responses.HistoricoGeral;
 using DeslandesApp.Domain.Models.Entities;
 using DeslandesApp.Domain.Models.Enum;
 using Newtonsoft.Json;
@@ -41,10 +42,26 @@ namespace DeslandesApp.Domain.Services
 
             await unitOfWork.HistoricoGeralRepository.AddAsync(historico);
         }
-        public async Task<List<HistoricoGeral>> ObterAsync(TipoEntidade entidade, Guid entidadeId)
+        public async Task<List<HistoricoGeralResponse>> ObterPorEntidadeAsync(TipoEntidade entidade, Guid entidadeId)
         {
-            return await unitOfWork.HistoricoGeralRepository
+            var historico = await unitOfWork.HistoricoGeralRepository
                 .ObterPorEntidadeAsync(entidade, entidadeId);
+
+            return historico.Select(h => new HistoricoGeralResponse
+            {
+                Entidade = h.Entidade,
+                EntidadeId = h.EntidadeId,
+                DataAlteracao = h.DataAlteracao,
+                Observacao = h.Observacao,
+
+                UsuarioNome = h.Usuario != null
+                    ? h.Usuario.NomeUsuario
+                    : "Sistema",
+
+                DadosAntes = h.DadosAntes,
+                DadosDepois = h.DadosDepois
+
+            }).ToList();
         }
     }
 }

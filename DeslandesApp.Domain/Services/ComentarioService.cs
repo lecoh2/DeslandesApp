@@ -63,10 +63,17 @@ namespace DeslandesApp.Domain.Services
             throw new NotImplementedException();
         }
 
-        public async Task<List<Comentario>> ObterComentarios(Guid? tarefaId, Guid? eventoId)
+        public async Task<List<ComentarioResponse>> ObterComentarios(Guid? tarefaId, Guid? eventoId)
         {
-            return await unitOfWork.ComentarioRepository
-                .ObterComentarios(tarefaId, eventoId);
+            var comentarios = await unitOfWork.ComentarioRepository.ObterComentarios(tarefaId, eventoId);
+
+            return comentarios.Select(c => new ComentarioResponse
+            {
+                Id = c.Id,
+                Texto = c.Texto,
+                DataCriacao = c.DataCriacao,
+                UsuarioNome = c.Usuario?.NomeUsuario ?? "Sistema"
+            }).ToList();
         }
 
         public Task<ComentarioResponse?> ObterPorIdAsync(Guid id)

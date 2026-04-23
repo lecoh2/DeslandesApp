@@ -34,6 +34,9 @@ namespace DeslandesApp.Infra.Data.Repositories
         {
             return await dataContext.Evento
                 .Include(e => e.UsuarioCriacao)
+                .Where(e => e.StatusGeralKanban != StatusGeralKanban.Cancelado)
+                .OrderBy(e => e.DataInicial)
+                .Take(200) // 🔥 limite
                 .ToListAsync();
         }
         public async Task<PageResult<EventoPaginacaoResponse>> GetEventoPaginacaoAsync(

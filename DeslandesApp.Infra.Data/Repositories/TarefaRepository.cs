@@ -83,6 +83,10 @@ namespace DeslandesApp.Infra.Data.Repositories
         {
             return await dataContext.Tarefas
                 .Include(t => t.UsuarioCriacao)
+                .Where(t => t.StatusGeralKanban != StatusGeralKanban.Cancelado)
+                .OrderBy(t => t.StatusGeralKanban)
+                .ThenBy(t => t.DataTarefa)
+                .Take(200)
                 .ToListAsync();
         }
     }
