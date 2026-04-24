@@ -3,10 +3,12 @@ using DeslandesApp.Domain.Interfaces.Repositories;
 using DeslandesApp.Domain.Interfaces.Services;
 using DeslandesApp.Domain.Models.Dtos.Requests.Kaban;
 using DeslandesApp.Domain.Models.Dtos.Requests.ListaTarefas;
+using DeslandesApp.Domain.Models.Dtos.Requests.Pessoas;
 using DeslandesApp.Domain.Models.Dtos.Requests.Processo;
 using DeslandesApp.Domain.Models.Dtos.Requests.Tarefa;
 using DeslandesApp.Domain.Models.Dtos.Responses.Processo;
 using DeslandesApp.Domain.Models.Dtos.Responses.Tarefa;
+using DeslandesApp.Domain.Models.Dtos.Responses.Usuarios;
 using DeslandesApp.Domain.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -93,6 +95,28 @@ namespace DeslandesApp.API.Controllers.V1
             var result = await tarefaService.ConsultarListaTarefaAutoCompleteAsync(termo);
 
             return Ok(result);
+        }
+        [HttpPut("atualizar-tarefa{id}")]
+        [ProducesResponseType(typeof(UsuariosResponse), 200)]
+        public async Task<IActionResult> PutAsync(Guid id, [FromBody] TarefaUpdateRequest request)
+        {
+            var response = await tarefaService.ModificarAsync(id, request);
+            return StatusCode(StatusCodes.Status201Created, new
+            {
+                success = true,
+                message = $"Tarefa {response.Descricao} atualizado com sucesso.",
+                data = response
+            });
+        }
+        [HttpGet("obter-tarefa-por-id{id:guid}")]
+        public async Task<IActionResult> ObterPorId(Guid id)
+        {
+            var tarefa = await tarefaService.ObterPorIdAsync(id);
+
+            if (tarefa == null)
+                return NotFound("Tarefa não encontrada.");
+
+            return Ok(tarefa);
         }
     }
 }

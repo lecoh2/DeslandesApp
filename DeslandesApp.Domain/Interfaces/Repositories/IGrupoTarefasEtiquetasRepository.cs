@@ -9,5 +9,6 @@ namespace DeslandesApp.Domain.Interfaces.Repositories
 {
     public interface IGrupoTarefasEtiquetasRepository : IBaseRepository<GrupoTarefasEtiquetas, Guid>
     {
+        Task RemoverPorTarefaId(Guid tarefaId);
     }
 }

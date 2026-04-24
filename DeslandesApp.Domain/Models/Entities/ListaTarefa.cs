@@ -11,9 +11,9 @@ namespace DeslandesApp.Domain.Models.Entities
 
     public class ListaTarefa : BaseEntity
     {
-        public string? Descricao { get; set; } = string.Empty;
+        public string Descricao { get; set; } = string.Empty;
 
-        public bool? Concluida { get; set; } = false;
+        public bool Concluida { get; set; } = false; // 👈 adicionar isso
 
         public DateTime? DataConclusao { get; set; }
 

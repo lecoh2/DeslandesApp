@@ -13,5 +13,6 @@ namespace DeslandesApp.Domain.Interfaces.Repositories
         Task<int?> ObterMaiorOrdemPorTarefaId(Guid tarefaId);
         Task<List<ListaTarefa>> ObterPorIdsAsync(List<Guid> ids);
         Task<List<ListaTarefasResponse>> ConsultarListaTarefaAutoCompleteAsync(string? termo = null);
+        Task RemoverPorTarefaId(Guid tarefaId);
     }
 }

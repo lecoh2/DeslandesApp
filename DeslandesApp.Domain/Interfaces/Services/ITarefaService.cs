@@ -15,13 +15,20 @@ using System.Threading.Tasks;
 
 namespace DeslandesApp.Domain.Interfaces.Services
 {
-    public interface ITarefaService : IBaseService<CriarTarefaRequest, TarefaUpdateRequest, CriarTarefaResponse, Guid>
+    public interface ITarefaService :
+        IBaseService<CriarTarefaRequest, TarefaUpdateRequest, CriarTarefaResponse, Guid>
     {
         Task ReordenarListaAsync(List<ReordenarListaTarefaRequest> request);
         Task MoverCardAsync(MoverKanbanCardRequest request);
         Task AtualizarStatusTarefasAutomatico();
-        Task<PageResult<TarefaPaginacaoResponse>> ConsultarTarefaPaginacaoAsync(int pageNumber, int pageSize, string? searchTerm = null);
+
+        Task<PageResult<TarefaPaginacaoResponse>> ConsultarTarefaPaginacaoAsync(
+            int pageNumber,
+            int pageSize,
+            string? searchTerm = null);
+
         Task<List<ListaTarefasResponse>> ConsultarListaTarefaAutoCompleteAsync(string? termo = null);
 
+        Task<ObterTarefaResponse?> ObterPorIdAsync(Guid id);
     }
 }

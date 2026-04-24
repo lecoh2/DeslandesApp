@@ -17,6 +17,6 @@ namespace DeslandesApp.Domain.Interfaces.Services
 
         Task<PageResult<TResponse>> ConsultarAsync(int pageNumber, int pageSize) ;
  
-        Task<TResponse?> ObterPorIdAsync(TKey id);
+     
     }
 }

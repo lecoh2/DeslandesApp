@@ -23,10 +23,10 @@ namespace DeslandesApp.Infra.Data.Mappings
                        .HasMaxLength(300)
                        .IsRequired();
 
-                builder.Property(x => x.Concluida)
-                       .HasColumnName("CONCLUIDA").IsRequired(false);
+            builder.Property(x => x.Concluida)
+   .HasColumnName("CONCLUIDA");
 
-                builder.Property(x => x.DataConclusao)
+            builder.Property(x => x.DataConclusao)
                        .HasColumnName("DATACONCLUSAO").IsRequired(false);
 
             builder.Property(x => x.Ordem)

@@ -1,4 +1,7 @@
 ﻿using DeslandesApp.Domain.Interfaces.Repositories;
+using DeslandesApp.Domain.Models.Dtos.Responses.Etiquetas;
+using DeslandesApp.Domain.Models.Dtos.Responses.GrupoTarefaResponsaveis;
+using DeslandesApp.Domain.Models.Dtos.Responses.ListaTarefas;
 using DeslandesApp.Domain.Models.Dtos.Responses.Processo;
 using DeslandesApp.Domain.Models.Dtos.Responses.Tarefa;
 using DeslandesApp.Domain.Models.Dtos.Responses.Usuarios;
@@ -31,8 +34,8 @@ namespace DeslandesApp.Infra.Data.Repositories
                 query = query.Where(p =>
                        p.Descricao.ToLower().Contains(term) ||
 
-                      // (p.Responsavel != null &&
-                      //  p.Responsavel.NomeUsuario.ToLower().Contains(term)) ||
+                       // (p.Responsavel != null &&
+                       //  p.Responsavel.NomeUsuario.ToLower().Contains(term)) ||
                        p.StatusGeralKanban.ToString().ToLower().Contains(term)
 
                                );
@@ -89,5 +92,18 @@ namespace DeslandesApp.Infra.Data.Repositories
                 .Take(200)
                 .ToListAsync();
         }
+        public async Task<Tarefa?> ObterCompletoPorIdAsync(Guid id)
+        {
+            return await dataContext.Tarefas
+                .AsNoTracking()
+                .Include(t => t.ListasTarefa)
+                .Include(t => t.GrupoTarefaResponsaveis)
+                    .ThenInclude(x => x.Usuario)
+                .Include(t => t.GrupoTarefasEtiquetas)
+                    .ThenInclude(x => x.Etiqueta)
+                .FirstOrDefaultAsync(t => t.Id == id);
+        }
+
+
     }
 }

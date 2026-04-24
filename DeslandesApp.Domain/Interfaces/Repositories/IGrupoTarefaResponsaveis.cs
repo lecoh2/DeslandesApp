@@ -11,5 +11,6 @@ namespace DeslandesApp.Domain.Interfaces.Repositories
     {
         Task<GrupoTarefaResponsaveis> GetByIdTarefaResponsaveisAsync(Guid idUsuario, Guid idTarefa);
         Task<GrupoTarefaResponsaveis> ExistTarefaResponsaveisAsync(Guid idUsuario, Guid idTarefa);
+        Task RemoverPorTarefaId(Guid tarefaId);
     }
 }

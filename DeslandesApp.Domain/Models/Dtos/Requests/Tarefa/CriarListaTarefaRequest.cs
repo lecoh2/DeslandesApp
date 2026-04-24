@@ -13,6 +13,8 @@ namespace DeslandesApp.Domain.Models.Dtos.Requests.Tarefa
         public string Descricao { get; init; } = string.Empty;
 
         //public int? Ordem { get; init; }
+        public bool Concluida { get; init; } = false;
+        public DateTime? DataConclusao { get; init; }
     }
 }
 

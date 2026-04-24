@@ -52,11 +52,20 @@ namespace DeslandesApp.Infra.Data.Repositories
                 .ToListAsync();
 
             return dados
-                .Select(x => new ListaTarefasResponse(
-                    x.Descricao,
-                    x.Quantidade
-                ))
-                .ToList();
+      .Select(x => new ListaTarefasResponse
+      {
+          Descricao = x.Descricao,
+          Quantidade = x.Quantidade
+      })
+      .ToList();
+        }
+        public async Task RemoverPorTarefaId(Guid tarefaId)
+        {
+            var registros = await dataContext.ListasTarefa
+                .Where(x => x.TarefaId == tarefaId)
+                .ToListAsync();
+
+            dataContext.ListasTarefa.RemoveRange(registros);
         }
     }
     }

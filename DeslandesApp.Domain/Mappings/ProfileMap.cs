@@ -26,7 +26,10 @@ using DeslandesApp.Domain.Models.Dtos.Responses.Evento;
 using DeslandesApp.Domain.Models.Dtos.Responses.GrupoNiveis;
 using DeslandesApp.Domain.Models.Dtos.Responses.GrupoPessoasEtiquetas;
 using DeslandesApp.Domain.Models.Dtos.Responses.GrupoSetores;
+using DeslandesApp.Domain.Models.Dtos.Responses.GrupoTarefaResponsaveis;
+using ObterTarefaResponse = DeslandesApp.Domain.Models.Dtos.Responses.Tarefa.ObterTarefaResponse;
 using DeslandesApp.Domain.Models.Dtos.Responses.InformacoesComplementares;
+using DeslandesApp.Domain.Models.Dtos.Responses.ListaTarefas;
 using DeslandesApp.Domain.Models.Dtos.Responses.Nivel;
 using DeslandesApp.Domain.Models.Dtos.Responses.Pessoas;
 using DeslandesApp.Domain.Models.Dtos.Responses.Processo;
@@ -219,20 +222,59 @@ namespace DeslandesApp.Domain.Mappings
      .ForAllMembers(opt => opt.Ignore());
 
             CreateMap<ProcessoUpdateRequest, Processo>();
-          
+
             #endregion
 
-            #region Tarefas
+         
 
+            #region TAREFAS
+
+            // =========================
+            // CREATE
+            // =========================
             CreateMap<CriarTarefaRequest, Tarefa>()
                 .ForMember(dest => dest.ListasTarefa, opt => opt.Ignore())
                 .ForMember(dest => dest.GrupoTarefasEtiquetas, opt => opt.Ignore())
                 .ForMember(dest => dest.GrupoTarefaResponsaveis, opt => opt.Ignore());
 
-            CreateMap<Tarefa, CriarTarefaResponse>()
-                .ForMember(dest => dest.Descricao, opt => opt.MapFrom(src => src.Descricao));
+            CreateMap<Tarefa, CriarTarefaResponse>();
 
             CreateMap<CriarListaTarefaRequest, ListaTarefa>();
+
+            CreateMap<ListaTarefa, ListaTarefasResponse>();
+
+            // =========================
+            // RESPONSE PRINCIPAL (CORRIGIDO)
+            // =========================
+            CreateMap<Tarefa, ObterTarefaResponse>()
+                .ForMember(dest => dest.ListasTarefa,
+                    opt => opt.MapFrom(src => src.ListasTarefa))
+
+                .ForMember(dest => dest.GrupoTarefaResponsaveis,
+                    opt => opt.MapFrom(src => src.GrupoTarefaResponsaveis))
+
+                .ForMember(dest => dest.GrupoTarefasEtiquetas,
+                    opt => opt.MapFrom(src => src.GrupoTarefasEtiquetas));
+
+            // =========================
+            // RESPONSÁVEIS (DTO LIMPO - SEM ENTIDADE)
+            // =========================
+            CreateMap<GrupoTarefaResponsaveis, TarefaResponsavelResponse>()
+                .ForMember(d => d.UsuarioId,
+                    o => o.MapFrom(s => s.UsuarioId))
+                .ForMember(d => d.Nome,
+                    o => o.MapFrom(s => s.Usuario != null ? s.Usuario.NomeUsuario : null));
+
+            // =========================
+            // ETIQUETAS (DTO LIMPO)
+            // =========================
+            CreateMap<GrupoTarefasEtiquetas, EtiquetaResponse>()
+                .ForMember(d => d.Id,
+                    o => o.MapFrom(s => s.EtiquetaId))
+                .ForMember(d => d.Nome,
+                    o => o.MapFrom(s => s.Etiqueta != null ? s.Etiqueta.Nome : null))
+                .ForMember(d => d.Cor,
+                    o => o.MapFrom(s => s.Etiqueta != null ? s.Etiqueta.Cor : null));
 
             #endregion
             #region Caso
@@ -243,8 +285,9 @@ namespace DeslandesApp.Domain.Mappings
                 .ForMember(dest => dest.GrupoCasoEnvolvidos, opt => opt.Ignore())
               .ForMember(dest => dest.GrupoEtiquetaCasos, opt => opt.Ignore()); // 🔥 FALTAVA ESSA
 
+
             // 🔁 Entidade -> Response
-            CreateMap<Caso, CriarCasoResponse>();
+            CreateMap<Caso, CriarCasoResponse>(); 
 
             #endregion
 
@@ -322,10 +365,11 @@ namespace DeslandesApp.Domain.Mappings
     .ForMember(dest => dest.Tipo, opt => opt.MapFrom(_ => "Evento"))
     .ForMember(dest => dest.Status, opt => opt.MapFrom(src => (StatusGeralKanban)src.StatusGeralKanban));
             #endregion
-            #region etiqutas
-            CreateMap<Etiqueta, EtiquetaResponse>()
+            #region etiquetas
+            CreateMap<Etiqueta, EtiquetaResponse>();
 
-     .ConstructUsing(src => new EtiquetaResponse(src.Id, src.Nome, src.Cor));
+ 
+
             #endregion
             #region Conta bancaria
             CreateMap<ContaBancariaRequest, ContaBancaria>()

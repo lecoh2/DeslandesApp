@@ -22,7 +22,8 @@ using DeslandesApp.Domain.Models.Dtos.Responses.ListaTarefas;
 
 namespace DeslandesApp.Domain.Services
 {
-    public class TarefaService(IUnitOfWork unitOfWork, IMapper mapper, IHttpContextAccessor httpContextAccessor) : ITarefaService
+    public class TarefaService(IUnitOfWork unitOfWork, IMapper mapper, IHttpContextAccessor httpContextAccessor,
+         IHistoricoGeralService historicoService) : ITarefaService
     {
         public async Task<CriarTarefaResponse> AdicionarAsync(CriarTarefaRequest request)
         {
@@ -35,7 +36,7 @@ namespace DeslandesApp.Domain.Services
             tarefa.Descricao = tarefa.Descricao?.Trim();
             tarefa.DataCadastro = DateTime.Now;
             tarefa.DataAtualizacao = DateTime.Now;
-            tarefa.StatusGeralKanban = StatusGeralKanban.A_Fazer;
+            tarefa.StatusGeralKanban = request.StatusGeralKanban;
             tarefa.UsuarioCriacaoId = ObterUsuarioId();
 
             // 🔗 VALIDAÇÃO DE VÍNCULOS
@@ -235,14 +236,191 @@ namespace DeslandesApp.Domain.Services
             throw new NotImplementedException();
         }
 
-        public Task<CriarTarefaResponse> ModificarAsync(Guid id, TarefaUpdateRequest request)
+        public async Task<CriarTarefaResponse> ModificarAsync(Guid id, TarefaUpdateRequest request)
         {
-            throw new NotImplementedException();
+            await unitOfWork.BeginTransactionAsync();
+
+            var tarefa = await unitOfWork.TarefaRepository.GetByIdAsync(id);
+
+            if (tarefa == null)
+                throw new InvalidOperationException("Tarefa não encontrada.");
+
+            var usuarioId = ObterUsuarioId();
+
+            // =========================
+            // 🔥 SNAPSHOT ANTES
+            // =========================
+            var dadosAntes = new
+            {
+                tarefa.Descricao,
+                tarefa.DataTarefa,
+                tarefa.StatusGeralKanban,
+                tarefa.Prioridade,
+                tarefa.TipoVinculo,
+                tarefa.ProcessoId,
+                tarefa.CasoId,
+                tarefa.AtendimentoId
+            };
+
+            // =========================
+            // 🔹 ATUALIZA CAMPOS (PARCIAL)
+            // =========================
+            if (!string.IsNullOrWhiteSpace(request.Descricao))
+                tarefa.Descricao = request.Descricao.Trim();
+
+            if (request.DataTarefa.HasValue)
+                tarefa.DataTarefa = request.DataTarefa;
+
+            if (request.Prioridade.HasValue)
+                tarefa.Prioridade = request.Prioridade.Value;
+
+            tarefa.DataAtualizacao = DateTime.Now;
+
+            // =========================
+            // 🔹 VÍNCULOS (REGRA DE NEGÓCIO)
+            // =========================
+            int count = 0;
+            if (request.ProcessoId.HasValue) count++;
+            if (request.CasoId.HasValue) count++;
+            if (request.AtendimentoId.HasValue) count++;
+
+            if (count > 1)
+                throw new InvalidOperationException("A tarefa não pode ter mais de um vínculo.");
+
+            // limpa tudo
+            tarefa.ProcessoId = null;
+            tarefa.CasoId = null;
+            tarefa.AtendimentoId = null;
+
+            if (request.ProcessoId.HasValue)
+            {
+                var processo = await unitOfWork.ProcessoRepository.GetByIdAsync(request.ProcessoId.Value)
+                    ?? throw new InvalidOperationException("Processo não encontrado.");
+
+                tarefa.ProcessoId = processo.Id;
+                tarefa.TipoVinculo = TipoVinculo.Processo;
+            }
+            else if (request.CasoId.HasValue)
+            {
+                var caso = await unitOfWork.CasoRepository.GetByIdAsync(request.CasoId.Value)
+                    ?? throw new InvalidOperationException("Caso não encontrado.");
+
+                tarefa.CasoId = caso.Id;
+                tarefa.TipoVinculo = TipoVinculo.Caso;
+            }
+            else if (request.AtendimentoId.HasValue)
+            {
+                var atendimento = await unitOfWork.AtendimentoRepository.GetByIdAsync(request.AtendimentoId.Value)
+                    ?? throw new InvalidOperationException("Atendimento não encontrado.");
+
+                tarefa.AtendimentoId = atendimento.Id;
+                tarefa.TipoVinculo = TipoVinculo.Atendimento;
+            }
+            else
+            {
+                tarefa.TipoVinculo = null;
+            }
+
+            // =========================
+            // 🔹 CHECKLIST (RESET)
+            // =========================
+            await unitOfWork.ListaTarefaRepository.RemoverPorTarefaId(id);
+            if (request.ListasTarefa?.Any() == true)
+            {
+                await unitOfWork.ListaTarefaRepository.RemoverPorTarefaId(id);
+
+                int ordem = 0;
+
+                foreach (var item in request.ListasTarefa)
+                {
+                    if (string.IsNullOrWhiteSpace(item.Descricao))
+                        continue;
+
+                    await unitOfWork.ListaTarefaRepository.AddAsync(new ListaTarefa
+                    {
+                        TarefaId = id,
+                        Descricao = item.Descricao.Trim(),
+                        Ordem = ordem += 10,
+                        Concluida = item.Concluida,
+                        DataConclusao = item.Concluida ? DateTime.Now : null
+                    });
+                }
+            }
+
+            // =========================
+            // 🔹 ETIQUETAS (RESET)
+            // =========================
+            await unitOfWork.GrupoTarefasEtiquetasRepository.RemoverPorTarefaId(id);
+
+            if (request.GrupoTarefasEtiquetas?.Any() == true)
+            {
+                foreach (var item in request.GrupoTarefasEtiquetas)
+                {
+                    await unitOfWork.GrupoTarefasEtiquetasRepository.AddAsync(new GrupoTarefasEtiquetas
+                    {
+                        TarefaId = id,
+                        EtiquetaId = item.EtiquetaId
+                    });
+                }
+            }
+
+            // =========================
+            // 🔹 RESPONSÁVEIS (RESET)
+            // =========================
+            await unitOfWork.GrupoTarefaResponsaveisRepository.RemoverPorTarefaId(id);
+
+            if (request.GrupoTarefaResponsaveis?.Any() == true)
+            {
+                foreach (var item in request.GrupoTarefaResponsaveis)
+                {
+                    await unitOfWork.GrupoTarefaResponsaveisRepository.AddAsync(new GrupoTarefaResponsaveis
+                    {
+                        TarefaId = id,
+                        UsuarioId = item.UsuarioId
+                    });
+                }
+            }
+
+            // =========================
+            // 🔥 SNAPSHOT DEPOIS
+            // =========================
+            var dadosDepois = new
+            {
+                tarefa.Descricao,
+                tarefa.DataTarefa,
+                tarefa.StatusGeralKanban,
+                tarefa.Prioridade,
+                tarefa.TipoVinculo,
+                tarefa.ProcessoId,
+                tarefa.CasoId,
+                tarefa.AtendimentoId
+            };
+
+            // =========================
+            // 🔥 HISTÓRICO PADRÃO
+            // =========================
+            await historicoService.RegistrarAsync(
+                TipoEntidade.Tarefa,
+                tarefa.Id,
+                usuarioId,
+                dadosAntes,
+                dadosDepois,
+                "Tarefa atualizada"
+            );
+
+            await unitOfWork.CommitAsync();
+
+            return mapper.Map<CriarTarefaResponse>(tarefa);
         }
 
-        public Task<CriarTarefaResponse?> ObterPorIdAsync(Guid id)
+        public async Task<ObterTarefaResponse?> ObterPorIdAsync(Guid id)
         {
-            throw new NotImplementedException();
+            var tarefa = await unitOfWork.TarefaRepository.ObterCompletoPorIdAsync(id);
+
+            if (tarefa == null)
+                return null;
+
+            return mapper.Map<ObterTarefaResponse>(tarefa);
         }
         public async Task MoverCardAsync(MoverKanbanCardRequest request)
         {
@@ -314,5 +492,7 @@ namespace DeslandesApp.Domain.Services
         {
             return await unitOfWork.ListaTarefaRepository.ConsultarListaTarefaAutoCompleteAsync(termo);
         }
+
+    
     }
 }

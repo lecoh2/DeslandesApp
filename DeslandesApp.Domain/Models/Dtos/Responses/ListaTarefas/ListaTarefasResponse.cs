@@ -6,6 +6,10 @@ using System.Threading.Tasks;
 
 namespace DeslandesApp.Domain.Models.Dtos.Responses.ListaTarefas
 {
-   
-    public record ListaTarefasResponse(string Descricao, int Quantidade);
+
+    public class ListaTarefasResponse
+    {
+        public string Descricao { get; set; }
+        public int Quantidade { get; set; }
+    }
 }

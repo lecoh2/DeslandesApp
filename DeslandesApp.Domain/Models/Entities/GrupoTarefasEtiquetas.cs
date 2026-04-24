@@ -10,6 +10,7 @@ namespace DeslandesApp.Domain.Models.Entities
     public class GrupoTarefasEtiquetas
     {
         public Guid TarefaId { get; set; }
+
         public Tarefa Tarefa { get; set; } = null!;
 
         public Guid EtiquetaId { get; set; }

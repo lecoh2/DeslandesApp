@@ -27,5 +27,13 @@ namespace DeslandesApp.Infra.Data.Repositories
         .Where(gc => gc.UsuarioId == idUsuario && gc.TarefaId == idTarefa )
         .FirstOrDefaultAsync();
         }
+        public async Task RemoverPorTarefaId(Guid tarefaId)
+        {
+            var registros = await dataContext.GrupoTarefaResponsaveis
+                .Where(x => x.TarefaId == tarefaId)
+                .ToListAsync();
+
+            dataContext.GrupoTarefaResponsaveis.RemoveRange(registros);
+        }
     }
 }

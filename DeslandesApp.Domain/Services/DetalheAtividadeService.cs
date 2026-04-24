@@ -54,11 +54,12 @@ namespace DeslandesApp.Domain.Services
     .ToList() ?? new(),
 
                 Etiquetas = t.GrupoTarefasEtiquetas?
-    .Select(x => new EtiquetaResponse(
-        x.Etiqueta.Id,
-        x.Etiqueta.Nome,
-        x.Etiqueta.Cor
-    ))
+    .Select(x => new EtiquetaResponse
+    {
+        Id = x.Etiqueta.Id,
+        Nome = x.Etiqueta.Nome,
+        Cor = x.Etiqueta.Cor
+    })
     .ToList() ?? new()
             };
         }
@@ -88,11 +89,12 @@ namespace DeslandesApp.Domain.Services
                     ))
                     .ToList() ?? new(),
                 Etiquetas = e.GrupoEventoEtiquetas?
-                    .Select(x => new EtiquetaResponse(
-                        x.Etiqueta.Id,
-                        x.Etiqueta.Nome,
-                        x.Etiqueta.Cor
-                    ))
+                    .Select(x => new EtiquetaResponse
+                  {
+                        Id = x.Etiqueta.Id,
+                        Nome = x.Etiqueta.Nome,
+                        Cor = x.Etiqueta.Cor
+                    })
                     .ToList() ?? new()
             };
         }
