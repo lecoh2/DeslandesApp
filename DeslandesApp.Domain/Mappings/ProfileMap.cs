@@ -27,7 +27,6 @@ using DeslandesApp.Domain.Models.Dtos.Responses.GrupoNiveis;
 using DeslandesApp.Domain.Models.Dtos.Responses.GrupoPessoasEtiquetas;
 using DeslandesApp.Domain.Models.Dtos.Responses.GrupoSetores;
 using DeslandesApp.Domain.Models.Dtos.Responses.GrupoTarefaResponsaveis;
-using ObterTarefaResponse = DeslandesApp.Domain.Models.Dtos.Responses.Tarefa.ObterTarefaResponse;
 using DeslandesApp.Domain.Models.Dtos.Responses.InformacoesComplementares;
 using DeslandesApp.Domain.Models.Dtos.Responses.ListaTarefas;
 using DeslandesApp.Domain.Models.Dtos.Responses.Nivel;
@@ -37,11 +36,13 @@ using DeslandesApp.Domain.Models.Dtos.Responses.Qualificacao;
 using DeslandesApp.Domain.Models.Dtos.Responses.Setor;
 using DeslandesApp.Domain.Models.Dtos.Responses.Tarefa;
 using DeslandesApp.Domain.Models.Dtos.Responses.Usuarios;
+using DeslandesApp.Domain.Models.Dtos.Responses.Usuarios.DeslandesApp.Domain.Models.Dtos.Responses.Usuarios;
 using DeslandesApp.Domain.Models.Dtos.Responses.Vara;
 using DeslandesApp.Domain.Models.Entities;
 using DeslandesApp.Domain.Models.Enum;
 using DeslandesApp.Domain.ValueObjects;
 using System.Runtime.ConstrainedExecution;
+using ObterTarefaResponse = DeslandesApp.Domain.Models.Dtos.Responses.Tarefa.ObterTarefaResponse;
 
 namespace DeslandesApp.Domain.Mappings
 {
@@ -225,7 +226,7 @@ namespace DeslandesApp.Domain.Mappings
 
             #endregion
 
-         
+
 
             #region TAREFAS
 
@@ -239,25 +240,90 @@ namespace DeslandesApp.Domain.Mappings
 
             CreateMap<Tarefa, CriarTarefaResponse>();
 
+            // =========================
+            // LISTA TAREFA
+            // =========================
             CreateMap<CriarListaTarefaRequest, ListaTarefa>();
 
-            CreateMap<ListaTarefa, ListaTarefasResponse>();
+            CreateMap<ListaTarefa, ListaTarefasResponse>()
+                .ForMember(dest => dest.Descricao,
+                    opt => opt.MapFrom(src => src.Descricao));
+
 
             // =========================
-            // RESPONSE PRINCIPAL (CORRIGIDO)
+            // RESPONSE PRINCIPAL (OBTER TAREFA)
             // =========================
             CreateMap<Tarefa, ObterTarefaResponse>()
+
+                // 🔹 BÁSICOS
+                .ForMember(dest => dest.Id,
+                    opt => opt.MapFrom(src => src.Id))
+
+                .ForMember(dest => dest.Descricao,
+                    opt => opt.MapFrom(src => src.Descricao))
+
+                .ForMember(dest => dest.DataTarefa,
+                    opt => opt.MapFrom(src => src.DataTarefa))
+
+                .ForMember(dest => dest.Prioridade,
+                    opt => opt.MapFrom(src => src.Prioridade))
+
+                .ForMember(dest => dest.StatusGeralKanban,
+                    opt => opt.MapFrom(src => src.StatusGeralKanban))
+
+
+                // =========================
+                // 🔗 VÍNCULOS (CORRIGIDO)
+                // =========================
+                .ForMember(dest => dest.TipoVinculo,
+                    opt => opt.MapFrom(src => src.TipoVinculo != null ? (int?)src.TipoVinculo : null))
+
+                .ForMember(dest => dest.ProcessoId,
+                    opt => opt.MapFrom(src => src.ProcessoId))
+
+                .ForMember(dest => dest.CasoId,
+                    opt => opt.MapFrom(src => src.CasoId))
+
+                .ForMember(dest => dest.AtendimentoId,
+                    opt => opt.MapFrom(src => src.AtendimentoId))
+
+
+                // =========================
+                // 🔥 DESCRIÇÕES DOS VÍNCULOS (SEGURAS)
+                // =========================
+                .ForMember(dest => dest.ProcessoPasta,
+                    opt => opt.MapFrom(src => src.Processo != null ? src.Processo.Pasta : null))
+
+                .ForMember(dest => dest.CasoPasta,
+                    opt => opt.MapFrom(src => src.Caso != null ? src.Caso.Pasta : null))
+
+                .ForMember(dest => dest.AtendimentoAssunto,
+                    opt => opt.MapFrom(src => src.Atendimento != null ? src.Atendimento.Assunto : null))
+
+
+                // =========================
+                // 📋 LISTA
+                // =========================
                 .ForMember(dest => dest.ListasTarefa,
                     opt => opt.MapFrom(src => src.ListasTarefa))
 
+
+                // =========================
+                // 👥 RESPONSÁVEIS
+                // =========================
                 .ForMember(dest => dest.GrupoTarefaResponsaveis,
                     opt => opt.MapFrom(src => src.GrupoTarefaResponsaveis))
 
+
+                // =========================
+                // 🏷️ ETIQUETAS
+                // =========================
                 .ForMember(dest => dest.GrupoTarefasEtiquetas,
                     opt => opt.MapFrom(src => src.GrupoTarefasEtiquetas));
 
+
             // =========================
-            // RESPONSÁVEIS (DTO LIMPO - SEM ENTIDADE)
+            // 👤 RESPONSÁVEIS (DETALHE)
             // =========================
             CreateMap<GrupoTarefaResponsaveis, TarefaResponsavelResponse>()
                 .ForMember(d => d.UsuarioId,
@@ -265,8 +331,19 @@ namespace DeslandesApp.Domain.Mappings
                 .ForMember(d => d.Nome,
                     o => o.MapFrom(s => s.Usuario != null ? s.Usuario.NomeUsuario : null));
 
+
             // =========================
-            // ETIQUETAS (DTO LIMPO)
+            // 👤 RESPONSÁVEIS (SELECT ANGULAR)
+            // =========================
+            CreateMap<GrupoTarefaResponsaveis, ConsultarUsuarioResponse>()
+                .ForMember(d => d.Id,
+                    o => o.MapFrom(s => s.UsuarioId)) // 🔥 CORRIGIDO (era Usuario.Id)
+                .ForMember(d => d.NomeUsuario,
+                    o => o.MapFrom(s => s.Usuario != null ? s.Usuario.NomeUsuario : null));
+
+
+            // =========================
+            // 🏷️ ETIQUETAS
             // =========================
             CreateMap<GrupoTarefasEtiquetas, EtiquetaResponse>()
                 .ForMember(d => d.Id,
@@ -287,7 +364,7 @@ namespace DeslandesApp.Domain.Mappings
 
 
             // 🔁 Entidade -> Response
-            CreateMap<Caso, CriarCasoResponse>(); 
+            CreateMap<Caso, CriarCasoResponse>();
 
             #endregion
 
@@ -329,7 +406,7 @@ namespace DeslandesApp.Domain.Mappings
                 .ForMember(dest => dest.GrupoEventoEtiquetas, opt => opt.Ignore())
                 .ForMember(dest => dest.GrupoEventoResponsaveis, opt => opt.Ignore());
 
-           
+
 
             CreateMap<UpdateEventoRequest, Evento>()
                 .ForMember(dest => dest.GrupoEventoEtiquetas, opt => opt.Ignore())
@@ -368,7 +445,7 @@ namespace DeslandesApp.Domain.Mappings
             #region etiquetas
             CreateMap<Etiqueta, EtiquetaResponse>();
 
- 
+
 
             #endregion
             #region Conta bancaria

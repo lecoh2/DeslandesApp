@@ -108,7 +108,7 @@ namespace DeslandesApp.API.Controllers.V1
                 data = response
             });
         }
-        [HttpGet("obter-tarefa-por-id{id:guid}")]
+        [HttpGet("obter-tarefa-por-id/{id:guid}")]
         public async Task<IActionResult> ObterPorId(Guid id)
         {
             var tarefa = await tarefaService.ObterPorIdAsync(id);

@@ -2,6 +2,7 @@
 using DeslandesApp.Domain.Models.Dtos.Responses.Etiquetas;
 using DeslandesApp.Domain.Models.Dtos.Responses.GrupoTarefaResponsaveis;
 using DeslandesApp.Domain.Models.Dtos.Responses.ListaTarefas;
+using DeslandesApp.Domain.Models.Dtos.Responses.Usuarios.DeslandesApp.Domain.Models.Dtos.Responses.Usuarios;
 using DeslandesApp.Domain.Models.Entities;
 using DeslandesApp.Domain.Models.Enum;
 using System;
@@ -19,9 +20,15 @@ namespace DeslandesApp.Domain.Models.Dtos.Responses.Tarefa
         public DateTime? DataTarefa { get; init; }
         public StatusGeralKanban StatusGeralKanban { get; init; }
         public PrioridadeTarefa Prioridade { get; init; }
-
+        public TipoVinculo? TipoVinculo { get; set; }
         public List<ListaTarefasResponse> ListasTarefa { get; init; }
-        public List<TarefaResponsavelResponse> GrupoTarefaResponsaveis { get; init; }
+        public List<ConsultarUsuarioResponse> GrupoTarefaResponsaveis { get; init; }
         public List<EtiquetaResponse> GrupoTarefasEtiquetas { get; init; }
+        public Guid? ProcessoId { get; init; }
+        public Guid? CasoId { get; init; }
+        public Guid? AtendimentoId { get; init; }
+        public string? ProcessoPasta { get; set; }
+        public string? CasoPasta { get; set; }
+        public string? AtendimentoAssunto { get; set; }
     }
 }

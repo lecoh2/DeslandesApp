@@ -96,11 +96,20 @@ namespace DeslandesApp.Infra.Data.Repositories
         {
             return await dataContext.Tarefas
                 .AsNoTracking()
+
+                // 🔥 ADICIONAR ISSO
+                .Include(t => t.Processo)
+                .Include(t => t.Caso)
+                .Include(t => t.Atendimento)
+
                 .Include(t => t.ListasTarefa)
+
                 .Include(t => t.GrupoTarefaResponsaveis)
                     .ThenInclude(x => x.Usuario)
+
                 .Include(t => t.GrupoTarefasEtiquetas)
                     .ThenInclude(x => x.Etiqueta)
+
                 .FirstOrDefaultAsync(t => t.Id == id);
         }
 
