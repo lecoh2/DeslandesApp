@@ -572,9 +572,15 @@ namespace DeslandesApp.Domain.Services
                 throw;
             }
         }
-        public Task<CriarEventoResponse?> ObterPorIdAsync(Guid id)
+      
+        public async Task<ObterEventoResponse?> ObterPorIdAsync(Guid id)
         {
-            throw new NotImplementedException();
+            var evento = await unitOfWork.EventoRepository.ObterCompletoPorIdAsync(id);
+
+            if (evento == null)
+                return null;
+
+            return mapper.Map<ObterEventoResponse>(evento);
         }
         public async Task MoverCardAsync(MoverKanbanCardRequest request)
         {

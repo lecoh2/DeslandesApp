@@ -52,12 +52,11 @@ namespace DeslandesApp.Domain.Services
 
                 await unitOfWork.CommitAsync();
 
-                return new GrupoEventoResponsavelResponse(
-                    usuario.Id,
-                     usuario.NomeUsuario
-                //pessoa.Nome // 👈 aqui
-
-                );
+                return new GrupoEventoResponsavelResponse
+                {
+                    UsuarioId = usuario.Id,
+                    NomeUsuario = usuario.NomeUsuario
+                };
             }
             catch
             {
@@ -107,10 +106,11 @@ namespace DeslandesApp.Domain.Services
                 await unitOfWork.GrupoEventoResponsavelRepository.DeleteAsync(entidade);
 
                 await unitOfWork.CommitAsync();
-                return new GrupoEventoResponsavelResponse(
-             entidade.UsuarioId,
-           entidade.Usuario?.NomeUsuario ?? string.Empty
-);
+                return new GrupoEventoResponsavelResponse
+                {
+                    UsuarioId = entidade.UsuarioId,
+                    NomeUsuario = entidade.Usuario?.NomeUsuario ?? string.Empty
+                };
             }
             catch
             {

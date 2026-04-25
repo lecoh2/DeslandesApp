@@ -80,6 +80,16 @@ namespace DeslandesApp.API.Controllers.V1
                 message = "Responsável removido do processo com sucesso."
             });
         }
+        [HttpGet("obter-evento-por-id/{id:guid}")]
+        public async Task<IActionResult> ObterPorId(Guid id)
+        {
+            var evento = await eventoService.ObterPorIdAsync(id);
+
+            if (evento == null)
+                return NotFound("Evento não encontrada.");
+
+            return Ok(evento);
+        }
 
     }
 }

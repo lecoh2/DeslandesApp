@@ -96,15 +96,15 @@ namespace DeslandesApp.API.Controllers.V1
 
             return Ok(result);
         }
-        [HttpPut("atualizar-tarefa{id}")]
+        [HttpPut("atualizar-tarefa/{id}")]
         [ProducesResponseType(typeof(UsuariosResponse), 200)]
         public async Task<IActionResult> PutAsync(Guid id, [FromBody] TarefaUpdateRequest request)
         {
             var response = await tarefaService.ModificarAsync(id, request);
-            return StatusCode(StatusCodes.Status201Created, new
+            return Ok(new
             {
                 success = true,
-                message = $"Tarefa {response.Descricao} atualizado com sucesso.",
+                message = $"Tarefa {response.Descricao} atualizada com sucesso.",
                 data = response
             });
         }

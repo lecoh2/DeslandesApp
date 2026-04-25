@@ -16,7 +16,8 @@ using System.Threading.Tasks;
 namespace DeslandesApp.Domain.Interfaces.Services
 {
     public interface ITarefaService :
-        IBaseService<CriarTarefaRequest, TarefaUpdateRequest, CriarTarefaResponse, Guid>
+        IBaseService<CriarTarefaRequest, TarefaUpdateRequest,
+            CriarTarefaResponse, Guid>
     {
         Task ReordenarListaAsync(List<ReordenarListaTarefaRequest> request);
         Task MoverCardAsync(MoverKanbanCardRequest request);

@@ -10,10 +10,12 @@ using System.Threading.Tasks;
 
 namespace DeslandesApp.Domain.Interfaces.Services
 {
-    public interface IEventoService : IBaseService<CriarEventoRequest, UpdateEventoRequest, CriarEventoResponse, Guid>
+    public interface IEventoService
+        : IBaseService<CriarEventoRequest, UpdateEventoRequest, 
+            CriarEventoResponse, Guid>
     {
         Task AtualizarStatusAutomatico();
         Task<PageResult<EventoPaginacaoResponse>> ConsultarEventoPaginacaoAsync(int pageNumber, int pageSize, string? searchTerm = null);
-
+        Task<ObterEventoResponse?> ObterPorIdAsync(Guid id);
     }
 }

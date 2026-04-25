@@ -1,5 +1,6 @@
 ﻿using DeslandesApp.Domain.Models.Dtos.Requests.GrupoTarefasEnvolvidos;
 using DeslandesApp.Domain.Models.Dtos.Requests.GrupoTarefasEtiquetas;
+using DeslandesApp.Domain.Models.Entities;
 using DeslandesApp.Domain.Models.Enum;
 using System;
 using System.Collections.Generic;
@@ -19,7 +20,7 @@ namespace DeslandesApp.Domain.Models.Dtos.Requests.Tarefa
         public Guid? ProcessoId { get; init; }
         public Guid? CasoId { get; init; }
         public Guid? AtendimentoId { get; init; }
-
+        public StatusGeralKanban? StatusGeralKanban { get; init; }
         public PrioridadeTarefa? Prioridade { get; init; }
 
         // 🏷️ Etiquetas

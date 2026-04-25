@@ -7,8 +7,8 @@ using System.Threading.Tasks;
 namespace DeslandesApp.Domain.Models.Dtos.Responses.GrupoEventoResponsavel
 {
     public record GrupoEventoResponsavelResponse
-    (
-        Guid UsuarioId,
-    string NomeUsuario
-    );
+    {
+        public Guid UsuarioId { get; init; }
+        public string NomeUsuario { get; init; }
+    }
 }

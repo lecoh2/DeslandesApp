@@ -248,7 +248,7 @@ namespace DeslandesApp.Domain.Services
             var usuarioId = ObterUsuarioId();
 
             // =========================
-            // 🔥 SNAPSHOT ANTES
+            // SNAPSHOT ANTES
             // =========================
             var dadosAntes = new
             {
@@ -263,7 +263,7 @@ namespace DeslandesApp.Domain.Services
             };
 
             // =========================
-            // 🔹 ATUALIZA CAMPOS (PARCIAL)
+            // CAMPOS BÁSICOS
             // =========================
             if (!string.IsNullOrWhiteSpace(request.Descricao))
                 tarefa.Descricao = request.Descricao.Trim();
@@ -274,27 +274,23 @@ namespace DeslandesApp.Domain.Services
             if (request.Prioridade.HasValue)
                 tarefa.Prioridade = request.Prioridade.Value;
 
+            if (request.StatusGeralKanban.HasValue)
+                tarefa.StatusGeralKanban = request.StatusGeralKanban.Value;
+
             tarefa.DataAtualizacao = DateTime.Now;
 
             // =========================
-            // 🔹 VÍNCULOS (REGRA DE NEGÓCIO)
+            // 🔗 VÍNCULO (REGRA CORRETA)
             // =========================
-            int count = 0;
-            if (request.ProcessoId.HasValue) count++;
-            if (request.CasoId.HasValue) count++;
-            if (request.AtendimentoId.HasValue) count++;
-
-            if (count > 1)
-                throw new InvalidOperationException("A tarefa não pode ter mais de um vínculo.");
-
-            // limpa tudo
             tarefa.ProcessoId = null;
             tarefa.CasoId = null;
             tarefa.AtendimentoId = null;
+            tarefa.TipoVinculo = null;
 
             if (request.ProcessoId.HasValue)
             {
-                var processo = await unitOfWork.ProcessoRepository.GetByIdAsync(request.ProcessoId.Value)
+                var processo = await unitOfWork.ProcessoRepository
+                    .GetByIdAsync(request.ProcessoId.Value)
                     ?? throw new InvalidOperationException("Processo não encontrado.");
 
                 tarefa.ProcessoId = processo.Id;
@@ -302,7 +298,8 @@ namespace DeslandesApp.Domain.Services
             }
             else if (request.CasoId.HasValue)
             {
-                var caso = await unitOfWork.CasoRepository.GetByIdAsync(request.CasoId.Value)
+                var caso = await unitOfWork.CasoRepository
+                    .GetByIdAsync(request.CasoId.Value)
                     ?? throw new InvalidOperationException("Caso não encontrado.");
 
                 tarefa.CasoId = caso.Id;
@@ -310,25 +307,21 @@ namespace DeslandesApp.Domain.Services
             }
             else if (request.AtendimentoId.HasValue)
             {
-                var atendimento = await unitOfWork.AtendimentoRepository.GetByIdAsync(request.AtendimentoId.Value)
+                var atendimento = await unitOfWork.AtendimentoRepository
+                    .GetByIdAsync(request.AtendimentoId.Value)
                     ?? throw new InvalidOperationException("Atendimento não encontrado.");
 
                 tarefa.AtendimentoId = atendimento.Id;
                 tarefa.TipoVinculo = TipoVinculo.Atendimento;
             }
-            else
-            {
-                tarefa.TipoVinculo = null;
-            }
 
             // =========================
-            // 🔹 CHECKLIST (RESET)
+            // CHECKLIST (RESET)
             // =========================
             await unitOfWork.ListaTarefaRepository.RemoverPorTarefaId(id);
+
             if (request.ListasTarefa?.Any() == true)
             {
-                await unitOfWork.ListaTarefaRepository.RemoverPorTarefaId(id);
-
                 int ordem = 0;
 
                 foreach (var item in request.ListasTarefa)
@@ -348,7 +341,7 @@ namespace DeslandesApp.Domain.Services
             }
 
             // =========================
-            // 🔹 ETIQUETAS (RESET)
+            // ETIQUETAS (RESET)
             // =========================
             await unitOfWork.GrupoTarefasEtiquetasRepository.RemoverPorTarefaId(id);
 
@@ -365,7 +358,7 @@ namespace DeslandesApp.Domain.Services
             }
 
             // =========================
-            // 🔹 RESPONSÁVEIS (RESET)
+            // RESPONSÁVEIS (RESET)
             // =========================
             await unitOfWork.GrupoTarefaResponsaveisRepository.RemoverPorTarefaId(id);
 
@@ -382,7 +375,7 @@ namespace DeslandesApp.Domain.Services
             }
 
             // =========================
-            // 🔥 SNAPSHOT DEPOIS
+            // SNAPSHOT DEPOIS
             // =========================
             var dadosDepois = new
             {
@@ -397,7 +390,7 @@ namespace DeslandesApp.Domain.Services
             };
 
             // =========================
-            // 🔥 HISTÓRICO PADRÃO
+            // HISTÓRICO
             // =========================
             await historicoService.RegistrarAsync(
                 TipoEntidade.Tarefa,
@@ -410,6 +403,9 @@ namespace DeslandesApp.Domain.Services
 
             await unitOfWork.CommitAsync();
 
+            // =========================
+            // RETORNO (COMPATÍVEL COM INTERFACE)
+            // =========================
             return mapper.Map<CriarTarefaResponse>(tarefa);
         }
 

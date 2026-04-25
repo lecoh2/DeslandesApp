@@ -23,6 +23,8 @@ using DeslandesApp.Domain.Models.Dtos.Responses.Caso;
 using DeslandesApp.Domain.Models.Dtos.Responses.EnderecoEndereco;
 using DeslandesApp.Domain.Models.Dtos.Responses.Etiquetas;
 using DeslandesApp.Domain.Models.Dtos.Responses.Evento;
+using DeslandesApp.Domain.Models.Dtos.Responses.GrupoEventoEtiquetas;
+using DeslandesApp.Domain.Models.Dtos.Responses.GrupoEventoResponsavel;
 using DeslandesApp.Domain.Models.Dtos.Responses.GrupoNiveis;
 using DeslandesApp.Domain.Models.Dtos.Responses.GrupoPessoasEtiquetas;
 using DeslandesApp.Domain.Models.Dtos.Responses.GrupoSetores;
@@ -418,7 +420,34 @@ namespace DeslandesApp.Domain.Mappings
               opt => opt.MapFrom(src => src.StatusGeralKanban
                   .ToString()
                   .Replace("_", " ")));
-
+            CreateMap<Evento, ObterEventoResponse>()
+               .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
+               .ForMember(dest => dest.Titulo, opt => opt.MapFrom(src => src.Titulo))
+               .ForMember(dest => dest.DataInicial, opt => opt.MapFrom(src => src.DataInicial))
+               .ForMember(dest => dest.HoraInicial, opt => opt.MapFrom(src => src.HoraInicial))
+               .ForMember(dest => dest.DataFinal, opt => opt.MapFrom(src => src.DataFinal))
+               .ForMember(dest => dest.HoraFinal, opt => opt.MapFrom(src => src.HoraFinal))
+               .ForMember(dest => dest.DiaInteiro, opt => opt.MapFrom(src => src.DiaInteiro))
+               .ForMember(dest => dest.Endereco, opt => opt.MapFrom(src => src.Endereco))
+               .ForMember(dest => dest.Modalidade, opt => opt.MapFrom(src => src.Modalidade))
+               .ForMember(dest => dest.Observacao, opt => opt.MapFrom(src => src.Observacao))
+               .ForMember(dest => dest.StatusGeralKanban, opt => opt.MapFrom(src => src.StatusGeralKanban))
+               .ForMember(dest => dest.ProcessoId, opt => opt.MapFrom(src => src.ProcessoId))
+               .ForMember(dest => dest.CasoId, opt => opt.MapFrom(src => src.CasoId))
+               .ForMember(dest => dest.AtendimentoId, opt => opt.MapFrom(src => src.AtendimentoId))
+               .ForMember(dest => dest.TipoVinculo, opt => opt.MapFrom(src => src.TipoVinculo));
+               CreateMap<GrupoEventoResponsavel, GrupoEventoResponsavelResponse>()
+    .ForMember(dest => dest.UsuarioId,
+        opt => opt.MapFrom(src => src.UsuarioId))
+    .ForMember(dest => dest.NomeUsuario,
+        opt => opt.MapFrom(src => src.Usuario.NomeUsuario));
+            CreateMap<GrupoEventoEtiquetas, GrupoEventoEtiquetasResponse>()
+    .ForMember(dest => dest.EtiquetaId,
+        opt => opt.MapFrom(src => src.EtiquetaId))
+    .ForMember(dest => dest.Nome,
+        opt => opt.MapFrom(src => src.Etiqueta.Nome))
+    .ForMember(dest => dest.Cor,
+        opt => opt.MapFrom(src => src.Etiqueta.Cor));
             #endregion
             #region GrupoEvento
 

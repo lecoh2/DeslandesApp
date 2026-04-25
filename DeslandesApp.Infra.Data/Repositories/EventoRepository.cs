@@ -124,10 +124,11 @@ namespace DeslandesApp.Infra.Data.Repositories
                         ),
 
                     GrupoEventoResponsavel = responsaveis
-                        .Select(r => new GrupoEventoResponsavelResponse(
-                            r.UsuarioId,
-                            r.NomeUsuario
-                        ))
+                         .Select(r => new GrupoEventoResponsavelResponse
+                         {
+                             UsuarioId = r.UsuarioId,
+                             NomeUsuario = r.NomeUsuario
+                         })
                         .ToList()
                 };
             }).ToList();
@@ -140,6 +141,25 @@ namespace DeslandesApp.Infra.Data.Repositories
                 PageNumber = pageNumber,
                 PageSize = pageSize
             };
+        }
+
+        public async Task<Evento?> ObterCompletoPorIdAsync(Guid id)
+        {
+            return await dataContext.Evento
+                .AsNoTracking()
+
+                // 🔥 ADICIONAR ISSO
+                .Include(t => t.Processo)
+                .Include(t => t.Caso)
+                .Include(t => t.Atendimento)               
+
+                .Include(t => t.GrupoEventoResponsaveis)
+                    .ThenInclude(x => x.Usuario)
+
+                .Include(t => t.GrupoEventoEtiquetas)
+                    .ThenInclude(x => x.Etiqueta)
+
+                .FirstOrDefaultAsync(t => t.Id == id);
         }
     }
 }
