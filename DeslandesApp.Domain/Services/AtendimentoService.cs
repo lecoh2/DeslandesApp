@@ -204,7 +204,7 @@ namespace DeslandesApp.Domain.Services
                 var usuarioId = ObterUsuarioId();
 
                 // =========================
-                // ANTES
+                // SNAPSHOT ANTES
                 // =========================
                 var atendimentoAntes = await unitOfWork.AtendimentoRepository
                     .ConsultarAtendimentoComRelacionamentosAsync(id);
@@ -213,32 +213,15 @@ namespace DeslandesApp.Domain.Services
                 {
                     atendimentoAntes.Assunto,
                     atendimentoAntes.Registro,
-                    atendimentoAntes.DataCadastro,
-                    atendimentoAntes.DataAtualizacao,
-
-                    Processo = atendimentoAntes.Processo?.Id,
-                    Caso = atendimentoAntes.Caso?.Id,
-                    AtendimentoPai = atendimentoAntes.AtendimentoPai?.Id,
-
-                    Responsavel = atendimentoAntes.Responsavel != null ? new
-                    {
-                        atendimentoAntes.Responsavel.Id,
-                        atendimentoAntes.Responsavel.NomeUsuario
-                    } : null,
-
-                    Clientes = atendimentoAntes.GrupoClientes?
-                        .Select(c => c.Pessoa?.Nome)
-                        .Where(n => n != null)
-                        .ToList(),
-
-                    Etiquetas = atendimentoAntes.GrupoEtiquetasAtendimentos?
-                        .Select(e => e.Etiqueta?.Nome)
-                        .Where(n => n != null)
-                        .ToList()
+                    atendimentoAntes.ProcessoId,
+                    atendimentoAntes.CasoId,
+                    atendimentoAntes.AtendimentoPaiId,
+                    Clientes = atendimentoAntes.GrupoClientes?.Select(x => x.PessoaId).ToList(),
+                    Etiquetas = atendimentoAntes.GrupoEtiquetasAtendimentos?.Select(x => x.EtiquetaId).ToList()
                 };
 
                 // =========================
-                // ATUALIZAÇÃO
+                // CAMPOS BASE
                 // =========================
                 mapper.Map(request, atendimento);
 
@@ -251,12 +234,47 @@ namespace DeslandesApp.Domain.Services
                 atendimento.ResponsavelId = request.ResponsavelId;
                 atendimento.DataAtualizacao = DateTime.Now;
 
-                atendimento.ValidarVinculo();
+                // =========================
+                // 🔥 CLIENTES (RESET + RECREATE)
+                // =========================
+                await unitOfWork.GrupoAtendimentoClienteRepository.RemoverPorAtendimentoId(id);
 
+                if (request.GrupoAtendimentoCliente?.Any() == true)
+                {
+                    foreach (var item in request.GrupoAtendimentoCliente)
+                    {
+                        await unitOfWork.GrupoAtendimentoClienteRepository.AddAsync(new GrupoAtendimentoCliente
+                        {
+                            AtendimentoId = id,
+                            PessoaId = item.PessoaId.Value
+                        });
+                    }
+                }
+
+                // =========================
+                // 🔥 ETIQUETAS (RESET + RECREATE)
+                // =========================
+                await unitOfWork.GrupoEtiquetasAtendimentoRepository.RemoverPorAtendimentoId(id);
+
+                if (request.GrupoAtendimentoEtiqueta?.Any() == true)
+                {
+                    foreach (var item in request.GrupoAtendimentoEtiqueta)
+                    {
+                        await unitOfWork.GrupoEtiquetasAtendimentoRepository.AddAsync(new GrupoEtiquetasAtendimentos
+                        {
+                            AtendimentoId = id,
+                            EtiquetaId = item.EtiquetaId
+                        });
+                    }
+                }
+
+                // =========================
+                // UPDATE
+                // =========================
                 await unitOfWork.AtendimentoRepository.UpdateAsync(atendimento);
 
                 // =========================
-                // DEPOIS
+                // SNAPSHOT DEPOIS
                 // =========================
                 var atendimentoDepois = await unitOfWork.AtendimentoRepository
                     .ConsultarAtendimentoComRelacionamentosAsync(id);
@@ -265,28 +283,12 @@ namespace DeslandesApp.Domain.Services
                 {
                     atendimentoDepois.Assunto,
                     atendimentoDepois.Registro,
-                    atendimentoDepois.DataCadastro,
-                    atendimentoDepois.DataAtualizacao,
-
-                    Processo = atendimentoDepois.Processo?.Id,
-                    Caso = atendimentoDepois.Caso?.Id,
-                    AtendimentoPai = atendimentoDepois.AtendimentoPai?.Id,
-
-                    Responsavel = atendimentoDepois.Responsavel?.NomeUsuario,
-
-                    Clientes = atendimentoDepois.GrupoClientes?
-                        .Select(c => c.Pessoa?.Nome)
-                        .Where(n => n != null)
-                        .ToList(),
-
-                    Etiquetas = atendimentoDepois.GrupoEtiquetasAtendimentos?
-                        .Select(e => e.Etiqueta?.Nome)
-                        .Where(n => n != null)
-                        .ToList()
+                    Clientes = atendimentoDepois.GrupoClientes?.Select(x => x.PessoaId).ToList(),
+                    Etiquetas = atendimentoDepois.GrupoEtiquetasAtendimentos?.Select(x => x.EtiquetaId).ToList()
                 };
 
                 // =========================
-                // HISTÓRICO (PADRÃO EVENTO)
+                // HISTÓRICO
                 // =========================
                 await historicoGeralService.RegistrarAsync(
                     TipoEntidade.Atendimento,
@@ -308,8 +310,6 @@ namespace DeslandesApp.Domain.Services
             }
         }
 
-
-      
         public async Task<List<AtendimentoAutoComplete>> ConsultarAtendimentoAutoCompleteAsync(string? termo = null)
         {
             return await unitOfWork.AtendimentoRepository.ConsultarAtendimentoAutoCompleteAsync(termo);

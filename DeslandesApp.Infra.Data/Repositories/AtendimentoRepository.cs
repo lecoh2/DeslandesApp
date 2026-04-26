@@ -22,17 +22,17 @@ namespace DeslandesApp.Infra.Data.Repositories
         : BaseRepository<Atendimento, Guid>(dataContext), IAtendimentoRepository
     {
         public async Task<Atendimento> ConsultarAtendimentoComRelacionamentosAsync(Guid idAtendimento)
-        
-               
+
+
         {
             return await dataContext.Atendimento
                 .Include(p => p.Caso)
                 .Include(p => p.Responsavel)
                 .Include(p => p.Processo)
-                .Include(p => p.AtendimentoPai)               
+                .Include(p => p.AtendimentoPai)
                 .FirstOrDefaultAsync(p => p.Id == idAtendimento);
         }
-        
+
 
         public async Task<PageResult<AtendimentoPaginacaoResponse>> GetAtendimentoPaginacaoAsync(
        int pageNumber,
@@ -112,7 +112,7 @@ namespace DeslandesApp.Infra.Data.Repositories
 
                 return new AtendimentoPaginacaoResponse
                 {
-                    Id=r.Id,
+                    Id = r.Id,
                     Assunto = r.Assunto,
                     Registro = r.Registro,
                     ProcessoId = r.ProcessoId,
@@ -197,5 +197,8 @@ namespace DeslandesApp.Infra.Data.Repositories
 
                 .FirstOrDefaultAsync(a => a.Id == id);
         }
-    }
+
+           }
+
+
 }

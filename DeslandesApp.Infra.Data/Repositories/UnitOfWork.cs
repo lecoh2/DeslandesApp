@@ -540,8 +540,24 @@ namespace DeslandesApp.Infra.Data.Repositories
         }
         public async Task RollbackAsync()
         {
-            if (transaction != null)
-                await transaction.RollbackAsync();
+            if (transaction == null)
+                return;
+
+            var currentTransaction = transaction;
+            transaction = null; // 👈 bloqueia reentrada IMEDIATO
+
+            try
+            {
+                await currentTransaction.RollbackAsync();
+            }
+            catch
+            {
+                // evita crash se já estiver finalizada
+            }
+            finally
+            {
+                await currentTransaction.DisposeAsync();
+            }
         }
         public void Dispose()
         {

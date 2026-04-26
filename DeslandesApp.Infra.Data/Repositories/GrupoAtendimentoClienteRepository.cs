@@ -1,6 +1,7 @@
 ﻿using DeslandesApp.Domain.Interfaces.Repositories;
 using DeslandesApp.Domain.Models.Entities;
 using DeslandesApp.Infra.Data.Contexts;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,6 +13,13 @@ namespace DeslandesApp.Infra.Data.Repositories
     public class GrupoAtendimentoClienteRepository(DataContext dataContext)
         : BaseRepository<GrupoAtendimentoCliente, Guid>(dataContext), IGrupoAtendimentoClienteRepository
     {
+        public async Task RemoverPorAtendimentoId(Guid atendimentoId)
+        {
+            var registros = await dataContext.GrupoAtendimentoCliente
+                .Where(x => x.AtendimentoId == atendimentoId)
+                .ToListAsync();
 
+            dataContext.GrupoAtendimentoCliente.RemoveRange(registros);
+        }
     }
 }

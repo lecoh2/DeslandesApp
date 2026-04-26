@@ -9,5 +9,6 @@ namespace DeslandesApp.Domain.Interfaces.Repositories
 {
     public interface IGrupoAtendimentoClienteRepository : IBaseRepository<GrupoAtendimentoCliente, Guid>
     {
+        Task RemoverPorAtendimentoId(Guid atendimentoId);
     }
 }

@@ -24,6 +24,8 @@ namespace DeslandesApp.Domain.Models.Dtos.Responses.Atendimento
         // 🔥 CLIENTES (N:N)
         public List<GrupoAtendimentoClienteResponse> GrupoAtendimentoCliente { get; init; } = new();
         public List<GrupoEtiquetaAtendimentoResponse> GrupoAtendimentoEtiqueta { get; init; } = new();
-
+        public string? ProcessoPasta { get; set; }
+        public string? CasoPasta { get; set; }
+        public string? AtendimentoAssunto { get; set; }
     }
 }

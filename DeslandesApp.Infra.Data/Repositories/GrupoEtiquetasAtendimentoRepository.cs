@@ -26,5 +26,14 @@ namespace DeslandesApp.Infra.Data.Repositories
         .Where(gr => gr.EtiquetaId == idEtiqueta && gr.AtendimentoId == idAtendimento)
         .FirstOrDefaultAsync();
         }
+
+        public async Task RemoverPorAtendimentoId(Guid atendimentoId)
+        {
+            var registros = await dataContext.GrupoEtiquetasAtendimentos
+                .Where(x => x.AtendimentoId == atendimentoId)
+                .ToListAsync();
+
+            dataContext.GrupoEtiquetasAtendimentos.RemoveRange(registros);
+        }
     }
 }
