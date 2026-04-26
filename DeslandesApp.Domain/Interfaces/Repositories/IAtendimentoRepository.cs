@@ -15,5 +15,6 @@ namespace DeslandesApp.Domain.Interfaces.Repositories
         Task<PageResult<AtendimentoPaginacaoResponse>> GetAtendimentoPaginacaoAsync(int pageNumber, int pageSize, string? searchTerm = null);
         Task<Atendimento> ConsultarAtendimentoComRelacionamentosAsync(Guid idAtendimento);
         Task<List<AtendimentoAutoComplete>> ConsultarAtendimentoAutoCompleteAsync(string? termo = null);
+        Task<Atendimento?> ObterCompletoPorIdAsync(Guid id);
     }
 }

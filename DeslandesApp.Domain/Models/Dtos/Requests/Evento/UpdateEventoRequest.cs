@@ -1,4 +1,5 @@
-﻿using DeslandesApp.Domain.Models.Entities;
+﻿using DeslandesApp.Domain.Models.Dtos.Requests.GrupoEventoEtiquetas;
+using DeslandesApp.Domain.Models.Entities;
 using DeslandesApp.Domain.Models.Enum;
 using System;
 using System.Collections.Generic;
@@ -36,6 +37,8 @@ namespace DeslandesApp.Domain.Models.Dtos.Requests.Evento
         public DateOnly? DataFimRecorrencia { get; init; }
         public int? QuantidadeOcorrencias { get; init; }
         //public StatusEvento? Status { get; init; }
-        public StatusGeralKanban? StatusKaban { get; set; }
+        public StatusGeralKanban? StatusGeralKanban { get; init; }
+        public List<GrupoEventoResponsavelRequest>? GrupoEventoResponsavel { get; init; }
+        public List<GrupoEventoEtiquetasRequest>? GrupoEventoEtiquetas { get; init; }
     }
 }

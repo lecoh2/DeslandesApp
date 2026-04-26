@@ -97,17 +97,22 @@ namespace DeslandesApp.Infra.Data.Repositories
                     })
                     .ToList();
 
-                var etiquetas = dataContext.GrupoEtiquetasAtendimentos
-                    .Where(ge => ge.AtendimentoId == r.Id)
-                    .Select(ge => new
-                    {
-                        ge.EtiquetaId,
-                        Nome = ge.Etiqueta.Nome
-                    })
-                    .ToList();
+                var etiquetas = (
+     from ge in dataContext.GrupoEtiquetasAtendimentos
+     join e in dataContext.Etiqueta
+         on ge.EtiquetaId equals e.Id
+     where ge.AtendimentoId == r.Id
+     select new
+     {
+         EtiquetaId = e.Id,
+         Nome = e.Nome,
+         Cor = e.Cor
+     }
+ ).ToList();
 
                 return new AtendimentoPaginacaoResponse
                 {
+                    Id=r.Id,
                     Assunto = r.Assunto,
                     Registro = r.Registro,
                     ProcessoId = r.ProcessoId,
@@ -124,12 +129,13 @@ namespace DeslandesApp.Infra.Data.Repositories
                         .ToList(),
 
                     GrupoAtendimentoEtiqueta = etiquetas
-                        .Select(e => new GrupoEtiquetaAtendimentoResponse
-                        {
-                            EtiquetaId = e.EtiquetaId,
-                            Nome = e.Nome
-                        })
-                        .ToList()
+    .Select(e => new GrupoEtiquetaAtendimentoResponse
+    {
+        EtiquetaId = e.EtiquetaId,
+        Nome = e.Nome,
+        Cor = e.Cor
+    })
+    .ToList()
                 };
             }).ToList();
 
@@ -166,6 +172,30 @@ namespace DeslandesApp.Infra.Data.Repositories
                 .OrderBy(p => p.Assunto)
                 .Take(20) // 🔥 MUITO importante pra autocomplete
                 .ToListAsync();
+        }
+
+        public async Task<Atendimento?> ObterCompletoPorIdAsync(Guid id)
+        {
+            return await dataContext.Atendimento
+                .AsNoTracking()
+
+                // 🔗 Vínculos
+                .Include(a => a.Processo)
+                .Include(a => a.Caso)
+                .Include(a => a.AtendimentoPai)
+
+                // 👤 Responsável
+                .Include(a => a.Responsavel)
+
+                // 👥 CLIENTES (🔥 CORRETO AGORA)
+                .Include(a => a.GrupoClientes)
+                    .ThenInclude(gc => gc.Pessoa)
+
+                // 🏷️ ETIQUETAS
+                .Include(a => a.GrupoEtiquetasAtendimentos)
+                    .ThenInclude(x => x.Etiqueta)
+
+                .FirstOrDefaultAsync(a => a.Id == id);
         }
     }
 }

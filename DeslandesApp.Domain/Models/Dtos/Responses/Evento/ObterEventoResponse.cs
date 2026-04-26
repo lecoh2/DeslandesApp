@@ -14,31 +14,34 @@ namespace DeslandesApp.Domain.Models.Dtos.Responses.Evento
 {
     public class ObterEventoResponse
     {
-        public Guid Id { get; set; }
-        public string Titulo { get; set; }
+        public Guid Id { get; init; }
+        public string Titulo { get; init; }
 
-        public DateOnly DataInicial { get; set; }
-        public TimeOnly HoraInicial { get; set; }
+        public DateOnly DataInicial { get; init; }
+        public TimeOnly HoraInicial { get; init; }
 
-        public DateOnly? DataFinal { get; set; }
-        public TimeOnly? HoraFinal { get; set; }
+        public DateOnly? DataFinal { get; init; }
+        public TimeOnly? HoraFinal { get; init; }
 
-        public bool DiaInteiro { get; set; }
+        public bool DiaInteiro { get; init; }
 
-        public string? Endereco { get; set; }
+        public string? Endereco { get; init; }
 
-        public ModalidadeEvento Modalidade { get; set; }
+        public ModalidadeEvento Modalidade { get; init; }
 
-        public string? Observacao { get; set; }
+        public string? Observacao { get; init; }
 
-        public StatusGeralKanban? StatusGeralKanban { get; set; }
+        public StatusGeralKanban StatusGeralKanban { get; init; }
 
-        public Guid? ProcessoId { get; set; }
-        public Guid? CasoId { get; set; }
-        public Guid? AtendimentoId { get; set; }
+        public Guid? ProcessoId { get; init; }
+        public Guid? CasoId { get; init; }
+        public Guid? AtendimentoId { get; init; }
 
-        public TipoVinculo? TipoVinculo { get; set; }
-        public List<GrupoEventoResponsavelResponse>? GrupoEventoResponsaveis { get; set; }
-        public List<GrupoEventoEtiquetasResponse>? GrupoEventoEtiquetas { get; set; }
+        public TipoVinculo? TipoVinculo { get; init; }
+        public List<GrupoEventoResponsavelResponse>? GrupoEventoResponsaveis { get; init; }
+        public List<GrupoEventoEtiquetasResponse>? GrupoEventoEtiquetas { get; init; }
+        public string? ProcessoPasta { get; init; }
+        public string? CasoPasta { get; init; }
+        public string? AtendimentoAssunto { get; init; }
     }
 }

@@ -11,5 +11,6 @@ namespace DeslandesApp.Domain.Models.Dtos.Responses.GrupoEtiquetaAtendimento
         public Guid? EtiquetaId { get; init; }
 
         public string? Nome { get; init; }
+        public string? Cor { get; set; }
     }
 }

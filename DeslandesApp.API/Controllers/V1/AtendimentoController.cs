@@ -26,7 +26,7 @@ namespace DeslandesApp.API.Controllers.V1
                 data = response
             });
         }
-        [HttpPut("atualizar-atenndimento{id}")]
+        [HttpPut("atualizar-atendimento/{id}")]
         [ProducesResponseType(typeof(CriarAtendimentoClienteResponse), 200)]
         public async Task<IActionResult> PutAsync(Guid id, [FromBody] AtendimentoClienteUpdateRequest request)
         {
@@ -85,6 +85,16 @@ namespace DeslandesApp.API.Controllers.V1
             var result = await atendiemntofaService.ConsultarAtendimentoAutoCompleteAsync(termo);
 
             return Ok(result);
+        }
+        [HttpGet("obter-atendimento-por-id/{id:guid}")]
+        public async Task<IActionResult> ObterPorId(Guid id)
+        {
+            var tarefa = await atendiemntofaService.ObterPorIdAsync(id);
+
+            if (tarefa == null)
+                return NotFound("Tarefa não encontrada.");
+
+            return Ok(tarefa);
         }
     }
 }

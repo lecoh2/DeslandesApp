@@ -459,25 +459,68 @@ namespace DeslandesApp.Domain.Services
                     Responsaveis = eventoAntes.GrupoEventoResponsaveis?
                         .Select(r => r.Usuario?.NomeUsuario)
                         .Where(n => n != null)
-                        .ToList()
+                        .ToList(),
+                    Etiquetas = eventoAntes.GrupoEventoEtiquetas?
+        .Select(e => e.Etiqueta?.Nome)
+        .Where(n => n != null)
+        .ToList()
                 };
 
                 // =========================
                 // ATUALIZAÇÃO
                 // =========================
                 mapper.Map(request, evento);
+                evento.GrupoEventoResponsaveis.Clear();
+
+                if (request.GrupoEventoResponsavel != null)
+                {
+                    evento.GrupoEventoResponsaveis = request.GrupoEventoResponsavel
+                        .Select(x => new GrupoEventoResponsavel
+                        {
+                            UsuarioId = x.UsuarioId,
+                            EventoId = evento.Id
+                        })
+                        .ToList();
+                }
+                evento.GrupoEventoEtiquetas.Clear();
+
+                if (request.GrupoEventoEtiquetas != null)
+                {
+                    evento.GrupoEventoEtiquetas = request.GrupoEventoEtiquetas
+                        .Select(x => new GrupoEventoEtiquetas
+                        {
+                            EtiquetaId = x.EtiquetaId,
+                            EventoId = evento.Id
+                        })
+                        .ToList();
+                }
 
                 var agora = DateTime.Now;
                 var hoje = DateOnly.FromDateTime(agora);
                 var horaAtual = TimeOnly.FromDateTime(agora);
 
-                evento.StatusGeralKanban = request.StatusKaban ?? evento.StatusGeralKanban;
+                // evento.StatusGeralKanban = request.StatusGeralKanban ?? evento.StatusGeralKanban;
 
+                //if (evento.DataFinal.HasValue && evento.DataFinal.Value < hoje)
+                //{
+                //    evento.StatusGeralKanban = StatusGeralKanban.Concluido;
+                //}
+                //else if (evento.DataInicial == hoje &&
+                //         evento.HoraInicial <= horaAtual &&
+                //         (evento.HoraFinal == null || evento.HoraFinal >= horaAtual))
+                //{
+                //    evento.StatusGeralKanban = StatusGeralKanban.Em_Andamento;
+                //}
                 if (evento.DataFinal.HasValue && evento.DataFinal.Value < hoje)
                 {
                     evento.StatusGeralKanban = StatusGeralKanban.Concluido;
                 }
-                else if (evento.DataInicial == hoje &&
+                else if (evento.DataInicial > hoje)
+                {
+                    evento.StatusGeralKanban = StatusGeralKanban.A_Fazer;
+                }
+                else if (evento.DataInicial <= hoje &&
+                         evento.DataFinal >= hoje &&
                          evento.HoraInicial <= horaAtual &&
                          (evento.HoraFinal == null || evento.HoraFinal >= horaAtual))
                 {
@@ -547,7 +590,11 @@ namespace DeslandesApp.Domain.Services
                     Responsaveis = eventoDepois.GrupoEventoResponsaveis?
                         .Select(r => r.Usuario?.NomeUsuario)
                         .Where(n => n != null)
-                        .ToList()
+                        .ToList(),
+                    Etiquetas = eventoDepois.GrupoEventoEtiquetas?
+        .Select(e => e.Etiqueta?.Nome)
+        .Where(n => n != null)
+        .ToList()
                 };
 
                 // 🧾 =========================
