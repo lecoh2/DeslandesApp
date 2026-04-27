@@ -196,10 +196,8 @@ namespace DeslandesApp.Domain.Services
 
             try
             {
-                var atendimento = await unitOfWork.AtendimentoRepository.GetByIdAsync(id);
-
-                if (atendimento == null)
-                    throw new ApplicationException("Atendimento não encontrado.");
+                var atendimento = await unitOfWork.AtendimentoRepository.GetByIdAsync(id)
+                    ?? throw new ApplicationException("Atendimento não encontrado.");
 
                 var usuarioId = ObterUsuarioId();
 
@@ -221,21 +219,25 @@ namespace DeslandesApp.Domain.Services
                 };
 
                 // =========================
-                // CAMPOS BASE
+                // CAMPOS BÁSICOS (SEM AUTO MAPPER)
                 // =========================
-                mapper.Map(request, atendimento);
+                atendimento.Assunto = request.Assunto;
+                atendimento.Registro = request.Registro;
 
+                atendimento.ResponsavelId = request.ResponsavelId;
+                atendimento.DataAtualizacao = DateTime.Now;
+
+                // =========================
+                // 🔗 VÍNCULO (SEMPRE MANUAL)
+                // =========================
                 atendimento.DefinirVinculo(
                     request.ProcessoId,
                     request.CasoId,
                     request.AtendimentoPaiId
                 );
 
-                atendimento.ResponsavelId = request.ResponsavelId;
-                atendimento.DataAtualizacao = DateTime.Now;
-
                 // =========================
-                // 🔥 CLIENTES (RESET + RECREATE)
+                // 👥 CLIENTES (RESET)
                 // =========================
                 await unitOfWork.GrupoAtendimentoClienteRepository.RemoverPorAtendimentoId(id);
 
@@ -252,7 +254,7 @@ namespace DeslandesApp.Domain.Services
                 }
 
                 // =========================
-                // 🔥 ETIQUETAS (RESET + RECREATE)
+                // 🏷️ ETIQUETAS (RESET)
                 // =========================
                 await unitOfWork.GrupoEtiquetasAtendimentoRepository.RemoverPorAtendimentoId(id);
 
@@ -269,7 +271,7 @@ namespace DeslandesApp.Domain.Services
                 }
 
                 // =========================
-                // UPDATE
+                // UPDATE ENTIDADE
                 // =========================
                 await unitOfWork.AtendimentoRepository.UpdateAsync(atendimento);
 
@@ -283,16 +285,16 @@ namespace DeslandesApp.Domain.Services
                 {
                     atendimentoDepois.Assunto,
                     atendimentoDepois.Registro,
+                    atendimentoDepois.ProcessoId,
+                    atendimentoDepois.CasoId,
+                    atendimentoDepois.AtendimentoPaiId,
                     Clientes = atendimentoDepois.GrupoClientes?.Select(x => x.PessoaId).ToList(),
                     Etiquetas = atendimentoDepois.GrupoEtiquetasAtendimentos?.Select(x => x.EtiquetaId).ToList()
                 };
 
-                // =========================
-                // HISTÓRICO
-                // =========================
                 await historicoGeralService.RegistrarAsync(
                     TipoEntidade.Atendimento,
-                    atendimento.Id,
+                    id,
                     usuarioId,
                     dadosAntes,
                     dadosDepois,
@@ -309,7 +311,6 @@ namespace DeslandesApp.Domain.Services
                 throw;
             }
         }
-
         public async Task<List<AtendimentoAutoComplete>> ConsultarAtendimentoAutoCompleteAsync(string? termo = null)
         {
             return await unitOfWork.AtendimentoRepository.ConsultarAtendimentoAutoCompleteAsync(termo);

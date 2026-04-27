@@ -505,12 +505,6 @@ namespace DeslandesApp.Infra.Data.Repositories
             }
         }
 
-
-
-
-
-
-
         #endregion
         #region Transaçoes
         //construtor para injeção de dependência 
@@ -523,20 +517,17 @@ namespace DeslandesApp.Infra.Data.Repositories
         }
         public async Task CommitAsync()
         {
-            try
-            {
-                await dataContext.SaveChangesAsync();
+            await dataContext.SaveChangesAsync();
 
-                if (transaction != null)
-                    await transaction.CommitAsync();
-            }
-            catch
+            if (transaction != null)
             {
-                if (transaction != null)
-                    await transaction.RollbackAsync();
-
-                throw;
+                await transaction.CommitAsync();
+                await transaction.DisposeAsync();
+                transaction = null;
             }
+
+            // 🔥 ESSENCIAL (resolve 80% dos seus bugs)
+            dataContext.ChangeTracker.Clear();
         }
         public async Task RollbackAsync()
         {
@@ -544,7 +535,7 @@ namespace DeslandesApp.Infra.Data.Repositories
                 return;
 
             var currentTransaction = transaction;
-            transaction = null; // 👈 bloqueia reentrada IMEDIATO
+            transaction = null;
 
             try
             {
@@ -552,12 +543,14 @@ namespace DeslandesApp.Infra.Data.Repositories
             }
             catch
             {
-                // evita crash se já estiver finalizada
+                // ignorar porque pode já ter sido finalizada
             }
             finally
             {
                 await currentTransaction.DisposeAsync();
             }
+
+            dataContext.ChangeTracker.Clear();
         }
         public void Dispose()
         {

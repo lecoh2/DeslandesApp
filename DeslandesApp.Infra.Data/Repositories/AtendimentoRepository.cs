@@ -178,27 +178,19 @@ namespace DeslandesApp.Infra.Data.Repositories
         {
             return await dataContext.Atendimento
                 .AsNoTracking()
-
-                // 🔗 Vínculos
+                .Where(x => x.Id == id) // 👈 importante
                 .Include(a => a.Processo)
                 .Include(a => a.Caso)
                 .Include(a => a.AtendimentoPai)
-
-                // 👤 Responsável
                 .Include(a => a.Responsavel)
-
-                // 👥 CLIENTES (🔥 CORRETO AGORA)
                 .Include(a => a.GrupoClientes)
                     .ThenInclude(gc => gc.Pessoa)
-
-                // 🏷️ ETIQUETAS
                 .Include(a => a.GrupoEtiquetasAtendimentos)
                     .ThenInclude(x => x.Etiqueta)
-
-                .FirstOrDefaultAsync(a => a.Id == id);
+                .FirstOrDefaultAsync();
         }
 
-           }
+    }
 
 
 }

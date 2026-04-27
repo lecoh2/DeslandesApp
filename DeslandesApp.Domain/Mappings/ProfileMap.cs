@@ -390,69 +390,79 @@ namespace DeslandesApp.Domain.Mappings
             // 🔹 REQUEST → ENTITY (CRIAR)
             // =============================
             CreateMap<CriarAtendimentoClienteRequest, Atendimento>()
-                .ForMember(dest => dest.GrupoEtiquetasAtendimentos, opt => opt.Ignore())
-                .ForMember(dest => dest.GrupoClientes, opt => opt.Ignore())
-                .ForMember(dest => dest.Processo, opt => opt.Ignore())
-                .ForMember(dest => dest.Caso, opt => opt.Ignore())
-                .ForMember(dest => dest.AtendimentoPai, opt => opt.Ignore())
-                .ForMember(dest => dest.Responsavel, opt => opt.Ignore());
+          .ForMember(x => x.GrupoEtiquetasAtendimentos, opt => opt.Ignore())
+          .ForMember(x => x.GrupoClientes, opt => opt.Ignore())
+          .ForMember(x => x.Processo, opt => opt.Ignore())
+          .ForMember(x => x.Caso, opt => opt.Ignore())
+          .ForMember(x => x.AtendimentoPai, opt => opt.Ignore())
+          .ForMember(x => x.Responsavel, opt => opt.Ignore());
 
             // =============================
             // 🔹 UPDATE → ENTITY
             // =============================
             CreateMap<AtendimentoClienteUpdateRequest, Atendimento>()
-                .ForMember(dest => dest.GrupoEtiquetasAtendimentos, opt => opt.Ignore())
-                .ForMember(dest => dest.GrupoClientes, opt => opt.Ignore())
-                .ForMember(dest => dest.Processo, opt => opt.Ignore())
-                .ForMember(dest => dest.Caso, opt => opt.Ignore())
-                .ForMember(dest => dest.AtendimentoPai, opt => opt.Ignore())
-                .ForMember(dest => dest.Responsavel, opt => opt.Ignore())
-                .ForMember(dest => dest.DataCadastro, opt => opt.Ignore());
+    .ForMember(x => x.GrupoEtiquetasAtendimentos, opt => opt.Ignore())
+    .ForMember(x => x.GrupoClientes, opt => opt.Ignore())
+    .ForMember(x => x.Processo, opt => opt.Ignore())
+    .ForMember(x => x.Caso, opt => opt.Ignore())
+    .ForMember(x => x.AtendimentoPai, opt => opt.Ignore())
+    .ForMember(x => x.Responsavel, opt => opt.Ignore())
+    .ForMember(x => x.DataCadastro, opt => opt.Ignore())
+    .ForMember(x => x.ProcessoId, opt => opt.Ignore())
+    .ForMember(x => x.CasoId, opt => opt.Ignore())
+    .ForMember(x => x.AtendimentoPaiId, opt => opt.Ignore())
+    .ForMember(x => x.ResponsavelId, opt => opt.Ignore());
 
             // =============================
-            // 🔥 ENTITY → RESPONSE (OBTER POR ID) - PRINCIPAL
+            // 🔥 ENTITY → RESPONSE
             // =============================
-            CreateMap<Atendimento, ObterAtendimentoResponse>()
+            CreateMap<Atendimento, CriarAtendimentoClienteResponse>()
+     .ForMember(d => d.GrupoAtendimentoCliente,
+         o => o.MapFrom(s => s.GrupoClientes))
 
-                // 🔗 VÍNCULOS
-                .ForMember(dest => dest.ProcessoPasta,
-                    opt => opt.MapFrom(src => src.Processo != null ? src.Processo.Pasta : null))
-
-                .ForMember(dest => dest.CasoPasta,
-                    opt => opt.MapFrom(src => src.Caso != null ? src.Caso.Pasta : null))
-
-                .ForMember(dest => dest.AtendimentoAssunto,
-                    opt => opt.MapFrom(src => src.AtendimentoPai != null ? src.AtendimentoPai.Assunto : null))
-
-                // 👥 CLIENTES (N:N)
-                .ForMember(dest => dest.GrupoAtendimentoCliente,
-                    opt => opt.MapFrom(src => src.GrupoClientes))
-
-                // 🏷️ ETIQUETAS (N:N)
-                .ForMember(dest => dest.GrupoAtendimentoEtiqueta,
-                    opt => opt.MapFrom(src => src.GrupoEtiquetasAtendimentos));
-
-
-            // =============================
-            // 🔥 CLIENTES
-            // =============================
+     .ForMember(d => d.GrupoAtendimentoEtiqueta,
+         o => o.MapFrom(s => s.GrupoEtiquetasAtendimentos));
             CreateMap<GrupoAtendimentoCliente, GrupoAtendimentoClienteResponse>()
-                .ForMember(dest => dest.Nome,
-                    opt => opt.MapFrom(src => src.Pessoa.Nome));
-
-
-            // =============================
-            // 🔥 ETIQUETAS
-            // =============================
+    .ForMember(d => d.Nome,
+        o => o.MapFrom(s => s.Pessoa.Nome));
             CreateMap<GrupoEtiquetasAtendimentos, GrupoEtiquetaAtendimentoResponse>()
-                .ForMember(dest => dest.EtiquetaId,
-                    opt => opt.MapFrom(src => src.EtiquetaId))
+    .ForMember(d => d.EtiquetaId,
+        o => o.MapFrom(s => s.EtiquetaId))
+    .ForMember(d => d.Nome,
+        o => o.MapFrom(s => s.Etiqueta.Nome))
+    .ForMember(d => d.Cor,
+        o => o.MapFrom(s => s.Etiqueta.Cor));
+            CreateMap<Atendimento, ObterAtendimentoResponse>()
+      // vínculos
+      .ForMember(d => d.ProcessoPasta,
+          opt => opt.MapFrom(s => s.Processo != null ? s.Processo.Pasta : null))
 
-                .ForMember(dest => dest.Nome,
-                    opt => opt.MapFrom(src => src.Etiqueta.Nome))
+      .ForMember(d => d.CasoPasta,
+          opt => opt.MapFrom(s => s.Caso != null ? s.Caso.Pasta : null))
 
-                .ForMember(dest => dest.Cor,
-                    opt => opt.MapFrom(src => src.Etiqueta.Cor));
+      .ForMember(d => d.AtendimentoAssunto,
+          opt => opt.MapFrom(s => s.AtendimentoPai != null ? s.AtendimentoPai.Assunto : null))
+
+      // clientes
+      .ForMember(d => d.GrupoAtendimentoCliente,
+          opt => opt.MapFrom(s => s.GrupoClientes))
+
+      // etiquetas
+      .ForMember(d => d.GrupoAtendimentoEtiqueta,
+          opt => opt.MapFrom(s => s.GrupoEtiquetasAtendimentos));
+            CreateMap<GrupoAtendimentoCliente, GrupoAtendimentoClienteResponse>()
+    .ForMember(d => d.PessoaId,
+        opt => opt.MapFrom(s => s.PessoaId))
+    .ForMember(d => d.Nome,
+        opt => opt.MapFrom(s => s.Pessoa.Nome));
+
+            CreateMap<GrupoEtiquetasAtendimentos, GrupoEtiquetaAtendimentoResponse>()
+    .ForMember(d => d.EtiquetaId,
+        opt => opt.MapFrom(s => s.EtiquetaId))
+    .ForMember(d => d.Nome,
+        opt => opt.MapFrom(s => s.Etiqueta != null ? s.Etiqueta.Nome : null))
+    .ForMember(d => d.Cor,
+        opt => opt.MapFrom(s => s.Etiqueta != null ? s.Etiqueta.Cor : null));
 
             #endregion
 
