@@ -19,9 +19,9 @@ namespace DeslandesApp.Infra.Data.Mappings
                 .WithMany(p => p.GrupoPessoaClientes)
                 .HasForeignKey(x => x.PessoaId);
 
-            builder.HasOne(x => x.Processo)
-                .WithMany(p => p.GrupoPessoaClientes)
-                .HasForeignKey(x => x.ProcessoId);
+            //builder.HasOne(x => x.Processo)
+            //    .WithMany(p => p.GrupoPessoaClientes)
+            //    .HasForeignKey(x => x.ProcessoId);
 
             builder.HasOne(x => x.QualificacaoCliente)
             .WithMany()

@@ -6,10 +6,11 @@ using System.Threading.Tasks;
 
 namespace DeslandesApp.Domain.Models.Dtos.Responses.GrupoEtiquetaCaso
 {
-    public record GrupoEtiquetaCasoResponse
-(
-    Guid? EtiquetaId,
-    string? Nome
-);
+    public class GrupoEtiquetaCasoResponse
+    {
+        public Guid? EtiquetaId { get; set; }
+        public string? Nome { get; set; }
+        public string? Cor { get; set; }
 
+    }
 }

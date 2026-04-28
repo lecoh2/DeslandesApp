@@ -51,12 +51,12 @@ namespace DeslandesApp.Domain.Services
 
                 await unitOfWork.CommitAsync();
 
-                return new GrupoCasoClienteResponse(
-                    pessoa.Id,
-                     caso.Id,
-                    pessoa.Nome // 👈 aqui
-
-                );
+                return new GrupoCasoClienteResponse
+                {
+                    PessoaId = pessoa.Id,
+                    CasoId = caso.Id,
+                    Nome = pessoa.Nome
+                };
             }
             catch
             {
@@ -105,11 +105,12 @@ namespace DeslandesApp.Domain.Services
                 await unitOfWork.GrupoCasoClienteRepository.DeleteAsync(entidade);
 
                 await unitOfWork.CommitAsync();
-                return new GrupoCasoClienteResponse(
-entidade.PessoaId,
-entidade.CasoId,
-entidade.Pessoa?.Nome
-);
+                return new GrupoCasoClienteResponse
+                {
+                    PessoaId = entidade.PessoaId,
+                    CasoId = entidade.CasoId,
+                    Nome = entidade.Pessoa?.Nome
+                };
             }
             catch
             {

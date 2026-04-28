@@ -1,11 +1,14 @@
 ﻿using AutoMapper;
+using DeslandesApp.Domain.Helpers;
 using DeslandesApp.Domain.Interfaces.Repositories;
 using DeslandesApp.Domain.Interfaces.Services;
 using DeslandesApp.Domain.Models.Dtos.Requests.Caso;
+using DeslandesApp.Domain.Models.Dtos.Responses.Atendimento;
 using DeslandesApp.Domain.Models.Dtos.Responses.Caso;
 using DeslandesApp.Domain.Models.Dtos.Responses.Pessoas;
 using DeslandesApp.Domain.Models.Dtos.Responses.Processo;
 using DeslandesApp.Domain.Models.Entities;
+using DeslandesApp.Domain.Models.Enum;
 using DeslandesApp.Domain.Utils;
 using DeslandesApp.Domain.Validators;
 using FluentValidation;
@@ -18,7 +21,7 @@ using System.Threading.Tasks;
 
 namespace DeslandesApp.Domain.Services
 {
-    public class CasoService(IUnitOfWork unitOfWork, IMapper mapper) : ICasoService
+    public class CasoService(IUnitOfWork unitOfWork, IMapper mapper, IHistoricoGeralService historicoGeralService, FunctionsHelper functionsHelper) : ICasoService
     {
         public async Task<CriarCasoResponse> AdicionarAsync(CriarCasoRequest request)
         {
@@ -166,91 +169,150 @@ namespace DeslandesApp.Domain.Services
         {
             await unitOfWork.BeginTransactionAsync();
 
-            // 🔎 Busca caso atual
-            var caso = await unitOfWork.CasoRepository.GetByIdAsync(id);
-            if (caso == null)
-                throw new ApplicationException("Caso não encontrado.");
-
-            // 🔎 Busca responsável (se informado)
-            Usuario? usuario = null;
-            if (request.ResponsavelId.HasValue)
+            try
             {
-                usuario = await unitOfWork.UsuarioRepository.GetByIdAsync(request.ResponsavelId.Value);
-                if (usuario == null)
-                    throw new ApplicationException("Usuário responsável não encontrado.");
+                var caso = await unitOfWork.CasoRepository.GetByIdAsync(id)
+                    ?? throw new ApplicationException("Caso não encontrado.");
+
+                var usuarioId = functionsHelper.ObterUsuarioId();
+
+                // =========================
+                // SNAPSHOT ANTES
+                // =========================
+                var casoAntes = await unitOfWork.CasoRepository
+                    .ConsultarCasoComRelacionamentosAsync(id);
+
+                if (casoAntes == null)
+                    throw new ApplicationException("Caso para histórico não encontrado.");
+
+                var dadosAntes = new
+                {
+                    casoAntes.Pasta,
+                    casoAntes.Titulo,
+                    casoAntes.Descricao,
+                    casoAntes.Observacao,
+                    Acesso = casoAntes.Acesso.ToString(),
+
+                    ResponsavelId = casoAntes.ResponsavelId,
+
+                    Clientes = casoAntes.GrupoCasoClientes?
+                        .Select(x => x.PessoaId)
+                        .ToList(),
+
+                    Envolvidos = casoAntes.GrupoCasoEnvolvidos?
+                        .Select(x => x.PessoaId)
+                        .ToList()
+                };
+
+                // =========================
+                // CAMPOS BÁSICOS
+                // =========================
+                caso.Pasta = request.Pasta;
+                caso.Titulo = request.Titulo;
+                caso.Descricao = request.Descricao;
+                caso.Observacao = request.Observacao;
+                caso.Acesso = request.Acesso;
+                caso.ResponsavelId = request.ResponsavelId;
+
+                // =========================
+                // 👥 CLIENTES (RESET)
+                // =========================
+                await unitOfWork.GrupoCasoClienteRepository.RemoverPorCasoId(id);
+
+                if (request.GrupoCasoCliente?.Any() == true)
+                {
+                    foreach (var item in request.GrupoCasoCliente)
+                    {
+                        await unitOfWork.GrupoCasoClienteRepository.AddAsync(new GrupoCasoCliente
+                        {
+                            CasoId = id,
+                            PessoaId = item.IdPessoa
+                        });
+                    }
+                }
+
+                // =========================
+                // 👤 ENVOLVIDOS (RESET)
+                // =========================
+                await unitOfWork.GrupoCasoEnvolvidosRepository.RemoverPorCasoId(id);
+
+                if (request.GrupoCasoEnvolvidos?.Any() == true)
+                {
+                    foreach (var item in request.GrupoCasoEnvolvidos)
+                    {
+                        await unitOfWork.GrupoCasoEnvolvidosRepository.AddAsync(new GrupoCasoEnvolvido
+                        {
+                            CasoId = id,
+                            PessoaId = item.IdPessoa,
+                            QualificacaoId = item.IdQualificacao
+                        });
+                    }
+                }
+
+                // =========================
+                // UPDATE ENTIDADE
+                // =========================
+                await unitOfWork.CasoRepository.UpdateAsync(caso);
+
+                // =========================
+                // SNAPSHOT DEPOIS
+                // =========================
+                var casoDepois = await unitOfWork.CasoRepository
+                    .ConsultarCasoComRelacionamentosAsync(id);
+
+                if (casoDepois == null)
+                    throw new ApplicationException("Caso atualizado não encontrado.");
+
+                var dadosDepois = new
+                {
+                    casoDepois.Pasta,
+                    casoDepois.Titulo,
+                    casoDepois.Descricao,
+                    casoDepois.Observacao,
+                    Acesso = casoDepois.Acesso.ToString(),
+
+                    ResponsavelId = casoDepois.ResponsavelId,
+
+                    Clientes = casoDepois.GrupoCasoClientes?
+                        .Select(x => x.PessoaId)
+                        .ToList(),
+
+                    Envolvidos = casoDepois.GrupoCasoEnvolvidos?
+                        .Select(x => x.PessoaId)
+                        .ToList()
+                };
+
+                // =========================
+                // HISTÓRICO GERAL
+                // =========================
+                await historicoGeralService.RegistrarAsync(
+                    TipoEntidade.Caso,
+                    id,
+                    usuarioId,
+                    dadosAntes,
+                    dadosDepois,
+                    request.Observacao
+                );
+
+                await unitOfWork.CommitAsync();
+
+                return mapper.Map<CriarCasoResponse>(casoDepois);
             }
-
-            // 🔎 Antes (com relacionamentos, se existir método)
-            var casoAntes = await unitOfWork.CasoRepository
-                .ConsultarCasoComRelacionamentosAsync(id);
-
-            if (casoAntes == null)
-                throw new ApplicationException("Caso para histórico não encontrado.");
-
-            var dadosAntes = new
+            catch
             {
-                casoAntes.Pasta,
-                casoAntes.Titulo,
-                casoAntes.Descricao,
-                casoAntes.Observacao,
-                Acesso = casoAntes.Acesso.ToString(),
-
-                Responsavel = casoAntes.Responsavel != null ? new
-                {
-                    casoAntes.Responsavel.Id,
-                    casoAntes.Responsavel.NomeUsuario
-                } : null
-            };
-
-            // 🔄 Atualiza entidade
-            mapper.Map(request, caso);
-            caso.ResponsavelId = request.ResponsavelId;
-
-            await unitOfWork.CasoRepository.UpdateAsync(caso);
-
-            // 🔎 Depois
-            var casoDepois = await unitOfWork.CasoRepository
-                .ConsultarCasoComRelacionamentosAsync(id);
-
-            if (casoDepois == null)
-                throw new ApplicationException("Caso atualizado não encontrado.");
-
-            var dadosDepois = new
-            {
-                casoDepois.Pasta,
-                casoDepois.Titulo,
-                casoDepois.Descricao,
-                casoDepois.Observacao,
-                Acesso = casoDepois.Acesso.ToString(),
-
-                Responsavel = casoDepois.Responsavel != null ? new
-                {
-                    casoDepois.Responsavel.Id,
-                    casoDepois.Responsavel.NomeUsuario
-                } : null
-            };
-
-            // 🧾 Histórico
-            var historico = new CasoHistorico
-            {
-                CasoId = caso.Id,
-                IdUsuario = request.ResponsavelId ?? Guid.Empty, // cuidado aqui
-                DataAlteracao = DateTime.Now,
-                Observacao = request.Observacao ?? "",
-                DadosAntes = JsonConvert.SerializeObject(dadosAntes),
-                DadosDepois = JsonConvert.SerializeObject(dadosDepois)
-            };
-
-            await unitOfWork.CasoHistoricoRepository.AddAsync(historico);
-
-            await unitOfWork.CommitAsync();
-
-            return mapper.Map<CriarCasoResponse>(casoDepois);
+                await unitOfWork.RollbackAsync();
+                throw;
+            }
         }
 
-        public Task<CriarCasoResponse?> ObterPorIdAsync(Guid id)
+        public async Task<ObterCasoResponse?> ObterPorIdAsync(Guid id)
         {
-            throw new NotImplementedException();
+            var caso = await unitOfWork.CasoRepository.ObterCompletoPorIdAsync(id);
+
+            if (caso == null)
+                return null;
+
+            return mapper.Map<ObterCasoResponse>(caso);
         }
         public async Task<List<CasoAutoComplete>> ConsultarCasoAutoCompleteAsync(string? termo = null)
         {

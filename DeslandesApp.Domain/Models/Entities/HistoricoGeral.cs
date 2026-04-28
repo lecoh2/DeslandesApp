@@ -10,20 +10,22 @@ namespace DeslandesApp.Domain.Models.Entities
 {
     public class HistoricoGeral : BaseEntity
     {
-       
-            public TipoEntidade Entidade { get; set; } // 👈 agora é enum
 
-            public Guid EntidadeId { get; set; }
+        public TipoEntidade Entidade { get; set; } // 👈 agora é enum
 
-            public Guid? UsuarioId { get; set; }
-            public Usuario? Usuario { get; set; }
+        public Guid EntidadeId { get; set; }
 
-            public DateTime DataAlteracao { get; set; } = DateTime.Now;
+        public Guid? UsuarioId { get; set; }
+        public Usuario? Usuario { get; set; }
 
-            public string? Observacao { get; set; }
+        public DateTime DataAlteracao { get; set; } = DateTime.UtcNow;
 
-            public string DadosAntes { get; set; } = string.Empty;
-            public string DadosDepois { get; set; } = string.Empty;
-        
+        public string? Observacao { get; set; }
+
+        public string DadosAntes { get; set; } = string.Empty;
+        public string DadosDepois { get; set; } = string.Empty;
+        public string? Ip { get; set; }
+        public string? UserAgent { get; set; }
+
     }
 }

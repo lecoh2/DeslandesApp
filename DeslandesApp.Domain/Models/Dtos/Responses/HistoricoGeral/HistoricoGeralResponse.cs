@@ -19,5 +19,8 @@ namespace DeslandesApp.Domain.Models.Dtos.Responses.HistoricoGeral
 
         public string DadosAntes { get; init; } = string.Empty;
         public string DadosDepois { get; init; } = string.Empty;
+        public string? Ip { get; set; }
+        public string? UserAgent { get; set; }
     }
+
 }

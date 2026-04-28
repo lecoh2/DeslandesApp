@@ -31,10 +31,10 @@ namespace DeslandesApp.Infra.Data.Mappings
                 .OnDelete(DeleteBehavior.Restrict);
 
             // 🔥 RELAÇÃO N:N (tabela de junção)
-            builder.HasMany(x => x.GrupoPessoaClientes)
-                .WithOne(x => x.Processo)
-                .HasForeignKey(x => x.ProcessoId)
-                .OnDelete(DeleteBehavior.Cascade);
+            //builder.HasMany(x => x.GrupoPessoaClientes)
+            //    .WithOne(x => x.Processo)
+            //    .HasForeignKey(x => x.ProcessoId)
+            //    .OnDelete(DeleteBehavior.Cascade);
 
             builder.HasMany(x => x.GrupoEnvolvidos)
                 .WithOne(x => x.Processo)

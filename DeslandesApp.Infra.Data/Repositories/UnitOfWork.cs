@@ -49,7 +49,7 @@ namespace DeslandesApp.Infra.Data.Repositories
         private IGrupoAtendimentoClienteRepository? _atendimentoClienteRepository;       
         private IEventoRepository? _eventoRepository;
         private IGrupoEventoResponsavelRepository? _grupoEventoResponsavelRepository;
-        private IProcessoHistoricoRepository? _processoHistoricoRepository;      
+         
         private IGrupoClientesProcessosRepository? _grupoClientesProcessosRepository;
         private IGrupoEnvolvidosProcessoRepository? _grupoEnvolvidosProcessoRepository;
         private IGrupoEtiquetasProcessosRepository? _grupoEtiquetasProcessosRepository;
@@ -216,16 +216,7 @@ namespace DeslandesApp.Infra.Data.Repositories
                 return _grupoClientesProcessosRepository;
             }
         }       
-        public IProcessoHistoricoRepository ProcessoHistoricoRepository
-        {
-            get
-            {
-                if (_processoHistoricoRepository == null)
-                    _processoHistoricoRepository = new ProcessoHistoricoRepository(dataContext);
-
-                return _processoHistoricoRepository;
-            }
-        }
+       
         public IGrupoEventoResponsavelRepository GrupoEventoResponsavelRepository
         {
             get

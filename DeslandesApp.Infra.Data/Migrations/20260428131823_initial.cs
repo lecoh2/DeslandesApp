@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace DeslandesApp.Infra.Data.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialClean : Migration
+    public partial class initial : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -28,8 +28,8 @@ namespace DeslandesApp.Infra.Data.Migrations
                 columns: table => new
                 {
                     ID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    NOME = table.Column<string>(type: "varchar(250)", unicode: false, maxLength: 250, nullable: false),
-                    COR = table.Column<string>(type: "varchar(250)", unicode: false, maxLength: 250, nullable: false)
+                    NOME = table.Column<string>(type: "varchar(200)", unicode: false, maxLength: 200, nullable: false),
+                    COR = table.Column<string>(type: "varchar(20)", unicode: false, maxLength: 20, nullable: false)
                 },
                 constraints: table =>
                 {
@@ -134,6 +134,7 @@ namespace DeslandesApp.Infra.Data.Migrations
                     OBSERVACAO = table.Column<string>(type: "varchar(2000)", unicode: false, maxLength: 2000, nullable: true),
                     DATACADASTRO = table.Column<DateTime>(type: "datetime2", nullable: true),
                     RESPONSAVELID = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    USUARIOCADASTROID = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     ACESSO = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
@@ -145,41 +146,11 @@ namespace DeslandesApp.Infra.Data.Migrations
                         principalTable: "USUARIOS",
                         principalColumn: "ID",
                         onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "EVENTO",
-                columns: table => new
-                {
-                    ID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    TITULO = table.Column<string>(type: "varchar(250)", unicode: false, maxLength: 250, nullable: false),
-                    DATAINICIAL = table.Column<DateOnly>(type: "date", nullable: false),
-                    HORAINICIAL = table.Column<TimeOnly>(type: "time", nullable: false),
-                    DATAFINAL = table.Column<DateOnly>(type: "date", nullable: true),
-                    HORAFINAL = table.Column<TimeOnly>(type: "time", nullable: true),
-                    DIAINTEIRO = table.Column<bool>(type: "bit", nullable: false),
-                    ENDERECO = table.Column<string>(type: "varchar(250)", unicode: false, maxLength: 250, nullable: true),
-                    MODALIDADE = table.Column<int>(type: "int", nullable: false),
-                    OBSERVACAO = table.Column<string>(type: "varchar(2000)", unicode: false, maxLength: 2000, nullable: true),
-                    TIPORECORRENCIA = table.Column<int>(type: "int", nullable: false),
-                    INTERVALORECORRENCIA = table.Column<int>(type: "int", nullable: false),
-                    DIASSEMANA = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    DATAFIMRECORRENCIA = table.Column<DateOnly>(type: "date", nullable: true),
-                    QUANTIDADEOCORRENCIAS = table.Column<int>(type: "int", nullable: true),
-                    STATUSKANBAN = table.Column<int>(type: "int", nullable: false),
-                    USUARIOCRIACAOID = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    DATACADASTRO = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    DATAATUALIZACAO = table.Column<DateTime>(type: "datetime2", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_EVENTO", x => x.ID);
                     table.ForeignKey(
-                        name: "FK_EVENTO_USUARIOS_USUARIOCRIACAOID",
-                        column: x => x.USUARIOCRIACAOID,
+                        name: "FK_CASO_USUARIOS_USUARIOCADASTROID",
+                        column: x => x.USUARIOCADASTROID,
                         principalTable: "USUARIOS",
-                        principalColumn: "ID",
-                        onDelete: ReferentialAction.Restrict);
+                        principalColumn: "ID");
                 });
 
             migrationBuilder.CreateTable(
@@ -268,6 +239,32 @@ namespace DeslandesApp.Infra.Data.Migrations
                     table.ForeignKey(
                         name: "FK_GRUPOSETORES_USUARIOS_IDUSUARIO",
                         column: x => x.IDUSUARIO,
+                        principalTable: "USUARIOS",
+                        principalColumn: "ID",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "HISTORICOGERAL",
+                columns: table => new
+                {
+                    ID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    ENTIDADE = table.Column<int>(type: "int", nullable: false),
+                    ENTIDADEID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    USUARIOID = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    DATAALTERACAO = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    OBSERVACAO = table.Column<string>(type: "varchar(500)", unicode: false, maxLength: 500, nullable: true),
+                    DADOSANTES = table.Column<string>(type: "text", unicode: false, maxLength: 250, nullable: false),
+                    DADOSDEPOIS = table.Column<string>(type: "text", unicode: false, maxLength: 250, nullable: false),
+                    IP = table.Column<string>(type: "varchar(50)", unicode: false, maxLength: 50, nullable: true),
+                    USERAGENT = table.Column<string>(type: "varchar(500)", unicode: false, maxLength: 500, nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_HISTORICOGERAL", x => x.ID);
+                    table.ForeignKey(
+                        name: "FK_HISTORICOGERAL_USUARIOS_USUARIOID",
+                        column: x => x.USUARIOID,
                         principalTable: "USUARIOS",
                         principalColumn: "ID",
                         onDelete: ReferentialAction.Restrict);
@@ -419,7 +416,7 @@ namespace DeslandesApp.Infra.Data.Migrations
                 {
                     table.PrimaryKey("PK_GRUPOETIQUETACASOS", x => new { x.ETIQUETAID, x.CASOID });
                     table.ForeignKey(
-                        name: "FK_GRUPOETIQUETACASOS_CASO_CASOID",
+                        name: "FK_CASO_ETIQUETA",
                         column: x => x.CASOID,
                         principalTable: "CASO",
                         principalColumn: "ID",
@@ -430,59 +427,6 @@ namespace DeslandesApp.Infra.Data.Migrations
                         principalTable: "ETIQUETA",
                         principalColumn: "ID",
                         onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "EVENTOHISTORICO",
-                columns: table => new
-                {
-                    ID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    EVENTO_ID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    USUARIO_ID = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    DATAALTERACAO = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    OBSERVACAO = table.Column<string>(type: "VARCHAR(255)", unicode: false, maxLength: 250, nullable: true),
-                    DADOSANTES = table.Column<string>(type: "VARCHAR(MAX)", unicode: false, maxLength: 250, nullable: true),
-                    DADOSDEPOIS = table.Column<string>(type: "VARCHAR(MAX)", unicode: false, maxLength: 250, nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_EVENTOHISTORICO", x => x.ID);
-                    table.ForeignKey(
-                        name: "FK_EVENTOHISTORICO_EVENTO",
-                        column: x => x.EVENTO_ID,
-                        principalTable: "EVENTO",
-                        principalColumn: "ID",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_EVENTOHISTORICO_USUARIO",
-                        column: x => x.USUARIO_ID,
-                        principalTable: "USUARIOS",
-                        principalColumn: "ID",
-                        onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "GRUPOEVENTORESPONSAVEL",
-                columns: table => new
-                {
-                    EVENTOID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    USUARIOID = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_GRUPOEVENTORESPONSAVEL", x => new { x.EVENTOID, x.USUARIOID });
-                    table.ForeignKey(
-                        name: "FK_EVENTO_EVENTORESPONSAVEL",
-                        column: x => x.EVENTOID,
-                        principalTable: "EVENTO",
-                        principalColumn: "ID",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_GRUPOEVENTORESPONSAVEL_USUARIOS_USUARIOID",
-                        column: x => x.USUARIOID,
-                        principalTable: "USUARIOS",
-                        principalColumn: "ID",
-                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -794,7 +738,7 @@ namespace DeslandesApp.Infra.Data.Migrations
                         column: x => x.PESSOAID,
                         principalTable: "PESSOA",
                         principalColumn: "ID",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_GRUPOENVOLVIDOSPROCESSO_PROCESSOS_PROCESSOID",
                         column: x => x.PROCESSOID,
@@ -814,8 +758,7 @@ namespace DeslandesApp.Infra.Data.Migrations
                 columns: table => new
                 {
                     PROCESSOID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    ETIQUETAID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    PESSOAID = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
+                    ETIQUETAID = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -826,11 +769,6 @@ namespace DeslandesApp.Infra.Data.Migrations
                         principalTable: "ETIQUETA",
                         principalColumn: "ID",
                         onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_GRUPOETIQUETASPROCESSOS_PESSOA_PESSOAID",
-                        column: x => x.PESSOAID,
-                        principalTable: "PESSOA",
-                        principalColumn: "ID");
                     table.ForeignKey(
                         name: "FK_GRUPOETIQUETASPROCESSOS_PROCESSOS_PROCESSOID",
                         column: x => x.PROCESSOID,
@@ -855,7 +793,7 @@ namespace DeslandesApp.Infra.Data.Migrations
                         column: x => x.PESSOAID,
                         principalTable: "PESSOA",
                         principalColumn: "ID",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_GRUPOPESSOACLIENTES_PROCESSOS_PROCESSOID",
                         column: x => x.PROCESSOID,
@@ -866,42 +804,6 @@ namespace DeslandesApp.Infra.Data.Migrations
                         name: "FK_GRUPOPESSOACLIENTES_QUALIFICACAO_QUALIFICACAOID",
                         column: x => x.QUALIFICACAOID,
                         principalTable: "QUALIFICACAO",
-                        principalColumn: "ID",
-                        onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "PROCESSOHISTORICO",
-                columns: table => new
-                {
-                    ID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    USUARIO_ID = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    PROCESSOID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    IDACAO = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    DATAALTERACAO = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    OBSERVACOES = table.Column<string>(type: "VARCHAR(255)", unicode: false, maxLength: 250, nullable: true),
-                    DADOSANTES = table.Column<string>(type: "VARCHAR(MAX)", unicode: false, maxLength: 250, nullable: true),
-                    DADOSDEPOIS = table.Column<string>(type: "VARCHAR(MAX)", unicode: false, maxLength: 250, nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_PROCESSOHISTORICO", x => x.ID);
-                    table.ForeignKey(
-                        name: "FK_PROCESSOHISTORICO_ACAO",
-                        column: x => x.IDACAO,
-                        principalTable: "ACAO",
-                        principalColumn: "ID",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_PROCESSOHISTORICO_PROCESSOS_PROCESSOID",
-                        column: x => x.PROCESSOID,
-                        principalTable: "PROCESSOS",
-                        principalColumn: "ID",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_USUARIOHISTORICO_USUARIO",
-                        column: x => x.USUARIO_ID,
-                        principalTable: "USUARIOS",
                         principalColumn: "ID",
                         onDelete: ReferentialAction.Restrict);
                 });
@@ -930,6 +832,63 @@ namespace DeslandesApp.Infra.Data.Migrations
                     table.ForeignKey(
                         name: "FK_ATENDIMENTOHISTORICO_USUARIO",
                         column: x => x.USUARIO_ID,
+                        principalTable: "USUARIOS",
+                        principalColumn: "ID",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "EVENTO",
+                columns: table => new
+                {
+                    ID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    TITULO = table.Column<string>(type: "varchar(250)", unicode: false, maxLength: 250, nullable: false),
+                    DATAINICIAL = table.Column<DateOnly>(type: "date", nullable: false),
+                    HORAINICIAL = table.Column<TimeOnly>(type: "time", nullable: false),
+                    DATAFINAL = table.Column<DateOnly>(type: "date", nullable: true),
+                    HORAFINAL = table.Column<TimeOnly>(type: "time", nullable: true),
+                    DIAINTEIRO = table.Column<bool>(type: "bit", nullable: false),
+                    ENDERECO = table.Column<string>(type: "varchar(250)", unicode: false, maxLength: 250, nullable: true),
+                    MODALIDADE = table.Column<int>(type: "int", nullable: false),
+                    OBSERVACAO = table.Column<string>(type: "varchar(2000)", unicode: false, maxLength: 2000, nullable: true),
+                    TIPORECORRENCIA = table.Column<int>(type: "int", nullable: false),
+                    INTERVALORECORRENCIA = table.Column<int>(type: "int", nullable: false),
+                    DIASSEMANA = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    DATAFIMRECORRENCIA = table.Column<DateOnly>(type: "date", nullable: true),
+                    QUANTIDADEOCORRENCIAS = table.Column<int>(type: "int", nullable: true),
+                    STATUSKANBAN = table.Column<int>(type: "int", nullable: false),
+                    USUARIOCRIACAOID = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    DATACADASTRO = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    DATAATUALIZACAO = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    TIPOVINCULO = table.Column<int>(type: "int", nullable: true),
+                    PROCESSOID = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    CASOID = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    ATENDIMENTOID = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_EVENTO", x => x.ID);
+                    table.ForeignKey(
+                        name: "FK_EVENTO_ATENDIMENTO",
+                        column: x => x.ATENDIMENTOID,
+                        principalTable: "ATENDIMENTO",
+                        principalColumn: "ID",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_EVENTO_CASO",
+                        column: x => x.CASOID,
+                        principalTable: "CASO",
+                        principalColumn: "ID",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_EVENTO_PROCESSO",
+                        column: x => x.PROCESSOID,
+                        principalTable: "PROCESSOS",
+                        principalColumn: "ID",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_EVENTO_USUARIOS_USUARIOCRIACAOID",
+                        column: x => x.USUARIOCRIACAOID,
                         principalTable: "USUARIOS",
                         principalColumn: "ID",
                         onDelete: ReferentialAction.Restrict);
@@ -1023,14 +982,125 @@ namespace DeslandesApp.Infra.Data.Migrations
                         principalColumn: "ID",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_TAREFA_USUARIO",
+                        name: "FK_TAREFA_USUARIOS_RESPONSAVELID",
                         column: x => x.RESPONSAVELID,
                         principalTable: "USUARIOS",
-                        principalColumn: "ID",
-                        onDelete: ReferentialAction.Restrict);
+                        principalColumn: "ID");
                     table.ForeignKey(
                         name: "FK_TAREFA_USUARIOS_USUARIOCRIACAOID",
                         column: x => x.USUARIOCRIACAOID,
+                        principalTable: "USUARIOS",
+                        principalColumn: "ID",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "EVENTOHISTORICO",
+                columns: table => new
+                {
+                    ID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    EVENTO_ID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    USUARIO_ID = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    DATAALTERACAO = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    OBSERVACAO = table.Column<string>(type: "VARCHAR(255)", unicode: false, maxLength: 250, nullable: true),
+                    DADOSANTES = table.Column<string>(type: "VARCHAR(MAX)", unicode: false, maxLength: 250, nullable: true),
+                    DADOSDEPOIS = table.Column<string>(type: "VARCHAR(MAX)", unicode: false, maxLength: 250, nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_EVENTOHISTORICO", x => x.ID);
+                    table.ForeignKey(
+                        name: "FK_EVENTOHISTORICO_EVENTO",
+                        column: x => x.EVENTO_ID,
+                        principalTable: "EVENTO",
+                        principalColumn: "ID",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_EVENTOHISTORICO_USUARIO",
+                        column: x => x.USUARIO_ID,
+                        principalTable: "USUARIOS",
+                        principalColumn: "ID",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "GRUPOEVENTOETIQUETAS",
+                columns: table => new
+                {
+                    EVENDOID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    ETIQUETAID = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_GRUPOEVENTOETIQUETAS", x => new { x.EVENDOID, x.ETIQUETAID });
+                    table.ForeignKey(
+                        name: "FK_EVENTOETIQUETA_ETIQUETA",
+                        column: x => x.ETIQUETAID,
+                        principalTable: "ETIQUETA",
+                        principalColumn: "ID",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_EVENTOETIQUETA_EVENTO",
+                        column: x => x.EVENDOID,
+                        principalTable: "EVENTO",
+                        principalColumn: "ID",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "GRUPOEVENTORESPONSAVEL",
+                columns: table => new
+                {
+                    EVENTOID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    USUARIOID = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_GRUPOEVENTORESPONSAVEL", x => new { x.EVENTOID, x.USUARIOID });
+                    table.ForeignKey(
+                        name: "FK_EVENTO_EVENTORESPONSAVEL",
+                        column: x => x.EVENTOID,
+                        principalTable: "EVENTO",
+                        principalColumn: "ID",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_GRUPOEVENTORESPONSAVEL_USUARIOS_USUARIOID",
+                        column: x => x.USUARIOID,
+                        principalTable: "USUARIOS",
+                        principalColumn: "ID",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "COMENTARIOS",
+                columns: table => new
+                {
+                    ID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    TEXTO = table.Column<string>(type: "varchar(1000)", unicode: false, maxLength: 1000, nullable: false),
+                    DATACRIACAO = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    USUARIOID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    TAREFAID = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    EVENTOID = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_COMENTARIOS", x => x.ID);
+                    table.CheckConstraint("CK_Comentario_Vinculo", "[TarefaId] IS NOT NULL OR [EventoId] IS NOT NULL");
+                    table.ForeignKey(
+                        name: "FK_COMENTARIOS_EVENTO_EVENTOID",
+                        column: x => x.EVENTOID,
+                        principalTable: "EVENTO",
+                        principalColumn: "ID",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_COMENTARIOS_TAREFA_TAREFAID",
+                        column: x => x.TAREFAID,
+                        principalTable: "TAREFA",
+                        principalColumn: "ID",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_COMENTARIOS_USUARIOS_USUARIOID",
+                        column: x => x.USUARIOID,
                         principalTable: "USUARIOS",
                         principalColumn: "ID",
                         onDelete: ReferentialAction.Restrict);
@@ -1041,19 +1111,43 @@ namespace DeslandesApp.Infra.Data.Migrations
                 columns: table => new
                 {
                     TAREFAID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    PESSOAID = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                    USUARIOID = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_GRUPOTAREFARESPONSAVEIS", x => new { x.PESSOAID, x.TAREFAID });
-                    table.ForeignKey(
-                        name: "FK_TAREFARESPONSAVEIS_PESSOA",
-                        column: x => x.PESSOAID,
-                        principalTable: "PESSOA",
-                        principalColumn: "ID",
-                        onDelete: ReferentialAction.Restrict);
+                    table.PrimaryKey("PK_GRUPOTAREFARESPONSAVEIS", x => new { x.USUARIOID, x.TAREFAID });
                     table.ForeignKey(
                         name: "FK_TAREFARESPONSAVEIS_TAREFA",
+                        column: x => x.TAREFAID,
+                        principalTable: "TAREFA",
+                        principalColumn: "ID",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_TAREFARESPONSAVEIS_USUARIO",
+                        column: x => x.USUARIOID,
+                        principalTable: "USUARIOS",
+                        principalColumn: "ID",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "GRUPOTAREFASETIQUETAS",
+                columns: table => new
+                {
+                    TAREFAID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    ETIQUETAID = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_GRUPOTAREFASETIQUETAS", x => new { x.TAREFAID, x.ETIQUETAID });
+                    table.ForeignKey(
+                        name: "FK_TAREFAETIQUETA_ETIQUETA",
+                        column: x => x.ETIQUETAID,
+                        principalTable: "ETIQUETA",
+                        principalColumn: "ID",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_TAREFAETIQUETA_TAREFA",
                         column: x => x.TAREFAID,
                         principalTable: "TAREFA",
                         principalColumn: "ID",
@@ -1066,7 +1160,7 @@ namespace DeslandesApp.Infra.Data.Migrations
                 {
                     ID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     DESCRICAO = table.Column<string>(type: "varchar(300)", unicode: false, maxLength: 300, nullable: false),
-                    CONCLUIDA = table.Column<bool>(type: "bit", nullable: true),
+                    CONCLUIDA = table.Column<bool>(type: "bit", nullable: false),
                     DATACONCLUSAO = table.Column<DateTime>(type: "datetime2", nullable: true),
                     TAREFAID = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     ORDEM = table.Column<int>(type: "int", nullable: true)
@@ -1076,30 +1170,6 @@ namespace DeslandesApp.Infra.Data.Migrations
                     table.PrimaryKey("PK_LISTATAREFA", x => x.ID);
                     table.ForeignKey(
                         name: "FK_TAREFA_LISTATAREFA",
-                        column: x => x.TAREFAID,
-                        principalTable: "TAREFA",
-                        principalColumn: "ID",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "TAREFAETIQUETA",
-                columns: table => new
-                {
-                    TAREFAID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    ETIQUETAID = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_TAREFAETIQUETA", x => new { x.TAREFAID, x.ETIQUETAID });
-                    table.ForeignKey(
-                        name: "FK_TAREFAETIQUETA_ETIQUETA",
-                        column: x => x.ETIQUETAID,
-                        principalTable: "ETIQUETA",
-                        principalColumn: "ID",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_TAREFAETIQUETA_TAREFA",
                         column: x => x.TAREFAID,
                         principalTable: "TAREFA",
                         principalColumn: "ID",
@@ -1142,6 +1212,11 @@ namespace DeslandesApp.Infra.Data.Migrations
                 column: "RESPONSAVELID");
 
             migrationBuilder.CreateIndex(
+                name: "IX_CASO_USUARIOCADASTROID",
+                table: "CASO",
+                column: "USUARIOCADASTROID");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_CASOHISTORICO_CASO_ID",
                 table: "CASOHISTORICO",
                 column: "CASO_ID");
@@ -1150,6 +1225,21 @@ namespace DeslandesApp.Infra.Data.Migrations
                 name: "IX_CASOHISTORICO_USUARIO_ID",
                 table: "CASOHISTORICO",
                 column: "USUARIO_ID");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_COMENTARIOS_EVENTOID",
+                table: "COMENTARIOS",
+                column: "EVENTOID");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_COMENTARIOS_TAREFAID",
+                table: "COMENTARIOS",
+                column: "TAREFAID");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_COMENTARIOS_USUARIOID",
+                table: "COMENTARIOS",
+                column: "USUARIOID");
 
             migrationBuilder.CreateIndex(
                 name: "IX_CONTABANCARIA_PESSOAID",
@@ -1161,6 +1251,21 @@ namespace DeslandesApp.Infra.Data.Migrations
                 table: "ENDERECO",
                 column: "PESSOA_ID",
                 unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_EVENTO_ATENDIMENTOID",
+                table: "EVENTO",
+                column: "ATENDIMENTOID");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_EVENTO_CASOID",
+                table: "EVENTO",
+                column: "CASOID");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_EVENTO_PROCESSOID",
+                table: "EVENTO",
+                column: "PROCESSOID");
 
             migrationBuilder.CreateIndex(
                 name: "IX_EVENTO_USUARIOCRIACAOID",
@@ -1256,14 +1361,14 @@ namespace DeslandesApp.Infra.Data.Migrations
                 column: "ATENDIMENTOID");
 
             migrationBuilder.CreateIndex(
-                name: "IX_GRUPOETIQUETASPROCESSOS_PESSOAID",
-                table: "GRUPOETIQUETASPROCESSOS",
-                column: "PESSOAID");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_GRUPOETIQUETASPROCESSOS_PROCESSOID",
                 table: "GRUPOETIQUETASPROCESSOS",
                 column: "PROCESSOID");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_GRUPOEVENTOETIQUETAS_ETIQUETAID",
+                table: "GRUPOEVENTOETIQUETAS",
+                column: "ETIQUETAID");
 
             migrationBuilder.CreateIndex(
                 name: "IX_GRUPOEVENTORESPONSAVEL_USUARIOID",
@@ -1296,10 +1401,40 @@ namespace DeslandesApp.Infra.Data.Migrations
                 column: "IDSETOR");
 
             migrationBuilder.CreateIndex(
-                name: "IX_GRUPOTAREFARESPONSAVEIS_TAREFAID_PESSOAID",
+                name: "IX_GRUPOTAREFARESPONSAVEIS_TAREFAID_USUARIOID",
                 table: "GRUPOTAREFARESPONSAVEIS",
-                columns: new[] { "TAREFAID", "PESSOAID" },
+                columns: new[] { "TAREFAID", "USUARIOID" },
                 unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_GRUPOTAREFASETIQUETAS_ETIQUETAID",
+                table: "GRUPOTAREFASETIQUETAS",
+                column: "ETIQUETAID");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_HISTORICOGERAL_DATAALTERACAO",
+                table: "HISTORICOGERAL",
+                column: "DATAALTERACAO");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_HISTORICOGERAL_ENTIDADE",
+                table: "HISTORICOGERAL",
+                column: "ENTIDADE");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_HISTORICOGERAL_ENTIDADE_ENTIDADEID",
+                table: "HISTORICOGERAL",
+                columns: new[] { "ENTIDADE", "ENTIDADEID" });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_HISTORICOGERAL_ENTIDADEID",
+                table: "HISTORICOGERAL",
+                column: "ENTIDADEID");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_HISTORICOGERAL_USUARIOID",
+                table: "HISTORICOGERAL",
+                column: "USUARIOID");
 
             migrationBuilder.CreateIndex(
                 name: "IX_INFORMACOESCOMPLEMENTARES_PESSOA_ID",
@@ -1330,21 +1465,6 @@ namespace DeslandesApp.Infra.Data.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_PESSOAHISTORICO_USUARIO_ID",
                 table: "PESSOAHISTORICO",
-                column: "USUARIO_ID");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_PROCESSOHISTORICO_IDACAO",
-                table: "PROCESSOHISTORICO",
-                column: "IDACAO");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_PROCESSOHISTORICO_PROCESSOID",
-                table: "PROCESSOHISTORICO",
-                column: "PROCESSOID");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_PROCESSOHISTORICO_USUARIO_ID",
-                table: "PROCESSOHISTORICO",
                 column: "USUARIO_ID");
 
             migrationBuilder.CreateIndex(
@@ -1388,11 +1508,6 @@ namespace DeslandesApp.Infra.Data.Migrations
                 column: "USUARIOCRIACAOID");
 
             migrationBuilder.CreateIndex(
-                name: "IX_TAREFAETIQUETA_ETIQUETAID",
-                table: "TAREFAETIQUETA",
-                column: "ETIQUETAID");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_VARA_FOROID",
                 table: "VARA",
                 column: "FOROID");
@@ -1412,6 +1527,9 @@ namespace DeslandesApp.Infra.Data.Migrations
 
             migrationBuilder.DropTable(
                 name: "CASOHISTORICO");
+
+            migrationBuilder.DropTable(
+                name: "COMENTARIOS");
 
             migrationBuilder.DropTable(
                 name: "CONTABANCARIA");
@@ -1456,6 +1574,9 @@ namespace DeslandesApp.Infra.Data.Migrations
                 name: "GRUPOETIQUETASPROCESSOS");
 
             migrationBuilder.DropTable(
+                name: "GRUPOEVENTOETIQUETAS");
+
+            migrationBuilder.DropTable(
                 name: "GRUPOEVENTORESPONSAVEL");
 
             migrationBuilder.DropTable(
@@ -1474,6 +1595,12 @@ namespace DeslandesApp.Infra.Data.Migrations
                 name: "GRUPOTAREFARESPONSAVEIS");
 
             migrationBuilder.DropTable(
+                name: "GRUPOTAREFASETIQUETAS");
+
+            migrationBuilder.DropTable(
+                name: "HISTORICOGERAL");
+
+            migrationBuilder.DropTable(
                 name: "INFORMACOESCOMPLEMENTARES");
 
             migrationBuilder.DropTable(
@@ -1484,12 +1611,6 @@ namespace DeslandesApp.Infra.Data.Migrations
 
             migrationBuilder.DropTable(
                 name: "PESSOAHISTORICO");
-
-            migrationBuilder.DropTable(
-                name: "PROCESSOHISTORICO");
-
-            migrationBuilder.DropTable(
-                name: "TAREFAETIQUETA");
 
             migrationBuilder.DropTable(
                 name: "EVENTO");
@@ -1504,13 +1625,13 @@ namespace DeslandesApp.Infra.Data.Migrations
                 name: "SETORES");
 
             migrationBuilder.DropTable(
-                name: "PESSOA");
-
-            migrationBuilder.DropTable(
                 name: "ETIQUETA");
 
             migrationBuilder.DropTable(
                 name: "TAREFA");
+
+            migrationBuilder.DropTable(
+                name: "PESSOA");
 
             migrationBuilder.DropTable(
                 name: "ATENDIMENTO");

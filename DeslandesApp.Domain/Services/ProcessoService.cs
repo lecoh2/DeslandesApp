@@ -229,10 +229,10 @@ namespace DeslandesApp.Domain.Services
                 } : null,
 
                 // 🔥 AQUI você só TRAZ, não altera
-                Clientes = processoAntes.GrupoPessoaClientes?
-                    .Select(c => c.Pessoa?.Nome)
-                    .Where(n => n != null)
-                    .ToList(),
+                //Clientes = processoAntes.GrupoPessoaClientes?
+                //    .Select(c => c.Pessoa?.Nome)
+                //    .Where(n => n != null)
+                //    .ToList(),
 
                 Envolvidos = processoAntes.GrupoEnvolvidos?
                     .Select(e => new
@@ -282,10 +282,10 @@ namespace DeslandesApp.Domain.Services
                 UsuarioResponsavel = processoDepois.UsuarioResponsavel?.NomeUsuario,
                 Acao = processoDepois.Acao?.NomeAcao,
 
-                Clientes = processoDepois.GrupoPessoaClientes?
-                    .Select(c => c.Pessoa?.Nome)
-                    .Where(n => n != null)
-                    .ToList(),
+                //Clientes = processoDepois.GrupoPessoaClientes?
+                //    .Select(c => c.Pessoa?.Nome)
+                //    .Where(n => n != null)
+                //    .ToList(),
 
                 Envolvidos = processoDepois.GrupoEnvolvidos?
                     .Select(e => new
@@ -308,17 +308,17 @@ namespace DeslandesApp.Domain.Services
             mapper.Map(request, processo);
             processo.UsuarioResponsavelId = request.UsuarioResponsavelId;
 
-            var historico = new ProcessoHistorico
-            {
-                ProcessoId = processo.Id,
-                IdUsuario = request.UsuarioResponsavelId!.Value,
-                DataAlteracao = DateTime.Now,
-                Observacoes = request.Observacao ?? "",
-                DadosAntes = JsonConvert.SerializeObject(dadosAntes),
-                DadosDepois = JsonConvert.SerializeObject(dadosDepois)
-            };
+            //var historico = new ProcessoHistorico
+            //{
+            //    ProcessoId = processo.Id,
+            //    IdUsuario = request.UsuarioResponsavelId!.Value,
+            //    DataAlteracao = DateTime.Now,
+            //    Observacoes = request.Observacao ?? "",
+            //    DadosAntes = JsonConvert.SerializeObject(dadosAntes),
+            //    DadosDepois = JsonConvert.SerializeObject(dadosDepois)
+            //};
 
-            await unitOfWork.ProcessoHistoricoRepository.AddAsync(historico);
+           // await unitOfWork.ProcessoHistoricoRepository.AddAsync(historico);
 
       
 

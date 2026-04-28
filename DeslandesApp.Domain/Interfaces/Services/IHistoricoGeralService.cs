@@ -18,6 +18,7 @@ namespace DeslandesApp.Domain.Interfaces.Services
             object dadosAntes,
             object dadosDepois,
             string? observacao = null
+
         );
         Task<List<HistoricoGeralResponse>> ObterPorEntidadeAsync(TipoEntidade entidade, Guid entidadeId);
     }

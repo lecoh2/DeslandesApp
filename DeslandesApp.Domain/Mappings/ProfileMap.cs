@@ -24,7 +24,10 @@ using DeslandesApp.Domain.Models.Dtos.Responses.EnderecoEndereco;
 using DeslandesApp.Domain.Models.Dtos.Responses.Etiquetas;
 using DeslandesApp.Domain.Models.Dtos.Responses.Evento;
 using DeslandesApp.Domain.Models.Dtos.Responses.GrupoAtendimentoCliente;
+using DeslandesApp.Domain.Models.Dtos.Responses.GrupoCasoCliente;
+using DeslandesApp.Domain.Models.Dtos.Responses.GrupoCasoEnvolvidos;
 using DeslandesApp.Domain.Models.Dtos.Responses.GrupoEtiquetaAtendimento;
+using DeslandesApp.Domain.Models.Dtos.Responses.GrupoEtiquetaCaso;
 using DeslandesApp.Domain.Models.Dtos.Responses.GrupoEventoEtiquetas;
 using DeslandesApp.Domain.Models.Dtos.Responses.GrupoEventoResponsavel;
 using DeslandesApp.Domain.Models.Dtos.Responses.GrupoNiveis;
@@ -360,18 +363,89 @@ namespace DeslandesApp.Domain.Mappings
             #endregion
             #region Caso
 
-            // 🔁 Request -> Entidade
+            // =========================
+            // CREATE (Cadastro)
+            // =========================
             CreateMap<CriarCasoRequest, Caso>()
                 .ForMember(dest => dest.GrupoCasoClientes, opt => opt.Ignore())
                 .ForMember(dest => dest.GrupoCasoEnvolvidos, opt => opt.Ignore())
-              .ForMember(dest => dest.GrupoEtiquetaCasos, opt => opt.Ignore()); // 🔥 FALTAVA ESSA
+                .ForMember(dest => dest.GrupoEtiquetaCasos, opt => opt.Ignore());
 
+            // =========================
+            // UPDATE (Edição)
+            // =========================
+            CreateMap<CasoUpdateRequest, Caso>()
+                .ForMember(dest => dest.Id, opt => opt.Ignore())
+                .ForMember(dest => dest.DataCadastro, opt => opt.Ignore())
+                .ForMember(dest => dest.GrupoCasoClientes, opt => opt.Ignore())
+                .ForMember(dest => dest.GrupoCasoEnvolvidos, opt => opt.Ignore())
+                .ForMember(dest => dest.GrupoEtiquetaCasos, opt => opt.Ignore());
 
-            // 🔁 Entidade -> Response
-            CreateMap<Caso, CriarCasoResponse>();
+            // =========================
+            // RESPONSE (CASO PRINCIPAL)
+            // =========================
+            CreateMap<Caso, ObterCasoResponse>()
+                .ForMember(dest => dest.Clientes,
+                    opt => opt.MapFrom(src => src.GrupoCasoClientes))
+
+                .ForMember(dest => dest.Envolvidos,
+                    opt => opt.MapFrom(src => src.GrupoCasoEnvolvidos))
+
+                .ForMember(dest => dest.GrupoEtiquetaCaso,
+                    opt => opt.MapFrom(src => src.GrupoEtiquetaCasos))
+
+                .ForMember(dest => dest.ResponsavelNome,
+                    opt => opt.MapFrom(src => src.Responsavel != null ? src.Responsavel.NomeUsuario : null))
+
+                .ForMember(dest => dest.UsuarioCadastroNome,
+                    opt => opt.MapFrom(src => src.UsuarioCadastro != null ? src.UsuarioCadastro.NomeUsuario : null));
+
+            // =========================
+            // CLIENTES DO CASO
+            // =========================
+            CreateMap<GrupoCasoCliente, GrupoCasoClienteResponse>()
+                .ForMember(dest => dest.PessoaId,
+                    opt => opt.MapFrom(src => src.PessoaId))
+
+                .ForMember(dest => dest.CasoId,
+                    opt => opt.MapFrom(src => src.CasoId))
+
+                .ForMember(dest => dest.Nome,
+                    opt => opt.MapFrom(src => src.Pessoa != null ? src.Pessoa.Nome : null));
+
+            // =========================
+            // ENVOLVIDOS DO CASO
+            // =========================
+            CreateMap<GrupoCasoEnvolvido, GrupoCasoEnvolvidosResponse>()
+                .ForMember(dest => dest.PessoaId,
+                    opt => opt.MapFrom(src => src.PessoaId))
+
+                .ForMember(dest => dest.Nome,
+                    opt => opt.MapFrom(src => src.Pessoa != null ? src.Pessoa.Nome : null))
+
+                .ForMember(dest => dest.QualificacaoId,
+                    opt => opt.MapFrom(src => src.QualificacaoId))
+
+                .ForMember(dest => dest.NomeQualificacao,
+                    opt => opt.MapFrom(src =>
+                        src.Qualificacao != null ? src.Qualificacao.NomeQualificacao : null));
+
+            // =========================
+            // ETIQUETAS DO CASO
+            // =========================
+            CreateMap<GrupoEtiquetaCasos, GrupoEtiquetaCasoResponse>()
+                .ForMember(dest => dest.EtiquetaId,
+                    opt => opt.MapFrom(src => src.EtiquetaId))
+
+                .ForMember(dest => dest.Nome,
+                    opt => opt.MapFrom(src =>
+                        src.Etiqueta != null ? src.Etiqueta.Nome : null))
+
+                .ForMember(dest => dest.Cor,
+                    opt => opt.MapFrom(src =>
+                        src.Etiqueta != null ? src.Etiqueta.Cor : null));
 
             #endregion
-
             #region GrupoCasoCliente
 
             CreateMap<GrupoCasoClienteRequest, GrupoCasoCliente>();

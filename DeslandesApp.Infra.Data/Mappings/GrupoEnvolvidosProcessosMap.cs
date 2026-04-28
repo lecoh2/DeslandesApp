@@ -22,7 +22,7 @@ namespace DeslandesApp.Infra.Data.Mappings
             builder.HasOne(x => x.Processo)
                 .WithMany(p => p.GrupoEnvolvidosProcesso)
                 .HasForeignKey(x => x.ProcessoId);
-            builder.HasOne(x => x.QualificacaoEnvolvidos)
+            builder.HasOne(x => x.Qualificacao)
        .WithMany()
        .HasForeignKey(x => x.QualificacaoId)
        .OnDelete(DeleteBehavior.Restrict);

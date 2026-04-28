@@ -52,11 +52,12 @@ namespace DeslandesApp.Domain.Services
 
                 await unitOfWork.CommitAsync();
 
-                return new GrupoEtiquetaCasoResponse(
-                   etiqueta.Id,                  
-                   etiqueta.Nome // 👈 aqui
-
-               );
+                return new GrupoEtiquetaCasoResponse
+                {
+                    EtiquetaId = etiqueta.Id,
+                    Nome = etiqueta.Nome,
+                    Cor = etiqueta.Cor
+                };
             }
             catch
             {
@@ -106,10 +107,12 @@ namespace DeslandesApp.Domain.Services
                 await unitOfWork.GrupoEtiquetasAtendimentoRepository.DeleteAsync(entidade);
 
                 await unitOfWork.CommitAsync();
-                return new GrupoEtiquetaCasoResponse(
-      entidade.EtiquetaId,
-      entidade.Etiqueta?.Nome
-  );
+                return new GrupoEtiquetaCasoResponse
+                {
+                    EtiquetaId = entidade.EtiquetaId,
+                    Nome = entidade.Etiqueta?.Nome ?? string.Empty,
+                    Cor = entidade.Etiqueta?.Cor ?? string.Empty
+                }; 
             }
             catch
             {

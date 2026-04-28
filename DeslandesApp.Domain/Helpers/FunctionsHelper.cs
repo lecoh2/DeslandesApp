@@ -1,4 +1,5 @@
 ﻿using DeslandesApp.Domain.Models.Dtos.Requests.InformacoesComplementares;
+using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,6 +11,13 @@ namespace DeslandesApp.Domain.Helpers
 {
     public class FunctionsHelper
     {
+        private readonly IHttpContextAccessor _httpContextAccessor;
+
+        public FunctionsHelper(IHttpContextAccessor httpContextAccessor)
+        {
+            _httpContextAccessor = httpContextAccessor;
+        }
+
         public static string LimparHtmlQuill(string html)
         {
             if (string.IsNullOrWhiteSpace(html))
@@ -258,6 +266,14 @@ namespace DeslandesApp.Domain.Helpers
                 || !string.IsNullOrWhiteSpace(info.Naturalidade)
                 || !string.IsNullOrWhiteSpace(info.Nacionalidade)
                 || !string.IsNullOrWhiteSpace(info.Comentario);
+        }
+        public Guid? ObterUsuarioId()
+        {
+            var user = _httpContextAccessor.HttpContext?.User;
+
+            var userId = user?.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+
+            return string.IsNullOrEmpty(userId) ? null : Guid.Parse(userId);
         }
     }
 }

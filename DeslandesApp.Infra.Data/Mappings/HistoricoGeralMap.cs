@@ -25,12 +25,15 @@ public class HistoricoGeralMap : IEntityTypeConfiguration<HistoricoGeral>
             .HasForeignKey(x => x.UsuarioId)
             .OnDelete(DeleteBehavior.Restrict);
 
+        // 🕒 DATA
         builder.Property(x => x.DataAlteracao)
             .IsRequired();
 
+        // 📝 OBS
         builder.Property(x => x.Observacao)
             .HasMaxLength(500);
 
+        // 📦 JSON
         builder.Property(x => x.DadosAntes)
             .IsRequired()
             .HasColumnType("text");
@@ -39,8 +42,20 @@ public class HistoricoGeralMap : IEntityTypeConfiguration<HistoricoGeral>
             .IsRequired()
             .HasColumnType("text");
 
+        // 🌐 IP
+        builder.Property(x => x.Ip)
+            .HasMaxLength(50); // IPv4/IPv6
+
+        // 🧠 USER AGENT
+        builder.Property(x => x.UserAgent)
+            .HasMaxLength(500);
+
+        // 🔎 INDEXES (melhorando performance)
         builder.HasIndex(x => x.Entidade);
         builder.HasIndex(x => x.EntidadeId);
         builder.HasIndex(x => x.DataAlteracao);
+
+        // 🔥 OPCIONAL (muito bom)
+        builder.HasIndex(x => new { x.Entidade, x.EntidadeId });
     }
 }

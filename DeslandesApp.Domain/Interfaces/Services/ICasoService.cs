@@ -16,5 +16,6 @@ namespace DeslandesApp.Domain.Interfaces.Services
     {
         Task<PageResult<CasoPaginacaoResponse>> ConsultarCasoPaginacaoAsync(int pageNumber, int pageSize, string? searchTerm = null);
         Task<List<CasoAutoComplete>> ConsultarCasoAutoCompleteAsync(string? termo = null);
+        Task<ObterCasoResponse?> ObterPorIdAsync(Guid id);
     }
 }

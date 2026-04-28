@@ -17,8 +17,15 @@ namespace DeslandesApp.Domain.Models.Entities
         public string CNH { get; set; } = string.Empty;
         public string Passaporte { get; set; } = string.Empty;
         public string CertidaoReservista { get; set; } = string.Empty;
-  
+
         #region Relacionamento
+        public ICollection<GrupoCasoCliente> GrupoCasoClientes { get; set; } = new List<GrupoCasoCliente>();
+
+        public ICollection<GrupoCasoEnvolvido> GrupoCasoEnvolvidos { get; set; } = new List<GrupoCasoEnvolvido>();
+
+        public ICollection<GrupoPessoasEtiquetas> GrupoPessoasEtiquetas { get; set; } = new List<GrupoPessoasEtiquetas>();
+
+        public ICollection<GrupoEnvolvidosProcesso> GrupoEnvolvidosProcesso { get; set; } = new List<GrupoEnvolvidosProcesso>();
 
         #endregion
     }

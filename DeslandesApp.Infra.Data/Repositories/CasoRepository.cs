@@ -24,16 +24,20 @@ namespace DeslandesApp.Infra.Data.Repositories
         : BaseRepository<Caso, Guid>(dataContext), ICasoRepository
     {
         public async Task<PageResult<CasoPaginacaoResponse>> GetCasoPaginacaoAsync(
-     int pageNumber,
-     int pageSize,
-     string? searchTerm = null)
+      int pageNumber,
+      int pageSize,
+      string? searchTerm = null)
         {
-            // 1️⃣ Base query
+            // =========================
+            // 1. BASE QUERY
+            // =========================
             var query = dataContext.Caso
                 .AsNoTracking()
                 .AsQueryable();
 
-            // 2️⃣ Filtro
+            // =========================
+            // 2. FILTRO
+            // =========================
             if (!string.IsNullOrWhiteSpace(searchTerm))
             {
                 var term = searchTerm.ToLower();
@@ -41,20 +45,15 @@ namespace DeslandesApp.Infra.Data.Repositories
                 query = query.Where(p =>
                     p.Pasta.ToLower().Contains(term) ||
                     p.Titulo.ToLower().Contains(term) ||
-
                     (p.Responsavel != null &&
                      p.Responsavel.NomeUsuario.ToLower().Contains(term)) ||
-
                     dataContext.GrupoCasoCliente
                         .Where(gc => gc.CasoId == p.Id)
                         .Any(gc =>
-
                             dataContext.PessoasFisicas
                                 .Any(pf => pf.Id == gc.PessoaId &&
                                            pf.Nome.ToLower().Contains(term))
-
                             ||
-
                             dataContext.PessoaJuridica
                                 .Any(pj => pj.Id == gc.PessoaId &&
                                            pj.Nome.ToLower().Contains(term))
@@ -62,10 +61,14 @@ namespace DeslandesApp.Infra.Data.Repositories
                 );
             }
 
-            // 3️⃣ Total
+            // =========================
+            // 3. TOTAL
+            // =========================
             var totalCount = await query.CountAsync();
 
-            // 4️⃣ Paginação
+            // =========================
+            // 4. PAGINAÇÃO
+            // =========================
             var pagedCasos = await query
                 .OrderBy(p => p.Pasta)
                 .Skip((pageNumber - 1) * pageSize)
@@ -74,42 +77,44 @@ namespace DeslandesApp.Infra.Data.Repositories
 
             var casosIds = pagedCasos.Select(c => c.Id).ToList();
 
-            // 5️⃣ 🔥 Buscar envolvidos (AGORA TIPADO)
+            // =========================
+            // 5. ENVOLVIDOS
+            // =========================
             var envolvidosDb = await dataContext.GrupoCasoCliente
                 .Where(gc => casosIds.Contains(gc.CasoId))
                 .Select(gc => new EnvolvidoTemp
                 {
                     CasoId = gc.CasoId,
                     PessoaId = gc.PessoaId,
-                    //QualificacaoId = gc.QualificacaoId,
 
-                    Nome = dataContext.PessoasFisicas
-                        .Where(pf => pf.Id == gc.PessoaId)
-                        .Select(pf => pf.Nome)
-                        .FirstOrDefault()
-                        ?? dataContext.PessoaJuridica
+                    Nome =
+                        dataContext.PessoasFisicas
+                            .Where(pf => pf.Id == gc.PessoaId)
+                            .Select(pf => pf.Nome)
+                            .FirstOrDefault()
+                        ??
+                        dataContext.PessoaJuridica
                             .Where(pj => pj.Id == gc.PessoaId)
                             .Select(pj => pj.Nome)
-                            .FirstOrDefault(),
-
-                    //NomeQualificacao = dataContext.Qualificacao
-                    //    .Where(q => q.Id == gc.QualificacaoId)
-                    //    .Select(q => q.NomeQualificacao)
-                    //    .FirstOrDefault()
+                            .FirstOrDefault()
                 })
                 .ToListAsync();
 
-            // 6️⃣ Agrupar por caso
+            // =========================
+            // 6. AGRUPAMENTO
+            // =========================
             var envolvidosPorCaso = envolvidosDb
                 .GroupBy(e => e.CasoId)
                 .ToDictionary(g => g.Key, g => g.ToList());
 
-            // 7️⃣ Montagem final (🔥 CORRIGIDO)
+            // =========================
+            // 7. MAPEAMENTO FINAL
+            // =========================
             var items = pagedCasos.Select(u =>
             {
                 var envolvidos = envolvidosPorCaso.ContainsKey(u.Id)
                     ? envolvidosPorCaso[u.Id]
-                    : new List<EnvolvidoTemp>(); // ✅ corrigido
+                    : new List<EnvolvidoTemp>();
 
                 return new CasoPaginacaoResponse
                 {
@@ -124,30 +129,30 @@ namespace DeslandesApp.Infra.Data.Repositories
                             u.Responsavel.NomeUsuario
                         ),
 
-                    // ✅ COMPLETO
                     GrupoCasoClientes = envolvidos
-                        .Select(c => new GrupoCasoClienteResponse(
-                            c.PessoaId,
-                            c.CasoId,
-                            c.Nome
-                        //c.QualificacaoId ?? Guid.Empty,
-                        //c.NomeQualificacao
-                        ))
+                        .Select(c => new GrupoCasoClienteResponse
+                        {
+                            PessoaId = c.PessoaId,
+                            CasoId = c.CasoId,
+                            Nome = c.Nome
+                        })
                         .ToList(),
 
-                    // ✅ ENVOLVIDOS (exibição)
                     GrupoCasoEnvolvidos = envolvidos
-                        .Select(c => new GrupoCasoEnvolvidosResponse(
-                            c.PessoaId,
-                            c.Nome,
-                            c.QualificacaoId ?? Guid.Empty,
-                            c.NomeQualificacao
-                        ))
+                        .Select(c => new GrupoCasoEnvolvidosResponse
+                        {
+                            PessoaId = c.PessoaId,
+                            Nome = c.Nome,
+                            QualificacaoId = c.QualificacaoId,
+                            NomeQualificacao = c.NomeQualificacao
+                        })
                         .ToList()
                 };
             }).ToList();
 
-            // 8️⃣ Retorno
+            // =========================
+            // 8. RETURN FINAL (🔥 FALTAVA ISSO)
+            // =========================
             return new PageResult<CasoPaginacaoResponse>
             {
                 Items = items,
@@ -156,7 +161,6 @@ namespace DeslandesApp.Infra.Data.Repositories
                 PageSize = pageSize
             };
         }
-
         public async Task<Caso> ConsultarCasoComRelacionamentosAsync(Guid idCaso)
         {
             return await dataContext.Caso
@@ -189,6 +193,35 @@ namespace DeslandesApp.Infra.Data.Repositories
                 .OrderBy(p => p.Titulo)
                 .Take(20)
                 .ToListAsync();
+        }
+        public async Task<Caso?> ObterCompletoPorIdAsync(Guid id)
+        {
+            return await dataContext.Caso
+                .AsNoTracking()
+                .Where(x => x.Id == id)
+
+                // CLIENTES
+                .Include(x => x.GrupoCasoClientes)
+                    .ThenInclude(gc => gc.Pessoa)
+
+                // ENVOLVIDOS (🔥 AQUI ESTAVA FALTANDO)
+                .Include(x => x.GrupoCasoEnvolvidos)
+                    .ThenInclude(ge => ge.Pessoa)
+
+                .Include(x => x.GrupoCasoEnvolvidos)
+                    .ThenInclude(ge => ge.Qualificacao) // 👈 ISSO AQUI
+
+                // ETIQUETAS
+                .Include(x => x.GrupoEtiquetaCasos)
+                    .ThenInclude(ge => ge.Etiqueta)
+
+                // RESPONSÁVEL
+                .Include(x => x.Responsavel)
+
+                // USUÁRIO CADASTRO
+                .Include(x => x.UsuarioCadastro)
+
+                .FirstOrDefaultAsync();
         }
     }
 }

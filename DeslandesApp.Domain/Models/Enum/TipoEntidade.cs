@@ -11,8 +11,9 @@ namespace DeslandesApp.Domain.Models.Enum
         Atendimento = 1,
         Evento = 2,
         Tarefa = 3,
-        Usuario = 4,
+        Caso=4,
         Processo = 5,
-        Cliente = 6
+        Cliente = 6,
+        Usuario = 7,
     }
 }

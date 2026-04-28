@@ -1,6 +1,7 @@
 ﻿using DeslandesApp.API.Configurations;
 using DeslandesApp.API.Middlewares;
 using DeslandesApp.Domain.Extensions;
+using DeslandesApp.Domain.Helpers;
 using DeslandesApp.Domain.Interfaces.Services;
 using DeslandesApp.Infra.Data.Extensions;
 using Hangfire;
@@ -82,7 +83,7 @@ builder.Services.AddDomainService();
 // ===== JWT + CORS =====
 JwtConfiguration.Configure(builder.Services);
 CorsConfiguration.Configure(builder.Services);
-
+builder.Services.AddScoped<FunctionsHelper>();
 // ===== Hangfire =====
 builder.Services.AddHangfire(config =>
     config.SetDataCompatibilityLevel(CompatibilityLevel.Version_180)

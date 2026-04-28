@@ -144,5 +144,15 @@ namespace DeslandesApp.API.Controllers.V1
 
             return Ok(result);
         }
+        [HttpGet("obter-caso-por-id/{id:guid}")]
+        public async Task<IActionResult> ObterPorId(Guid id)
+        {
+            var caso = await casoService.ObterPorIdAsync(id);
+
+            if (caso == null)
+                return NotFound("Cso não encontrada.");
+
+            return Ok(caso);
+        }
     }
 }

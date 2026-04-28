@@ -11,6 +11,7 @@ namespace DeslandesApp.Domain.Interfaces.Repositories
     {
         Task<GrupoCasoCliente> GetByIdClienteAsync(Guid idPessoa, Guid idCaso );
         Task<GrupoCasoCliente> ExistCasoClienteAsync(Guid idPessoa, Guid idCaso);
+        Task RemoverPorCasoId(Guid casoId);
     }
 }
 

@@ -27,9 +27,9 @@ namespace DeslandesApp.Infra.Data.Mappings
                    .OnDelete(DeleteBehavior.Cascade);
 
             builder.HasOne(x => x.Pessoa)
-                   .WithMany()
-                   .HasForeignKey(x => x.PessoaId)
-                   .OnDelete(DeleteBehavior.Restrict);
+           .WithMany(x => x.GrupoCasoEnvolvidos)
+           .HasForeignKey(x => x.PessoaId)
+           .OnDelete(DeleteBehavior.Restrict);
 
             builder.HasOne(x => x.Qualificacao)
                    .WithMany()
