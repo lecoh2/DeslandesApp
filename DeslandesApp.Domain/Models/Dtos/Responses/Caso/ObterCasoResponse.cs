@@ -25,9 +25,9 @@ namespace DeslandesApp.Domain.Models.Dtos.Responses.Caso
         public Guid? UsuarioCadastroId { get; set; }
         public string? UsuarioCadastroNome { get; set; }
 
-        public List<GrupoCasoClienteResponse> Clientes { get; set; } = new();
+        public List<GrupoCasoClienteResponse> GrupoCasoClientes { get; set; } = new();
 
-        public List<GrupoCasoEnvolvidosResponse> Envolvidos { get; set; } = new();
+        public List<GrupoCasoEnvolvidosResponse> GrupoCasoEnvolvidos { get; set; } = new();
 
         public List<GrupoEtiquetaCasoResponse> GrupoEtiquetaCaso { get; set; } = new();
     }

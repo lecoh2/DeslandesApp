@@ -385,10 +385,10 @@ namespace DeslandesApp.Domain.Mappings
             // RESPONSE (CASO PRINCIPAL)
             // =========================
             CreateMap<Caso, ObterCasoResponse>()
-                .ForMember(dest => dest.Clientes,
+                .ForMember(dest => dest.GrupoCasoClientes,
                     opt => opt.MapFrom(src => src.GrupoCasoClientes))
 
-                .ForMember(dest => dest.Envolvidos,
+                .ForMember(dest => dest.GrupoCasoEnvolvidos,
                     opt => opt.MapFrom(src => src.GrupoCasoEnvolvidos))
 
                 .ForMember(dest => dest.GrupoEtiquetaCaso,
