@@ -116,6 +116,9 @@ namespace DeslandesApp.Infra.Data.Repositories
                 .Include(x => x.GrupoClienteProcesso)
                     .ThenInclude(gc => gc.Pessoa)
 
+                .Include(x => x.GrupoClienteProcesso)
+                    .ThenInclude(gc => gc.QualificacaoCliente)
+
                 // ENVOLVIDOS
                 .Include(x => x.GrupoEnvolvidosProcesso)
                     .ThenInclude(ge => ge.Pessoa)

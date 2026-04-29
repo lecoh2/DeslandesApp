@@ -70,7 +70,7 @@ namespace DeslandesApp.API.Controllers.V1
             return Ok(new
             {
                 success = true,
-                message = $"Cliente {response.nome}, adicionado ao processo com sucesso."
+                message = $"Cliente {response.Nome}, adicionado ao processo com sucesso."
             });
         }
 
@@ -153,7 +153,7 @@ namespace DeslandesApp.API.Controllers.V1
             var processo = await processoService.ObterPorIdAsync(id);
 
             if (processo == null)
-                return NotFound("Cso não encontrada.");
+                return NotFound("Processo não encontrado.");
 
             return Ok(processo);
         }

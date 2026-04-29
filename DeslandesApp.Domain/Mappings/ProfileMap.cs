@@ -8,6 +8,7 @@ using DeslandesApp.Domain.Models.Dtos.Requests.Evento;
 using DeslandesApp.Domain.Models.Dtos.Requests.GrupoCasoCliente;
 using DeslandesApp.Domain.Models.Dtos.Requests.GrupoCasoEnvolvidos;
 using DeslandesApp.Domain.Models.Dtos.Requests.GrupoClienteProceso;
+using DeslandesApp.Domain.Models.Dtos.Requests.GrupoEnvolvidosProcesso;
 using DeslandesApp.Domain.Models.Dtos.Requests.GrupoEtiquetaProcesso;
 using DeslandesApp.Domain.Models.Dtos.Requests.GrupoEventoEtiquetas;
 using DeslandesApp.Domain.Models.Dtos.Requests.GrupoNiveis;
@@ -29,6 +30,7 @@ using DeslandesApp.Domain.Models.Dtos.Responses.Evento;
 using DeslandesApp.Domain.Models.Dtos.Responses.GrupoAtendimentoCliente;
 using DeslandesApp.Domain.Models.Dtos.Responses.GrupoCasoCliente;
 using DeslandesApp.Domain.Models.Dtos.Responses.GrupoCasoEnvolvidos;
+using DeslandesApp.Domain.Models.Dtos.Responses.GrupoClienteProcesso;
 using DeslandesApp.Domain.Models.Dtos.Responses.GrupoEnvolvidosProcesso;
 using DeslandesApp.Domain.Models.Dtos.Responses.GrupoEtiquetaAtendimento;
 using DeslandesApp.Domain.Models.Dtos.Responses.GrupoEtiquetaCaso;
@@ -222,7 +224,6 @@ namespace DeslandesApp.Domain.Mappings
             #endregion
 
             #region Processo
-            #region Processo
 
             // =========================
             // CREATE
@@ -235,6 +236,7 @@ namespace DeslandesApp.Domain.Mappings
                 .ForMember(dest => dest.GrupoEnvolvidosProcesso, opt => opt.Ignore())
                 .ForMember(dest => dest.GrupoEtiquetasProcessos, opt => opt.Ignore());
 
+
             // =========================
             // UPDATE
             // =========================
@@ -243,78 +245,81 @@ namespace DeslandesApp.Domain.Mappings
                 .ForMember(dest => dest.GrupoEnvolvidosProcesso, opt => opt.Ignore())
                 .ForMember(dest => dest.GrupoEtiquetasProcessos, opt => opt.Ignore());
 
+
             // =========================
             // RESPONSE PRINCIPAL
             // =========================
             CreateMap<Processo, ObterProcessoResponse>()
-                .ForMember(dest => dest.AcaoId,
-                    opt => opt.MapFrom(src => src.AcaoId))
+                .ForMember(d => d.AcaoId, o => o.MapFrom(s => s.AcaoId))
+                .ForMember(d => d.VaraId, o => o.MapFrom(s => s.VaraId))
+                .ForMember(d => d.UsuarioResponsavelId, o => o.MapFrom(s => s.UsuarioResponsavelId))
 
-                .ForMember(dest => dest.VaraId,
-                    opt => opt.MapFrom(src => src.VaraId))
+                .ForMember(d => d.Pasta, o => o.MapFrom(s => s.Pasta))
+                .ForMember(d => d.Titulo, o => o.MapFrom(s => s.Titulo))
+                .ForMember(d => d.NumeroProcesso, o => o.MapFrom(s => s.NumeroProcesso))
+                .ForMember(d => d.LinkTribunal, o => o.MapFrom(s => s.LinkTribunal))
+                .ForMember(d => d.Objeto, o => o.MapFrom(s => s.Objeto))
+                .ForMember(d => d.ValorCausa, o => o.MapFrom(s => s.ValorCausa))
+                .ForMember(d => d.Distribuido, o => o.MapFrom(s => s.Distribuido))
+                .ForMember(d => d.ValorCondenacao, o => o.MapFrom(s => s.ValorCondenacao))
+                .ForMember(d => d.Observacao, o => o.MapFrom(s => s.Observacao))
+                .ForMember(d => d.Instancia, o => o.MapFrom(s => s.Instancia))
+                .ForMember(d => d.Acesso, o => o.MapFrom(s => s.Acesso))
 
-                .ForMember(dest => dest.UsuarioResponsavelId,
-                    opt => opt.MapFrom(src => src.UsuarioResponsavelId))
+                // RELAÇÕES
+                .ForMember(d => d.GrupoClienteProcesso,
+                    o => o.MapFrom(s => s.GrupoClienteProcesso))
 
-                // 🔥 CAMPOS SIMPLES
-                .ForMember(dest => dest.Pasta, opt => opt.MapFrom(src => src.Pasta))
-                .ForMember(dest => dest.Titulo, opt => opt.MapFrom(src => src.Titulo))
-                .ForMember(dest => dest.NumeroProcesso, opt => opt.MapFrom(src => src.NumeroProcesso))
-                .ForMember(dest => dest.LinkTribunal, opt => opt.MapFrom(src => src.LinkTribunal))
-                .ForMember(dest => dest.Objeto, opt => opt.MapFrom(src => src.Objeto))
-                .ForMember(dest => dest.ValorCausa, opt => opt.MapFrom(src => src.ValorCausa))
-                .ForMember(dest => dest.Distribuido, opt => opt.MapFrom(src => src.Distribuido))
-                .ForMember(dest => dest.ValorCondenacao, opt => opt.MapFrom(src => src.ValorCondenacao))
-                .ForMember(dest => dest.Observacao, opt => opt.MapFrom(src => src.Observacao))
-                .ForMember(dest => dest.Instancia, opt => opt.MapFrom(src => src.Instancia))
-                .ForMember(dest => dest.Acesso, opt => opt.MapFrom(src => src.Acesso))
+                .ForMember(d => d.GrupoEnvolvidosProcesso,
+                    o => o.MapFrom(s => s.GrupoEnvolvidosProcesso))
 
-                // 🔥 RELACIONAMENTOS
-                .ForMember(dest => dest.GrupoClienteProcesso,
-                    opt => opt.MapFrom(src => src.GrupoClienteProcesso))
-
-                .ForMember(dest => dest.GrupoEnvolvidosProcesso,
-                    opt => opt.MapFrom(src => src.GrupoEnvolvidosProcesso))
-
-                .ForMember(dest => dest.GrupoEtiquetasProcesso,
-                    opt => opt.MapFrom(src => src.GrupoEtiquetasProcessos));
+                .ForMember(d => d.GrupoEtiquetasProcesso,
+                    o => o.MapFrom(s => s.GrupoEtiquetasProcessos));
 
 
             // =========================
-            // CLIENTES
+            // CLIENTE PROCESSO
             // =========================
-            CreateMap<GrupoClienteProcesso, GrupoClienteProcessoRequest>()
-                .ForMember(dest => dest.IdPessoa,
-                    opt => opt.MapFrom(src => src.PessoaId));
+            CreateMap<GrupoClienteProcesso, GrupoClienteProcessoResponse>()
+                .ForMember(d => d.IdPessoa, o => o.MapFrom(s => s.PessoaId))
+                .ForMember(d => d.IdProcesso, o => o.MapFrom(s => s.ProcessoId))
+                .ForMember(d => d.Nome, o => o.MapFrom(s => s.Pessoa != null ? s.Pessoa.Nome : null));
 
 
             // =========================
-            // ENVOLVIDOS
+            // ENVOLVIDOS PROCESSO
             // =========================
             CreateMap<GrupoEnvolvidosProcesso, GrupoEnvolvidosProcessoResponse>()
-                .ForMember(dest => dest.IdPessoa,
-                    opt => opt.MapFrom(src => src.PessoaId))
-
-                .ForMember(dest => dest.Nome,
-                    opt => opt.MapFrom(src => src.Pessoa != null ? src.Pessoa.Nome : null))
-
-                .ForMember(dest => dest.QualificacaoId,
-                    opt => opt.MapFrom(src => src.QualificacaoId))
-
-                .ForMember(dest => dest.NomeQualificacao,
-                    opt => opt.MapFrom(src =>
-                        src.Qualificacao != null ? src.Qualificacao.NomeQualificacao : null));
+                .ForMember(d => d.IdPessoa, o => o.MapFrom(s => s.PessoaId))
+                .ForMember(d => d.IdProcesso, o => o.MapFrom(s => s.ProcessoId))
+                .ForMember(d => d.Nome, o => o.MapFrom(s => s.Pessoa != null ? s.Pessoa.Nome : null))
+                .ForMember(d => d.QualificacaoId, o => o.MapFrom(s => s.QualificacaoId))
+                .ForMember(d => d.NomeQualificacao,
+                    o => o.MapFrom(s => s.Qualificacao != null ? s.Qualificacao.NomeQualificacao : null));
 
 
             // =========================
-            // ETIQUETAS
+            // ETIQUETAS PROCESSO
             // =========================
-            CreateMap<GrupoEtiquetasProcessos, GrupoEtiquetaProcessoRequest>()
-                .ForMember(dest => dest.EtiquetaId,
-                    opt => opt.MapFrom(src => src.EtiquetaId));
+            CreateMap<GrupoEtiquetasProcessos, GrupoEtiquetasProcessosResponse>()
+                .ForMember(d => d.IdEtiqueta, o => o.MapFrom(s => s.EtiquetaId))
+                .ForMember(d => d.IdProcesso, o => o.MapFrom(s => s.ProcessoId))
+                .ForMember(d => d.Nome,
+                    o => o.MapFrom(s => s.Etiqueta != null ? s.Etiqueta.Nome : null))
+                .ForMember(d => d.Cor,
+                    o => o.MapFrom(s => s.Etiqueta != null ? s.Etiqueta.Cor : null));
+
+            CreateMap<GrupoClienteProcessoRequest, GrupoClienteProcesso>()
+    .ForMember(d => d.PessoaId, o => o.MapFrom(s => s.IdPessoa))
+    .ForMember(d => d.QualificacaoId, o => o.MapFrom(s => s.IdQualificacao));
+            CreateMap<GrupoEnvolvidosProcessoRequest, GrupoEnvolvidosProcesso>()
+    .ForMember(d => d.PessoaId, o => o.MapFrom(s => s.IdPessoa))
+    .ForMember(d => d.QualificacaoId, o => o.MapFrom(s => s.IdQualificacao));
+            CreateMap<GrupoEtiquetaProcessoRequest, GrupoEtiquetasProcessos>()
+    .ForMember(d => d.EtiquetaId, o => o.MapFrom(s => s.EtiquetaId));
 
             #endregion
-            #endregion
+
 
 
 

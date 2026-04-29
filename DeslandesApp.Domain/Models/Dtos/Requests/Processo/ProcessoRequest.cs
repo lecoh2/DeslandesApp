@@ -40,7 +40,7 @@ namespace DeslandesApp.Domain.Models.Dtos.Requests.Processo
         // 🔥 RELACIONAMENTOS N:N
         public List<GrupoClienteProcessoRequest>? GrupoClienteProcesso { get; init; }
         public List<GrupoEnvolvidosProcessoRequest>? GrupoEnvolvidosProcesso { get; init; }
-        public List<GrupoEtiquetaProcessoRequest> GrupoEtiquetasProcesso { get; init; } = new();
+        public List<GrupoEtiquetaProcessoRequest> GrupoEtiquetasProcesso { get; init; } 
     }
 
 }

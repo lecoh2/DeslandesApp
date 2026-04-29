@@ -6,9 +6,10 @@ using System.Threading.Tasks;
 
 namespace DeslandesApp.Domain.Models.Dtos.Responses.GrupoClienteProcesso
 {
-    public record GrupoClienteProcessoResponse
-    (Guid idPessoa,
-      Guid idProcesso,
-       string nome
-        );
+    public class GrupoClienteProcessoResponse
+    {
+        public Guid IdPessoa { get; set; }
+        public Guid IdProcesso { get; set; }
+        public string? Nome { get; set; }
+    }
 }

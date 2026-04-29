@@ -6,12 +6,12 @@ using System.Threading.Tasks;
 
 namespace DeslandesApp.Domain.Models.Dtos.Responses.GrupoEnvolvidosProcesso
 {
-    public record GrupoEnvolvidosProcessoResponse
+    public class GrupoEnvolvidosProcessoResponse
     {
-        public Guid IdPessoa      { get; init; }
-        public Guid IdProcesso     { get; init; }
-       public string Nome     { get; init; } 
-        public Guid QualificacaoId { get; init; }
-        public string NomeQualificacao { get; init; } 
+        public Guid IdPessoa { get; set; }
+        public Guid IdProcesso { get; set; }
+        public string? Nome { get; set; }
+        public Guid? QualificacaoId { get; set; }
+        public string? NomeQualificacao { get; set; }
     }
 }
