@@ -11,5 +11,6 @@ namespace DeslandesApp.Domain.Interfaces.Repositories
     {
         Task<GrupoEtiquetaCasos> GetByIdEtiquetaCasoAsync(Guid idEtiqueta, Guid idAtendiemnto);
         Task<GrupoEtiquetaCasos> ExistEtiquetaCasoAsync(Guid idEtiqueta, Guid idAtendiemnto);
+        Task RemoverPorCasoId(Guid casoId);
     }
 }

@@ -51,12 +51,13 @@ namespace DeslandesApp.Domain.Services
 
                 await unitOfWork.CommitAsync();
 
-                return new GrupoEtiquetasProcessosResponse(
-                   etiqueta.Id,
-                   processo.Id,
-                   etiqueta.Nome // 👈 aqui
-
-               );
+                return new GrupoEtiquetasProcessosResponse
+                {
+                    IdEtiqueta = etiqueta.Id,
+                    IdProcesso = processo.Id,
+                    Nome = etiqueta.Nome,
+                    Cor = etiqueta.Cor
+                };
             }
             catch
             {
@@ -105,11 +106,14 @@ namespace DeslandesApp.Domain.Services
                 await unitOfWork.GrupoEtiquetasProcessosRepository.DeleteAsync(entidade);
 
                 await unitOfWork.CommitAsync();
-                return new GrupoEtiquetasProcessosResponse(
-entidade.EtiquetaId,
-entidade.ProcessoId,
-entidade.Etiqueta?.Nome
-);
+                return new GrupoEtiquetasProcessosResponse
+                {
+                    IdEtiqueta = entidade.EtiquetaId,
+                    IdProcesso = entidade.ProcessoId,
+                    Nome = entidade.Etiqueta?.Nome
+                };
+
+
             }
             catch
             {

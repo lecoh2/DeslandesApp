@@ -106,5 +106,33 @@ namespace DeslandesApp.Infra.Data.Repositories
                 .Take(20)
                 .ToListAsync();
         }
+        public async Task<Processo?> ObterCompletoPorIdAsync(Guid id)
+        {
+            return await dataContext.Processos
+                .AsNoTracking()
+                .Where(x => x.Id == id)
+
+                // CLIENTES
+                .Include(x => x.GrupoClienteProcesso)
+                    .ThenInclude(gc => gc.Pessoa)
+
+                // ENVOLVIDOS
+                .Include(x => x.GrupoEnvolvidosProcesso)
+                    .ThenInclude(ge => ge.Pessoa)
+
+                .Include(x => x.GrupoEnvolvidosProcesso)
+                    .ThenInclude(ge => ge.Qualificacao)
+
+                // ETIQUETAS
+                .Include(x => x.GrupoEtiquetasProcessos)
+                    .ThenInclude(ge => ge.Etiqueta)
+
+                // RELACIONAMENTOS
+                .Include(x => x.UsuarioResponsavel)
+                .Include(x => x.Acao)
+                .Include(x => x.Vara)
+
+                .FirstOrDefaultAsync();
+        }
     }
 }

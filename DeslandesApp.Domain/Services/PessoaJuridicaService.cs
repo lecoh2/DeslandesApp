@@ -25,11 +25,14 @@ namespace DeslandesApp.Domain.Services
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
-
-        public PessoaJuridicaService(IUnitOfWork unitOfWork, IMapper mapper)
+        private readonly IHistoricoGeralService _historicoGeralService;
+        private readonly FunctionsHelper _functionsHelper;
+        public PessoaJuridicaService(IUnitOfWork unitOfWork, IMapper mapper, IHistoricoGeralService historicoGeralService,
+            FunctionsHelper functionsHelper)
         {
             _unitOfWork = unitOfWork;
-            _mapper = mapper;
+            _mapper = mapper; _historicoGeralService = historicoGeralService;
+            _functionsHelper = functionsHelper;
         }
 
         public async Task<PessoaJuridicaResponse> AdicionarAsync(PessoaJuridicaRequest request)
@@ -281,17 +284,16 @@ namespace DeslandesApp.Domain.Services
                 if (request.IdUsuario == null)
                     throw new ApplicationException("Id do usuário não informado.");
 
-                var historico = new PessoaHistorico
-                {
-                    IdPessoa = pessoa.Id,
-                    IdUsuario = request.IdUsuario.Value,
-                    DataAlteracao = DateTime.Now,
-                    Observacoes = request.Observacoes ?? "",
-                    DadosAntes = JsonConvert.SerializeObject(dadosAntes),
-                    DadosDepois = JsonConvert.SerializeObject(dadosDepois)
-                };
+                var usuarioId = _functionsHelper.ObterUsuarioId();
 
-                await _unitOfWork.PessoaHistoricoRepository.AddAsync(historico);
+                await _historicoGeralService.RegistrarAsync(
+                    TipoEntidade.Pessoa,
+                    pessoa.Id,
+                    usuarioId,
+                    dadosAntes,
+                    dadosDepois,
+                    request.Observacoes
+                );
 
                 await _unitOfWork.CommitAsync();
 

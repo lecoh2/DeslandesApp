@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using DeslandesApp.Domain.Helpers;
 using DeslandesApp.Domain.Interfaces.Repositories;
 using DeslandesApp.Domain.Interfaces.Services;
 using DeslandesApp.Domain.Models.Dtos.Requests.Evento;
@@ -22,7 +23,7 @@ using System.Threading.Tasks;
 namespace DeslandesApp.Domain.Services
 {
     public class EventoService(IUnitOfWork unitOfWork, IMapper mapper,
-        IHttpContextAccessor httpContextAccessor, IHistoricoGeralService historicoGeralService) : IEventoService
+        IHttpContextAccessor httpContextAccessor, IHistoricoGeralService historicoGeralService, FunctionsHelper functionsHelper) : IEventoService
     {
         public async Task<CriarEventoResponse> AdicionarAsync(CriarEventoRequest request)
         {
@@ -36,7 +37,7 @@ namespace DeslandesApp.Domain.Services
                 var agora = DateTime.Now;
                 var hoje = DateOnly.FromDateTime(agora);
                 var horaAtual = TimeOnly.FromDateTime(agora);
-                evento.UsuarioCriacaoId = ObterUsuarioId();
+                evento.UsuarioCriacaoId = functionsHelper.ObterUsuarioId();
                 // =========================
                 // 🧠 STATUS KANBAN
                 // =========================
@@ -435,7 +436,9 @@ namespace DeslandesApp.Domain.Services
                 if (evento == null)
                     throw new ApplicationException("Evento não encontrado.");
 
-                var usuarioId = ObterUsuarioId();
+
+                var usuarioId = functionsHelper.ObterUsuarioId();
+
 
                 // =========================
                 // ANTES
@@ -688,16 +691,6 @@ namespace DeslandesApp.Domain.Services
             if (eventosParaAtualizar.Any())
                 await unitOfWork.CommitAsync();
         }
-        private Guid? ObterUsuarioId()
-        {
-            var user = httpContextAccessor.HttpContext?.User;
-
-            var userId = user?.FindFirst(System.Security.Claims.ClaimTypes.Name)?.Value;
-
-            if (string.IsNullOrEmpty(userId))
-                return null;
-
-            return Guid.Parse(userId);
-        }
+       
     }
 }

@@ -4,7 +4,9 @@ using DeslandesApp.Domain.Interfaces.Services;
 using DeslandesApp.Domain.Models.Dtos.Requests.GrupoEnvolvidosProcesso;
 using DeslandesApp.Domain.Models.Dtos.Responses.GrupoClienteProcesso;
 using DeslandesApp.Domain.Models.Dtos.Responses.GrupoEnvolvidosProcesso;
+using DeslandesApp.Domain.Models.Dtos.Responses.GrupoEtiquetasProcessos;
 using DeslandesApp.Domain.Models.Entities;
+using DeslandesApp.Domain.Models.Enum;
 using DeslandesApp.Domain.Utils;
 using System;
 using System.Collections.Generic;
@@ -51,12 +53,14 @@ namespace DeslandesApp.Domain.Services
 
                 await unitOfWork.CommitAsync();
 
-                return new GrupoEnvolvidosProcessoResponse(
-                    pessoa.Id,
-                    processo.Id,
-                    pessoa.Nome // 👈 aqui
-                   
-                );
+                return new GrupoEnvolvidosProcessoResponse
+                {
+                    IdPessoa = pessoa.Id,
+                    IdProcesso = processo.Id,
+                    Nome = pessoa.Nome
+                };
+
+
             }
             catch
             {
@@ -105,11 +109,12 @@ namespace DeslandesApp.Domain.Services
                 await unitOfWork.GrupoEnvolvidosProcessosRepository.DeleteAsync(entidade);
 
                 await unitOfWork.CommitAsync();
-                return new GrupoEnvolvidosProcessoResponse(
-entidade.PessoaId,
-entidade.ProcessoId,
-entidade.Pessoa?.Nome
-);
+                return new GrupoEnvolvidosProcessoResponse
+                {
+                    IdPessoa = entidade.PessoaId,
+                    IdProcesso = entidade.ProcessoId,
+                    Nome = entidade.Pessoa?.Nome
+                };
             }
             catch
             {

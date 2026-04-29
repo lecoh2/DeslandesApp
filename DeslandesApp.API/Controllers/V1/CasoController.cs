@@ -43,15 +43,15 @@ namespace DeslandesApp.API.Controllers.V1
 
             return Ok(proessoPaged);
         }
-        [HttpPut("atualizar-caso{id}")]
+        [HttpPut("atualizar-caso/{id}")]
         [ProducesResponseType(typeof(CriarCasoResponse), 200)]
         public async Task<IActionResult> PutAsync(Guid id, [FromBody] CasoUpdateRequest request)
         {
             var response = await casoService.ModificarAsync(id, request);
-            return StatusCode(StatusCodes.Status201Created, new
+            return Ok(new
             {
                 success = true,
-                message = $"Proceso {response.Titulo} atualizado com sucesso.",
+                message = $"Caso {response.Titulo} atualizado com sucesso.",
                 data = response
             });
         }

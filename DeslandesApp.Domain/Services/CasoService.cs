@@ -249,6 +249,20 @@ namespace DeslandesApp.Domain.Services
                     }
                 }
 
+                await unitOfWork.GrupoEtiquetaCasoRepository.RemoverPorCasoId(id);
+
+                if (request.GrupoEtiquetaCaso?.Any() == true)
+                {
+                    foreach (var item in request.GrupoEtiquetaCaso)
+                    {
+                        await unitOfWork.GrupoEtiquetaCasoRepository.AddAsync(new GrupoEtiquetaCasos
+                        {
+                            CasoId = id,
+                            EtiquetaId = item.EtiquetaId
+                        });
+                    }
+                }
+
                 // =========================
                 // UPDATE ENTIDADE
                 // =========================

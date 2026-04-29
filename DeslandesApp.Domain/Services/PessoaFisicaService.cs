@@ -27,13 +27,18 @@ namespace DeslandesApp.Domain.Services
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
+        private readonly IHistoricoGeralService _historicoGeralService;
+        private readonly FunctionsHelper _functionsHelper;
 
-        public PessoaFisicaService(IUnitOfWork unitOfWork, IMapper mapper)
+        public PessoaFisicaService(IUnitOfWork unitOfWork, IMapper mapper, IHistoricoGeralService historicoGeralService,
+            FunctionsHelper functionsHelper)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
+            _historicoGeralService = historicoGeralService;
+            _functionsHelper = functionsHelper;
         }
-
+        
         public async Task<PessoaFisicaResponse> AdicionarAsync(PessoaFisicaRequest request)
         {
             await _unitOfWork.BeginTransactionAsync();
@@ -280,17 +285,17 @@ namespace DeslandesApp.Domain.Services
                 if (request.IdUsuario == null)
                     throw new ApplicationException("Id do usuário não informado.");
 
-                var historico = new PessoaHistorico
-                {
-                    IdPessoa = pessoa.Id,
-                    IdUsuario = request.IdUsuario.Value,
-                    DataAlteracao = DateTime.Now,
-                    Observacoes = request.Observacoes ?? "",
-                    DadosAntes = JsonConvert.SerializeObject(dadosAntes),
-                    DadosDepois = JsonConvert.SerializeObject(dadosDepois)
-                };
 
-                await _unitOfWork.PessoaHistoricoRepository.AddAsync(historico);
+                var usuarioId = _functionsHelper.ObterUsuarioId();
+
+                await _historicoGeralService.RegistrarAsync(
+                    TipoEntidade.Pessoa,
+                    pessoa.Id,
+                    usuarioId,
+                    dadosAntes,
+                    dadosDepois,
+                    request.Observacoes
+                );
 
                 await _unitOfWork.CommitAsync();
 

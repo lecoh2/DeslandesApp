@@ -3,6 +3,7 @@ using DeslandesApp.Domain.Helpers;
 using DeslandesApp.Domain.Interfaces.Repositories;
 using DeslandesApp.Domain.Interfaces.Services;
 using DeslandesApp.Domain.Models.Dtos.Requests.Processo;
+using DeslandesApp.Domain.Models.Dtos.Responses.Caso;
 using DeslandesApp.Domain.Models.Dtos.Responses.Pessoas;
 using DeslandesApp.Domain.Models.Dtos.Responses.Processo;
 using DeslandesApp.Domain.Models.Dtos.Responses.Usuarios;
@@ -327,9 +328,14 @@ namespace DeslandesApp.Domain.Services
             return mapper.Map<ProcessoResponse>(processoDepois);
         }
 
-        public Task<ProcessoResponse?> ObterPorIdAsync(Guid id)
+        public async Task<ObterProcessoResponse?> ObterPorIdAsync(Guid id)
         {
-            throw new NotImplementedException();
+            var processo = await unitOfWork.ProcessoRepository.ObterCompletoPorIdAsync(id);
+
+            if (processo == null)
+                return null;
+
+            return mapper.Map<ObterProcessoResponse>(processo);
         }
         public async Task AdicionarSetorAsync(Guid idUsuario, Guid idSetor)
         {

@@ -26,7 +26,7 @@ namespace DeslandesApp.Domain.Interfaces.Repositories
         ILoginHistoryRepository LoginHistoryRepository { get; }
         IEnderecoRepository EnderecoRepository { get; }
         IInformacoesComplementaresRepository InformacoesComplementaresRepository { get;  }
-        IPessoaHistoricoRepository PessoaHistoricoRepository { get; }
+       
         IProcessoRepository ProcessoRepository { get; }
         IGrupoClientesRepository GrupoClientesRepository { get; }
         IGrupoClientesProcessosRepository GrupoClientesProcessosRepository { get; }
@@ -51,8 +51,7 @@ namespace DeslandesApp.Domain.Interfaces.Repositories
         IGrupoEtiquetasAtendimentoRepository GrupoEtiquetasAtendimentoRepository { get;  }
         IGrupoEtiquetaCasoRepository GrupoEtiquetaCasoRepository { get; }
         IAtendimentoHistoricoRepository AtendimentoHistoricoRepository { get; }
-        ICasoHistoricoRepository CasoHistoricoRepository { get; }
-        IEventoHistoricoRepository EventoHistoricoRepository { get;  }
+       
         IGrupoPessoasEtiquetasRepository GrupoPessoasEtiquetasRepository { get; }
         IContaBancariaRepository ContaBancariaRepository { get; }
         IAcaoRepository AcaoRepository { get; }

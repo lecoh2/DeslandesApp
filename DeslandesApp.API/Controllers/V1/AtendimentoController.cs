@@ -34,7 +34,7 @@ namespace DeslandesApp.API.Controllers.V1
             return StatusCode(StatusCodes.Status201Created, new
             {
                 success = true,
-                message = $"Proceso {response.Assunto} atualizado com sucesso.",
+                message = $"Atendimento {response.Assunto} atualizado com sucesso.",
                 data = response
             });
         }

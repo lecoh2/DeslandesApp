@@ -1,9 +1,12 @@
 ﻿using AutoMapper;
+using DeslandesApp.Domain.Helpers;
 using DeslandesApp.Domain.Interfaces.Repositories;
 using DeslandesApp.Domain.Interfaces.Services;
+using DeslandesApp.Domain.Models.Dtos.Requests.Kaban;
 using DeslandesApp.Domain.Models.Dtos.Requests.ListaTarefas;
 using DeslandesApp.Domain.Models.Dtos.Requests.Processo;
 using DeslandesApp.Domain.Models.Dtos.Requests.Tarefa;
+using DeslandesApp.Domain.Models.Dtos.Responses.ListaTarefas;
 using DeslandesApp.Domain.Models.Dtos.Responses.Processo;
 using DeslandesApp.Domain.Models.Dtos.Responses.Tarefa;
 using DeslandesApp.Domain.Models.Entities;
@@ -11,19 +14,17 @@ using DeslandesApp.Domain.Models.Enum;
 using DeslandesApp.Domain.Utils;
 using DeslandesApp.Domain.Validators;
 using FluentValidation;
+using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using DeslandesApp.Domain.Models.Dtos.Requests.Kaban;
-using DeslandesApp.Domain.Models.Dtos.Responses.ListaTarefas;
 
 namespace DeslandesApp.Domain.Services
 {
     public class TarefaService(IUnitOfWork unitOfWork, IMapper mapper, IHttpContextAccessor httpContextAccessor,
-         IHistoricoGeralService historicoService) : ITarefaService
+         IHistoricoGeralService historicoService, FunctionsHelper functionsHelper) : ITarefaService
     {
         public async Task<CriarTarefaResponse> AdicionarAsync(CriarTarefaRequest request)
         {
@@ -37,7 +38,7 @@ namespace DeslandesApp.Domain.Services
             tarefa.DataCadastro = DateTime.Now;
             tarefa.DataAtualizacao = DateTime.Now;
             tarefa.StatusGeralKanban = request.StatusGeralKanban;
-            tarefa.UsuarioCriacaoId = ObterUsuarioId();
+            tarefa.UsuarioCriacaoId = functionsHelper.ObterUsuarioId();
 
             // 🔗 VALIDAÇÃO DE VÍNCULOS
             int count = 0;
@@ -245,7 +246,7 @@ namespace DeslandesApp.Domain.Services
             if (tarefa == null)
                 throw new InvalidOperationException("Tarefa não encontrada.");
 
-            var usuarioId = ObterUsuarioId();
+            var usuarioId = functionsHelper.ObterUsuarioId();
 
             // =========================
             // SNAPSHOT ANTES
@@ -473,17 +474,7 @@ namespace DeslandesApp.Domain.Services
             await unitOfWork.CommitAsync();
         }
 
-        private Guid? ObterUsuarioId()
-        {
-            var user = httpContextAccessor.HttpContext?.User;
-
-            var userId = user?.FindFirst(System.Security.Claims.ClaimTypes.Name)?.Value;
-
-            if (string.IsNullOrEmpty(userId))
-                return null;
-
-            return Guid.Parse(userId);
-        }
+       
         public async Task<List<ListaTarefasResponse>> ConsultarListaTarefaAutoCompleteAsync(string? termo = null)
         {
             return await unitOfWork.ListaTarefaRepository.ConsultarListaTarefaAutoCompleteAsync(termo);

@@ -26,7 +26,7 @@ namespace DeslandesApp.Infra.Data.Contexts
         public DbSet<PessoaFisica> PessoasFisicas { get; set; }
         public DbSet<PessoaJuridica> PessoaJuridica { get; set; }
         public DbSet<Qualificacao> Qualificacao { get; set; }
-        public DbSet<PessoaHistorico> PessoaHistorico { get; set; }       
+        
         public DbSet<AtendimentoHistorico> AtendimentoHistorico { get; set; }
         public DbSet<InformacoesComplementaresPessoaJuridica> InformacoesComplementaresPessoaJuridicas { get; set; }
         public DbSet<Processo> Processos { get; set; }
@@ -48,9 +48,8 @@ namespace DeslandesApp.Infra.Data.Contexts
         public DbSet<GrupoEtiquetasProcessos> GrupoEtiquetasProcessos { get; set; }
         public DbSet<GrupoEtiquetaCasos> GrupoEtiquetaCasos { get; set; }
         public DbSet<GrupoTarefaResponsaveis> GrupoTarefaResponsaveis { get; set; }
-        public DbSet<GrupoEtiquetasAtendimentos> GrupoEtiquetasAtendimentos { get; set; }
-        public DbSet<EventoHistorico> EventoHistorico { get; set; }
-        public DbSet<CasoHistorico> CasoHistorico { get; set; }
+        public DbSet<GrupoEtiquetasAtendimentos> GrupoEtiquetasAtendimentos { get; set; }      
+      
         public DbSet<GrupoPessoasEtiquetas> GrupoPessoasEtiquetas { get; set; }
         public DbSet<ContaBancaria> ContaBancaria { get; set; }
         public DbSet<Vara> Varas { get; set; }

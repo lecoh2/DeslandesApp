@@ -7,8 +7,10 @@ using System.Threading.Tasks;
 namespace DeslandesApp.Domain.Models.Dtos.Responses.GrupoEtiquetasProcessos
 {
     public record GrupoEtiquetasProcessosResponse
-     (Guid idEtiqueta,
-      Guid idProcesso,
-      string nome
-        );
+    { 
+        public Guid IdEtiqueta { get; init; }
+        public Guid IdProcesso { get; init; }
+        public string Nome { get; init; }
+        public string Cor { get; init; }
+    }
 }

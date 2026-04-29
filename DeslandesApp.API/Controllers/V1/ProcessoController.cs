@@ -47,7 +47,7 @@ namespace DeslandesApp.API.Controllers.V1
             return Ok(proessoPaged);
         }
     
-       [HttpPut("atualizar-processo{id}")]
+       [HttpPut("atualizar-processo/{id}")]
         [ProducesResponseType(typeof(ProcessoResponse), 200)]
         public async Task<IActionResult> PutAsync(Guid id, [FromBody] ProcessoUpdateRequest request)
         {
@@ -98,7 +98,7 @@ namespace DeslandesApp.API.Controllers.V1
             return Ok(new
             {
                 success = true,
-                message = $"Envolvido {response.nome}, adicionado ao processo com sucesso."
+                message = $"Envolvido {response.Nome}, adicionado ao processo com sucesso."
             });
         }
 
@@ -123,7 +123,7 @@ namespace DeslandesApp.API.Controllers.V1
             return Ok(new
             {
                 success = true,
-                message = $"Etiqueta {response.nome}, adicionada ao processo com sucesso"
+                message = $"Etiqueta {response.Nome}, adicionada ao processo com sucesso"
                 
             });
         }
@@ -146,6 +146,16 @@ namespace DeslandesApp.API.Controllers.V1
             var result = await processoService.ConsultarProcessoAutoCompleteAsync(termo);
 
             return Ok(result);
+        }
+        [HttpGet("obter-processo-por-id/{id:guid}")]
+        public async Task<IActionResult> ObterPorId(Guid id)
+        {
+            var processo = await processoService.ObterPorIdAsync(id);
+
+            if (processo == null)
+                return NotFound("Cso não encontrada.");
+
+            return Ok(processo);
         }
     }
 }

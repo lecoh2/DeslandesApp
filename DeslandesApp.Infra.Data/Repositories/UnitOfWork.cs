@@ -33,7 +33,7 @@ namespace DeslandesApp.Infra.Data.Repositories
         private IPessoaRepository? _pessoaRepository;
         private IEnderecoRepository? _enderecoRepository;
         private IInformacoesComplementaresRepository? _informacoesComplementaresRepository;
-        private IPessoaHistoricoRepository? _pessoaHistoricoRepository;
+       
         private IProcessoRepository? _processoRepository;
         private IGrupoClientesRepository? _grupoClientesRepository;
         private IGrupoEnvolvidosRepository? _grupoEnvolvidosRepository;
@@ -56,7 +56,7 @@ namespace DeslandesApp.Infra.Data.Repositories
         private IGrupoEtiquetasAtendimentoRepository? _grupoEtiquetasAtendimentoRepository;
         private IGrupoEtiquetaCasoRepository? _grupoEtiquetaCasoRepository;
         private IAtendimentoHistoricoRepository? _atendimentoHistoricoRepository;
-        private ICasoHistoricoRepository? _casoHistoricoRepository;
+        
         private IHistoricoGeralRepository? _geralRepository;
         public IHistoricoGeralRepository HistoricoGeralRepository
         {
@@ -68,7 +68,7 @@ namespace DeslandesApp.Infra.Data.Repositories
                 return _geralRepository;
             }
         }
-        public IEventoHistoricoRepository? _eventoHistoricoRepository;
+      
         public IGrupoPessoasEtiquetasRepository? _grupoPessoasEtiquetasRepository;
 
         public IGrupoPessoasEtiquetasRepository GrupoPessoasEtiquetasRepository
@@ -81,26 +81,8 @@ namespace DeslandesApp.Infra.Data.Repositories
                 return _grupoPessoasEtiquetasRepository;
             }
         }
-        public IEventoHistoricoRepository EventoHistoricoRepository
-        {
-            get
-            {
-                if (_eventoHistoricoRepository == null)
-                    _eventoHistoricoRepository = new EventoHistoricoRepository(dataContext);
-
-                return _eventoHistoricoRepository;
-            }
-        }
-        public ICasoHistoricoRepository CasoHistoricoRepository
-        {
-            get
-            {
-                if (_casoHistoricoRepository == null)
-                    _casoHistoricoRepository = new CasoHistoricoRepository(dataContext);
-
-                return _casoHistoricoRepository;
-            }
-        }
+       
+      
         private IGrupoEventoEtiquetasRepository? _grupoEventoEtiquetasRepository;
         private IComentarioRepository? _comentarioRepository;
         public IComentarioRepository ComentarioRepository
@@ -381,17 +363,7 @@ namespace DeslandesApp.Infra.Data.Repositories
                 return _processoRepository;
             }
         }
-        public IPessoaHistoricoRepository PessoaHistoricoRepository
-
-        {
-            get
-            {
-                if (_pessoaHistoricoRepository == null)
-                    _pessoaHistoricoRepository = new PessoaHistoricoRepository(dataContext);
-
-                return _pessoaHistoricoRepository;
-            }
-        }
+        
         public IInformacoesComplementaresRepository InformacoesComplementaresRepository
 
         {

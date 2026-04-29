@@ -1,5 +1,6 @@
 ﻿using DeslandesApp.Domain.Models.Dtos.Requests.GrupoCasoCliente;
 using DeslandesApp.Domain.Models.Dtos.Requests.GrupoCasoEnvolvidos;
+using DeslandesApp.Domain.Models.Dtos.Requests.GrupoEtiquetaCaso;
 using DeslandesApp.Domain.Models.Dtos.Requests.GrupoEventoEtiquetas;
 using DeslandesApp.Domain.Models.Enum;
 using System;
@@ -20,5 +21,6 @@ namespace DeslandesApp.Domain.Models.Dtos.Requests.Caso
         public AcessoCaso Acesso { get; init; } = AcessoCaso.Publico;
         public List<GrupoCasoEnvolvidosRequest>? GrupoCasoEnvolvidos { get; init; }
         public List<GrupoCasoClienteRequest>? GrupoCasoCliente { get; init; }
+        public List<GrupoEtiquetaCasoRequest>? GrupoEtiquetaCaso { get; init; }
     }
 }
