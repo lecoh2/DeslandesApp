@@ -11,5 +11,7 @@ namespace DeslandesApp.Domain.Models.Dtos.Responses.GrupoClienteProcesso
         public Guid IdPessoa { get; set; }
         public Guid IdProcesso { get; set; }
         public string? Nome { get; set; }
+        public Guid? QualificacaoId { get; set; }
+        public string? NomeQualificacao { get; set; }
     }
 }

@@ -29,7 +29,11 @@ namespace DeslandesApp.Domain.Models.Dtos.Responses.Processo
         public string? Observacao { get; init; }
         public int? Instancia { get; set; }
         public int? Acesso { get; set; }
-
+        public Guid? ForoId { get; set; }
+        public string? NomeForo { get; set; }
+        public int? NumeroVara { get; set; }
+        public string? NomeVara { get; set; }
+        public string? Juizo { get; set; }
         public List<GrupoClienteProcessoResponse>? GrupoClienteProcesso { get; init; }
         public List<GrupoEnvolvidosProcessoResponse>? GrupoEnvolvidosProcesso { get; init; }
         public List<GrupoEtiquetasProcessosResponse>? GrupoEtiquetasProcesso { get; init; }

@@ -26,5 +26,14 @@ namespace DeslandesApp.Infra.Data.Repositories
         .Where(gr => gr.PessoaId == idPessoa && gr.ProcessoId == idProcesso)
         .FirstOrDefaultAsync();
         }
+
+        public async Task RemoverEnvolvidosProcessoPorId(Guid tarefaId)
+        {
+            var registros = await dataContext.GrupoEnvolvidosProcesso
+                .Where(x => x.ProcessoId == tarefaId)
+                .ToListAsync();
+
+            dataContext.GrupoEnvolvidosProcesso.RemoveRange(registros);
+        }
     }
 }

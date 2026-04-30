@@ -13,6 +13,7 @@ using DeslandesApp.Domain.Utils;
 using DeslandesApp.Domain.Validators;
 using DeslandesApp.Domain.ValueObjects;
 using FluentValidation;
+using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -22,7 +23,9 @@ using System.Threading.Tasks;
 
 namespace DeslandesApp.Domain.Services
 {
-    public class ProcessoService(IUnitOfWork unitOfWork, IMapper mapper) : IProcessoService
+    public class ProcessoService(IUnitOfWork unitOfWork, IMapper mapper, 
+        IHttpContextAccessor httpContextAccessor, IHistoricoGeralService historicoGeralService,
+         FunctionsHelper functionsHelper) : IProcessoService
     {
         public async Task<ProcessoResponse> AdicionarAsync(ProcessoRequest request)
         {
@@ -182,150 +185,178 @@ namespace DeslandesApp.Domain.Services
         {
             await unitOfWork.BeginTransactionAsync();
 
-            var processo = await unitOfWork.ProcessoRepository.GetByIdAsync(id);
-            if (processo == null)
-                throw new ApplicationException("Processo não encontrado.");
-
-            var usuario = await unitOfWork.UsuarioRepository.GetByIdAsync(request.UsuarioResponsavelId!.Value);
-            if (usuario == null)
-                throw new ApplicationException("Usuário informado não encontrado.");
-
-            // 🔎 Antes (com relacionamentos completos)
-            var processoAntes = await unitOfWork.ProcessoRepository
-                .ConsultarProcessoComRelacionamentosAsync(id);
-
-            if (processoAntes == null)
-                throw new ApplicationException("Processo para histórico não encontrado.");
-
-            var dadosAntes = new
+            try
             {
-                processoAntes.Titulo,
-                processoAntes.Pasta,
-                processoAntes.NumeroProcesso,
-                processoAntes.LinkTribunal,
-                processoAntes.Objeto,
-                processoAntes.ValorCausa,
-                processoAntes.ValorCondenacao,
-                processoAntes.Distribuido,
-                processoAntes.Observacao,
-                Instancia = processoAntes.Instancia?.ToString(),
-                Acesso = processoAntes.Acesso?.ToString(),
+                var processo = await unitOfWork.ProcessoRepository.GetByIdAsync(id)
+                    ?? throw new ApplicationException("Processo não encontrado.");
 
-                Vara = processoAntes.Vara != null ? new
+                var usuarioId = functionsHelper.ObterUsuarioId();
+
+                // =========================
+                // SNAPSHOT ANTES
+                // =========================
+                var processoAntes = await unitOfWork.ProcessoRepository
+                    .ConsultarProcessoComRelacionamentosAsync(id);
+
+                var dadosAntes = new
                 {
-                    processoAntes.Vara.Id,
-                    processoAntes.Vara.NomeVara
-                } : null,
+                    processoAntes.Titulo,
+                    processoAntes.Pasta,
+                    processoAntes.NumeroProcesso,
+                    processoAntes.LinkTribunal,
+                    processoAntes.Objeto,
+                    processoAntes.ValorCausa,
+                    processoAntes.ValorCondenacao,
+                    processoAntes.Distribuido,
+                    processoAntes.Observacao,
 
-                UsuarioResponsavel = processoAntes.UsuarioResponsavel != null ? new
+                    Instancia = processoAntes.Instancia?.ToString(),
+                    Acesso = processoAntes.Acesso?.ToString(),
+
+                    VaraId = processoAntes.VaraId,
+                    NomeVara = processoAntes.Vara?.NomeVara,
+                    ForoId = processoAntes.Vara?.ForoId,
+                    NomeForo = processoAntes.Vara?.Foro?.NomeForo,
+
+                    Clientes = processoAntes.GrupoClienteProcesso?.Select(x => x.PessoaId).ToList(),
+                    Envolvidos = processoAntes.GrupoEnvolvidosProcesso?.Select(x => x.PessoaId).ToList(),
+                    Etiquetas = processoAntes.GrupoEtiquetasProcessos?.Select(x => x.EtiquetaId).ToList()
+                };
+
+                // =========================
+                // CAMPOS BÁSICOS (MANUAL)
+                // =========================
+                processo.Titulo = request.Titulo;
+                processo.Pasta = request.Pasta;
+                processo.NumeroProcesso = request.NumeroProcesso;
+                processo.LinkTribunal = request.LinkTribunal;
+                processo.Objeto = request.Objeto;
+                processo.ValorCausa = request.ValorCausa;
+                processo.ValorCondenacao = request.ValorCondenacao;
+                processo.Distribuido = request.Distribuido;
+                processo.Observacao = request.Observacao;
+
+                processo.Instancia = request.Instancia.HasValue
+     ? (Instancia?)request.Instancia.Value
+     : null;
+                processo.Instancia = request.Instancia.HasValue
+      ? (Instancia?)request.Instancia.Value
+      : null;
+
+                processo.VaraId = request.VaraId;
+                processo.AcaoId = request.AcaoId;
+                processo.UsuarioResponsavelId = request.UsuarioResponsavelId;
+
+                // =========================
+                // 👥 CLIENTES (RESET)
+                // =========================
+                await unitOfWork.GrupoClientesProcessosRepository.RemoverClienteProcessoPorId(id);
+
+                if (request.GrupoClienteProcesso?.Any() == true)
                 {
-                    processoAntes.UsuarioResponsavel.Id,
-                    processoAntes.UsuarioResponsavel.NomeUsuario
-                } : null,
-
-                Acao = processoAntes.Acao != null ? new
-                {
-                    processoAntes.Acao.Id,
-                    processoAntes.Acao.NomeAcao
-                } : null,
-
-                // 🔥 AQUI você só TRAZ, não altera
-                //Clientes = processoAntes.GrupoPessoaClientes?
-                //    .Select(c => c.Pessoa?.Nome)
-                //    .Where(n => n != null)
-                //    .ToList(),
-
-                Envolvidos = processoAntes.GrupoEnvolvidos?
-                    .Select(e => new
+                    foreach (var item in request.GrupoClienteProcesso)
                     {
-                        Nome = e.Pessoa?.Nome,
-                       // e.TipoEnvolvido
-                    })
-                    .Where(e => e.Nome != null)
-                    .ToList(),
+                        await unitOfWork.GrupoClientesProcessosRepository.AddAsync(new GrupoClienteProcesso
+                        {
+                            ProcessoId = id,
+                            PessoaId = item.IdPessoa.Value,
+                            QualificacaoId = item.IdQualificacao
+                        });
+                    }
+                }
 
-                Usuario = usuario != null ? new
+                // =========================
+                // 👥 ENVOLVIDOS (RESET)
+                // =========================
+                await unitOfWork.GrupoEnvolvidosProcessosRepository.RemoverEnvolvidosProcessoPorId(id);
+
+                if (request.GrupoEnvolvidosProcesso?.Any() == true)
                 {
-                    usuario.Id,
-                    usuario.Login,
-                    NomeUsuario = usuario.NomeUsuario
-                } : null
-            };
+                    foreach (var item in request.GrupoEnvolvidosProcesso)
+                    {
+                        await unitOfWork.GrupoEnvolvidosProcessosRepository.AddAsync(new GrupoEnvolvidosProcesso
+                        {
+                            ProcessoId = id,
+                            PessoaId = item.IdPessoa,
+                            QualificacaoId = item.IdQualificacao
+                        });
+                    }
+                }
 
-            // 🔄 Atualiza entidade
-            mapper.Map(request, processo);
-            processo.UsuarioResponsavelId = request.UsuarioResponsavelId;
-           // processo.DataAtualizacao = DateTime.Now;
+                // =========================
+                // 🏷️ ETIQUETAS (RESET)
+                // =========================
+                await unitOfWork.GrupoEtiquetasProcessosRepository.RemoverEtiquetaProcessoPorId(id);
 
-            await unitOfWork.ProcessoRepository.UpdateAsync(processo);
+                if (request.GrupoEtiquetasProcesso?.Any() == true)
+                {
+                    foreach (var item in request.GrupoEtiquetasProcesso)
+                    {
+                        await unitOfWork.GrupoEtiquetasProcessosRepository.AddAsync(new GrupoEtiquetasProcessos
+                        {
+                            ProcessoId = id,
+                            EtiquetaId = item.EtiquetaId
+                        });
+                    }
+                }
 
-            // 🔎 Depois (já atualizado)
-            var processoDepois = await unitOfWork.ProcessoRepository
-                .ConsultarProcessoComRelacionamentosAsync(id);
+                // =========================
+                // UPDATE
+                // =========================
+                await unitOfWork.ProcessoRepository.UpdateAsync(processo);
 
-            if (processoDepois == null)
-                throw new ApplicationException("Processo atualizado não encontrado.");
+                // =========================
+                // SNAPSHOT DEPOIS
+                // =========================
+                var processoDepois = await unitOfWork.ProcessoRepository
+                    .ConsultarProcessoComRelacionamentosAsync(id);
 
-            var dadosDepois = new
+                var dadosDepois = new
+                {
+                    processoDepois.Titulo,
+                    processoDepois.Pasta,
+                    processoDepois.NumeroProcesso,
+                    processoDepois.LinkTribunal,
+                    processoDepois.Objeto,
+                    processoDepois.ValorCausa,
+                    processoDepois.ValorCondenacao,
+                    processoDepois.Distribuido,
+                    processoDepois.Observacao,
+
+                    Instancia = processoDepois.Instancia?.ToString(),
+                    Acesso = processoDepois.Acesso?.ToString(),
+
+                    VaraId = processoDepois.VaraId,
+                    NomeVara = processoDepois.Vara?.NomeVara,
+                    ForoId = processoDepois.Vara?.ForoId,
+                    NomeForo = processoDepois.Vara?.Foro?.NomeForo,
+
+                    Clientes = processoDepois.GrupoClienteProcesso?.Select(x => x.PessoaId).ToList(),
+                    Envolvidos = processoDepois.GrupoEnvolvidosProcesso?.Select(x => x.PessoaId).ToList(),
+                    Etiquetas = processoDepois.GrupoEtiquetasProcessos?.Select(x => x.EtiquetaId).ToList()
+                };
+
+                // =========================
+                // HISTÓRICO 🔥
+                // =========================
+                await historicoGeralService.RegistrarAsync(
+                    TipoEntidade.Processo,
+                    id,
+                    usuarioId,
+                    dadosAntes,
+                    dadosDepois,
+                    request.Observacao
+                );
+
+                await unitOfWork.CommitAsync();
+
+                return mapper.Map<ProcessoResponse>(processoDepois);
+            }
+            catch
             {
-                processoDepois.Titulo,
-                processoDepois.Pasta,
-                processoDepois.NumeroProcesso,
-                processoDepois.LinkTribunal,
-                processoDepois.Objeto,
-                processoDepois.ValorCausa,
-                processoDepois.ValorCondenacao,
-                processoDepois.Distribuido,
-                processoDepois.Observacao,
-                Instancia = processoDepois.Instancia?.ToString(),
-                Acesso = processoDepois.Acesso?.ToString(),
-                Vara = processoDepois.Vara?.NomeVara,
-                UsuarioResponsavel = processoDepois.UsuarioResponsavel?.NomeUsuario,
-                Acao = processoDepois.Acao?.NomeAcao,
-
-                //Clientes = processoDepois.GrupoPessoaClientes?
-                //    .Select(c => c.Pessoa?.Nome)
-                //    .Where(n => n != null)
-                //    .ToList(),
-
-                Envolvidos = processoDepois.GrupoEnvolvidos?
-                    .Select(e => new
-                    {
-                        Nome = e.Pessoa?.Nome,
-                       // e.TipoEnvolvido
-                    })
-                    .Where(e => e.Nome != null)
-                    .ToList(),
-
-                Usuario = usuario != null ? new
-                {
-                    usuario.Id,
-                    usuario.Login,
-                    NomeUsuario = usuario.NomeUsuario
-                } : null
-            };
-
-            // 🧾 Histórico
-            mapper.Map(request, processo);
-            processo.UsuarioResponsavelId = request.UsuarioResponsavelId;
-
-            //var historico = new ProcessoHistorico
-            //{
-            //    ProcessoId = processo.Id,
-            //    IdUsuario = request.UsuarioResponsavelId!.Value,
-            //    DataAlteracao = DateTime.Now,
-            //    Observacoes = request.Observacao ?? "",
-            //    DadosAntes = JsonConvert.SerializeObject(dadosAntes),
-            //    DadosDepois = JsonConvert.SerializeObject(dadosDepois)
-            //};
-
-           // await unitOfWork.ProcessoHistoricoRepository.AddAsync(historico);
-
-      
-
-            await unitOfWork.CommitAsync();
-
-            return mapper.Map<ProcessoResponse>(processoDepois);
+                await unitOfWork.RollbackAsync();
+                throw;
+            }
         }
 
         public async Task<ObterProcessoResponse?> ObterPorIdAsync(Guid id)

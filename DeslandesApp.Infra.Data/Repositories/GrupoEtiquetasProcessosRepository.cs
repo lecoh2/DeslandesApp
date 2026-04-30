@@ -16,7 +16,7 @@ namespace DeslandesApp.Infra.Data.Repositories
         public async Task<GrupoEtiquetasProcessos> ExistEtiquetaProcessoAsync(Guid idEtiqueta, Guid idProcesso)
         {
             return await dataContext.GrupoEtiquetasProcessos
-                .FirstOrDefaultAsync(gr => gr.EtiquetaId == idEtiqueta&& gr.ProcessoId == idProcesso);
+                .FirstOrDefaultAsync(gr => gr.EtiquetaId == idEtiqueta && gr.ProcessoId == idProcesso);
         }
 
         public async Task<GrupoEtiquetasProcessos> GetByIdEtiquetaProcessoAsync(Guid idEtiqueta, Guid idProcesso)
@@ -25,6 +25,15 @@ namespace DeslandesApp.Infra.Data.Repositories
 
         .Where(gr => gr.EtiquetaId == idEtiqueta && gr.ProcessoId == idProcesso)
         .FirstOrDefaultAsync();
+        }
+
+        public async Task RemoverEtiquetaProcessoPorId(Guid tarefaId)
+        {
+            var registros = await dataContext.GrupoEtiquetasProcessos
+                .Where(x => x.ProcessoId == tarefaId)
+                .ToListAsync();
+
+            dataContext.GrupoEtiquetasProcessos.RemoveRange(registros);
         }
     }
 }

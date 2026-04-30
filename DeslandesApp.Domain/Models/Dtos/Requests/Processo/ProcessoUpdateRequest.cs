@@ -1,5 +1,8 @@
 ﻿using DeslandesApp.Domain.Models.Dtos.Requests.GrupoCliente;
+using DeslandesApp.Domain.Models.Dtos.Requests.GrupoClienteProceso;
 using DeslandesApp.Domain.Models.Dtos.Requests.GrupoEnvolvidos;
+using DeslandesApp.Domain.Models.Dtos.Requests.GrupoEnvolvidosProcesso;
+using DeslandesApp.Domain.Models.Dtos.Requests.GrupoEtiquetaProcesso;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -30,8 +33,8 @@ namespace DeslandesApp.Domain.Models.Dtos.Requests.Processo
         public string? Observacao { get; init; }
         public int? Instancia { get; set; }
         public int? Acesso { get; set; }
-        // 🔥 RELACIONAMENTOS N:N
-      //  public List<GrupoClienteRequset>? GrupoCliente { get; init; }
-       // public List<GrupoEnvolvidosRequest>? GrupoEnvolvidos { get; init; }
+        public List<GrupoClienteProcessoRequest>? GrupoClienteProcesso { get; init; }
+        public List<GrupoEnvolvidosProcessoRequest>? GrupoEnvolvidosProcesso { get; init; }
+        public List<GrupoEtiquetaProcessoRequest> GrupoEtiquetasProcesso { get; init; }
     }
 }

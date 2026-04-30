@@ -11,5 +11,6 @@ namespace DeslandesApp.Domain.Interfaces.Repositories
     {
         Task<GrupoClienteProcesso> GetByIdClienteProcessoAsync(Guid idCliente, Guid idProcesso);
         Task<GrupoClienteProcesso> ExistClienteProcessoAsync(Guid idClietne, Guid idProcesso);
+        Task RemoverClienteProcessoPorId(Guid tarefaId);
     }
 }

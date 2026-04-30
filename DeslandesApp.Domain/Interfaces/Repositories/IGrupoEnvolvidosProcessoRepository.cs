@@ -7,10 +7,11 @@ using System.Threading.Tasks;
 
 namespace DeslandesApp.Domain.Interfaces.Repositories
 {
-    public interface IGrupoEnvolvidosProcessoRepository  : IBaseRepository<GrupoEnvolvidosProcesso, Guid>
+    public interface IGrupoEnvolvidosProcessoRepository : IBaseRepository<GrupoEnvolvidosProcesso, Guid>
     {
-    Task<GrupoEnvolvidosProcesso> GetByIdEnvolvidosProcessoAsync(Guid idCliente, Guid idProcesso);
-    Task<GrupoEnvolvidosProcesso> ExistEnvolvidosProcessoAsync(Guid idClinte, Guid idProcesso);
-}
+        Task<GrupoEnvolvidosProcesso> GetByIdEnvolvidosProcessoAsync(Guid idCliente, Guid idProcesso);
+        Task<GrupoEnvolvidosProcesso> ExistEnvolvidosProcessoAsync(Guid idClinte, Guid idProcesso);
+        Task RemoverEnvolvidosProcessoPorId(Guid tarefaId);
+    }
 }
 

@@ -22,13 +22,17 @@ namespace DeslandesApp.Infra.Data.Repositories
         public async Task<Processo?> ConsultarProcessoComRelacionamentosAsync(Guid idProcesso)
         {
             return await dataContext.Processos
-                .Include(p => p.Vara)
-                .Include(p => p.UsuarioResponsavel)
-                .Include(p => p.Acao)
-                // .Include(p => p.Etiqueta)
-                //.Include(p => p.Instancia)
-                // .Include(p => p.Acesso)
-                .FirstOrDefaultAsync(p => p.Id == idProcesso);
+    .Include(p => p.Vara)
+        .ThenInclude(v => v.Foro) // 🔥 ESSENCIAL
+    .Include(p => p.Acao)
+    .Include(p => p.UsuarioResponsavel)
+    .Include(p => p.GrupoClienteProcesso)
+        .ThenInclude(c => c.Pessoa)
+    .Include(p => p.GrupoEnvolvidosProcesso)
+        .ThenInclude(e => e.Pessoa)
+    .Include(p => p.GrupoEtiquetasProcessos)
+        .ThenInclude(e => e.Etiqueta)
+    .FirstOrDefaultAsync(p => p.Id == idProcesso);
         }
 
 
@@ -134,6 +138,7 @@ namespace DeslandesApp.Infra.Data.Repositories
                 .Include(x => x.UsuarioResponsavel)
                 .Include(x => x.Acao)
                 .Include(x => x.Vara)
+                 .ThenInclude(v => v.Foro)
 
                 .FirstOrDefaultAsync();
         }

@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using DeslandesApp.Domain.Helpers;
 using DeslandesApp.Domain.Interfaces.Repositories;
 using DeslandesApp.Domain.Interfaces.Services;
 using DeslandesApp.Domain.Models.Dtos.Requests.Atendimento;
@@ -22,7 +23,8 @@ using System.Threading.Tasks;
 namespace DeslandesApp.Domain.Services
 {
     public class AtendiemntoService(IUnitOfWork unitOfWork, IMapper mapper,
-        IHttpContextAccessor httpContextAccessor, IHistoricoGeralService historicoGeralService) : IAtendimentoService
+        IHttpContextAccessor httpContextAccessor, IHistoricoGeralService historicoGeralService,
+          FunctionsHelper functionsHelper) : IAtendimentoService
     {
         public async Task<CriarAtendimentoClienteResponse> AdicionarAsync(CriarAtendimentoClienteRequest request)
         {
@@ -199,7 +201,7 @@ namespace DeslandesApp.Domain.Services
                 var atendimento = await unitOfWork.AtendimentoRepository.GetByIdAsync(id)
                     ?? throw new ApplicationException("Atendimento não encontrado.");
 
-                var usuarioId = ObterUsuarioId();
+                var usuarioId = functionsHelper.ObterUsuarioId();
 
                 // =========================
                 // SNAPSHOT ANTES
@@ -325,16 +327,6 @@ namespace DeslandesApp.Domain.Services
 
             return mapper.Map<ObterAtendimentoResponse>(atendimento);
         }
-        private Guid? ObterUsuarioId()
-        {
-            var user = httpContextAccessor.HttpContext?.User;
-
-            var userId = user?.FindFirst(System.Security.Claims.ClaimTypes.Name)?.Value;
-
-            if (string.IsNullOrEmpty(userId))
-                return null;
-
-            return Guid.Parse(userId);
-        }
+       
     }
 }

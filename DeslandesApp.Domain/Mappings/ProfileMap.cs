@@ -226,30 +226,30 @@ namespace DeslandesApp.Domain.Mappings
             #region Processo
 
             // =========================
-            // CREATE
+            // CREATE (REQUEST -> ENTITY)
             // =========================
             CreateMap<ProcessoRequest, Processo>()
-                .ForMember(dest => dest.Vara, opt => opt.Ignore())
-                .ForMember(dest => dest.UsuarioResponsavel, opt => opt.Ignore())
-                .ForMember(dest => dest.Acao, opt => opt.Ignore())
-                .ForMember(dest => dest.GrupoClienteProcesso, opt => opt.Ignore())
-                .ForMember(dest => dest.GrupoEnvolvidosProcesso, opt => opt.Ignore())
-                .ForMember(dest => dest.GrupoEtiquetasProcessos, opt => opt.Ignore());
+                .ForMember(d => d.Vara, o => o.Ignore())
+                .ForMember(d => d.UsuarioResponsavel, o => o.Ignore())
+                .ForMember(d => d.Acao, o => o.Ignore())
+                .ForMember(d => d.GrupoClienteProcesso, o => o.Ignore())
+                .ForMember(d => d.GrupoEnvolvidosProcesso, o => o.Ignore())
+                .ForMember(d => d.GrupoEtiquetasProcessos, o => o.Ignore());
 
 
             // =========================
             // UPDATE
             // =========================
             CreateMap<ProcessoUpdateRequest, Processo>()
-                .ForMember(dest => dest.GrupoClienteProcesso, opt => opt.Ignore())
-                .ForMember(dest => dest.GrupoEnvolvidosProcesso, opt => opt.Ignore())
-                .ForMember(dest => dest.GrupoEtiquetasProcessos, opt => opt.Ignore());
+                .ForMember(d => d.GrupoClienteProcesso, o => o.Ignore())
+                .ForMember(d => d.GrupoEnvolvidosProcesso, o => o.Ignore())
+                .ForMember(d => d.GrupoEtiquetasProcessos, o => o.Ignore());
 
 
             // =========================
-            // RESPONSE PRINCIPAL
+            // ENTITY -> RESPONSE SIMPLES
             // =========================
-            CreateMap<Processo, ObterProcessoResponse>()
+            CreateMap<Processo, ProcessoResponse>()
                 .ForMember(d => d.AcaoId, o => o.MapFrom(s => s.AcaoId))
                 .ForMember(d => d.VaraId, o => o.MapFrom(s => s.VaraId))
                 .ForMember(d => d.UsuarioResponsavelId, o => o.MapFrom(s => s.UsuarioResponsavelId))
@@ -264,9 +264,15 @@ namespace DeslandesApp.Domain.Mappings
                 .ForMember(d => d.ValorCondenacao, o => o.MapFrom(s => s.ValorCondenacao))
                 .ForMember(d => d.Observacao, o => o.MapFrom(s => s.Observacao))
                 .ForMember(d => d.Instancia, o => o.MapFrom(s => s.Instancia))
-                .ForMember(d => d.Acesso, o => o.MapFrom(s => s.Acesso))
+                .ForMember(d => d.Acesso, o => o.MapFrom(s => s.Acesso));
 
-                // RELAÇÕES
+
+            // =========================
+            // ENTITY -> RESPONSE COMPLETO
+            // =========================
+            CreateMap<Processo, ObterProcessoResponse>()
+                //.IncludeBase<Processo, ProcessoResponse>()
+
                 .ForMember(d => d.GrupoClienteProcesso,
                     o => o.MapFrom(s => s.GrupoClienteProcesso))
 
@@ -278,28 +284,35 @@ namespace DeslandesApp.Domain.Mappings
 
 
             // =========================
-            // CLIENTE PROCESSO
+            // CLIENTES (ENTITY -> RESPONSE)
             // =========================
             CreateMap<GrupoClienteProcesso, GrupoClienteProcessoResponse>()
                 .ForMember(d => d.IdPessoa, o => o.MapFrom(s => s.PessoaId))
                 .ForMember(d => d.IdProcesso, o => o.MapFrom(s => s.ProcessoId))
-                .ForMember(d => d.Nome, o => o.MapFrom(s => s.Pessoa != null ? s.Pessoa.Nome : null));
+                .ForMember(d => d.Nome,
+                    o => o.MapFrom(s => s.Pessoa != null ? s.Pessoa.Nome : null))
+                 .ForMember(d => d.QualificacaoId, o => o.MapFrom(s => s.QualificacaoId))
+                .ForMember(d => d.NomeQualificacao,
+                    o => o.MapFrom(s =>
+                        s.QualificacaoCliente != null ? s.QualificacaoCliente.NomeQualificacao : null));
 
 
             // =========================
-            // ENVOLVIDOS PROCESSO
+            // ENVOLVIDOS (ENTITY -> RESPONSE)
             // =========================
             CreateMap<GrupoEnvolvidosProcesso, GrupoEnvolvidosProcessoResponse>()
                 .ForMember(d => d.IdPessoa, o => o.MapFrom(s => s.PessoaId))
                 .ForMember(d => d.IdProcesso, o => o.MapFrom(s => s.ProcessoId))
-                .ForMember(d => d.Nome, o => o.MapFrom(s => s.Pessoa != null ? s.Pessoa.Nome : null))
+                .ForMember(d => d.Nome,
+                    o => o.MapFrom(s => s.Pessoa != null ? s.Pessoa.Nome : null))
                 .ForMember(d => d.QualificacaoId, o => o.MapFrom(s => s.QualificacaoId))
                 .ForMember(d => d.NomeQualificacao,
-                    o => o.MapFrom(s => s.Qualificacao != null ? s.Qualificacao.NomeQualificacao : null));
+                    o => o.MapFrom(s =>
+                        s.Qualificacao != null ? s.Qualificacao.NomeQualificacao : null));
 
 
             // =========================
-            // ETIQUETAS PROCESSO
+            // ETIQUETAS (ENTITY -> RESPONSE)
             // =========================
             CreateMap<GrupoEtiquetasProcessos, GrupoEtiquetasProcessosResponse>()
                 .ForMember(d => d.IdEtiqueta, o => o.MapFrom(s => s.EtiquetaId))
@@ -309,15 +322,59 @@ namespace DeslandesApp.Domain.Mappings
                 .ForMember(d => d.Cor,
                     o => o.MapFrom(s => s.Etiqueta != null ? s.Etiqueta.Cor : null));
 
-            CreateMap<GrupoClienteProcessoRequest, GrupoClienteProcesso>()
-    .ForMember(d => d.PessoaId, o => o.MapFrom(s => s.IdPessoa))
-    .ForMember(d => d.QualificacaoId, o => o.MapFrom(s => s.IdQualificacao));
-            CreateMap<GrupoEnvolvidosProcessoRequest, GrupoEnvolvidosProcesso>()
-    .ForMember(d => d.PessoaId, o => o.MapFrom(s => s.IdPessoa))
-    .ForMember(d => d.QualificacaoId, o => o.MapFrom(s => s.IdQualificacao));
-            CreateMap<GrupoEtiquetaProcessoRequest, GrupoEtiquetasProcessos>()
-    .ForMember(d => d.EtiquetaId, o => o.MapFrom(s => s.EtiquetaId));
 
+            // =========================
+            // REQUEST -> ENTITY (N:N)
+            // =========================
+            CreateMap<GrupoClienteProcessoRequest, GrupoClienteProcesso>()
+                .ForMember(d => d.PessoaId, o => o.MapFrom(s => s.IdPessoa))
+                .ForMember(d => d.QualificacaoId, o => o.MapFrom(s => s.IdQualificacao))
+                .ForMember(d => d.ProcessoId, o => o.Ignore());
+
+
+            CreateMap<GrupoEnvolvidosProcessoRequest, GrupoEnvolvidosProcesso>()
+                .ForMember(d => d.PessoaId, o => o.MapFrom(s => s.IdPessoa))
+                .ForMember(d => d.QualificacaoId, o => o.MapFrom(s => s.IdQualificacao))
+                .ForMember(d => d.ProcessoId, o => o.Ignore());
+
+
+            CreateMap<GrupoEtiquetaProcessoRequest, GrupoEtiquetasProcessos>()
+                .ForMember(d => d.EtiquetaId, o => o.MapFrom(s => s.EtiquetaId))
+                .ForMember(d => d.ProcessoId, o => o.Ignore());
+            CreateMap<Processo, ObterProcessoResponse>()
+    .ForMember(d => d.AcaoId, o => o.MapFrom(s => s.AcaoId))
+    .ForMember(d => d.VaraId, o => o.MapFrom(s => s.VaraId))
+    .ForMember(d => d.UsuarioResponsavelId, o => o.MapFrom(s => s.UsuarioResponsavelId))
+
+    // 🔥 DADOS DA VARA
+    .ForMember(d => d.NomeVara,
+        o => o.MapFrom(s => s.Vara != null ? s.Vara.NomeVara : null))
+
+    .ForMember(d => d.NumeroVara,
+        o => o.MapFrom(s => s.Vara != null ? s.Vara.Numero : (int?)null))
+
+    // 🔥 DADOS DO FORO (VIA VARA)
+    .ForMember(d => d.ForoId,
+        o => o.MapFrom(s => s.Vara != null ? s.Vara.ForoId : (Guid?)null))
+
+    .ForMember(d => d.NomeForo,
+        o => o.MapFrom(s =>
+            s.Vara != null && s.Vara.Foro != null
+                ? s.Vara.Foro.NomeForo
+                : null))
+     .ForMember(d => d.Juizo,
+        o => o.MapFrom(s =>
+            s.Vara.NomeVara + " - " + s.Vara.Foro.NomeForo
+        ))
+    // RELAÇÕES
+    .ForMember(d => d.GrupoClienteProcesso,
+        o => o.MapFrom(s => s.GrupoClienteProcesso))
+
+    .ForMember(d => d.GrupoEnvolvidosProcesso,
+        o => o.MapFrom(s => s.GrupoEnvolvidosProcesso))
+
+    .ForMember(d => d.GrupoEtiquetasProcesso,
+        o => o.MapFrom(s => s.GrupoEtiquetasProcessos));
             #endregion
 
 
