@@ -105,6 +105,7 @@ namespace DeslandesApp.Infra.Data.Repositories
 
                 return new EventoPaginacaoResponse
                 {
+                    Id = e.Id,
                     Titulo = e.Titulo,
                     DataInicial = e.DataInicial,
                     HoraInicial = e.HoraInicial,

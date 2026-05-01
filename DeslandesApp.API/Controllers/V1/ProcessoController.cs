@@ -52,7 +52,7 @@ namespace DeslandesApp.API.Controllers.V1
         public async Task<IActionResult> PutAsync(Guid id, [FromBody] ProcessoUpdateRequest request)
         {
             var response = await processoService.ModificarAsync(id, request);
-            return StatusCode(StatusCodes.Status201Created, new
+            return Ok(new
             {
                 success = true,
                 message = $"Proceso {response.Pasta} atualizado com sucesso.",

@@ -12,6 +12,7 @@ namespace DeslandesApp.Domain.Models.Dtos.Responses.Evento
 {
     public record EventoPaginacaoResponse
     {
+        public Guid Id{ get; set; }
         public string Titulo { get; set; } = string.Empty;
         public DateOnly DataInicial { get; set; }
         public TimeOnly HoraInicial { get; set; }

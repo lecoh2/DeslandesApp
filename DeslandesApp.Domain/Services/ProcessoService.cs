@@ -239,9 +239,9 @@ namespace DeslandesApp.Domain.Services
                 processo.Instancia = request.Instancia.HasValue
      ? (Instancia?)request.Instancia.Value
      : null;
-                processo.Instancia = request.Instancia.HasValue
-      ? (Instancia?)request.Instancia.Value
-      : null;
+                processo.Acesso = request.Acesso.HasValue
+                    ? (Acesso?)request.Acesso.Value
+                    : null;
 
                 processo.VaraId = request.VaraId;
                 processo.AcaoId = request.AcaoId;
