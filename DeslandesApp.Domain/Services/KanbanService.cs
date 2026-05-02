@@ -26,37 +26,56 @@ namespace DeslandesApp.Domain.Services
 
         public async Task<List<KanbanColuna>> ObterKanbanAsync()
         {
-            // 🔹 Busca dados do banco
             var tarefas = await _unitOfWork.TarefaRepository.GetKanbanAsync();
             var eventos = await _unitOfWork.EventoRepository.GetKanbanAsync();
             var comentarios = await _unitOfWork.ComentarioRepository.ContarComentariosPorCard();
-            // 🔹 Lista de cards
+
             var cards = new List<KanbanCard>();
 
             // =========================
-            // TAREFAS → CARDS
+            // 🔹 TAREFAS → CARDS
             // =========================
             foreach (var t in tarefas)
             {
+                var vinculoDescricao =
+                    t.Processo != null
+                        ? $"{t.Processo.Pasta} - {t.Processo.NumeroProcesso}"
+                    : t.Atendimento != null
+                        ? $"{t.Atendimento.Assunto} - {t.Atendimento.Registro}"
+                    : t.Caso != null
+                        ? $"{t.Caso.Pasta} - {t.Caso.Titulo}"
+                    : null;
+
+                TipoVinculo? tipoVinculo =
+                    t.Processo != null ? TipoVinculo.Processo :
+                    t.Atendimento != null ? TipoVinculo.Atendimento :
+                    t.Caso != null ? TipoVinculo.Caso :
+                    null;
                 cards.Add(new KanbanCard
                 {
                     Id = t.Id,
                     Titulo = t.Descricao,
                     Data = t.DataTarefa,
-                    Tipo = "Tarefa",
+                    Tipo = "Tarefa", // 🔥 NÃO MEXE
+
+                    // 🔥 NOVOS CAMPOS (pro modal)
+                    VinculoDescricao = vinculoDescricao,
+                    TipoVinculo = tipoVinculo,
+
                     Prioridade = t.Prioridade,
                     PrioridadeDescricao = t.Prioridade.ToString(),
                     Status = t.StatusGeralKanban,
                     UsuarioCriacaoId = t.UsuarioCriacaoId,
                     UsuarioCriacaoNome = t.UsuarioCriacao?.NomeUsuario,
+
                     QuantidadeComentarios = comentarios.TryGetValue(t.Id, out var qtd)
-            ? qtd
-            : 0
+                        ? qtd
+                        : 0
                 });
             }
 
             // =========================
-            // EVENTOS → CARDS
+            // 🔹 EVENTOS → CARDS
             // =========================
             foreach (var e in eventos)
             {
@@ -67,7 +86,6 @@ namespace DeslandesApp.Domain.Services
 
                     Data = e.DataInicial.ToDateTime(TimeOnly.MinValue),
 
-                    // 🔥 CORRIGIDO
                     DataInicial = e.DataInicial.ToDateTime(e.HoraInicial),
                     DataFinal = e.DataFinal?.ToDateTime(e.HoraFinal ?? TimeOnly.MinValue),
 
@@ -75,17 +93,19 @@ namespace DeslandesApp.Domain.Services
                     HoraFinal = e.HoraFinal,
 
                     Tipo = "Evento",
+
                     Status = e.StatusGeralKanban,
                     UsuarioCriacaoId = e.UsuarioCriacaoId,
                     UsuarioCriacaoNome = e.UsuarioCriacao?.NomeUsuario,
+
                     QuantidadeComentarios = comentarios.TryGetValue(e.Id, out var qtd)
-            ? qtd
-            : 0
+                        ? qtd
+                        : 0
                 });
             }
 
             // =========================
-            // COLUNAS DO KANBAN (🔥 CORRETO)
+            // 🔹 COLUNAS
             // =========================
             var colunas = Enum.GetValues(typeof(StatusGeralKanban))
                 .Cast<StatusGeralKanban>()

@@ -26,6 +26,8 @@ namespace DeslandesApp.Domain.Models.Entities
         public TimeOnly? HoraFinal { get; set; }
         public string PrioridadeDescricao { get; set; } = string.Empty;
         public int QuantidadeComentarios { get; set; }
+        public string? VinculoDescricao { get; init; }
+        public TipoVinculo? TipoVinculo { get; init; }
     }
 }
 

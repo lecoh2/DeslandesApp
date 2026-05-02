@@ -30,5 +30,6 @@ namespace DeslandesApp.Domain.Models.Dtos.Responses.Tarefa
         public string? ProcessoPasta { get; set; }
         public string? CasoPasta { get; set; }
         public string? AtendimentoAssunto { get; set; }
+        public string? VinculoDescricao { get; set; }
     }
 }

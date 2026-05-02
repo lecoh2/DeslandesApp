@@ -422,6 +422,24 @@ namespace DeslandesApp.Domain.Mappings
 
                 .ForMember(dest => dest.StatusGeralKanban,
                     opt => opt.MapFrom(src => src.StatusGeralKanban))
+                .ForMember(dest => dest.TipoVinculo, opt => opt.MapFrom(src =>
+    src.Processo != null ? TipoVinculo.Processo :
+    src.Atendimento != null ? TipoVinculo.Atendimento :
+    src.Caso != null ? TipoVinculo.Caso :
+    (TipoVinculo?)null
+))
+
+.ForMember(dest => dest.ProcessoPasta, opt => opt.MapFrom(src =>
+    src.Processo != null ? $"{src.Processo.Pasta} - {src.Processo.NumeroProcesso}" : null
+))
+
+.ForMember(dest => dest.AtendimentoAssunto, opt => opt.MapFrom(src =>
+    src.Atendimento != null ? $"{src.Atendimento.Assunto} - {src.Atendimento.Registro}" : null
+))
+
+.ForMember(dest => dest.CasoPasta, opt => opt.MapFrom(src =>
+    src.Caso != null ? $"{src.Caso.Pasta} - {src.Caso.Titulo}" : null
+))
 
 
                 // =========================

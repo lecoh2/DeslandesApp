@@ -14,5 +14,6 @@ namespace DeslandesApp.Domain.Models.Dtos.Responses.Kanban
         public string Tipo { get; init; } = string.Empty;
         public int Status { get; init; }
         public int QuantidadeComentarios { get; init; }
+        public string? VinculoDescricao { get; init; }
     }
 }
