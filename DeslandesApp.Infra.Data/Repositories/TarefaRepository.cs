@@ -45,23 +45,35 @@ namespace DeslandesApp.Infra.Data.Repositories
             var totalCount = await query.CountAsync();
 
             var items = await query
-       .OrderBy(u => u.DataTarefa)
-       .Skip((pageNumber - 1) * pageSize)
-       .Take(pageSize)
-       .Select(u => new TarefaPaginacaoResponse
-       {
-           Id = u.Id,
-           Descricao = u.Descricao,
-           DataTarefa = u.DataTarefa,
-           Responsavel = u.Responsavel == null ? null : new UsuarioResumoResponse(
-    u.Responsavel.Id,
-    u.Responsavel.NomeUsuario
-),
-           Prioridade = u.Prioridade,
-           TipoVinculo = u.TipoVinculo,
-           StatusGeralKanban = u.StatusGeralKanban
-       })
-       .ToListAsync();
+         .OrderBy(u => u.DataTarefa)
+         .Skip((pageNumber - 1) * pageSize)
+         .Take(pageSize)
+         .Select(u => new TarefaPaginacaoResponse
+         {
+             Id = u.Id,
+             Descricao = u.Descricao,
+             DataTarefa = u.DataTarefa,
+
+             // 🔥 CRIADOR
+             UsuarioCriacao = u.UsuarioCriacao == null ? null : new UsuarioResumoResponse(
+                 u.UsuarioCriacao.Id,
+                 u.UsuarioCriacao.NomeUsuario
+             ),
+
+             // 🔥 RESPONSÁVEIS (MUITO IMPORTANTE)
+             GrupoTarefaResponsaveis = u.GrupoTarefaResponsaveis
+    .Select(r => new GrupoTarefaResponsaveisResponse(
+        r.UsuarioId,
+        r.Usuario.Id,
+        r.Usuario.NomeUsuario
+    ))
+    .ToList(),
+
+             Prioridade = u.Prioridade,
+             TipoVinculo = u.TipoVinculo,
+             StatusGeralKanban = u.StatusGeralKanban
+         })
+         .ToListAsync();
 
 
             return new PageResult<TarefaPaginacaoResponse>

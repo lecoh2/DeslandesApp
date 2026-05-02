@@ -1,4 +1,6 @@
 ﻿using DeslandesApp.Domain.Models.Dtos.Requests.Usuarios;
+using DeslandesApp.Domain.Models.Dtos.Responses.GrupoEventoResponsavel;
+using DeslandesApp.Domain.Models.Dtos.Responses.GrupoTarefaResponsaveis;
 using DeslandesApp.Domain.Models.Dtos.Responses.Usuarios;
 using DeslandesApp.Domain.Models.Entities;
 using DeslandesApp.Domain.Models.Enum;
@@ -15,7 +17,8 @@ namespace DeslandesApp.Domain.Models.Dtos.Responses.Tarefa
         public Guid? Id { get; set; }
         public string Descricao { get; set; } = string.Empty;
         public DateTime? DataTarefa { get; set; } 
-        public UsuarioResumoResponse? Responsavel { get; set; }
+        public UsuarioResumoResponse? UsuarioCriacao { get; set; }
+        public List<GrupoTarefaResponsaveisResponse> GrupoTarefaResponsaveis{ get; set; }
         public PrioridadeTarefa? Prioridade { get; set; }
       
         public TipoVinculo? TipoVinculo { get; set; }
