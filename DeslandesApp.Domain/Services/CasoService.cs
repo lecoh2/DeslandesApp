@@ -340,6 +340,27 @@ namespace DeslandesApp.Domain.Services
 
             return mapper.Map<List<ObterCasoResponse>>(dados);
         }
+        public async Task<List<GraficoCasoResponse>> ConsultarGraficoCaso()
+        {
+            var dados = await unitOfWork.CasoRepository.GetGraficoCasoAsync();
+
+            var meses = Enumerable.Range(1, 12);
+
+            var resultado = new List<GraficoCasoResponse>();
+
+            foreach (var mes in meses)
+            {
+                var item = dados.FirstOrDefault(d => d.Mes == mes);
+
+                resultado.Add(new GraficoCasoResponse
+                {
+                    Mes = mes,
+                    Quantidade = item?.Quantidade ?? 0
+                });
+            }
+
+            return resultado;
+        }
 
     }
 }

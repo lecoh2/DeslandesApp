@@ -1,5 +1,6 @@
 ﻿using DeslandesApp.Domain.Models.Dtos.Requests.Caso;
 using DeslandesApp.Domain.Models.Dtos.Requests.Tarefa;
+using DeslandesApp.Domain.Models.Dtos.Responses.Atendimento;
 using DeslandesApp.Domain.Models.Dtos.Responses.Caso;
 using DeslandesApp.Domain.Models.Dtos.Responses.Pessoas;
 using DeslandesApp.Domain.Models.Dtos.Responses.Tarefa;
@@ -18,5 +19,6 @@ namespace DeslandesApp.Domain.Interfaces.Services
         Task<List<CasoAutoComplete>> ConsultarCasoAutoCompleteAsync(string? termo = null);
         Task<ObterCasoResponse?> ObterPorIdAsync(Guid id);
         Task<List<ObterCasoResponse>> ConsultarUltimosAsync(int quantidade);
+        Task<List<GraficoCasoResponse>> ConsultarGraficoCaso();
     }
 }

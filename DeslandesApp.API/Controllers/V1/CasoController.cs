@@ -161,5 +161,11 @@ namespace DeslandesApp.API.Controllers.V1
 
             return Ok(result);
         }
+        [HttpGet("consultar-graficos-casos")]
+        public async Task<IActionResult> ConsultarGraficoCaso()
+        {
+            var resultado = await casoService.ConsultarGraficoCaso();
+            return Ok(resultado);
+        }
     }
 }

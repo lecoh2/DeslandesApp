@@ -230,6 +230,25 @@ namespace DeslandesApp.Infra.Data.Repositories
                 .Take(quantidade)
                 .ToListAsync();
         }
+        public async Task<List<CasoAgrupado>> GetGraficoCasoAsync()
+        {
+            var anoAtual = DateTime.Now.Year;
+
+            return await dataContext.Caso
+                .Where(r => r.DataCadastro.HasValue && r.DataCadastro.Value.Year == anoAtual)
+                .GroupBy(r => new
+                {
+                    Mes = r.DataCadastro.Value.Month
+                })
+                .Select(g => new CasoAgrupado
+                {
+                    Mes = g.Key.Mes,
+                    Quantidade = g.Count()
+                })
+                .OrderBy(g => g.Mes)
+                .AsNoTracking()
+                .ToListAsync();
+        }
     }
 }
 
