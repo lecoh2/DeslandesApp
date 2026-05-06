@@ -31,5 +31,6 @@ namespace DeslandesApp.Domain.Interfaces.Services
         Task<List<ListaTarefasResponse>> ConsultarListaTarefaAutoCompleteAsync(string? termo = null);
 
         Task<ObterTarefaResponse?> ObterPorIdAsync(Guid id);
+        Task<List<ObterTarefaResponse>> ConsultarUltimosAsync(int quantidade);
     }
 }

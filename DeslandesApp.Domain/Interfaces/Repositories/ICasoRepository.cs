@@ -14,8 +14,9 @@ namespace DeslandesApp.Domain.Interfaces.Repositories
     public interface ICasoRepository : IBaseRepository<Caso, Guid>
     {
         Task<PageResult<CasoPaginacaoResponse>> GetCasoPaginacaoAsync(int pageNumber, int pageSize, string? searchTerm = null);
-         Task<Caso> ConsultarCasoComRelacionamentosAsync(Guid idCaso);
+        Task<Caso> ConsultarCasoComRelacionamentosAsync(Guid idCaso);
         Task<List<CasoAutoComplete>> ConsultarCasoAutoCompleteAsync(string? termo = null);
         Task<Caso?> ObterCompletoPorIdAsync(Guid id);
+        Task<List<Caso>> ConsultarUltimosAsync(int quantidade);
     }
 }

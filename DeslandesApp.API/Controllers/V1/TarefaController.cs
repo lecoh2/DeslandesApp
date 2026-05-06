@@ -118,5 +118,12 @@ namespace DeslandesApp.API.Controllers.V1
 
             return Ok(tarefa);
         }
+        [HttpGet("ultimas-tarefas")]
+        public async Task<IActionResult> ConsultarUltimos([FromQuery] int quantidade = 5)
+        {
+            var result = await tarefaService.ConsultarUltimosAsync(quantidade);
+
+            return Ok(result);
+        }
     }
 }

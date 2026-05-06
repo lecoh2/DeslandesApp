@@ -691,6 +691,14 @@ namespace DeslandesApp.Domain.Services
             if (eventosParaAtualizar.Any())
                 await unitOfWork.CommitAsync();
         }
-       
+
+        public async Task<List<EventoService>> ConsultarUltimosAsync(int quantidade)
+        {
+            var dados = await unitOfWork.ProcessoRepository
+                .ConsultarUltimosAsync(quantidade);
+
+            return mapper.Map<List<EventoService>>(dados);
+        }
+
     }
 }

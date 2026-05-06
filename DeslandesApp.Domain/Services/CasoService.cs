@@ -21,7 +21,8 @@ using System.Threading.Tasks;
 
 namespace DeslandesApp.Domain.Services
 {
-    public class CasoService(IUnitOfWork unitOfWork, IMapper mapper, IHistoricoGeralService historicoGeralService, FunctionsHelper functionsHelper) : ICasoService
+    public class CasoService(IUnitOfWork unitOfWork, IMapper mapper, 
+        IHistoricoGeralService historicoGeralService, FunctionsHelper functionsHelper) : ICasoService
     {
         public async Task<CriarCasoResponse> AdicionarAsync(CriarCasoRequest request)
         {
@@ -332,7 +333,13 @@ namespace DeslandesApp.Domain.Services
         {
             return await unitOfWork.CasoRepository.ConsultarCasoAutoCompleteAsync(termo);
         }
+        public async Task<List<ObterCasoResponse>> ConsultarUltimosAsync(int quantidade)
+        {
+            var dados = await unitOfWork.CasoRepository
+                .ConsultarUltimosAsync(quantidade);
 
-       
+            return mapper.Map<List<ObterCasoResponse>>(dados);
+        }
+
     }
 }

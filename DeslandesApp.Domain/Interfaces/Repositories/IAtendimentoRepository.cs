@@ -16,5 +16,7 @@ namespace DeslandesApp.Domain.Interfaces.Repositories
         Task<Atendimento> ConsultarAtendimentoComRelacionamentosAsync(Guid idAtendimento);
         Task<List<AtendimentoAutoComplete>> ConsultarAtendimentoAutoCompleteAsync(string? termo = null);
         Task<Atendimento?> ObterCompletoPorIdAsync(Guid id);
+        Task<List<Atendimento>> ConsultarUltimosAsync(int quantidade);
+        Task<List<AtendimentoAgrupado>> GetGraficoAtendimentoAsync();
     }
 }

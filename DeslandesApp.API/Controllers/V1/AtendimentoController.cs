@@ -11,13 +11,13 @@ namespace DeslandesApp.API.Controllers.V1
 {
     [Route("api/v1/atendimento")]
     [ApiController]
-    public class AtendimentoController(IAtendimentoService atendiemntofaService, IGrupoEtiquetaAtendimentoServices grupoEtiquetaAtendimento) : ControllerBase
+    public class AtendimentoController(IAtendimentoService atendimentoService, IGrupoEtiquetaAtendimentoServices grupoEtiquetaAtendimento) : ControllerBase
     {
         [HttpPost("cadastrar-atendimento")]
         [ProducesResponseType(typeof(CriarAtendimentoClienteResponse), StatusCodes.Status201Created)]
         public async Task<IActionResult> PostAsync([FromBody] CriarAtendimentoClienteRequest request)
         {
-            var response = await atendiemntofaService.AdicionarAsync(request);
+            var response = await atendimentoService.AdicionarAsync(request);
 
             return StatusCode(StatusCodes.Status201Created, new
             {
@@ -30,7 +30,7 @@ namespace DeslandesApp.API.Controllers.V1
         [ProducesResponseType(typeof(CriarAtendimentoClienteResponse), 200)]
         public async Task<IActionResult> PutAsync(Guid id, [FromBody] AtendimentoClienteUpdateRequest request)
         {
-            var response = await atendiemntofaService.ModificarAsync(id, request);
+            var response = await atendimentoService.ModificarAsync(id, request);
             return StatusCode(StatusCodes.Status201Created, new
             {
                 success = true,
@@ -47,7 +47,7 @@ namespace DeslandesApp.API.Controllers.V1
             pageNumber = pageNumber <= 0 ? 1 : pageNumber;
             pageSize = pageSize <= 0 ? 10 : Math.Min(pageSize, 100);
 
-            var atendimentoPaged = await atendiemntofaService
+            var atendimentoPaged = await atendimentoService
                 .ConsultarAtendimentoPaginacaoAsync(pageNumber, pageSize, searchTerm);
 
             return Ok(atendimentoPaged);
@@ -82,19 +82,32 @@ namespace DeslandesApp.API.Controllers.V1
         [HttpGet("consultar-atendiemnto-autocomplete")]
         public async Task<IActionResult> ConsultarResumo([FromQuery] string? termo = null)
         {
-            var result = await atendiemntofaService.ConsultarAtendimentoAutoCompleteAsync(termo);
+            var result = await atendimentoService.ConsultarAtendimentoAutoCompleteAsync(termo);
 
             return Ok(result);
         }
         [HttpGet("obter-atendimento-por-id/{id:guid}")]
         public async Task<IActionResult> ObterPorId(Guid id)
         {
-            var tarefa = await atendiemntofaService.ObterPorIdAsync(id);
+            var tarefa = await atendimentoService.ObterPorIdAsync(id);
 
             if (tarefa == null)
                 return NotFound("Tarefa não encontrada.");
 
             return Ok(tarefa);
+        }
+        [HttpGet("ultimos-atendimentos")]
+        public async Task<IActionResult> ConsultarUltimos([FromQuery] int quantidade = 5)
+        {
+            var result = await atendimentoService.ConsultarUltimosAsync(quantidade);
+
+            return Ok(result);
+        }
+        [HttpGet("consultar-graficos-atendimento")]
+        public async Task<IActionResult> ConsultarGraficoAtendimento()
+        {
+            var resultado = await atendimentoService.ConsultarGraficAtendimento();
+            return Ok(resultado);
         }
     }
 }

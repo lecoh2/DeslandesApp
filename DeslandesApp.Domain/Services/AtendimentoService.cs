@@ -327,6 +327,46 @@ namespace DeslandesApp.Domain.Services
 
             return mapper.Map<ObterAtendimentoResponse>(atendimento);
         }
-       
+        public async Task<List<ObterAtendimentoResponse>> ConsultarUltimosAsync(int quantidade)
+        {
+            var dados = await unitOfWork.CasoRepository
+                .ConsultarUltimosAsync(quantidade);
+
+            return mapper.Map<List<ObterAtendimentoResponse>>(dados);
+        }
+        public async Task<List<GraficoAtendimentoResponse>> ConsultarGraficAtendimento()
+        {
+            var dados = await unitOfWork.AtendimentoRepository.GetGraficoAtendimentoAsync();
+
+            var meses = Enumerable.Range(1, 12);
+
+            var tipos = dados.Select(d => d.TipoVinculo).Distinct();
+
+            var resultado = new List<GraficoAtendimentoResponse>();
+
+            foreach (var tipo in tipos)
+            {
+                foreach (var mes in meses)
+                {
+                    var item = dados.FirstOrDefault(d => d.Mes == mes && d.TipoVinculo == tipo);
+
+                    resultado.Add(new GraficoAtendimentoResponse
+                    {
+                        Mes = mes,
+                        TipoVinculo = tipo,
+                        Tipo = tipo switch
+                        {
+                            TipoVinculo.Processo => "Processo",
+                            TipoVinculo.Caso => "Caso",
+                            TipoVinculo.Atendimento => "Atendimento",
+                            _ => "Sem vínculo"
+                        },
+                        Quantidade = item?.Quantidade ?? 0
+                    });
+                }
+            }
+
+            return resultado;
+        }
     }
 }

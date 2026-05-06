@@ -90,6 +90,13 @@ namespace DeslandesApp.API.Controllers.V1
 
             return Ok(evento);
         }
+        [HttpGet("ultimos-eventos")]
+        public async Task<IActionResult> ConsultarUltimos([FromQuery] int quantidade = 5)
+        {
+            var result = await eventoService.ConsultarUltimosAsync(quantidade);
+
+            return Ok(result);
+        }
 
     }
 }

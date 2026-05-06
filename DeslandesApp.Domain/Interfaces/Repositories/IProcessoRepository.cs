@@ -16,5 +16,7 @@ namespace DeslandesApp.Domain.Interfaces.Repositories
         Task<Processo> ConsultarProcessoComRelacionamentosAsync(Guid idPessoa);
         Task<List<ProcessoAutoComplete>> ConsultarProcessoAutoCompleteAsync(string? termo = null);
         Task<Processo?> ObterCompletoPorIdAsync(Guid id);
+        Task<List<ProcessoResumoResponse>> ConsultarUltimosAsync(int quantidade);
+        Task<List<ProcessoAgrupado>> GetGraficoProcessoAsync();
     }
 }

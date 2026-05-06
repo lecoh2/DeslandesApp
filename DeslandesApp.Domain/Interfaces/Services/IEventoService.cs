@@ -1,6 +1,7 @@
 ﻿using DeslandesApp.Domain.Models.Dtos.Requests.Evento;
 using DeslandesApp.Domain.Models.Dtos.Responses.Caso;
 using DeslandesApp.Domain.Models.Dtos.Responses.Evento;
+using DeslandesApp.Domain.Services;
 using DeslandesApp.Domain.Utils;
 using System;
 using System.Collections.Generic;
@@ -17,5 +18,6 @@ namespace DeslandesApp.Domain.Interfaces.Services
         Task AtualizarStatusAutomatico();
         Task<PageResult<EventoPaginacaoResponse>> ConsultarEventoPaginacaoAsync(int pageNumber, int pageSize, string? searchTerm = null);
         Task<ObterEventoResponse?> ObterPorIdAsync(Guid id);
+        Task<List<EventoService>> ConsultarUltimosAsync(int quantidade);
     }
 }

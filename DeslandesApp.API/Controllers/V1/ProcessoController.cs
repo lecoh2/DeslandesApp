@@ -157,5 +157,27 @@ namespace DeslandesApp.API.Controllers.V1
 
             return Ok(processo);
         }
+        [HttpGet("ultimos-processos")]
+        public async Task<IActionResult> ConsultarUltimos([FromQuery] int quantidade = 5)
+        {
+            var result = await processoService.ConsultarUltimosAsync(quantidade);
+
+            return Ok(result);
+        }
+
+
+        //[HttpGet("consultar-cinco-ultimas-atendimentos")]
+        //public async Task<IActionResult> ConsultarCincoUltimasAtendimentos()
+        //{
+        //    //var resultado = await _atendimentoDomainService.Consultar5UltimosAtendimento();
+        //   // return Ok(resultado);
+        //}
+
+        [HttpGet("consultar-graficos-processo")]
+        public async Task<IActionResult> ConsultarGraficoAtendimento()
+        {
+            var resultado = await processoService.ConsultarGraficoProcesso();
+            return Ok(resultado);
+        }
     }
 }

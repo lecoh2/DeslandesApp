@@ -1,4 +1,5 @@
-﻿using DeslandesApp.Domain.Interfaces.Repositories;
+﻿using AutoMapper;
+using DeslandesApp.Domain.Interfaces.Repositories;
 using DeslandesApp.Domain.Models.Dtos.Responses.Etiquetas;
 using DeslandesApp.Domain.Models.Dtos.Responses.GrupoTarefaResponsaveis;
 using DeslandesApp.Domain.Models.Dtos.Responses.ListaTarefas;
@@ -130,6 +131,18 @@ namespace DeslandesApp.Infra.Data.Repositories
                     .ThenInclude(x => x.Etiqueta)
 
                 .FirstOrDefaultAsync(t => t.Id == id);
+        }
+        public async Task<List<Tarefa>> ConsultarUltimosAsync(int quantidade)
+        {
+            return await dataContext.Tarefas
+                .AsNoTracking()
+                .Include(t => t.UsuarioCriacao)
+                .Include(t => t.GrupoTarefaResponsaveis)
+                .Include(t => t.GrupoTarefasEtiquetas)
+                    .ThenInclude(e => e.Etiqueta)
+                .OrderByDescending(x => x.DataCadastro)
+                .Take(quantidade)
+                .ToListAsync();
         }
 
 

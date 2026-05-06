@@ -3,6 +3,7 @@ using DeslandesApp.Domain.Helpers;
 using DeslandesApp.Domain.Interfaces.Repositories;
 using DeslandesApp.Domain.Interfaces.Services;
 using DeslandesApp.Domain.Models.Dtos.Requests.Processo;
+using DeslandesApp.Domain.Models.Dtos.Responses.Atendimento;
 using DeslandesApp.Domain.Models.Dtos.Responses.Caso;
 using DeslandesApp.Domain.Models.Dtos.Responses.Pessoas;
 using DeslandesApp.Domain.Models.Dtos.Responses.Processo;
@@ -143,13 +144,10 @@ namespace DeslandesApp.Domain.Services
             //  Retorno
             return mapper.Map<ProcessoResponse>(processo);
         }
-
         public Task<PageResult<ProcessoResponse>> ConsultarAsync(int pageNumber, int pageSize)
         {
             throw new NotImplementedException();
-        }
-
-   
+        }   
         public async Task<PageResult<ProcessoPaginacaoResponse>> ConsultarProcessoPaginacaoAsync(
       int pageNumber,
       int pageSize,
@@ -180,7 +178,6 @@ namespace DeslandesApp.Domain.Services
         {
             throw new NotImplementedException();
         }
-
         public async Task<ProcessoResponse> ModificarAsync(Guid id, ProcessoUpdateRequest request)
         {
             await unitOfWork.BeginTransactionAsync();
@@ -358,7 +355,6 @@ namespace DeslandesApp.Domain.Services
                 throw;
             }
         }
-
         public async Task<ObterProcessoResponse?> ObterPorIdAsync(Guid id)
         {
             var processo = await unitOfWork.ProcessoRepository.ObterCompletoPorIdAsync(id);
@@ -404,7 +400,6 @@ namespace DeslandesApp.Domain.Services
                 throw;
             }
         }
-
         public async Task RemoverSetorAsync(Guid idUsuario, Guid idSetor)
         {
             await unitOfWork.BeginTransactionAsync();
@@ -427,10 +422,53 @@ namespace DeslandesApp.Domain.Services
                 throw;
             }
         }
-
         public async Task<List<ProcessoAutoComplete>> ConsultarProcessoAutoCompleteAsync(string? termo = null)
         {
             return await unitOfWork.ProcessoRepository.ConsultarProcessoAutoCompleteAsync(termo);
         }
+
+        public async Task<List<ProcessoResumoResponse>> ConsultarUltimosAsync(int quantidade)
+        {
+            return await unitOfWork.ProcessoRepository
+                .ConsultarUltimosAsync(quantidade);
+        }
+        public async Task<List<GraficoProcessoResponse>> ConsultarGraficoProcesso()
+        {
+            var dados = await unitOfWork.ProcessoRepository.GetGraficoProcessoAsync();
+
+            var meses = Enumerable.Range(1, 12);
+
+            var resultado = new List<GraficoProcessoResponse>();
+
+            foreach (var mes in meses)
+            {
+                var item = dados.FirstOrDefault(d => d.Mes == mes);
+
+                resultado.Add(new GraficoProcessoResponse
+                {
+                    Mes = mes,
+                    Quantidade = item?.Quantidade ?? 0
+                });
+            }
+
+            return resultado;
+        }
+        //public async Task<List<AtendimentoResponseDto>> Consultar5UltimosAtendimento()
+        //{
+        //    try
+        //    {
+        //        var atendimentos = await _unitOfWork.AtendimentoRepository.GetUltimas5AtendimentosAsync();
+
+        //        if (atendimentos == null || !atendimentos.Any())
+        //            throw new ApplicationException("Nenhuma Atendimento encontrado.");
+
+        //        return atendimentos;
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        await _unitOfWork.RollbackAsync();
+        //        throw new ApplicationException("Erro ao consultar atendiemntos.", ex);
+        //    }
+        //}
     }
 }

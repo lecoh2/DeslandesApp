@@ -162,5 +162,12 @@ namespace DeslandesApp.Infra.Data.Repositories
 
                 .FirstOrDefaultAsync(t => t.Id == id);
         }
+        public async Task<List<Evento>> ConsultarUltimosAsync(int quantidade)
+        {
+            return await dataContext.Evento
+                .OrderByDescending(x => x.DataCadastro)
+                .Take(quantidade)
+                .ToListAsync();
+        }
     }
 }

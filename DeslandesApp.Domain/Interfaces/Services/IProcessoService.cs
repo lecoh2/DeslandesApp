@@ -18,5 +18,7 @@ namespace DeslandesApp.Domain.Interfaces.Services
         Task<PageResult<ProcessoPaginacaoResponse>> ConsultarProcessoPaginacaoAsync(int pageNumber, int pageSize, string? searchTerm = null);
         Task<List<ProcessoAutoComplete>> ConsultarProcessoAutoCompleteAsync(string? termo = null);
         Task<ObterProcessoResponse?> ObterPorIdAsync(Guid id);
+        Task<List<ProcessoResumoResponse>> ConsultarUltimosAsync(int quantidade);
+        Task<List<GraficoProcessoResponse>> ConsultarGraficoProcesso();
     }
 }

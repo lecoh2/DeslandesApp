@@ -177,7 +177,6 @@ namespace DeslandesApp.Domain.Services
 
             return mapper.Map<CriarTarefaResponse>(tarefa);
         }
-
         public async Task ReordenarListaAsync(List<ReordenarListaTarefaRequest> request)
         {
             if (request == null || !request.Any())
@@ -236,7 +235,6 @@ namespace DeslandesApp.Domain.Services
         {
             throw new NotImplementedException();
         }
-
         public async Task<CriarTarefaResponse> ModificarAsync(Guid id, TarefaUpdateRequest request)
         {
             await unitOfWork.BeginTransactionAsync();
@@ -409,7 +407,6 @@ namespace DeslandesApp.Domain.Services
             // =========================
             return mapper.Map<CriarTarefaResponse>(tarefa);
         }
-
         public async Task<ObterTarefaResponse?> ObterPorIdAsync(Guid id)
         {
             var tarefa = await unitOfWork.TarefaRepository.ObterCompletoPorIdAsync(id);
@@ -472,14 +469,18 @@ namespace DeslandesApp.Domain.Services
             }
 
             await unitOfWork.CommitAsync();
-        }
-
-       
+        }       
         public async Task<List<ListaTarefasResponse>> ConsultarListaTarefaAutoCompleteAsync(string? termo = null)
         {
             return await unitOfWork.ListaTarefaRepository.ConsultarListaTarefaAutoCompleteAsync(termo);
         }
 
-    
+        public async Task<List<ObterTarefaResponse>> ConsultarUltimosAsync(int quantidade)
+        {
+            var dados = await unitOfWork.TarefaRepository
+                .ConsultarUltimosAsync(quantidade);
+
+            return mapper.Map<List<ObterTarefaResponse>>(dados);
+        }
     }
 }

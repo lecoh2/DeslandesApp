@@ -223,6 +223,13 @@ namespace DeslandesApp.Infra.Data.Repositories
 
                 .FirstOrDefaultAsync();
         }
+        public async Task<List<Caso>> ConsultarUltimosAsync(int quantidade)
+        {
+            return await dataContext.Caso
+                .OrderByDescending(x => x.DataCadastro)
+                .Take(quantidade)
+                .ToListAsync();
+        }
     }
 }
 

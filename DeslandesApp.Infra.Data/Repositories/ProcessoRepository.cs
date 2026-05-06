@@ -1,10 +1,13 @@
 ﻿using DeslandesApp.Domain.Interfaces.Repositories;
 using DeslandesApp.Domain.Models.Dtos.Responses.Atendimento;
+using DeslandesApp.Domain.Models.Dtos.Responses.GrupoClienteProcesso;
+using DeslandesApp.Domain.Models.Dtos.Responses.GrupoEnvolvidosProcesso;
 using DeslandesApp.Domain.Models.Dtos.Responses.GrupoNiveis;
 using DeslandesApp.Domain.Models.Dtos.Responses.GrupoSetores;
 using DeslandesApp.Domain.Models.Dtos.Responses.Processo;
 using DeslandesApp.Domain.Models.Dtos.Responses.Usuarios;
 using DeslandesApp.Domain.Models.Entities;
+using DeslandesApp.Domain.Models.Enum;
 using DeslandesApp.Domain.Utils;
 using DeslandesApp.Infra.Data.Contexts;
 using Microsoft.EntityFrameworkCore;
@@ -34,8 +37,6 @@ namespace DeslandesApp.Infra.Data.Repositories
         .ThenInclude(e => e.Etiqueta)
     .FirstOrDefaultAsync(p => p.Id == idProcesso);
         }
-
-
         public async Task<PageResult<ProcessoPaginacaoResponse>> GetProcessoPaginacaoAsync(int pageNumber, int pageSize, string? searchTerm = null)
         {
 
@@ -81,7 +82,6 @@ namespace DeslandesApp.Infra.Data.Repositories
                 PageSize = pageSize
             };
         }
-
         public async Task<List<ProcessoAutoComplete>> ConsultarProcessoAutoCompleteAsync(string? termo = null)
         {
             var query = dataContext.Set<Processo>()
@@ -141,6 +141,60 @@ namespace DeslandesApp.Infra.Data.Repositories
                  .ThenInclude(v => v.Foro)
 
                 .FirstOrDefaultAsync();
+        }
+        public async Task<List<ProcessoResumoResponse>> ConsultarUltimosAsync(int quantidade)
+        {
+            return await dataContext.Processos
+     .AsNoTracking()
+     .OrderByDescending(p => p.DataCadastro)
+     .Take(quantidade)
+     .Select(p => new ProcessoResumoResponse
+     {
+         Id = p.Id,
+         Pasta = p.Pasta,
+         NumeroProcesso = p.NumeroProcesso,
+         Titulo = p.Titulo,
+
+         GrupoClientesProcesso = p.GrupoClienteProcesso
+             .Select(c => new GrupoClienteProcessoResponse
+             {
+                 IdPessoa = c.PessoaId,
+                 Nome = c.Pessoa.Nome
+             })
+             .ToList(),
+
+         GrupoEnvolvidosProcesso = p.GrupoEnvolvidosProcesso
+             .Select(e => new GrupoEnvolvidosProcessoResponse
+             {
+                 IdPessoa = e.PessoaId,
+                 Nome = e.Pessoa.Nome
+             })
+             .ToList(),
+
+         DataCadastro = p.DataCadastro
+     })
+     .ToListAsync();
+        }
+
+        public async Task<List<ProcessoAgrupado>> GetGraficoProcessoAsync()
+        {
+            var anoAtual = DateTime.Now.Year;
+
+            return await dataContext.Processos
+                .Where(r => r.DataCadastro.Year == anoAtual)
+                .GroupBy(r => new
+                {
+                    Mes = r.DataCadastro.Month,
+                   
+                })
+                .Select(g => new ProcessoAgrupado
+                {
+                    Mes = g.Key.Mes,                   
+                    Quantidade = g.Count()
+                })
+                .OrderBy(g => g.Mes)
+                .AsNoTracking()
+                .ToListAsync();
         }
     }
 }

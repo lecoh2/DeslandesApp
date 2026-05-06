@@ -7,6 +7,7 @@ using DeslandesApp.Domain.Models.Dtos.Responses.GrupoAtendimentoCliente;
 using DeslandesApp.Domain.Models.Dtos.Responses.GrupoEtiquetaAtendimento;
 using DeslandesApp.Domain.Models.Dtos.Responses.Processo;
 using DeslandesApp.Domain.Models.Entities;
+using DeslandesApp.Domain.Models.Enum;
 using DeslandesApp.Domain.Utils;
 using DeslandesApp.Infra.Data.Contexts;
 using Microsoft.EntityFrameworkCore;
@@ -189,7 +190,39 @@ namespace DeslandesApp.Infra.Data.Repositories
                     .ThenInclude(x => x.Etiqueta)
                 .FirstOrDefaultAsync();
         }
+        public async Task<List<Atendimento>> ConsultarUltimosAsync(int quantidade)
+        {
+            return await dataContext.Atendimento
+                .OrderByDescending(x => x.DataCadastro)
+                .Take(quantidade)
+                .ToListAsync();
+        }
 
+        public async Task<List<AtendimentoAgrupado>> GetGraficoAtendimentoAsync()
+        {
+            var anoAtual = DateTime.Now.Year;
+
+            return await dataContext.Atendimento
+                .Where(r => r.DataCadastro.Year == anoAtual)
+                .GroupBy(r => new
+                {
+                    Mes = r.DataCadastro.Month,
+                    Tipo = r.TipoVinculoId
+                })
+                .Select(g => new AtendimentoAgrupado
+                {
+                    Mes = g.Key.Mes,
+                    TipoVinculo = g.Key.Tipo,
+                    TipoDescricao = g.Key.Tipo == TipoVinculo.Processo ? "Processo" :
+                g.Key.Tipo == TipoVinculo.Caso ? "Caso" :
+                g.Key.Tipo == TipoVinculo.Atendimento ? "Atendimento" :
+                "Sem vínculo",
+                    Quantidade = g.Count()
+                })
+                .OrderBy(g => g.Mes)
+                .AsNoTracking()
+                .ToListAsync();
+        }
     }
 
 
