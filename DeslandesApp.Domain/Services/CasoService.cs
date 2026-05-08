@@ -172,6 +172,9 @@ namespace DeslandesApp.Domain.Services
 
             try
             {
+                // =========================
+                // BUSCA CASO
+                // =========================
                 var caso = await unitOfWork.CasoRepository.GetByIdAsync(id)
                     ?? throw new ApplicationException("Caso não encontrado.");
 
@@ -192,6 +195,7 @@ namespace DeslandesApp.Domain.Services
                     casoAntes.Titulo,
                     casoAntes.Descricao,
                     casoAntes.Observacao,
+
                     Acesso = casoAntes.Acesso.ToString(),
 
                     ResponsavelId = casoAntes.ResponsavelId,
@@ -202,70 +206,119 @@ namespace DeslandesApp.Domain.Services
 
                     Envolvidos = casoAntes.GrupoCasoEnvolvidos?
                         .Select(x => x.PessoaId)
+                        .ToList(),
+
+                    Etiquetas = casoAntes.GrupoEtiquetaCasos?
+                        .Select(x => x.EtiquetaId)
                         .ToList()
                 };
 
                 // =========================
-                // CAMPOS BÁSICOS
+                // NORMALIZAÇÃO / CAMPOS
                 // =========================
-                caso.Pasta = request.Pasta;
-                caso.Titulo = request.Titulo;
-                caso.Descricao = request.Descricao;
-                caso.Observacao = request.Observacao;
+                caso.Pasta = request.Pasta?.Trim();
+                caso.Titulo = request.Titulo?.Trim();
+                caso.Descricao = request.Descricao?.Trim();
+                caso.Observacao = request.Observacao?.Trim();
+
                 caso.Acesso = request.Acesso;
                 caso.ResponsavelId = request.ResponsavelId;
+
+                caso.DataAtualizacao = DateTime.Now;
+
+                // =========================
+                // ✅ VALIDA RESPONSÁVEL
+                // =========================
+                if (caso.ResponsavelId.HasValue)
+                {
+                    var usuario = await unitOfWork.UsuarioRepository
+                        .GetByIdAsync(caso.ResponsavelId.Value);
+
+                    if (usuario == null)
+                        throw new InvalidOperationException("Responsável não encontrado.");
+                }
 
                 // =========================
                 // 👥 CLIENTES (RESET)
                 // =========================
-                await unitOfWork.GrupoCasoClienteRepository.RemoverPorCasoId(id);
+                await unitOfWork.GrupoCasoClienteRepository
+                    .RemoverPorCasoId(id);
 
                 if (request.GrupoCasoCliente?.Any() == true)
                 {
                     foreach (var item in request.GrupoCasoCliente)
                     {
-                        await unitOfWork.GrupoCasoClienteRepository.AddAsync(new GrupoCasoCliente
-                        {
-                            CasoId = id,
-                            PessoaId = item.IdPessoa
-                        });
+                        // ✅ valida pessoa
+                        var pessoa = await unitOfWork.PessoaRepository
+                            .GetByIdAsync(item.IdPessoa);
+
+                        if (pessoa == null)
+                            throw new InvalidOperationException("Cliente não encontrado.");
+
+                        await unitOfWork.GrupoCasoClienteRepository
+                            .AddAsync(new GrupoCasoCliente
+                            {
+                                CasoId = id,
+                                PessoaId = item.IdPessoa
+                            });
                     }
                 }
 
                 // =========================
                 // 👤 ENVOLVIDOS (RESET)
                 // =========================
-                await unitOfWork.GrupoCasoEnvolvidosRepository.RemoverPorCasoId(id);
+                await unitOfWork.GrupoCasoEnvolvidosRepository
+                    .RemoverPorCasoId(id);
 
                 if (request.GrupoCasoEnvolvidos?.Any() == true)
                 {
                     foreach (var item in request.GrupoCasoEnvolvidos)
                     {
-                        await unitOfWork.GrupoCasoEnvolvidosRepository.AddAsync(new GrupoCasoEnvolvido
-                        {
-                            CasoId = id,
-                            PessoaId = item.IdPessoa,
-                            QualificacaoId = item.IdQualificacao
-                        });
+                        // ✅ valida pessoa
+                        var pessoa = await unitOfWork.PessoaRepository
+                            .GetByIdAsync(item.IdPessoa);
+
+                        if (pessoa == null)
+                            throw new InvalidOperationException("Envolvido não encontrado.");
+
+                        await unitOfWork.GrupoCasoEnvolvidosRepository
+                            .AddAsync(new GrupoCasoEnvolvido
+                            {
+                                CasoId = id,
+                                PessoaId = item.IdPessoa,
+                                QualificacaoId = item.IdQualificacao
+                            });
                     }
                 }
 
-                await unitOfWork.GrupoEtiquetaCasoRepository.RemoverPorCasoId(id);
+                // =========================
+                // 🏷️ ETIQUETAS (RESET)
+                // =========================
+                await unitOfWork.GrupoEtiquetaCasoRepository
+                    .RemoverPorCasoId(id);
 
                 if (request.GrupoEtiquetaCaso?.Any() == true)
                 {
                     foreach (var item in request.GrupoEtiquetaCaso)
                     {
-                        await unitOfWork.GrupoEtiquetaCasoRepository.AddAsync(new GrupoEtiquetaCasos
-                        {
-                            CasoId = id,
-                            EtiquetaId = item.EtiquetaId
-                        });
+                        // ✅ valida etiqueta
+                        var etiqueta = await unitOfWork.EtiquetaRepository
+                            .GetByIdAsync(item.EtiquetaId);
+
+                        if (etiqueta == null)
+                            throw new InvalidOperationException("Etiqueta não encontrada.");
+
+                        await unitOfWork.GrupoEtiquetaCasoRepository
+                            .AddAsync(new GrupoEtiquetaCasos
+                            {
+                                CasoId = id,
+                                EtiquetaId = item.EtiquetaId
+                            });
                     }
                 }
 
                 // =========================
-                // UPDATE ENTIDADE
+                // 💾 UPDATE ENTIDADE
                 // =========================
                 await unitOfWork.CasoRepository.UpdateAsync(caso);
 
@@ -284,6 +337,7 @@ namespace DeslandesApp.Domain.Services
                     casoDepois.Titulo,
                     casoDepois.Descricao,
                     casoDepois.Observacao,
+
                     Acesso = casoDepois.Acesso.ToString(),
 
                     ResponsavelId = casoDepois.ResponsavelId,
@@ -294,11 +348,15 @@ namespace DeslandesApp.Domain.Services
 
                     Envolvidos = casoDepois.GrupoCasoEnvolvidos?
                         .Select(x => x.PessoaId)
+                        .ToList(),
+
+                    Etiquetas = casoDepois.GrupoEtiquetaCasos?
+                        .Select(x => x.EtiquetaId)
                         .ToList()
                 };
 
                 // =========================
-                // HISTÓRICO GERAL
+                // 🕘 HISTÓRICO
                 // =========================
                 await historicoGeralService.RegistrarAsync(
                     TipoEntidade.Caso,
@@ -309,6 +367,9 @@ namespace DeslandesApp.Domain.Services
                     request.Observacao
                 );
 
+                // =========================
+                // ✅ COMMIT
+                // =========================
                 await unitOfWork.CommitAsync();
 
                 return mapper.Map<CriarCasoResponse>(casoDepois);
@@ -360,6 +421,15 @@ namespace DeslandesApp.Domain.Services
             }
 
             return resultado;
+        }
+
+        public async Task<int> ContarCasoAnoAtual()
+        {
+            return await unitOfWork.CasoRepository.ContarCasoAnoAtual();
+        }
+        public async Task<int> ContarTotal()
+        {
+            return await unitOfWork.CasoRepository.ContarTotal();
         }
 
     }

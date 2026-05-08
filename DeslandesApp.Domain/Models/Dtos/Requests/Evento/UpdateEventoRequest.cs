@@ -38,6 +38,11 @@ namespace DeslandesApp.Domain.Models.Dtos.Requests.Evento
         public int? QuantidadeOcorrencias { get; init; }
         //public StatusEvento? Status { get; init; }
         public StatusGeralKanban? StatusGeralKanban { get; init; }
+        public Guid? ProcessoId { get; set; }
+
+        public Guid? CasoId { get; set; }
+
+        public Guid? AtendimentoId { get; set; }
         public List<GrupoEventoResponsavelRequest>? GrupoEventoResponsavel { get; init; }
         public List<GrupoEventoEtiquetasRequest>? GrupoEventoEtiquetas { get; init; }
     }

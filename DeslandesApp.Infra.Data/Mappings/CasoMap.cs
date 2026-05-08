@@ -40,6 +40,10 @@ namespace DeslandesApp.Infra.Data.Mappings
             builder.Property(x => x.DataCadastro)
                    .HasColumnName("DATACADASTRO")
                    .IsRequired(false);
+            builder.Property(x => x.DataAtualizacao)
+                .HasColumnName("DATAATUALIZACAO")
+                .IsRequired(false);
+            
 
             builder.Property(x => x.ResponsavelId)
                    .HasColumnName("RESPONSAVELID");

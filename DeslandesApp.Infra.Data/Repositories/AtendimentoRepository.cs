@@ -223,6 +223,19 @@ namespace DeslandesApp.Infra.Data.Repositories
                 .AsNoTracking()
                 .ToListAsync();
         }
+        public async Task<int> ContarAtendimentoAnoAtual()
+        {
+            var inicioAno = new DateTime(DateTime.Now.Year, 1, 1);
+            var fimAno = new DateTime(DateTime.Now.Year, 12, 31, 23, 59, 59);
+
+            return await dataContext.Atendimento
+                .Where(p => p.DataCadastro >= inicioAno && p.DataCadastro <= fimAno)
+                .CountAsync();
+        }
+        public Task<int> ContarTotal()
+        {
+            return dataContext.Atendimento.CountAsync();
+        }
     }
 
 

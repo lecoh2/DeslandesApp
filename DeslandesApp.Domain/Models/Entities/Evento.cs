@@ -1,10 +1,5 @@
 ﻿using DeslandesApp.Domain.Commons;
 using DeslandesApp.Domain.Models.Enum;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DeslandesApp.Domain.Models.Entities
 {
@@ -22,14 +17,17 @@ namespace DeslandesApp.Domain.Models.Entities
 
         public string? Endereco { get; set; }
 
-        public ModalidadeEvento Modalidade { get; set; } 
+        public ModalidadeEvento Modalidade { get; set; }
 
         public string? Observacao { get; set; }
 
-        // 👥 Responsáveis (N:N)
+        // 👥 RESPONSÁVEIS
         public List<GrupoEventoResponsavel> GrupoEventoResponsaveis { get; set; } = new();
+
+        // 🏷️ ETIQUETAS
         public List<GrupoEventoEtiquetas> GrupoEventoEtiquetas { get; set; } = new();
-        // 🔁 Recorrência
+
+        // 🔁 RECORRÊNCIA
         public TipoRecorrencia TipoRecorrencia { get; set; } = TipoRecorrencia.Nenhuma;
 
         public int IntervaloRecorrencia { get; set; } = 1;
@@ -39,14 +37,21 @@ namespace DeslandesApp.Domain.Models.Entities
         public DateOnly? DataFimRecorrencia { get; set; }
 
         public int? QuantidadeOcorrencias { get; set; }
-        public StatusGeralKanban StatusGeralKanban { get; set; } 
-        // 🔥 FUNDAMENTAL
+
+        // 📌 STATUS
+        public StatusGeralKanban StatusGeralKanban { get; set; }
+
+        // 👤 USUÁRIO
         public Guid? UsuarioCriacaoId { get; set; }
-        public Usuario? UsuarioCriacao { get; set; } // ✔ nullable também
+        public Usuario? UsuarioCriacao { get; set; }
+
+        // 📅 DATAS
         public DateTime? DataCadastro { get; set; }
         public DateTime? DataAtualizacao { get; set; }
-        public TipoVinculo? TipoVinculo { get; set; }
-       
+
+        // 🔗 VÍNCULOS
+        public TipoVinculo? TipoVinculoId { get; set; }
+
         public Guid? ProcessoId { get; set; }
         public Processo? Processo { get; set; }
 
@@ -55,6 +60,56 @@ namespace DeslandesApp.Domain.Models.Entities
 
         public Guid? AtendimentoId { get; set; }
         public Atendimento? Atendimento { get; set; }
+
+        // =========================
+        // 🔗 DEFINIR VÍNCULO
+        // =========================
+        public void DefinirVinculo(
+            Guid? processoId,
+            Guid? casoId,
+            Guid? atendimentoId)
+        {
+            // 🔥 limpa tudo antes
+            ProcessoId = null;
+            Processo = null;
+
+            CasoId = null;
+            Caso = null;
+
+            AtendimentoId = null;
+            Atendimento = null;
+
+            // 🔗 PROCESSO
+            if (processoId.HasValue)
+            {
+                ProcessoId = processoId;
+                TipoVinculoId = TipoVinculo.Processo;
+                return;
+            }
+
+            // 🔗 CASO
+            if (casoId.HasValue)
+            {
+                CasoId = casoId;
+                TipoVinculoId = TipoVinculo.Caso;
+                return;
+            }
+
+            // 🔗 ATENDIMENTO
+            if (atendimentoId.HasValue)
+            {
+                AtendimentoId = atendimentoId;
+                TipoVinculoId = TipoVinculo.Atendimento;
+                return;
+            }
+
+            // 🔥 sem vínculo
+            TipoVinculoId = null;
+        }
+
+        // =========================
+        // ✅ VALIDAR VÍNCULO
+        // =========================
         public void ValidarVinculo()
         {
             int count = 0;
@@ -63,9 +118,46 @@ namespace DeslandesApp.Domain.Models.Entities
             if (CasoId.HasValue) count++;
             if (AtendimentoId.HasValue) count++;
 
+            // 🔥 impede múltiplos vínculos
             if (count > 1)
-                throw new Exception("O atendimento não pode ter mais de um vínculo.");
-        }
+            {
+                throw new Exception(
+                    "O evento não pode ter mais de um vínculo."
+                );
+            }
 
+            // 🔥 consistência Processo
+            if (
+                TipoVinculoId == TipoVinculo.Processo &&
+                !ProcessoId.HasValue
+            )
+            {
+                throw new Exception(
+                    "TipoVinculo Processo inválido."
+                );
+            }
+
+            // 🔥 consistência Caso
+            if (
+                TipoVinculoId == TipoVinculo.Caso &&
+                !CasoId.HasValue
+            )
+            {
+                throw new Exception(
+                    "TipoVinculo Caso inválido."
+                );
+            }
+
+            // 🔥 consistência Atendimento
+            if (
+                TipoVinculoId == TipoVinculo.Atendimento &&
+                !AtendimentoId.HasValue
+            )
+            {
+                throw new Exception(
+                    "TipoVinculo Atendimento inválido."
+                );
+            }
+        }
     }
 }

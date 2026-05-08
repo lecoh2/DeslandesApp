@@ -446,7 +446,7 @@ namespace DeslandesApp.Domain.Mappings
                 // 🔗 VÍNCULOS (CORRIGIDO)
                 // =========================
                 .ForMember(dest => dest.TipoVinculo,
-                    opt => opt.MapFrom(src => src.TipoVinculo != null ? (int?)src.TipoVinculo : null))
+                    opt => opt.MapFrom(src => src.TipoVinculoId != null ? (int?)src.TipoVinculoId : null))
 
                 .ForMember(dest => dest.ProcessoId,
                     opt => opt.MapFrom(src => src.ProcessoId))
@@ -738,7 +738,7 @@ namespace DeslandesApp.Domain.Mappings
                .ForMember(dest => dest.ProcessoId, opt => opt.MapFrom(src => src.ProcessoId))
                .ForMember(dest => dest.CasoId, opt => opt.MapFrom(src => src.CasoId))
                .ForMember(dest => dest.AtendimentoId, opt => opt.MapFrom(src => src.AtendimentoId))
-               .ForMember(dest => dest.TipoVinculo, opt => opt.MapFrom(src => src.TipoVinculo))
+               .ForMember(dest => dest.TipoVinculo, opt => opt.MapFrom(src => src.TipoVinculoId))
 
                // 🔥 AQUI ESTÁ A CORREÇÃO
                .ForMember(dest => dest.ProcessoPasta,

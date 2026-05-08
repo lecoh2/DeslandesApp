@@ -71,7 +71,7 @@ namespace DeslandesApp.Infra.Data.Repositories
     .ToList(),
 
              Prioridade = u.Prioridade,
-             TipoVinculo = u.TipoVinculo,
+             TipoVinculo = u.TipoVinculoId,
              StatusGeralKanban = u.StatusGeralKanban
          })
          .ToListAsync();

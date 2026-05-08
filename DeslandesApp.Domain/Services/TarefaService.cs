@@ -30,152 +30,237 @@ namespace DeslandesApp.Domain.Services
         {
             await unitOfWork.BeginTransactionAsync();
 
-            // DTO -> Entidade
-            var tarefa = mapper.Map<Tarefa>(request);
-
-            // Normalização
-            tarefa.Descricao = tarefa.Descricao?.Trim();
-            tarefa.DataCadastro = DateTime.Now;
-            tarefa.DataAtualizacao = DateTime.Now;
-            tarefa.StatusGeralKanban = request.StatusGeralKanban;
-            tarefa.UsuarioCriacaoId = functionsHelper.ObterUsuarioId();
-
-            // 🔗 VALIDAÇÃO DE VÍNCULOS
-            int count = 0;
-            if (request.ProcessoId.HasValue) count++;
-            if (request.CasoId.HasValue) count++;
-            if (request.AtendimentoId.HasValue) count++;
-
-            if (count > 1)
-                throw new InvalidOperationException("A tarefa não pode ter mais de um vínculo.");
-
-            // VÍNCULOS
-            if (request.ProcessoId.HasValue)
+            try
             {
-                var processo = await unitOfWork.ProcessoRepository.GetByIdAsync(request.ProcessoId.Value);
-                if (processo == null)
-                    throw new InvalidOperationException("Processo não encontrado.");
+                // =========================
+                // DTO -> ENTIDADE
+                // =========================
+                var tarefa = mapper.Map<Tarefa>(request);
 
-                tarefa.ProcessoId = processo.Id;
-                tarefa.TipoVinculo = TipoVinculo.Processo;
-            }
-            else if (request.CasoId.HasValue)
-            {
-                var caso = await unitOfWork.CasoRepository.GetByIdAsync(request.CasoId.Value);
-                if (caso == null)
-                    throw new InvalidOperationException("Caso não encontrado.");
+                // =========================
+                // NORMALIZAÇÃO
+                // =========================
+                tarefa.Descricao = tarefa.Descricao?.Trim();
 
-                tarefa.CasoId = caso.Id;
-                tarefa.TipoVinculo = TipoVinculo.Caso;
-            }
-            else if (request.AtendimentoId.HasValue)
-            {
-                var atendimento = await unitOfWork.AtendimentoRepository.GetByIdAsync(request.AtendimentoId.Value);
-                if (atendimento == null)
-                    throw new InvalidOperationException("Atendimento não encontrado.");
+                tarefa.DataCadastro = DateTime.Now;
+                tarefa.DataAtualizacao = DateTime.Now;
 
-                tarefa.AtendimentoId = atendimento.Id;
-                tarefa.TipoVinculo = TipoVinculo.Atendimento;
-            }
-            else
-            {
-                tarefa.TipoVinculo = null;
-            }
+                tarefa.StatusGeralKanban = request.StatusGeralKanban;
 
-            // Validação Fluent
-            var validator = new TarefaValidator();
-            var result = validator.Validate(tarefa);
+                tarefa.UsuarioCriacaoId = functionsHelper.ObterUsuarioId();
 
-            if (!result.IsValid)
-                throw new ValidationException(result.Errors);
+                // =========================
+                // 🔗 VALIDAÇÃO DE VÍNCULO
+                // =========================
+                int count = 0;
 
-            // Responsável
-            if (tarefa.UsuarioCriacaoId.HasValue)
-            {
-                var usuario = await unitOfWork.UsuarioRepository
-                    .GetByIdAsync(tarefa.UsuarioCriacaoId.Value);
+                if (request.ProcessoId.HasValue) count++;
+                if (request.CasoId.HasValue) count++;
+                if (request.AtendimentoId.HasValue) count++;
 
-                if (usuario == null)
-                    throw new InvalidOperationException("Responsável não encontrado.");
-            }
-
-            // Salva tarefa
-            await unitOfWork.TarefaRepository.AddAsync(tarefa);
-
-            // =========================
-            // CHECKLIST
-            // =========================
-            if (request.ListasTarefa != null && request.ListasTarefa.Any())
-            {
-                var ultimaOrdem = await unitOfWork.ListaTarefaRepository
-                    .ObterMaiorOrdemPorTarefaId(tarefa.Id) ?? 0;
-
-                int incremento = 0;
-
-                foreach (var item in request.ListasTarefa)
+                if (count > 1)
                 {
-                    var descricao = item.Descricao?.Trim();
-
-                    if (string.IsNullOrWhiteSpace(descricao))
-                        continue;
-
-                    incremento += 10;
-
-                    var lista = new ListaTarefa
-                    {
-                        TarefaId = tarefa.Id,
-                        Descricao = descricao,
-                        Ordem = ultimaOrdem + incremento,
-
-                        // ✔ CORRETO conforme sua entidade
-                        Concluida = false,
-                        DataConclusao = null
-                    };
-
-                    await unitOfWork.ListaTarefaRepository.AddAsync(lista);
+                    throw new InvalidOperationException(
+                        "A tarefa não pode ter mais de um vínculo."
+                    );
                 }
-            }
-            // Etiquetas
-            if (request.GrupoTarefasEtiquetas != null && request.GrupoTarefasEtiquetas.Any())
-            {
-                foreach (var grupoEtiqueta in request.GrupoTarefasEtiquetas)
+
+                // =========================
+                // 🔗 DEFINE VÍNCULO
+                // =========================
+                tarefa.DefinirVinculo(
+                    request.ProcessoId,
+                    request.CasoId,
+                    request.AtendimentoId
+                );
+
+                // =========================
+                // 🔍 VALIDA EXISTÊNCIA
+                // =========================
+                if (tarefa.ProcessoId.HasValue)
                 {
-                    var etiqueta = await unitOfWork.EtiquetaRepository
-                        .GetByIdAsync(grupoEtiqueta.EtiquetaId);
+                    var processo = await unitOfWork.ProcessoRepository
+                        .GetByIdAsync(tarefa.ProcessoId.Value);
 
-                    if (etiqueta == null)
-                        throw new InvalidOperationException("Etiqueta não encontrada.");
-
-                    await unitOfWork.GrupoTarefasEtiquetasRepository.AddAsync(new GrupoTarefasEtiquetas
+                    if (processo == null)
                     {
-                        TarefaId = tarefa.Id,
-                        EtiquetaId = grupoEtiqueta.EtiquetaId
-                    });
+                        throw new InvalidOperationException(
+                            "Processo não encontrado."
+                        );
+                    }
                 }
-            }
 
-            // Responsáveis
-            if (request.GrupoTarefaResponsaveis != null && request.GrupoTarefaResponsaveis.Any())
-            {
-                foreach (var envolvido in request.GrupoTarefaResponsaveis)
+                if (tarefa.CasoId.HasValue)
+                {
+                    var caso = await unitOfWork.CasoRepository
+                        .GetByIdAsync(tarefa.CasoId.Value);
+
+                    if (caso == null)
+                    {
+                        throw new InvalidOperationException(
+                            "Caso não encontrado."
+                        );
+                    }
+                }
+
+                if (tarefa.AtendimentoId.HasValue)
+                {
+                    var atendimento = await unitOfWork.AtendimentoRepository
+                        .GetByIdAsync(tarefa.AtendimentoId.Value);
+
+                    if (atendimento == null)
+                    {
+                        throw new InvalidOperationException(
+                            "Atendimento não encontrado."
+                        );
+                    }
+                }
+
+                // =========================
+                // ✅ REGRA DOMÍNIO
+                // =========================
+                tarefa.ValidarVinculo();
+
+                // =========================
+                // ✅ VALIDAÇÃO FLUENT
+                // =========================
+                var validator = new TarefaValidator();
+
+                var result = validator.Validate(tarefa);
+
+                if (!result.IsValid)
+                {
+                    throw new ValidationException(result.Errors);
+                }
+
+                // =========================
+                // 👤 RESPONSÁVEL
+                // =========================
+                if (tarefa.UsuarioCriacaoId.HasValue)
                 {
                     var usuario = await unitOfWork.UsuarioRepository
-                        .GetByIdAsync(envolvido.UsuarioId);
+                        .GetByIdAsync(tarefa.UsuarioCriacaoId.Value);
 
                     if (usuario == null)
-                        throw new InvalidOperationException("Usuário não encontrado.");
-
-                    await unitOfWork.GrupoTarefaResponsaveisRepository.AddAsync(new GrupoTarefaResponsaveis
                     {
-                        TarefaId = tarefa.Id,
-                        UsuarioId = envolvido.UsuarioId
-                    });
+                        throw new InvalidOperationException(
+                            "Responsável não encontrado."
+                        );
+                    }
                 }
+
+                // =========================
+                // 💾 SALVA TAREFA
+                // =========================
+                await unitOfWork.TarefaRepository.AddAsync(tarefa);
+
+                // =========================
+                // ✅ CHECKLIST
+                // =========================
+                if (
+                    request.ListasTarefa != null &&
+                    request.ListasTarefa.Any()
+                )
+                {
+                    var ultimaOrdem =
+                        await unitOfWork.ListaTarefaRepository
+                            .ObterMaiorOrdemPorTarefaId(tarefa.Id) ?? 0;
+
+                    int incremento = 0;
+
+                    foreach (var item in request.ListasTarefa)
+                    {
+                        var descricao = item.Descricao?.Trim();
+
+                        if (string.IsNullOrWhiteSpace(descricao))
+                            continue;
+
+                        incremento += 10;
+
+                        var lista = new ListaTarefa
+                        {
+                            TarefaId = tarefa.Id,
+                            Descricao = descricao,
+                            Ordem = ultimaOrdem + incremento,
+                            Concluida = false,
+                            DataConclusao = null
+                        };
+
+                        await unitOfWork.ListaTarefaRepository
+                            .AddAsync(lista);
+                    }
+                }
+
+                // =========================
+                // 🏷️ ETIQUETAS
+                // =========================
+                if (
+                    request.GrupoTarefasEtiquetas != null &&
+                    request.GrupoTarefasEtiquetas.Any()
+                )
+                {
+                    foreach (var grupoEtiqueta in request.GrupoTarefasEtiquetas)
+                    {
+                        var etiqueta = await unitOfWork.EtiquetaRepository
+                            .GetByIdAsync(grupoEtiqueta.EtiquetaId);
+
+                        if (etiqueta == null)
+                        {
+                            throw new InvalidOperationException(
+                                "Etiqueta não encontrada."
+                            );
+                        }
+
+                        await unitOfWork.GrupoTarefasEtiquetasRepository
+                            .AddAsync(new GrupoTarefasEtiquetas
+                            {
+                                TarefaId = tarefa.Id,
+                                EtiquetaId = grupoEtiqueta.EtiquetaId
+                            });
+                    }
+                }
+
+                // =========================
+                // 👥 RESPONSÁVEIS
+                // =========================
+                if (
+                    request.GrupoTarefaResponsaveis != null &&
+                    request.GrupoTarefaResponsaveis.Any()
+                )
+                {
+                    foreach (var envolvido in request.GrupoTarefaResponsaveis)
+                    {
+                        var usuario = await unitOfWork.UsuarioRepository
+                            .GetByIdAsync(envolvido.UsuarioId);
+
+                        if (usuario == null)
+                        {
+                            throw new InvalidOperationException(
+                                "Usuário não encontrado."
+                            );
+                        }
+
+                        await unitOfWork.GrupoTarefaResponsaveisRepository
+                            .AddAsync(new GrupoTarefaResponsaveis
+                            {
+                                TarefaId = tarefa.Id,
+                                UsuarioId = envolvido.UsuarioId
+                            });
+                    }
+                }
+
+                // =========================
+                // COMMIT
+                // =========================
+                await unitOfWork.CommitAsync();
+
+                return mapper.Map<CriarTarefaResponse>(tarefa);
             }
-
-            await unitOfWork.CommitAsync();
-
-            return mapper.Map<CriarTarefaResponse>(tarefa);
+            catch
+            {
+                await unitOfWork.RollbackAsync();
+                throw;
+            }
         }
         public async Task ReordenarListaAsync(List<ReordenarListaTarefaRequest> request)
         {
@@ -235,177 +320,298 @@ namespace DeslandesApp.Domain.Services
         {
             throw new NotImplementedException();
         }
-        public async Task<CriarTarefaResponse> ModificarAsync(Guid id, TarefaUpdateRequest request)
+        public async Task<CriarTarefaResponse> ModificarAsync(
+     Guid id,
+     TarefaUpdateRequest request)
         {
             await unitOfWork.BeginTransactionAsync();
 
-            var tarefa = await unitOfWork.TarefaRepository.GetByIdAsync(id);
-
-            if (tarefa == null)
-                throw new InvalidOperationException("Tarefa não encontrada.");
-
-            var usuarioId = functionsHelper.ObterUsuarioId();
-
-            // =========================
-            // SNAPSHOT ANTES
-            // =========================
-            var dadosAntes = new
+            try
             {
-                tarefa.Descricao,
-                tarefa.DataTarefa,
-                tarefa.StatusGeralKanban,
-                tarefa.Prioridade,
-                tarefa.TipoVinculo,
-                tarefa.ProcessoId,
-                tarefa.CasoId,
-                tarefa.AtendimentoId
-            };
+                // =========================
+                // BUSCA
+                // =========================
+                var tarefa = await unitOfWork.TarefaRepository
+                    .GetByIdAsync(id);
 
-            // =========================
-            // CAMPOS BÁSICOS
-            // =========================
-            if (!string.IsNullOrWhiteSpace(request.Descricao))
-                tarefa.Descricao = request.Descricao.Trim();
-
-            if (request.DataTarefa.HasValue)
-                tarefa.DataTarefa = request.DataTarefa;
-
-            if (request.Prioridade.HasValue)
-                tarefa.Prioridade = request.Prioridade.Value;
-
-            if (request.StatusGeralKanban.HasValue)
-                tarefa.StatusGeralKanban = request.StatusGeralKanban.Value;
-
-            tarefa.DataAtualizacao = DateTime.Now;
-
-            // =========================
-            // 🔗 VÍNCULO (REGRA CORRETA)
-            // =========================
-            tarefa.ProcessoId = null;
-            tarefa.CasoId = null;
-            tarefa.AtendimentoId = null;
-            tarefa.TipoVinculo = null;
-
-            if (request.ProcessoId.HasValue)
-            {
-                var processo = await unitOfWork.ProcessoRepository
-                    .GetByIdAsync(request.ProcessoId.Value)
-                    ?? throw new InvalidOperationException("Processo não encontrado.");
-
-                tarefa.ProcessoId = processo.Id;
-                tarefa.TipoVinculo = TipoVinculo.Processo;
-            }
-            else if (request.CasoId.HasValue)
-            {
-                var caso = await unitOfWork.CasoRepository
-                    .GetByIdAsync(request.CasoId.Value)
-                    ?? throw new InvalidOperationException("Caso não encontrado.");
-
-                tarefa.CasoId = caso.Id;
-                tarefa.TipoVinculo = TipoVinculo.Caso;
-            }
-            else if (request.AtendimentoId.HasValue)
-            {
-                var atendimento = await unitOfWork.AtendimentoRepository
-                    .GetByIdAsync(request.AtendimentoId.Value)
-                    ?? throw new InvalidOperationException("Atendimento não encontrado.");
-
-                tarefa.AtendimentoId = atendimento.Id;
-                tarefa.TipoVinculo = TipoVinculo.Atendimento;
-            }
-
-            // =========================
-            // CHECKLIST (RESET)
-            // =========================
-            await unitOfWork.ListaTarefaRepository.RemoverPorTarefaId(id);
-
-            if (request.ListasTarefa?.Any() == true)
-            {
-                int ordem = 0;
-
-                foreach (var item in request.ListasTarefa)
+                if (tarefa == null)
                 {
-                    if (string.IsNullOrWhiteSpace(item.Descricao))
-                        continue;
-
-                    await unitOfWork.ListaTarefaRepository.AddAsync(new ListaTarefa
-                    {
-                        TarefaId = id,
-                        Descricao = item.Descricao.Trim(),
-                        Ordem = ordem += 10,
-                        Concluida = item.Concluida,
-                        DataConclusao = item.Concluida ? DateTime.Now : null
-                    });
+                    throw new InvalidOperationException(
+                        "Tarefa não encontrada."
+                    );
                 }
-            }
 
-            // =========================
-            // ETIQUETAS (RESET)
-            // =========================
-            await unitOfWork.GrupoTarefasEtiquetasRepository.RemoverPorTarefaId(id);
+                var usuarioId = functionsHelper.ObterUsuarioId();
 
-            if (request.GrupoTarefasEtiquetas?.Any() == true)
-            {
-                foreach (var item in request.GrupoTarefasEtiquetas)
+                // =========================
+                // SNAPSHOT ANTES
+                // =========================
+                var dadosAntes = new
                 {
-                    await unitOfWork.GrupoTarefasEtiquetasRepository.AddAsync(new GrupoTarefasEtiquetas
-                    {
-                        TarefaId = id,
-                        EtiquetaId = item.EtiquetaId
-                    });
-                }
-            }
+                    tarefa.Descricao,
+                    tarefa.DataTarefa,
+                    tarefa.StatusGeralKanban,
+                    tarefa.Prioridade,
 
-            // =========================
-            // RESPONSÁVEIS (RESET)
-            // =========================
-            await unitOfWork.GrupoTarefaResponsaveisRepository.RemoverPorTarefaId(id);
+                    tarefa.TipoVinculoId,
 
-            if (request.GrupoTarefaResponsaveis?.Any() == true)
-            {
-                foreach (var item in request.GrupoTarefaResponsaveis)
+                    tarefa.ProcessoId,
+                    tarefa.CasoId,
+                    tarefa.AtendimentoId
+                };
+
+                // =========================
+                // CAMPOS BÁSICOS
+                // =========================
+                if (!string.IsNullOrWhiteSpace(request.Descricao))
                 {
-                    await unitOfWork.GrupoTarefaResponsaveisRepository.AddAsync(new GrupoTarefaResponsaveis
-                    {
-                        TarefaId = id,
-                        UsuarioId = item.UsuarioId
-                    });
+                    tarefa.Descricao = request.Descricao.Trim();
                 }
+
+                if (request.DataTarefa.HasValue)
+                {
+                    tarefa.DataTarefa = request.DataTarefa;
+                }
+
+                if (request.Prioridade.HasValue)
+                {
+                    tarefa.Prioridade = request.Prioridade.Value;
+                }
+
+                if (request.StatusGeralKanban.HasValue)
+                {
+                    tarefa.StatusGeralKanban =
+                        request.StatusGeralKanban.Value;
+                }
+
+                tarefa.DataAtualizacao = DateTime.Now;
+
+                // =========================
+                // 🔗 VALIDAÇÃO VÍNCULO
+                // =========================
+                int count = 0;
+
+                if (request.ProcessoId.HasValue) count++;
+
+                if (request.CasoId.HasValue) count++;
+
+                if (request.AtendimentoId.HasValue) count++;
+
+                if (count > 1)
+                {
+                    throw new InvalidOperationException(
+                        "A tarefa não pode ter mais de um vínculo."
+                    );
+                }
+
+                // =========================
+                // 🔗 DEFINE VÍNCULO
+                // =========================
+                tarefa.DefinirVinculo(
+                    request.ProcessoId,
+                    request.CasoId,
+                    request.AtendimentoId
+                );
+
+                // =========================
+                // 🔍 VALIDA EXISTÊNCIA
+                // =========================
+                if (tarefa.ProcessoId.HasValue)
+                {
+                    var processo = await unitOfWork.ProcessoRepository
+                        .GetByIdAsync(tarefa.ProcessoId.Value);
+
+                    if (processo == null)
+                    {
+                        throw new InvalidOperationException(
+                            "Processo não encontrado."
+                        );
+                    }
+                }
+
+                if (tarefa.CasoId.HasValue)
+                {
+                    var caso = await unitOfWork.CasoRepository
+                        .GetByIdAsync(tarefa.CasoId.Value);
+
+                    if (caso == null)
+                    {
+                        throw new InvalidOperationException(
+                            "Caso não encontrado."
+                        );
+                    }
+                }
+
+                if (tarefa.AtendimentoId.HasValue)
+                {
+                    var atendimento = await unitOfWork
+                        .AtendimentoRepository
+                        .GetByIdAsync(tarefa.AtendimentoId.Value);
+
+                    if (atendimento == null)
+                    {
+                        throw new InvalidOperationException(
+                            "Atendimento não encontrado."
+                        );
+                    }
+                }
+
+                // =========================
+                // ✅ REGRA DOMÍNIO
+                // =========================
+                tarefa.ValidarVinculo();
+
+                // =========================
+                // ✅ CHECKLIST (RESET)
+                // =========================
+                await unitOfWork.ListaTarefaRepository
+                    .RemoverPorTarefaId(id);
+
+                if (request.ListasTarefa?.Any() == true)
+                {
+                    int ordem = 0;
+
+                    foreach (var item in request.ListasTarefa)
+                    {
+                        if (string.IsNullOrWhiteSpace(item.Descricao))
+                        {
+                            continue;
+                        }
+
+                        ordem += 10;
+
+                        await unitOfWork.ListaTarefaRepository
+                            .AddAsync(new ListaTarefa
+                            {
+                                TarefaId = id,
+
+                                Descricao = item.Descricao.Trim(),
+
+                                Ordem = ordem,
+
+                                Concluida = item.Concluida,
+
+                                DataConclusao = item.Concluida
+                                    ? DateTime.Now
+                                    : null
+                            });
+                    }
+                }
+
+                // =========================
+                // 🏷️ ETIQUETAS (RESET)
+                // =========================
+                await unitOfWork
+                    .GrupoTarefasEtiquetasRepository
+                    .RemoverPorTarefaId(id);
+
+                if (request.GrupoTarefasEtiquetas?.Any() == true)
+                {
+                    foreach (var item in request.GrupoTarefasEtiquetas)
+                    {
+                        var etiqueta = await unitOfWork
+                            .EtiquetaRepository
+                            .GetByIdAsync(item.EtiquetaId);
+
+                        if (etiqueta == null)
+                        {
+                            throw new InvalidOperationException(
+                                "Etiqueta não encontrada."
+                            );
+                        }
+
+                        await unitOfWork
+                            .GrupoTarefasEtiquetasRepository
+                            .AddAsync(new GrupoTarefasEtiquetas
+                            {
+                                TarefaId = id,
+                                EtiquetaId = item.EtiquetaId
+                            });
+                    }
+                }
+
+                // =========================
+                // 👥 RESPONSÁVEIS (RESET)
+                // =========================
+                await unitOfWork
+                    .GrupoTarefaResponsaveisRepository
+                    .RemoverPorTarefaId(id);
+
+                if (request.GrupoTarefaResponsaveis?.Any() == true)
+                {
+                    foreach (var item in request.GrupoTarefaResponsaveis)
+                    {
+                        var usuario = await unitOfWork
+                            .UsuarioRepository
+                            .GetByIdAsync(item.UsuarioId);
+
+                        if (usuario == null)
+                        {
+                            throw new InvalidOperationException(
+                                "Usuário não encontrado."
+                            );
+                        }
+
+                        await unitOfWork
+                            .GrupoTarefaResponsaveisRepository
+                            .AddAsync(new GrupoTarefaResponsaveis
+                            {
+                                TarefaId = id,
+                                UsuarioId = item.UsuarioId
+                            });
+                    }
+                }
+
+                // =========================
+                // 💾 UPDATE
+                // =========================
+                await unitOfWork.TarefaRepository
+                    .UpdateAsync(tarefa);
+
+                // =========================
+                // SNAPSHOT DEPOIS
+                // =========================
+                var dadosDepois = new
+                {
+                    tarefa.Descricao,
+                    tarefa.DataTarefa,
+                    tarefa.StatusGeralKanban,
+                    tarefa.Prioridade,
+
+                    tarefa.TipoVinculoId,
+
+                    tarefa.ProcessoId,
+                    tarefa.CasoId,
+                    tarefa.AtendimentoId
+                };
+
+                // =========================
+                // 🧾 HISTÓRICO
+                // =========================
+                await historicoService.RegistrarAsync(
+                    TipoEntidade.Tarefa,
+                    tarefa.Id,
+                    usuarioId,
+                    dadosAntes,
+                    dadosDepois,
+                    "Tarefa atualizada"
+                );
+
+                // =========================
+                // COMMIT
+                // =========================
+                await unitOfWork.CommitAsync();
+
+                // =========================
+                // RETORNO
+                // =========================
+                return mapper.Map<CriarTarefaResponse>(tarefa);
             }
-
-            // =========================
-            // SNAPSHOT DEPOIS
-            // =========================
-            var dadosDepois = new
+            catch
             {
-                tarefa.Descricao,
-                tarefa.DataTarefa,
-                tarefa.StatusGeralKanban,
-                tarefa.Prioridade,
-                tarefa.TipoVinculo,
-                tarefa.ProcessoId,
-                tarefa.CasoId,
-                tarefa.AtendimentoId
-            };
-
-            // =========================
-            // HISTÓRICO
-            // =========================
-            await historicoService.RegistrarAsync(
-                TipoEntidade.Tarefa,
-                tarefa.Id,
-                usuarioId,
-                dadosAntes,
-                dadosDepois,
-                "Tarefa atualizada"
-            );
-
-            await unitOfWork.CommitAsync();
-
-            // =========================
-            // RETORNO (COMPATÍVEL COM INTERFACE)
-            // =========================
-            return mapper.Map<CriarTarefaResponse>(tarefa);
+                await unitOfWork.RollbackAsync();
+                throw;
+            }
         }
         public async Task<ObterTarefaResponse?> ObterPorIdAsync(Guid id)
         {

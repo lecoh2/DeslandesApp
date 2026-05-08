@@ -10,5 +10,6 @@ namespace DeslandesApp.Domain.Models.Dtos.Responses.Caso
     {
         public Guid? Id { get; set; }
         public string Titulo { get; init; }
+        public string Pasta { get; init; }
     }
 }

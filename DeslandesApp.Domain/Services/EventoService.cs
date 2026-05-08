@@ -31,13 +31,27 @@ namespace DeslandesApp.Domain.Services
 
             try
             {
-                // DTO -> Entidade
+                // =========================
+                // DTO -> ENTIDADE
+                // =========================
                 var evento = mapper.Map<Evento>(request);
 
                 var agora = DateTime.Now;
                 var hoje = DateOnly.FromDateTime(agora);
                 var horaAtual = TimeOnly.FromDateTime(agora);
+
                 evento.UsuarioCriacaoId = functionsHelper.ObterUsuarioId();
+
+                // =========================
+                // 🧹 NORMALIZAÇÃO
+                // =========================
+                evento.Titulo = evento.Titulo?.Trim();
+                evento.Endereco = evento.Endereco?.Trim();
+                evento.Observacao = evento.Observacao?.Trim();
+
+                evento.DataCadastro = DateTime.Now;
+                evento.DataAtualizacao = DateTime.Now;
+
                 // =========================
                 // 🧠 STATUS KANBAN
                 // =========================
@@ -46,25 +60,24 @@ namespace DeslandesApp.Domain.Services
                     evento.StatusGeralKanban = request.statusGeralKanban.Value;
                 }
 
-                // 🔥 STATUS AUTOMÁTICO (INTELIGENTE)
-                if (evento.DataFinal.HasValue && evento.DataFinal.Value < hoje)
+                // 🔥 STATUS AUTOMÁTICO
+                if (evento.DataFinal.HasValue &&
+                    evento.DataFinal.Value < hoje)
                 {
                     evento.StatusGeralKanban = StatusGeralKanban.Concluido;
                 }
-                else if (evento.DataInicial == hoje &&
-                         evento.HoraInicial <= horaAtual &&
-                         (evento.HoraFinal == null || evento.HoraFinal >= horaAtual))
+                else if (
+                    evento.DataInicial == hoje &&
+                    evento.HoraInicial <= horaAtual &&
+                    (
+                        evento.HoraFinal == null ||
+                        evento.HoraFinal >= horaAtual
+                    )
+                )
                 {
                     evento.StatusGeralKanban = StatusGeralKanban.Em_Andamento;
                 }
 
-                // =========================
-                // 🧹 NORMALIZAÇÃO
-                // =========================
-                evento.Titulo = evento.Titulo.Trim();
-                evento.Endereco = evento.Endereco?.Trim();
-                evento.Observacao = evento.Observacao?.Trim();
-                evento.DataCadastro = DateTime.Now;
                 // =========================
                 // 🕒 DIA INTEIRO
                 // =========================
@@ -78,93 +91,152 @@ namespace DeslandesApp.Domain.Services
                 // 🔁 RECORRÊNCIA
                 // =========================
                 if (evento.IntervaloRecorrencia < 1)
-                    throw new InvalidOperationException("Intervalo da recorrência deve ser maior ou igual a 1.");
+                {
+                    throw new InvalidOperationException(
+                        "Intervalo da recorrência deve ser maior ou igual a 1."
+                    );
+                }
 
                 if (evento.TipoRecorrencia != TipoRecorrencia.Nenhuma)
                 {
-                    if (evento.DataFimRecorrencia.HasValue && evento.QuantidadeOcorrencias.HasValue)
-                        throw new InvalidOperationException("Informe apenas DataFimRecorrencia ou QuantidadeOcorrencias.");
+                    if (
+                        evento.DataFimRecorrencia.HasValue &&
+                        evento.QuantidadeOcorrencias.HasValue
+                    )
+                    {
+                        throw new InvalidOperationException(
+                            "Informe apenas DataFimRecorrencia ou QuantidadeOcorrencias."
+                        );
+                    }
 
-                    if (!evento.DataFimRecorrencia.HasValue && !evento.QuantidadeOcorrencias.HasValue)
-                        throw new InvalidOperationException("Recorrência precisa de um critério de término.");
+                    if (
+                        !evento.DataFimRecorrencia.HasValue &&
+                        !evento.QuantidadeOcorrencias.HasValue
+                    )
+                    {
+                        throw new InvalidOperationException(
+                            "Recorrência precisa de um critério de término."
+                        );
+                    }
 
-                    if (evento.TipoRecorrencia == TipoRecorrencia.Semanal &&
-                        (evento.DiasSemana == null || !evento.DiasSemana.Any()))
-                        throw new InvalidOperationException("Informe ao menos um dia da semana para recorrência semanal.");
+                    if (
+                        evento.TipoRecorrencia == TipoRecorrencia.Semanal &&
+                        (
+                            evento.DiasSemana == null ||
+                            !evento.DiasSemana.Any()
+                        )
+                    )
+                    {
+                        throw new InvalidOperationException(
+                            "Informe ao menos um dia da semana para recorrência semanal."
+                        );
+                    }
                 }
                 else
                 {
                     evento.IntervaloRecorrencia = 1;
+
                     evento.DiasSemana = new List<DayOfWeek>();
+
                     evento.DataFimRecorrencia = null;
                     evento.QuantidadeOcorrencias = null;
                 }
-                // 🔗 VALIDAÇÃO DE VÍNCULOS
-                int count = 0;
-                if (request.ProcessoId.HasValue) count++;
-                if (request.CasoId.HasValue) count++;
-                if (request.AtendimentoId.HasValue) count++;
 
-                if (count > 1)
-                    throw new InvalidOperationException("A tarefa não pode ter mais de um vínculo.");
+                // =========================
+                // 🔗 DEFINE VÍNCULO
+                // =========================
+                evento.DefinirVinculo(
+                    request.ProcessoId,
+                    request.CasoId,
+                    request.AtendimentoId
+                );
 
-                // VÍNCULOS
+                // =========================
+                // ✅ VALIDA DOMÍNIO
+                // =========================
+                evento.ValidarVinculo();
+
+                // =========================
+                // ✅ VALIDA EXISTÊNCIA
+                // =========================
                 if (request.ProcessoId.HasValue)
                 {
-                    var processo = await unitOfWork.ProcessoRepository.GetByIdAsync(request.ProcessoId.Value);
+                    var processo = await unitOfWork
+                        .ProcessoRepository
+                        .GetByIdAsync(request.ProcessoId.Value);
+
                     if (processo == null)
-                        throw new InvalidOperationException("Processo não encontrado.");
-
-                    evento.ProcessoId = processo.Id;
-                    evento.TipoVinculo = TipoVinculo.Processo;
+                    {
+                        throw new InvalidOperationException(
+                            "Processo não encontrado."
+                        );
+                    }
                 }
-                else if (request.CasoId.HasValue)
+
+                if (request.CasoId.HasValue)
                 {
-                    var caso = await unitOfWork.CasoRepository.GetByIdAsync(request.CasoId.Value);
+                    var caso = await unitOfWork
+                        .CasoRepository
+                        .GetByIdAsync(request.CasoId.Value);
+
                     if (caso == null)
-                        throw new InvalidOperationException("Caso não encontrado.");
-
-                    evento.CasoId = caso.Id;
-                    evento.TipoVinculo = TipoVinculo.Caso;
+                    {
+                        throw new InvalidOperationException(
+                            "Caso não encontrado."
+                        );
+                    }
                 }
-                else if (request.AtendimentoId.HasValue)
+
+                if (request.AtendimentoId.HasValue)
                 {
-                    var atendimento = await unitOfWork.AtendimentoRepository.GetByIdAsync(request.AtendimentoId.Value);
+                    var atendimento = await unitOfWork
+                        .AtendimentoRepository
+                        .GetByIdAsync(request.AtendimentoId.Value);
+
                     if (atendimento == null)
-                        throw new InvalidOperationException("Atendimento não encontrado.");
+                    {
+                        throw new InvalidOperationException(
+                            "Atendimento não encontrado."
+                        );
+                    }
+                }
 
-                    evento.AtendimentoId = atendimento.Id;
-                    evento.TipoVinculo = TipoVinculo.Atendimento;
-                }
-                else
-                {
-                    evento.TipoVinculo = null;
-                }
                 // =========================
-                // ✅ VALIDAÇÃO
+                // ✅ VALIDAÇÃO FLUENT
                 // =========================
                 var validator = new EventoValidator();
+
                 var result = validator.Validate(evento);
 
                 if (!result.IsValid)
+                {
                     throw new ValidationException(result.Errors);
+                }
 
                 // =========================
                 // 💾 SALVAR EVENTO
                 // =========================
-                await unitOfWork.EventoRepository.AddAsync(evento);
+                await unitOfWork
+                    .EventoRepository
+                    .AddAsync(evento);
 
                 // =========================
                 // 👥 RESPONSÁVEIS (N:N)
                 // =========================
-                if (request.GrupoEventoResponsaveis != null && request.GrupoEventoResponsaveis.Any())
+                if (request.GrupoEventoResponsaveis?.Any() == true)
                 {
                     foreach (var item in request.GrupoEventoResponsaveis)
                     {
-                        var usuario = await unitOfWork.UsuarioRepository.GetByIdAsync(item.UsuarioId);
+                        var usuario = await unitOfWork
+                            .UsuarioRepository
+                            .GetByIdAsync(item.UsuarioId);
 
                         if (usuario == null)
-                            throw new InvalidOperationException($"Usuário {item.UsuarioId} não encontrado.");
+                        {
+                            throw new InvalidOperationException(
+                                $"Usuário {item.UsuarioId} não encontrado."
+                            );
+                        }
 
                         var grupo = new GrupoEventoResponsavel
                         {
@@ -172,27 +244,43 @@ namespace DeslandesApp.Domain.Services
                             UsuarioId = item.UsuarioId
                         };
 
-                        await unitOfWork.GrupoEventoResponsavelRepository.AddAsync(grupo);
-                    }
-                } // Etiquetas
-                if (request.GrupoEventoEtiquetas != null && request.GrupoEventoEtiquetas.Any())
-                {
-                    foreach (var grupoEtiqueta in request.GrupoEventoEtiquetas)
-                    {
-                        var etiqueta = await unitOfWork.EtiquetaRepository
-                            .GetByIdAsync(grupoEtiqueta.EtiquetaId);
-
-                        if (etiqueta == null)
-                            throw new InvalidOperationException("Etiqueta não encontrada.");
-
-                        await unitOfWork.GrupoEventoEtiquetasRepository.AddAsync(new GrupoEventoEtiquetas
-                        {
-                            EventoId = evento.Id,
-                            EtiquetaId = grupoEtiqueta.EtiquetaId
-                        });
+                        await unitOfWork
+                            .GrupoEventoResponsavelRepository
+                            .AddAsync(grupo);
                     }
                 }
 
+                // =========================
+                // 🏷️ ETIQUETAS (N:N)
+                // =========================
+                if (request.GrupoEventoEtiquetas?.Any() == true)
+                {
+                    foreach (var grupoEtiqueta in request.GrupoEventoEtiquetas)
+                    {
+                        var etiqueta = await unitOfWork
+                            .EtiquetaRepository
+                            .GetByIdAsync(grupoEtiqueta.EtiquetaId);
+
+                        if (etiqueta == null)
+                        {
+                            throw new InvalidOperationException(
+                                "Etiqueta não encontrada."
+                            );
+                        }
+
+                        await unitOfWork
+                            .GrupoEventoEtiquetasRepository
+                            .AddAsync(new GrupoEventoEtiquetas
+                            {
+                                EventoId = evento.Id,
+                                EtiquetaId = grupoEtiqueta.EtiquetaId
+                            });
+                    }
+                }
+
+                // =========================
+                // ✅ COMMIT
+                // =========================
                 await unitOfWork.CommitAsync();
 
                 return mapper.Map<CriarEventoResponse>(evento);
@@ -436,9 +524,7 @@ namespace DeslandesApp.Domain.Services
                 if (evento == null)
                     throw new ApplicationException("Evento não encontrado.");
 
-
                 var usuarioId = functionsHelper.ObterUsuarioId();
-
 
                 // =========================
                 // ANTES
@@ -459,20 +545,46 @@ namespace DeslandesApp.Domain.Services
                     eventoAntes.Modalidade,
                     eventoAntes.StatusGeralKanban,
 
+                    eventoAntes.ProcessoId,
+                    eventoAntes.CasoId,
+                    eventoAntes.AtendimentoId,
+                    eventoAntes.TipoVinculoId,
+
                     Responsaveis = eventoAntes.GrupoEventoResponsaveis?
                         .Select(r => r.Usuario?.NomeUsuario)
                         .Where(n => n != null)
                         .ToList(),
+
                     Etiquetas = eventoAntes.GrupoEventoEtiquetas?
-        .Select(e => e.Etiqueta?.Nome)
-        .Where(n => n != null)
-        .ToList()
+                        .Select(e => e.Etiqueta?.Nome)
+                        .Where(n => n != null)
+                        .ToList()
                 };
 
                 // =========================
-                // ATUALIZAÇÃO
+                // CAMPOS BÁSICOS
                 // =========================
                 mapper.Map(request, evento);
+
+                evento.DataAtualizacao = DateTime.Now;
+
+                // =========================
+                // 🔗 DEFINE VÍNCULO
+                // =========================
+                evento.DefinirVinculo(
+                    request.ProcessoId,
+                    request.CasoId,
+                    request.AtendimentoId
+                );
+
+                // =========================
+                // ✅ VALIDA REGRA DOMÍNIO
+                // =========================
+                evento.ValidarVinculo();
+
+                // =========================
+                // 👥 RESPONSÁVEIS
+                // =========================
                 evento.GrupoEventoResponsaveis.Clear();
 
                 if (request.GrupoEventoResponsavel != null)
@@ -485,6 +597,10 @@ namespace DeslandesApp.Domain.Services
                         })
                         .ToList();
                 }
+
+                // =========================
+                // 🏷️ ETIQUETAS
+                // =========================
                 evento.GrupoEventoEtiquetas.Clear();
 
                 if (request.GrupoEventoEtiquetas != null)
@@ -498,22 +614,13 @@ namespace DeslandesApp.Domain.Services
                         .ToList();
                 }
 
+                // =========================
+                // 🧠 STATUS
+                // =========================
                 var agora = DateTime.Now;
                 var hoje = DateOnly.FromDateTime(agora);
                 var horaAtual = TimeOnly.FromDateTime(agora);
 
-                // evento.StatusGeralKanban = request.StatusGeralKanban ?? evento.StatusGeralKanban;
-
-                //if (evento.DataFinal.HasValue && evento.DataFinal.Value < hoje)
-                //{
-                //    evento.StatusGeralKanban = StatusGeralKanban.Concluido;
-                //}
-                //else if (evento.DataInicial == hoje &&
-                //         evento.HoraInicial <= horaAtual &&
-                //         (evento.HoraFinal == null || evento.HoraFinal >= horaAtual))
-                //{
-                //    evento.StatusGeralKanban = StatusGeralKanban.Em_Andamento;
-                //}
                 if (evento.DataFinal.HasValue && evento.DataFinal.Value < hoje)
                 {
                     evento.StatusGeralKanban = StatusGeralKanban.Concluido;
@@ -522,38 +629,71 @@ namespace DeslandesApp.Domain.Services
                 {
                     evento.StatusGeralKanban = StatusGeralKanban.A_Fazer;
                 }
-                else if (evento.DataInicial <= hoje &&
-                         evento.DataFinal >= hoje &&
-                         evento.HoraInicial <= horaAtual &&
-                         (evento.HoraFinal == null || evento.HoraFinal >= horaAtual))
+                else if (
+                    evento.DataInicial <= hoje &&
+                    (!evento.DataFinal.HasValue || evento.DataFinal >= hoje) &&
+                    evento.HoraInicial <= horaAtual &&
+                    (evento.HoraFinal == null || evento.HoraFinal >= horaAtual)
+                )
                 {
                     evento.StatusGeralKanban = StatusGeralKanban.Em_Andamento;
                 }
 
+                // =========================
+                // 🧹 NORMALIZAÇÃO
+                // =========================
                 evento.Titulo = evento.Titulo.Trim();
                 evento.Endereco = evento.Endereco?.Trim();
                 evento.Observacao = evento.Observacao?.Trim();
 
+                // =========================
+                // 🕒 DIA INTEIRO
+                // =========================
                 if (evento.DiaInteiro)
                 {
                     evento.HoraInicial = TimeOnly.MinValue;
                     evento.HoraFinal = TimeOnly.MaxValue;
                 }
 
+                // =========================
+                // 🔁 RECORRÊNCIA
+                // =========================
                 if (evento.IntervaloRecorrencia < 1)
-                    throw new InvalidOperationException("Intervalo da recorrência deve ser maior ou igual a 1.");
+                    throw new InvalidOperationException(
+                        "Intervalo da recorrência deve ser maior ou igual a 1."
+                    );
 
                 if (evento.TipoRecorrencia != TipoRecorrencia.Nenhuma)
                 {
-                    if (evento.DataFimRecorrencia.HasValue && evento.QuantidadeOcorrencias.HasValue)
-                        throw new InvalidOperationException("Informe apenas DataFimRecorrencia ou QuantidadeOcorrencias.");
+                    if (
+                        evento.DataFimRecorrencia.HasValue &&
+                        evento.QuantidadeOcorrencias.HasValue
+                    )
+                    {
+                        throw new InvalidOperationException(
+                            "Informe apenas DataFimRecorrencia ou QuantidadeOcorrencias."
+                        );
+                    }
 
-                    if (!evento.DataFimRecorrencia.HasValue && !evento.QuantidadeOcorrencias.HasValue)
-                        throw new InvalidOperationException("Recorrência precisa de um critério de término.");
+                    if (
+                        !evento.DataFimRecorrencia.HasValue &&
+                        !evento.QuantidadeOcorrencias.HasValue
+                    )
+                    {
+                        throw new InvalidOperationException(
+                            "Recorrência precisa de um critério de término."
+                        );
+                    }
 
-                    if (evento.TipoRecorrencia == TipoRecorrencia.Semanal &&
-                        (evento.DiasSemana == null || !evento.DiasSemana.Any()))
-                        throw new InvalidOperationException("Informe ao menos um dia da semana.");
+                    if (
+                        evento.TipoRecorrencia == TipoRecorrencia.Semanal &&
+                        (evento.DiasSemana == null || !evento.DiasSemana.Any())
+                    )
+                    {
+                        throw new InvalidOperationException(
+                            "Informe ao menos um dia da semana."
+                        );
+                    }
                 }
                 else
                 {
@@ -563,12 +703,19 @@ namespace DeslandesApp.Domain.Services
                     evento.QuantidadeOcorrencias = null;
                 }
 
+                // =========================
+                // ✅ VALIDAÇÃO
+                // =========================
                 var validator = new EventoValidator();
+
                 var result = validator.Validate(evento);
 
                 if (!result.IsValid)
                     throw new ValidationException(result.Errors);
 
+                // =========================
+                // 💾 UPDATE
+                // =========================
                 await unitOfWork.EventoRepository.UpdateAsync(evento);
 
                 // =========================
@@ -590,18 +737,24 @@ namespace DeslandesApp.Domain.Services
                     eventoDepois.Modalidade,
                     eventoDepois.StatusGeralKanban,
 
+                    eventoDepois.ProcessoId,
+                    eventoDepois.CasoId,
+                    eventoDepois.AtendimentoId,
+                    eventoDepois.TipoVinculoId,
+
                     Responsaveis = eventoDepois.GrupoEventoResponsaveis?
                         .Select(r => r.Usuario?.NomeUsuario)
                         .Where(n => n != null)
                         .ToList(),
+
                     Etiquetas = eventoDepois.GrupoEventoEtiquetas?
-        .Select(e => e.Etiqueta?.Nome)
-        .Where(n => n != null)
-        .ToList()
+                        .Select(e => e.Etiqueta?.Nome)
+                        .Where(n => n != null)
+                        .ToList()
                 };
 
-                // 🧾 =========================
-                // HISTÓRICO (NOVO PADRÃO)
+                // =========================
+                // 🧾 HISTÓRICO
                 // =========================
                 await historicoGeralService.RegistrarAsync(
                     TipoEntidade.Evento,
@@ -622,7 +775,7 @@ namespace DeslandesApp.Domain.Services
                 throw;
             }
         }
-      
+
         public async Task<ObterEventoResponse?> ObterPorIdAsync(Guid id)
         {
             var evento = await unitOfWork.EventoRepository.ObterCompletoPorIdAsync(id);

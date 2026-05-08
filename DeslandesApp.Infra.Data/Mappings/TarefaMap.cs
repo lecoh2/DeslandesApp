@@ -27,8 +27,8 @@ namespace DeslandesApp.Infra.Data.Mappings
                    .IsRequired();
      
 
-            builder.Property(x => x.TipoVinculo)
-                   .HasColumnName("TIPOVINCULO");
+            builder.Property(x => x.TipoVinculoId)
+                   .HasColumnName("TIPOVINCULOID");
             builder.Property(x => x.DataAtualizacao)
                    .HasColumnName("DATAATUALIZACAO");
 

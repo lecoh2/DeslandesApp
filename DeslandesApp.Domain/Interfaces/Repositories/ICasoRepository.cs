@@ -19,5 +19,7 @@ namespace DeslandesApp.Domain.Interfaces.Repositories
         Task<Caso?> ObterCompletoPorIdAsync(Guid id);
         Task<List<Caso>> ConsultarUltimosAsync(int quantidade);
         Task<List<CasoAgrupado>> GetGraficoCasoAsync();
+        Task<int> ContarCasoAnoAtual();
+        Task<int> ContarTotal();
     }
 }

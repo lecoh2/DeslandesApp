@@ -90,8 +90,8 @@ namespace DeslandesApp.Infra.Data.Mappings
                 .HasColumnName("STATUSKANBAN")
                 .IsRequired();
 
-            builder.Property(x => x.TipoVinculo)
-               .HasColumnName("TIPOVINCULO");
+            builder.Property(x => x.TipoVinculoId)
+               .HasColumnName("TIPOVINCULOID");
 
             builder.Property(x => x.ProcessoId).HasColumnName("PROCESSOID");
             builder.HasOne(x => x.Processo)

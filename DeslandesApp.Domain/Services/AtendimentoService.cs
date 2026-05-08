@@ -521,5 +521,14 @@ namespace DeslandesApp.Domain.Services
 
             return resultado;
         }
+
+        public async Task<int> ContarAtendimentoAnoAtual()
+        {
+            return await unitOfWork.AtendimentoRepository.ContarAtendimentoAnoAtual();
+        }
+        public async Task<int> ContarTotal()
+        {
+            return await unitOfWork.AtendimentoRepository.ContarTotal();
+        }
     }
 }

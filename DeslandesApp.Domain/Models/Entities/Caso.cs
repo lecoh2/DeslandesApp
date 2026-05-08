@@ -15,6 +15,7 @@ namespace DeslandesApp.Domain.Models.Entities
         public string Descricao { get; set; } = string.Empty;
         public string? Observacao { get; set; }
         public DateTime? DataCadastro { get; set; }
+        public DateTime? DataAtualizacao { get; set; }
         // Responsável
         public Guid? ResponsavelId { get; set; }
         public Guid? UsuarioCadastroId { get; set; }

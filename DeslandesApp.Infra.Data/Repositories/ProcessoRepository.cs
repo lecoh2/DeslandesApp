@@ -92,8 +92,7 @@ namespace DeslandesApp.Infra.Data.Repositories
                 termo = termo.Trim();
 
                 query = query.Where(p =>
-                    p.NumeroProcesso.Contains(termo) ||
-                    p.Titulo.Contains(termo) ||
+                 
                     p.Pasta.Contains(termo)
                 );
             }
@@ -102,9 +101,9 @@ namespace DeslandesApp.Infra.Data.Repositories
                 .Select(p => new ProcessoAutoComplete
                 {
                     Id = p.Id,
+                   
                     Pasta = p.Pasta,
-                    NumeroProcesso = p.NumeroProcesso,
-                    Titulo = p.Titulo
+     
                 })
                 .OrderBy(p => p.Pasta)
                 .Take(20)
@@ -196,5 +195,20 @@ namespace DeslandesApp.Infra.Data.Repositories
                 .AsNoTracking()
                 .ToListAsync();
         }
+        public async Task<int> ContarProcessoAnoAtual()
+        {
+            var inicioAno = new DateTime(DateTime.Now.Year, 1, 1);
+            var fimAno = new DateTime(DateTime.Now.Year, 12, 31, 23, 59, 59);
+
+            return await dataContext.Processos
+                .Where(p => p.DataCadastro >= inicioAno && p.DataCadastro <= fimAno)
+                .CountAsync();
+        }
+        public Task<int> ContarTotal()
+        {
+            return dataContext.Processos.CountAsync();
+        }
+
+
     }
 }

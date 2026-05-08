@@ -179,20 +179,21 @@ namespace DeslandesApp.Infra.Data.Repositories
                 termo = termo.Trim();
 
                 query = query.Where(p =>
-                    p.Pasta.Contains(termo) ||
-                    p.Titulo.Contains(termo)
+                    p.Pasta.Contains(termo)
+
                 );
             }
 
             return await query
-                .Select(p => new CasoAutoComplete
-                {
-                    Id = p.Id,
-                    Titulo = p.Titulo
-                })
-                .OrderBy(p => p.Titulo)
-                .Take(20)
-                .ToListAsync();
+      .Select(p => new CasoAutoComplete
+      {
+          Id = p.Id,
+
+          Pasta = p.Pasta
+      })
+      .OrderBy(p => p.Pasta)
+      .Take(20)
+      .ToListAsync();
         }
         public async Task<Caso?> ObterCompletoPorIdAsync(Guid id)
         {
@@ -248,6 +249,19 @@ namespace DeslandesApp.Infra.Data.Repositories
                 .OrderBy(g => g.Mes)
                 .AsNoTracking()
                 .ToListAsync();
+        }
+        public async Task<int> ContarCasoAnoAtual()
+        {
+            var inicioAno = new DateTime(DateTime.Now.Year, 1, 1);
+            var fimAno = new DateTime(DateTime.Now.Year, 12, 31, 23, 59, 59);
+
+            return await dataContext.Caso
+                .Where(p => p.DataCadastro >= inicioAno && p.DataCadastro <= fimAno)
+                .CountAsync();
+        }
+        public Task<int> ContarTotal()
+        {
+            return dataContext.Caso.CountAsync();
         }
     }
 }

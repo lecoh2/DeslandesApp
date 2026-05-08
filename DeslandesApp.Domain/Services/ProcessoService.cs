@@ -24,7 +24,7 @@ using System.Threading.Tasks;
 
 namespace DeslandesApp.Domain.Services
 {
-    public class ProcessoService(IUnitOfWork unitOfWork, IMapper mapper, 
+    public class ProcessoService(IUnitOfWork unitOfWork, IMapper mapper,
         IHttpContextAccessor httpContextAccessor, IHistoricoGeralService historicoGeralService,
          FunctionsHelper functionsHelper) : IProcessoService
     {
@@ -147,7 +147,7 @@ namespace DeslandesApp.Domain.Services
         public Task<PageResult<ProcessoResponse>> ConsultarAsync(int pageNumber, int pageSize)
         {
             throw new NotImplementedException();
-        }   
+        }
         public async Task<PageResult<ProcessoPaginacaoResponse>> ConsultarProcessoPaginacaoAsync(
       int pageNumber,
       int pageSize,
@@ -470,5 +470,13 @@ namespace DeslandesApp.Domain.Services
         //        throw new ApplicationException("Erro ao consultar atendiemntos.", ex);
         //    }
         //}
+        public async Task<int> ContarProcessoAnoAtual()
+        {
+            return await unitOfWork.ProcessoRepository.ContarProcessoAnoAtual();
+        }
+        public async Task<int> ContarTotal()
+        {
+            return await unitOfWork.ProcessoRepository.ContarTotal();
+        }
     }
 }

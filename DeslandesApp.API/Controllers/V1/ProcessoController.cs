@@ -179,5 +179,17 @@ namespace DeslandesApp.API.Controllers.V1
             var resultado = await processoService.ConsultarGraficoProcesso();
             return Ok(resultado);
         }
+        [HttpGet("contar-processo-anoatual")]
+        public async Task<IActionResult> ContarProcessoAnoAtual()
+        {
+            var resultado = await processoService.ContarProcessoAnoAtual();
+            return Ok(resultado);
+        }
+        [HttpGet("contar-processos-total")]
+        public async Task<IActionResult> ContarTotal()
+        {
+            var total = await processoService.ContarTotal();
+            return Ok(total);
+        }
     }
 }
