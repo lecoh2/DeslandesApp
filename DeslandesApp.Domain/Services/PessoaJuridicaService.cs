@@ -12,6 +12,7 @@ using DeslandesApp.Domain.Utils;
 using DeslandesApp.Domain.Validators;
 using DeslandesApp.Domain.ValueObjects;
 using FluentValidation;
+using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -21,23 +22,17 @@ using System.Threading.Tasks;
 
 namespace DeslandesApp.Domain.Services
 {
-    public class PessoaJuridicaService : IPessoaJuridicaService
+    public class PessoaJuridicaService(
+IUnitOfWork unitOfWork,
+IMapper mapper,
+IHttpContextAccessor httpContextAccessor,
+IHistoricoGeralService historicoGeralService
+) : BaseService(httpContextAccessor), IPessoaJuridicaService
     {
-        private readonly IUnitOfWork _unitOfWork;
-        private readonly IMapper _mapper;
-        private readonly IHistoricoGeralService _historicoGeralService;
-        private readonly FunctionsHelper _functionsHelper;
-        public PessoaJuridicaService(IUnitOfWork unitOfWork, IMapper mapper, IHistoricoGeralService historicoGeralService,
-            FunctionsHelper functionsHelper)
-        {
-            _unitOfWork = unitOfWork;
-            _mapper = mapper; _historicoGeralService = historicoGeralService;
-            _functionsHelper = functionsHelper;
-        }
 
         public async Task<PessoaJuridicaResponse> AdicionarAsync(PessoaJuridicaRequest request)
         {
-            await _unitOfWork.BeginTransactionAsync();
+            await unitOfWork.BeginTransactionAsync();
 
             try
             {
@@ -49,16 +44,16 @@ namespace DeslandesApp.Domain.Services
                 if (!FunctionsHelper.ValidadorCNPJ(cnpj))
                     throw new ApplicationException("CNPJ inválido.");
 
-                if (await _unitOfWork.PessoaRepository.CnpjInUseAsync(cnpj))
+                if (await unitOfWork.PessoaRepository.CnpjInUseAsync(cnpj))
                     throw new InvalidOperationException("CNPJ já cadastrado.");
 
                 if (!string.IsNullOrWhiteSpace(inscricaoEstadual) &&
-                    await _unitOfWork.PessoaRepository.IncricaoEstadualInUseAsync(inscricaoEstadual))
+                    await unitOfWork.PessoaRepository.IncricaoEstadualInUseAsync(inscricaoEstadual))
                     throw new InvalidOperationException("Inscrição Estadual já cadastrada.");
 
                 // ================== MAPEAMENTO ==================
 
-                var pessoa = _mapper.Map<PessoaJuridica>(request);
+                var pessoa = mapper.Map<PessoaJuridica>(request);
 
                 // ================== VALIDAÇÃO DOMAIN ==================
 
@@ -82,14 +77,14 @@ namespace DeslandesApp.Domain.Services
                     ? new ValorEmail($"nadaconsta{cnpj}@sistema.local")
                     : pessoa.ValorEmail;
 
-                if (await _unitOfWork.PessoaRepository.EmailInUseAsync(pessoa.ValorEmail.EnderecoEmail))
+                if (await unitOfWork.PessoaRepository.EmailInUseAsync(pessoa.ValorEmail.EnderecoEmail))
                     throw new InvalidOperationException("Email já cadastrado.");
 
                 // ================== ENDEREÇO ==================
 
                 if (request.Endereco != null)
                 {
-                    pessoa.Endereco = _mapper.Map<Endereco>(request.Endereco);
+                    pessoa.Endereco = mapper.Map<Endereco>(request.Endereco);
                     pessoa.Endereco.Cep = FunctionsHelper.RemovePontosTracos(pessoa.Endereco.Cep);
                     pessoa.Endereco.Complemento ??= "";
                 }
@@ -100,13 +95,13 @@ namespace DeslandesApp.Domain.Services
                     TemAlgumValor(request.InformacoesComplementares))
                 {
                     pessoa.InformacoesComplementares =
-                        _mapper.Map<InformacoesComplementaresPessoaJuridica>(
+                        mapper.Map<InformacoesComplementaresPessoaJuridica>(
                             request.InformacoesComplementares);
                 }
 
                 // ================== SALVAR PESSOA (ANTES DAS RELAÇÕES) ==================
 
-                await _unitOfWork.PessoaRepository.AddAsync(pessoa);
+                await unitOfWork.PessoaRepository.AddAsync(pessoa);
 
                 // ================== ETIQUETAS (N:N) ==================
 
@@ -114,7 +109,7 @@ namespace DeslandesApp.Domain.Services
                 {
                     foreach (var item in request.GrupoPessoasEtiquetas)
                     {
-                        var etiqueta = await _unitOfWork.EtiquetaRepository.GetByIdAsync(item.idEtiqueta);
+                        var etiqueta = await unitOfWork.EtiquetaRepository.GetByIdAsync(item.idEtiqueta);
 
                         if (etiqueta == null)
                             throw new InvalidOperationException("Etiqueta não encontrada.");
@@ -125,7 +120,7 @@ namespace DeslandesApp.Domain.Services
                             PessoaId = pessoa.Id
                         };
 
-                        await _unitOfWork.GrupoPessoasEtiquetasRepository.AddAsync(grupoEtiqueta);
+                        await unitOfWork.GrupoPessoasEtiquetasRepository.AddAsync(grupoEtiqueta);
                     }
                 }
 
@@ -133,22 +128,22 @@ namespace DeslandesApp.Domain.Services
 
                 if (request.ContaBancaria != null && TemDadosConta(request.ContaBancaria))
                 {
-                    var conta = _mapper.Map<ContaBancaria>(request.ContaBancaria);
+                    var conta = mapper.Map<ContaBancaria>(request.ContaBancaria);
 
                     conta.PessoaId = pessoa.Id;
 
-                    await _unitOfWork.ContaBancariaRepository.AddAsync(conta);
+                    await unitOfWork.ContaBancariaRepository.AddAsync(conta);
                 }
 
                 // ================== COMMIT ==================
 
-                await _unitOfWork.CommitAsync();
+                await unitOfWork.CommitAsync();
 
-                return _mapper.Map<PessoaJuridicaResponse>(pessoa);
+                return mapper.Map<PessoaJuridicaResponse>(pessoa);
             }
             catch
             {
-                await _unitOfWork.RollbackAsync();
+                await unitOfWork.RollbackAsync();
                 throw;
             }
         }
@@ -160,7 +155,7 @@ namespace DeslandesApp.Domain.Services
 
         public void Dispose()
         {
-            _unitOfWork.Dispose();
+            unitOfWork.Dispose();
         }
         private bool TemDadosConta(ContaBancariaRequest conta)
         {
@@ -177,16 +172,16 @@ namespace DeslandesApp.Domain.Services
 
         public async Task<PessoaJuridicaResponse> ModificarAsync(Guid id, PessoaJuridicaUpdateRequest request)
         {
-            await _unitOfWork.BeginTransactionAsync();
+            await unitOfWork.BeginTransactionAsync();
 
             try
             {
-                var pessoa = await _unitOfWork.PessoaRepository.GetByIdAsync(id);
+                var pessoa = await unitOfWork.PessoaRepository.GetByIdAsync(id);
 
                 if (pessoa == null)
                     throw new ApplicationException("Pessoa não encontrada para edição.");
 
-                var pessoaAntes = await _unitOfWork
+                var pessoaAntes = await unitOfWork
                     .PessoaRepository
                     .ConsultarPessoasJuridicasComIdRelacionamentosAsync(id);
 
@@ -241,32 +236,32 @@ namespace DeslandesApp.Domain.Services
 
                 pessoa.DataAtualizacao = DateTime.Now;
 
-                _mapper.Map(request, pessoa);
-                await _unitOfWork.PessoaRepository.UpdateAsync(pessoa);
+                mapper.Map(request, pessoa);
+                await unitOfWork.PessoaRepository.UpdateAsync(pessoa);
 
                 if (request.Endereco != null)
                 {
-                    var endereco = await _unitOfWork.EnderecoRepository.GetByAsync(e=>e.IdPessoa == pessoa.Id);
+                    var endereco = await unitOfWork.EnderecoRepository.GetByAsync(e=>e.IdPessoa == pessoa.Id);
 
                     if (endereco != null)
                     {
-                        _mapper.Map(request.Endereco, endereco);
-                        await _unitOfWork.EnderecoRepository.UpdateAsync(endereco);
+                        mapper.Map(request.Endereco, endereco);
+                        await unitOfWork.EnderecoRepository.UpdateAsync(endereco);
                     }
                 }
 
                 if (request.InformacoesComplementares != null)
                 {
-                    var info = await _unitOfWork.InformacoesComplementaresRepository.GetByAsync(e => e.IdPessoa == pessoa.Id);
+                    var info = await unitOfWork.InformacoesComplementaresRepository.GetByAsync(e => e.IdPessoa == pessoa.Id);
 
                     if (info != null)
                     {
-                        _mapper.Map(request.InformacoesComplementares, info);
-                        await _unitOfWork.InformacoesComplementaresRepository.UpdateAsync(info);
+                        mapper.Map(request.InformacoesComplementares, info);
+                        await unitOfWork.InformacoesComplementaresRepository.UpdateAsync(info);
                     }
                 }
 
-                var pessoaDepois = await _unitOfWork
+                var pessoaDepois = await unitOfWork
                     .PessoaRepository
                     .ConsultarPessoasJuridicasComIdRelacionamentosAsync(id);
 
@@ -284,9 +279,9 @@ namespace DeslandesApp.Domain.Services
                 if (request.IdUsuario == null)
                     throw new ApplicationException("Id do usuário não informado.");
 
-                var usuarioId = _functionsHelper.ObterUsuarioId();
+                var usuarioId = ObterUsuarioId();
 
-                await _historicoGeralService.RegistrarAsync(
+                await historicoGeralService.RegistrarAsync(
                     TipoEntidade.Pessoa,
                     pessoa.Id,
                     usuarioId,
@@ -295,13 +290,13 @@ namespace DeslandesApp.Domain.Services
                     request.Observacoes
                 );
 
-                await _unitOfWork.CommitAsync();
+                await unitOfWork.CommitAsync();
 
-                return _mapper.Map<PessoaJuridicaResponse>(pessoaDepois);
+                return mapper.Map<PessoaJuridicaResponse>(pessoaDepois);
             }
             catch
             {
-                await _unitOfWork.RollbackAsync();
+                await unitOfWork.RollbackAsync();
                 throw;
             }
         }
@@ -312,7 +307,7 @@ namespace DeslandesApp.Domain.Services
         }
         public async Task<PageResult<PessoaJuridicaPaginacaoResponse>> ConsultarPessoaJuridicaPaginacaoAsync(int pageNumber, int pageSize, string? searchTerm = null)
         {
-            var paged = await _unitOfWork.PessoaRepository.ConsultarPessoaJuridicaComPaginacaoAsync
+            var paged = await unitOfWork.PessoaRepository.ConsultarPessoaJuridicaComPaginacaoAsync
                 (pageNumber, pageSize, searchTerm);
 
             if (paged == null || !paged.Items.Any())

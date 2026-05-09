@@ -356,7 +356,7 @@ namespace DeslandesApp.Domain.Services
                 var atendimento = await unitOfWork.AtendimentoRepository.GetByIdAsync(id)
                     ?? throw new ApplicationException("Atendimento não encontrado.");
 
-                var usuarioId = functionsHelper.ObterUsuarioId();
+                var usuarioId = ObterUsuarioId();
 
                 // =========================
                 // SNAPSHOT ANTES
@@ -509,7 +509,7 @@ namespace DeslandesApp.Domain.Services
                 await historicoGeralService.RegistrarAsync(
                     TipoEntidade.Atendimento,
                     id,
-                    usuarioId,
+                     usuarioId,
                     dadosAntes,
                     dadosDepois,
                     request.Observacao
