@@ -23,8 +23,11 @@ using System.Threading.Tasks;
 
 namespace DeslandesApp.Domain.Services
 {
-    public class TarefaService(IUnitOfWork unitOfWork, IMapper mapper, IHttpContextAccessor httpContextAccessor,
-         IHistoricoGeralService historicoService, FunctionsHelper functionsHelper) : ITarefaService
+    public class TarefaService(IUnitOfWork unitOfWork,
+    IMapper mapper,
+    IHttpContextAccessor httpContextAccessor,
+    IHistoricoGeralService historicoGeralService
+) : BaseService(httpContextAccessor) ,ITarefaService
     {
         public async Task<CriarTarefaResponse> AdicionarAsync(CriarTarefaRequest request)
         {
@@ -47,7 +50,7 @@ namespace DeslandesApp.Domain.Services
 
                 tarefa.StatusGeralKanban = request.StatusGeralKanban;
 
-                tarefa.UsuarioCriacaoId = functionsHelper.ObterUsuarioId();
+                tarefa.UsuarioCriacaoId = ObterUsuarioId();
 
                 // =========================
                 // 🔗 VALIDAÇÃO DE VÍNCULO
@@ -341,7 +344,7 @@ namespace DeslandesApp.Domain.Services
                     );
                 }
 
-                var usuarioId = functionsHelper.ObterUsuarioId();
+                var usuarioId = ObterUsuarioId();
 
                 // =========================
                 // SNAPSHOT ANTES
@@ -588,7 +591,7 @@ namespace DeslandesApp.Domain.Services
                 // =========================
                 // 🧾 HISTÓRICO
                 // =========================
-                await historicoService.RegistrarAsync(
+                await historicoGeralService.RegistrarAsync(
                     TipoEntidade.Tarefa,
                     tarefa.Id,
                     usuarioId,

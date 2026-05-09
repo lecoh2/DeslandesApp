@@ -1,6 +1,7 @@
 ﻿using DeslandesApp.Infra.Security.Settings;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+using System.Security.Claims;
 using System.Text;
 
 namespace DeslandesApp.API.Configurations
@@ -23,8 +24,12 @@ namespace DeslandesApp.API.Configurations
                     ValidateIssuer = false,
                     ValidateAudience = false,
                     ValidateLifetime = true,
+
                     IssuerSigningKey = new SymmetricSecurityKey(key),
-                    NameClaimType = "unique_name",
+
+                    // 🔥 ESSA LINHA RESOLVE
+                    NameClaimType = ClaimTypes.NameIdentifier,
+
                     RoleClaimType = "role"
                 };
             });

@@ -23,6 +23,8 @@ namespace DeslandesApp.Domain.Models.Entities
         public Guid? CasoId { get; set; }
         public Caso? Caso { get; set; }
         public Guid? ResponsavelId { get; set; }
+        public Guid? UsuarioCadastroId { get; set; }
+        public Usuario? UsuarioCadastro { get; set; }
         public Usuario? Responsavel { get; set; }
         public Guid? AtendimentoPaiId { get; set; }
         public Atendimento? AtendimentoPai { get; set; }
@@ -51,19 +53,33 @@ namespace DeslandesApp.Domain.Models.Entities
             if (TipoVinculoId == TipoVinculo.Atendimento && !AtendimentoPaiId.HasValue)
                 throw new Exception("TipoVinculo Atendimento inválido.");
         }
-        public void DefinirVinculo(Guid? processoId, Guid? casoId, Guid? atendimentoPaiId)
+        public void DefinirVinculo(
+     Guid? processoId,
+     Guid? casoId,
+     Guid? atendimentoPaiId)
         {
-            // ✅ valida múltiplos vínculos
+            // =========================
+            // VALIDAR MÚLTIPLOS VÍNCULOS
+            // =========================
             int total = 0;
 
-            if (processoId.HasValue) total++;
-            if (casoId.HasValue) total++;
-            if (atendimentoPaiId.HasValue) total++;
+            if (processoId.HasValue)
+                total++;
+
+            if (casoId.HasValue)
+                total++;
+
+            if (atendimentoPaiId.HasValue)
+                total++;
 
             if (total > 1)
-                throw new Exception("O atendimento só pode possuir um vínculo.");
+                throw new Exception(
+                    "O atendimento só pode possuir um vínculo."
+                );
 
-            // ✅ limpa tudo antes
+            // =========================
+            // LIMPA VÍNCULOS ATUAIS
+            // =========================
             ProcessoId = null;
             Processo = null;
 
@@ -73,30 +89,47 @@ namespace DeslandesApp.Domain.Models.Entities
             AtendimentoPaiId = null;
             AtendimentoPai = null;
 
-            // ✅ define vínculo
+            TipoVinculoId = null;
+
+            // =========================
+            // PROCESSO
+            // =========================
             if (processoId.HasValue)
             {
                 ProcessoId = processoId;
-                TipoVinculoId = TipoVinculo.Processo;
+
+                TipoVinculoId =
+                    TipoVinculo.Processo;
+
                 return;
             }
 
+            // =========================
+            // CASO
+            // =========================
             if (casoId.HasValue)
             {
                 CasoId = casoId;
-                TipoVinculoId = TipoVinculo.Caso;
+
+                TipoVinculoId =
+                    TipoVinculo.Caso;
+
                 return;
             }
 
+            // =========================
+            // ATENDIMENTO
+            // =========================
             if (atendimentoPaiId.HasValue)
             {
-                AtendimentoPaiId = atendimentoPaiId;
-                TipoVinculoId = TipoVinculo.Atendimento;
+                AtendimentoPaiId =
+                    atendimentoPaiId;
+
+                TipoVinculoId =
+                    TipoVinculo.Atendimento;
+
                 return;
             }
-
-            // ✅ sem vínculo
-            TipoVinculoId = null;
         }
     }
 

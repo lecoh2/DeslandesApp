@@ -22,8 +22,11 @@ using System.Threading.Tasks;
 
 namespace DeslandesApp.Domain.Services
 {
-    public class EventoService(IUnitOfWork unitOfWork, IMapper mapper,
-        IHttpContextAccessor httpContextAccessor, IHistoricoGeralService historicoGeralService, FunctionsHelper functionsHelper) : IEventoService
+    public class EventoService(IUnitOfWork unitOfWork,
+    IMapper mapper,
+    IHttpContextAccessor httpContextAccessor,
+    IHistoricoGeralService historicoGeralService
+) : BaseService(httpContextAccessor), IEventoService
     {
         public async Task<CriarEventoResponse> AdicionarAsync(CriarEventoRequest request)
         {
@@ -40,7 +43,7 @@ namespace DeslandesApp.Domain.Services
                 var hoje = DateOnly.FromDateTime(agora);
                 var horaAtual = TimeOnly.FromDateTime(agora);
 
-                evento.UsuarioCriacaoId = functionsHelper.ObterUsuarioId();
+                evento.UsuarioCriacaoId = ObterUsuarioId();
 
                 // =========================
                 // 🧹 NORMALIZAÇÃO
@@ -524,7 +527,7 @@ namespace DeslandesApp.Domain.Services
                 if (evento == null)
                     throw new ApplicationException("Evento não encontrado.");
 
-                var usuarioId = functionsHelper.ObterUsuarioId();
+                var usuarioId = ObterUsuarioId();
 
                 // =========================
                 // ANTES

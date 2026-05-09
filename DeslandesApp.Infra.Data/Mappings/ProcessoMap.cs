@@ -47,6 +47,8 @@ namespace DeslandesApp.Infra.Data.Mappings
             // 💡 DATEONLY
             builder.Property(x => x.Distribuido)
                 .HasConversion<NullableDateOnlyConverter, NullableDateOnlyComparer>();
+            builder.Property(x => x.UsuarioCadastroId)
+                  .HasColumnName("USUARIOCADASTROID");
         }
     }
 }

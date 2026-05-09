@@ -23,14 +23,25 @@ namespace DeslandesApp.Infra.Data.Repositories
         : BaseRepository<Atendimento, Guid>(dataContext), IAtendimentoRepository
     {
         public async Task<Atendimento> ConsultarAtendimentoComRelacionamentosAsync(Guid idAtendimento)
-
-
         {
             return await dataContext.Atendimento
+
                 .Include(p => p.Caso)
+
                 .Include(p => p.Responsavel)
+
                 .Include(p => p.Processo)
+
                 .Include(p => p.AtendimentoPai)
+
+                // CLIENTES
+                .Include(p => p.GrupoClientes)
+                    .ThenInclude(gc => gc.Pessoa)
+
+                // ETIQUETAS
+                .Include(p => p.GrupoEtiquetasAtendimentos)
+                    .ThenInclude(ge => ge.Etiqueta)
+
                 .FirstOrDefaultAsync(p => p.Id == idAtendimento);
         }
 

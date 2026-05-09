@@ -10,7 +10,8 @@ public class Processo : BaseEntity
 
     public Guid? UsuarioResponsavelId { get; set; }
     public Usuario? UsuarioResponsavel { get; set; }
-
+    public Guid? UsuarioCadastroId { get; set; }
+    public Usuario? UsuarioCadastro { get; set; }
     public string? Pasta { get; set; }
     public string? Titulo { get; set; }
     public string? NumeroProcesso { get; set; }

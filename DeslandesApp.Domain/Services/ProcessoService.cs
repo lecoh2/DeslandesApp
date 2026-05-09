@@ -24,9 +24,12 @@ using System.Threading.Tasks;
 
 namespace DeslandesApp.Domain.Services
 {
-    public class ProcessoService(IUnitOfWork unitOfWork, IMapper mapper,
-        IHttpContextAccessor httpContextAccessor, IHistoricoGeralService historicoGeralService,
-         FunctionsHelper functionsHelper) : IProcessoService
+    public class ProcessoService(
+    IUnitOfWork unitOfWork,
+    IMapper mapper,
+    IHttpContextAccessor httpContextAccessor,
+    IHistoricoGeralService historicoGeralService
+) : BaseService(httpContextAccessor), IProcessoService
     {
         public async Task<ProcessoResponse> AdicionarAsync(ProcessoRequest request)
         {
@@ -34,6 +37,7 @@ namespace DeslandesApp.Domain.Services
 
             //  DTO -> Entidade
             var processo = mapper.Map<Processo>(request);
+            processo.UsuarioCadastroId = ObterUsuarioId();
 
             // 🧹 Normalização segura
             processo.Pasta = processo.Pasta?.Trim().ToUpper();
@@ -187,7 +191,7 @@ namespace DeslandesApp.Domain.Services
                 var processo = await unitOfWork.ProcessoRepository.GetByIdAsync(id)
                     ?? throw new ApplicationException("Processo não encontrado.");
 
-                var usuarioId = functionsHelper.ObterUsuarioId();
+                var usuarioId = ObterUsuarioId();
 
                 // =========================
                 // SNAPSHOT ANTES
@@ -437,7 +441,6 @@ namespace DeslandesApp.Domain.Services
         {
             return await unitOfWork.ProcessoRepository.ConsultarProcessoAutoCompleteAsync(termo);
         }
-
         public async Task<List<ProcessoResumoResponse>> ConsultarUltimosAsync(int quantidade)
         {
             return await unitOfWork.ProcessoRepository
@@ -489,5 +492,6 @@ namespace DeslandesApp.Domain.Services
         {
             return await unitOfWork.ProcessoRepository.ContarTotal();
         }
+
     }
 }

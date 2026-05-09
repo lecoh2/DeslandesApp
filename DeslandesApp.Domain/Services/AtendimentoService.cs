@@ -22,9 +22,11 @@ using System.Threading.Tasks;
 
 namespace DeslandesApp.Domain.Services
 {
-    public class AtendiemntoService(IUnitOfWork unitOfWork, IMapper mapper,
-        IHttpContextAccessor httpContextAccessor, IHistoricoGeralService historicoGeralService,
-          FunctionsHelper functionsHelper) : IAtendimentoService
+    public class AtendiemntoService(IUnitOfWork unitOfWork,
+    IMapper mapper,
+    IHttpContextAccessor httpContextAccessor,
+    IHistoricoGeralService historicoGeralService,
+          FunctionsHelper functionsHelper) : BaseService(httpContextAccessor),  IAtendimentoService
     {
         //public async Task<CriarAtendimentoClienteResponse> AdicionarAsync(CriarAtendimentoClienteRequest request)
         //{
@@ -167,7 +169,7 @@ namespace DeslandesApp.Domain.Services
                 // DTO -> ENTIDADE
                 // =========================
                 var atendimento = mapper.Map<Atendimento>(request);
-
+                var usuarioId = ObterUsuarioId();
                 // =========================
                 // NORMALIZAÇÃO
                 // =========================
@@ -359,6 +361,9 @@ namespace DeslandesApp.Domain.Services
                 // =========================
                 // SNAPSHOT ANTES
                 // =========================
+                // =========================
+                // SNAPSHOT ANTES
+                // =========================
                 var atendimentoAntes = await unitOfWork.AtendimentoRepository
                     .ConsultarAtendimentoComRelacionamentosAsync(id);
 
@@ -366,11 +371,28 @@ namespace DeslandesApp.Domain.Services
                 {
                     atendimentoAntes.Assunto,
                     atendimentoAntes.Registro,
-                    atendimentoAntes.ProcessoId,
-                    atendimentoAntes.CasoId,
-                    atendimentoAntes.AtendimentoPaiId,
-                    Clientes = atendimentoAntes.GrupoClientes?.Select(x => x.PessoaId).ToList(),
-                    Etiquetas = atendimentoAntes.GrupoEtiquetasAtendimentos?.Select(x => x.EtiquetaId).ToList()
+
+                    Processo = atendimentoAntes.Processo != null
+                        ? atendimentoAntes.Processo.Pasta
+                        : null,
+
+                    Caso = atendimentoAntes.Caso != null
+                        ? atendimentoAntes.Caso.Pasta
+                        : null,
+
+                    AtendimentoPai = atendimentoAntes.AtendimentoPai != null
+                        ? atendimentoAntes.AtendimentoPai.Assunto
+                        : null,
+
+                    Clientes = atendimentoAntes.GrupoClientes?
+                        .Select(x => x.Pessoa?.Nome)
+                        .Where(x => !string.IsNullOrEmpty(x))
+                        .ToList(),
+
+                    Etiquetas = atendimentoAntes.GrupoEtiquetasAtendimentos?
+                        .Select(x => x.Etiqueta?.Nome)
+                        .Where(x => !string.IsNullOrEmpty(x))
+                        .ToList()
                 };
 
                 // =========================
@@ -385,12 +407,29 @@ namespace DeslandesApp.Domain.Services
                 // =========================
                 // 🔗 VÍNCULO (SEMPRE MANUAL)
                 // =========================
-                atendimento.DefinirVinculo(
-                    request.ProcessoId,
-                    request.CasoId,
-                    request.AtendimentoPaiId
-                );
-                atendimento.ValidarVinculo();
+                bool requestTemVinculo =
+         request.ProcessoId.HasValue
+      || request.CasoId.HasValue
+      || request.AtendimentoPaiId.HasValue;
+
+                if (requestTemVinculo)
+                {
+                    bool alterouVinculo =
+                           request.ProcessoId != atendimentoAntes.ProcessoId
+                        || request.CasoId != atendimentoAntes.CasoId
+                        || request.AtendimentoPaiId != atendimentoAntes.AtendimentoPaiId;
+
+                    if (alterouVinculo)
+                    {
+                        atendimento.DefinirVinculo(
+                            request.ProcessoId,
+                            request.CasoId,
+                            request.AtendimentoPaiId
+                        );
+
+                        atendimento.ValidarVinculo();
+                    }
+                }
                 // =========================
                 // 👥 CLIENTES (RESET)
                 // =========================
@@ -433,6 +472,9 @@ namespace DeslandesApp.Domain.Services
                 // =========================
                 // SNAPSHOT DEPOIS
                 // =========================
+                // =========================
+                // SNAPSHOT DEPOIS
+                // =========================
                 var atendimentoDepois = await unitOfWork.AtendimentoRepository
                     .ConsultarAtendimentoComRelacionamentosAsync(id);
 
@@ -440,11 +482,28 @@ namespace DeslandesApp.Domain.Services
                 {
                     atendimentoDepois.Assunto,
                     atendimentoDepois.Registro,
-                    atendimentoDepois.ProcessoId,
-                    atendimentoDepois.CasoId,
-                    atendimentoDepois.AtendimentoPaiId,
-                    Clientes = atendimentoDepois.GrupoClientes?.Select(x => x.PessoaId).ToList(),
-                    Etiquetas = atendimentoDepois.GrupoEtiquetasAtendimentos?.Select(x => x.EtiquetaId).ToList()
+
+                    Processo = atendimentoDepois.Processo != null
+                        ? atendimentoDepois.Processo.Pasta
+                        : null,
+
+                    Caso = atendimentoDepois.Caso != null
+                        ? atendimentoDepois.Caso.Pasta
+                        : null,
+
+                    AtendimentoPai = atendimentoDepois.AtendimentoPai != null
+                        ? atendimentoDepois.AtendimentoPai.Assunto
+                        : null,
+
+                    Clientes = atendimentoDepois.GrupoClientes?
+                        .Select(x => x.Pessoa?.Nome)
+                        .Where(x => !string.IsNullOrEmpty(x))
+                        .ToList(),
+
+                    Etiquetas = atendimentoDepois.GrupoEtiquetasAtendimentos?
+                        .Select(x => x.Etiqueta?.Nome)
+                        .Where(x => !string.IsNullOrEmpty(x))
+                        .ToList()
                 };
 
                 await historicoGeralService.RegistrarAsync(

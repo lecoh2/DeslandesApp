@@ -12,6 +12,7 @@ using DeslandesApp.Domain.Models.Enum;
 using DeslandesApp.Domain.Utils;
 using DeslandesApp.Domain.Validators;
 using FluentValidation;
+using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -21,8 +22,11 @@ using System.Threading.Tasks;
 
 namespace DeslandesApp.Domain.Services
 {
-    public class CasoService(IUnitOfWork unitOfWork, IMapper mapper, 
-        IHistoricoGeralService historicoGeralService, FunctionsHelper functionsHelper) : ICasoService
+    public class CasoService(IUnitOfWork unitOfWork,
+    IMapper mapper,
+    IHttpContextAccessor httpContextAccessor,
+    IHistoricoGeralService historicoGeralService,
+          FunctionsHelper functionsHelper) : BaseService(httpContextAccessor), ICasoService
     {
         public async Task<CriarCasoResponse> AdicionarAsync(CriarCasoRequest request)
         {
@@ -39,7 +43,7 @@ namespace DeslandesApp.Domain.Services
 
             // (se tiver DataCadastro no BaseEntity)
             caso.DataCadastro = DateTime.Now;
-
+            caso.UsuarioCadastroId = ObterUsuarioId();
             //  Responsável
             caso.ResponsavelId = request.ResponsavelId;
 
@@ -178,7 +182,7 @@ namespace DeslandesApp.Domain.Services
                 var caso = await unitOfWork.CasoRepository.GetByIdAsync(id)
                     ?? throw new ApplicationException("Caso não encontrado.");
 
-                var usuarioId = functionsHelper.ObterUsuarioId();
+                var usuarioId = ObterUsuarioId();
 
                 // =========================
                 // SNAPSHOT ANTES

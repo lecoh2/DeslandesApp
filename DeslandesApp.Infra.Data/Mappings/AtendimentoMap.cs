@@ -50,6 +50,8 @@ namespace DeslandesApp.Infra.Data.Mappings
                    .HasForeignKey(x => x.AtendimentoId)
                    .OnDelete(DeleteBehavior.Cascade)
                    .HasConstraintName("FK_ATENDIMENTO_ETIQUETA");
+            builder.Property(x => x.UsuarioCadastroId)
+                  .HasColumnName("USUARIOCADASTROID");
         }
     }
 }
