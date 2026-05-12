@@ -15,7 +15,7 @@ namespace DeslandesApp.API.Controllers.V1
     [ApiController]
     public class UsuariosController(IUsuarioService usuarioService) : ControllerBase
     {
-        [HttpPost]
+        [HttpPost("cadastrar-usuario")]
         [ProducesResponseType(typeof(UsuariosResponse), StatusCodes.Status201Created)]
         public async Task<IActionResult> PostAsync([FromBody] UsuariosRequest request)
         {
@@ -30,7 +30,7 @@ namespace DeslandesApp.API.Controllers.V1
         }
 
         [HttpPut("atualizar-usuario{id}")]
-        [ProducesResponseType(typeof(UsuariosResponse),200)]
+        [ProducesResponseType(typeof(UsuariosResponse), 200)]
         public async Task<IActionResult> PutAsync(Guid id, [FromBody] UsuarioUpdateRequest request)
         {
             var response = await usuarioService.ModificarAsync(id, request);
@@ -49,7 +49,7 @@ namespace DeslandesApp.API.Controllers.V1
         }
 
         [HttpDelete("{id}")]
-        [ProducesResponseType(typeof(UsuariosResponse),200)]
+        [ProducesResponseType(typeof(UsuariosResponse), 200)]
         public async Task<IActionResult> DeleteAsync(Guid id)
         {
             var response = await usuarioService.ExcluirAsync(id);
@@ -86,8 +86,8 @@ namespace DeslandesApp.API.Controllers.V1
             }
         }
         [HttpGet("{id}")]
-        [ProducesResponseType(typeof(UsuariosResponse),200)]
-        public async Task<IActionResult>GetByIdAsync(Guid id)
+        [ProducesResponseType(typeof(UsuariosResponse), 200)]
+        public async Task<IActionResult> GetByIdAsync(Guid id)
         {
             var response = await usuarioService.ObterPorIdAsync(id);
             return StatusCode(200, response);
@@ -145,8 +145,20 @@ namespace DeslandesApp.API.Controllers.V1
 
             return Ok(usuarioPaged);
         }
-       
+
+        [HttpPut("desbloquear-usuario/{idUsuario}")]
+        public async Task<IActionResult> DesbloquearUsuario(Guid idUsuario)
+        {
+           
+                await usuarioService.DesbloquearUsuario(idUsuario);
+
+                return StatusCode(200, new
+                {
+                    mensagem = "Usuário desbloqueado com sucesso."
+
+                });
         
         }
     }
+}
 

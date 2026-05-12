@@ -14,7 +14,7 @@ namespace DeslandesApp.API.Controllers.V1
     [ApiController]
     public class NivelController(INivelServices nivelService) : ControllerBase 
     {
-        [HttpPost]
+        [HttpPost("cadastrar-nivel")]
         [ProducesResponseType(typeof(NivelResponse), 201)]
         public async Task<IActionResult> PostAsync([FromBody] NivelRequest request)
         {
@@ -47,8 +47,8 @@ namespace DeslandesApp.API.Controllers.V1
             }
         }
 
-        [HttpPut]
-        public async Task<IActionResult> PutAsync()
+        [HttpPut("atualizar-nivel/{id}")]
+        public async Task<IActionResult> PutAsync(Guid id, [FromBody] NivelUpdateRequest request)
         {
             throw new NotImplementedException();
         }
@@ -60,7 +60,7 @@ namespace DeslandesApp.API.Controllers.V1
         }
 
      
-        [HttpGet]
+        [HttpGet("consultar-nivel")]
         [ProducesResponseType(typeof(PageResult<NivelResponse>), 201)]
         public async Task<IActionResult> GetAllAsync
         ([FromQuery] int pageNumber, [FromQuery] int pageSize)
@@ -91,6 +91,14 @@ namespace DeslandesApp.API.Controllers.V1
                 success = true,
                 message = "Nível removido do usuário com sucesso."
             });
+        }
+        [HttpGet("consultar-nivel-por-nome/{nomeNivel}")]
+        public async Task<IActionResult> ConsultarNivelPorNome(string nomeNivel)
+        {
+            var nivel = await nivelService
+                .ConsultarNivelPorNome(nomeNivel);
+
+            return Ok(nivel);
         }
     }
 }

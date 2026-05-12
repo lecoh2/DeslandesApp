@@ -12,6 +12,7 @@ using DeslandesApp.Domain.Models.Entities;
 using DeslandesApp.Domain.Models.Enum;
 using DeslandesApp.Domain.Utils;
 using DeslandesApp.Domain.Validators;
+using DeslandesApp.Domain.ValueObjects;
 using FluentValidation;
 using System;
 using System.Collections.Generic;
@@ -27,73 +28,171 @@ namespace DeslandesApp.Domain.Services
         public async Task<UsuariosResponse> AdicionarAsync(UsuariosRequest request)
         {
             await unitOfWork.BeginTransactionAsync();
-            // Mapeia DTO -> Entidade
-            var usuario = mapper.Map<Usuario>(request);
 
-            // Normalização de dados
-            usuario.Login = usuario.Login.Trim().ToLower();
-            usuario.ValorEmail = usuario.ValorEmail;
-            usuario.NomeUsuario = usuario.NomeUsuario.Trim();
-
-            usuario.DataCadastro = DateTime.Now;
-            usuario.Status = Status.Ativo;
-            // Validação
-            var validator = new UsuarioValidator();
-            var result = validator.Validate(usuario);
-
-            if (!result.IsValid)
-                throw new ValidationException(result.Errors);
-            usuario.Senha = CryptoHelper.SHA256Encrypt(usuario.Senha);
-            // Consulta única para verificar duplicidade
-            var existente = await unitOfWork.UsuarioRepository.GetByAsync(u =>
-                  u.NomeUsuario == usuario.NomeUsuario ||
-                  u.Login == usuario.Login ||
-                  u.ValorEmail == usuario.ValorEmail);
-            if (existente != null)
+            try
             {
-                if (existente.NomeUsuario == usuario.NomeUsuario)
-                    throw new InvalidOperationException("Nome de usuário já utilizado.");
+                // =========================
+                // MAPEAR
+                // =========================
+                var usuario = mapper.Map<Usuario>(request);
 
-                if (existente.Login == usuario.Login)
+                // =========================
+                // EMAIL
+                // =========================
+                if (!string.IsNullOrWhiteSpace(request.Email))
+                {
+                    usuario.ValorEmail =
+                        new ValorEmail(request.Email.Trim());
+                }
+
+                // =========================
+                // VALIDAÇÕES
+                // =========================
+                if (string.IsNullOrWhiteSpace(usuario.NomeUsuario))
+                    throw new ApplicationException("Nome do usuário é obrigatório.");
+
+                if (string.IsNullOrWhiteSpace(usuario.Login))
+                    throw new ApplicationException("Login é obrigatório.");
+
+                if (string.IsNullOrWhiteSpace(usuario.Senha))
+                    throw new ApplicationException("Senha é obrigatória.");
+
+                // =========================
+                // NORMALIZAÇÃO
+                // =========================
+                usuario.NomeUsuario =
+                    usuario.NomeUsuario.Trim();
+
+                usuario.Login =
+                    usuario.Login.Trim().ToLower();
+
+                usuario.DataCadastro =
+                    DateTime.Now;
+
+                usuario.Status =
+                    Status.Ativo;
+
+                // =========================
+                // VALIDATOR
+                // =========================
+                var validator = new UsuarioValidator();
+
+                var result = validator.Validate(usuario);
+
+                if (!result.IsValid)
+                    throw new ValidationException(result.Errors);
+
+                // =========================
+                // CRIPTOGRAFIA
+                // =========================
+                usuario.Senha =
+                    CryptoHelper.SHA256Encrypt(usuario.Senha);
+
+                // =========================
+                // VERIFICAR LOGIN
+                // =========================
+                var existenteLogin =
+                    await unitOfWork.UsuarioRepository.GetByAsync(
+                        u => u.Login == usuario.Login);
+
+                if (existenteLogin != null)
                     throw new InvalidOperationException("Login já utilizado.");
 
-                if (existente.ValorEmail == usuario.ValorEmail)
-                    throw new InvalidOperationException("E-mail já utilizado.");
-            }
-            await unitOfWork.UsuarioRepository.AddAsync(usuario);
-            // salva para gerar o Id
-            await unitOfWork.CommitAsync();
-            // Adiciona usuário
-            #region 7. Adicionar vínculos de grupo de acesso e níveis
-            foreach (var grupos in request.GrupoSetor)
-            {
-                var grupoSetores = new GrupoSetores
+                // =========================
+                // VERIFICAR NOME
+                // =========================
+                var existenteNome =
+                    await unitOfWork.UsuarioRepository.GetByAsync(
+                        u => u.NomeUsuario == usuario.NomeUsuario);
+
+                if (existenteNome != null)
+                    throw new InvalidOperationException("Nome de usuário já utilizado.");
+
+                // =========================
+                // VERIFICAR EMAIL
+                // =========================
+                if (usuario.ValorEmail != null)
                 {
-                    IdUsuario = usuario.Id,
-                    IdSetor = grupos.IdSetor,
+                    var usuarios =
+                        await unitOfWork.UsuarioRepository.GetAllAsync();
 
-                };
-                await unitOfWork.GrupoSetoresRepository.AddAsync(grupoSetores);
-            }
-                ;
-            foreach (var grupos in request.GrupoNivel)
-            {
-                var grupoNiveis = new GrupoNiveis
+                    var emailExistente =
+                        usuarios.FirstOrDefault(u =>
+
+                            u.ValorEmail != null &&
+
+                            u.ValorEmail.EnderecoEmail.ToLower()
+                            ==
+                            usuario.ValorEmail.EnderecoEmail.ToLower()
+                        );
+
+                    if (emailExistente != null)
+                        throw new InvalidOperationException("E-mail já utilizado.");
+                }
+
+                // =========================
+                // SALVAR USUÁRIO
+                // =========================
+                await unitOfWork.UsuarioRepository.AddAsync(usuario);
+
+                // =========================
+                // SALVAR PARA GERAR ID
+                // =========================
+          
+
+                // =========================
+                // GRUPOS SETOR
+                // =========================
+                if (request.GrupoSetor != null)
                 {
-                    IdUsuario = usuario.Id,
-                    IdNivel = grupos.IdNivel,
+                    foreach (var grupos in request.GrupoSetor)
+                    {
+                        var grupoSetores = new GrupoSetores
+                        {
+                            IdUsuario = usuario.Id,
+                            IdSetor = grupos.IdSetor
+                        };
 
-                };
-                await unitOfWork.GrupoNiveisRepository.AddAsync(grupoNiveis);
+                        await unitOfWork
+                            .GrupoSetoresRepository
+                            .AddAsync(grupoSetores);
+                    }
+                }
+
+                // =========================
+                // GRUPOS NÍVEL
+                // =========================
+                if (request.GrupoNivel != null)
+                {
+                    foreach (var grupos in request.GrupoNivel)
+                    {
+                        var grupoNiveis = new GrupoNiveis
+                        {
+                            IdUsuario = usuario.Id,
+                            IdNivel = grupos.IdNivel
+                        };
+
+                        await unitOfWork
+                            .GrupoNiveisRepository
+                            .AddAsync(grupoNiveis);
+                    }
+                }
+
+                // =========================
+                // COMMIT FINAL
+                // =========================
+                await unitOfWork.CommitAsync();
+
+                // =========================
+                // RETORNO
+                // =========================
+                return mapper.Map<UsuariosResponse>(usuario);
             }
-                ;
-            #endregion
-
-            // Salva no banco
-            await unitOfWork.CommitAsync();
-
-            // Retorno
-            return mapper.Map<UsuariosResponse>(usuario);
+            catch
+            {
+                await unitOfWork.RollbackAsync();
+                throw;
+            }
         }
         public async Task<UsuariosResponse> ModificarAsync(Guid id, UsuarioUpdateRequest request)
         {
@@ -361,7 +460,30 @@ namespace DeslandesApp.Domain.Services
 
             return paged;
         }
-     
 
+        public async Task DesbloquearUsuario(Guid idUsuario)
+        {
+            if (idUsuario == Guid.Empty)
+                throw new ApplicationException("Id do usuário inválido.");
+
+            await unitOfWork.BeginTransactionAsync();
+
+            var usuario = await unitOfWork.UsuarioRepository.GetByIdAsync(idUsuario);
+
+            if (usuario == null)
+                throw new ApplicationException("Usuário não encontrado.");
+
+            // Remove tentativas
+            await unitOfWork.FailedLoginAttemptRepository
+                .RemoveUserAsync(idUsuario);
+
+            // Atualiza status
+            usuario.Status = Status.Ativo;
+
+            await unitOfWork.UsuarioRepository
+                .UpdateAsync(usuario);
+
+            await unitOfWork.CommitAsync();
+        }
     }
 }

@@ -20,6 +20,7 @@ namespace DeslandesApp.Infra.Data.Contexts
         public DbSet<FailedLoginAttempt> FailedLoginAttempt { get; set; }
         public DbSet<Niveis> Niveis { get; set; }
         public DbSet<GrupoNiveis> GrupoNiveis { get; set; }
+        public DbSet<Setor> Setor { get; set; }
         public DbSet<GrupoSetores> GrupoSetores { get; set; }
         public DbSet<Endereco> Endereco { get; set; }
         public DbSet<InformacoesComplementaresPessoaFisica> InformacoesComplementaresPessoaFisicas { get; set; }

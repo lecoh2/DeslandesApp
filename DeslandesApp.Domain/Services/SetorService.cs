@@ -145,6 +145,14 @@ namespace DeslandesApp.Domain.Services
                 throw;
             }
         }
+        public async Task<List<SetorResponse>> ConsultarSetoresPorNome(string? nome)
+        {
+            var setores = await unitOfWork
+                .SetorRepository
+                .GetSetoresPorNomeAsync(nome);
+
+            return mapper.Map<List<SetorResponse>>(setores);
+        }
 
 
     }

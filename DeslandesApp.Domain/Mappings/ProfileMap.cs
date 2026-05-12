@@ -68,12 +68,12 @@ namespace DeslandesApp.Domain.Mappings
             #region USUARIOS
 
             CreateMap<UsuariosRequest, Usuario>()
-                .ForMember(dest => dest.ValorEmail,
-                    opt => opt.MapFrom(src =>
-                        string.IsNullOrEmpty(src.Email)
-                            ? null
-                            : new ValorEmail(src.Email)));
-
+              .ForMember(dest => dest.GrupoSetores, opt => opt.Ignore())
+              .ForMember(dest => dest.GrupoNiveis, opt => opt.Ignore())
+              .ForMember(dest => dest.ProcessosResponsaveis, opt => opt.Ignore())
+              .ForMember(dest => dest.Pessoa, opt => opt.Ignore())
+              .ForMember(dest => dest.Fotos, opt => opt.Ignore())
+              .ForMember(dest => dest.ValorEmail, opt => opt.Ignore());
             CreateMap<UsuarioUpdateRequest, Usuario>()
                 .ForMember(dest => dest.ValorEmail,
                     opt => opt.MapFrom(src =>

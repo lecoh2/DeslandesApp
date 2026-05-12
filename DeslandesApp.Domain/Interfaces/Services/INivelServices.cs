@@ -14,5 +14,6 @@ namespace DeslandesApp.Domain.Interfaces.Services
     {
         Task AdicionarNivelAsync(Guid idUsuario, Guid idNivel);
         Task RemoverNivelAsync(Guid idUsuario, Guid idNivel);
+        Task<List<NivelResponse>> ConsultarNivelPorNome(string nomeSetor);
     }
 }

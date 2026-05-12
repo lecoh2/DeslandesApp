@@ -142,5 +142,13 @@ namespace DeslandesApp.Domain.Services
                 throw;
             }
         }
+        public async Task<List<NivelResponse>> ConsultarNivelPorNome(string? nome)
+        {
+            var nivel = await unitOfWork
+                .NivelRepository
+                .GetNivelPorNomeAsync(nome);
+
+            return mapper.Map<List<NivelResponse>>(nivel);
+        }
     }
 }

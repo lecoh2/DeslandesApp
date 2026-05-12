@@ -349,18 +349,40 @@ namespace DeslandesApp.Domain.Services
                 // =========================
                 // SNAPSHOT ANTES
                 // =========================
+                // =========================
+                // SNAPSHOT ANTES
+                // =========================
+                var tarefaAntes = await unitOfWork.TarefaRepository
+                    .ConsultarComRelacionamentosAsync(id);
+
                 var dadosAntes = new
                 {
-                    tarefa.Descricao,
-                    tarefa.DataTarefa,
-                    tarefa.StatusGeralKanban,
-                    tarefa.Prioridade,
+                    tarefaAntes.Descricao,
+                    tarefaAntes.DataTarefa,
+                    tarefaAntes.StatusGeralKanban,
+                    tarefaAntes.Prioridade,
 
-                    tarefa.TipoVinculoId,
+                    Processo = tarefaAntes.Processo != null
+                        ? tarefaAntes.Processo.Pasta
+                        : null,
 
-                    tarefa.ProcessoId,
-                    tarefa.CasoId,
-                    tarefa.AtendimentoId
+                    Caso = tarefaAntes.Caso != null
+                        ? tarefaAntes.Caso.Pasta
+                        : null,
+
+                    Atendimento = tarefaAntes.Atendimento != null
+                        ? tarefaAntes.Atendimento.Assunto
+                        : null,
+
+                    Responsaveis = tarefaAntes.GrupoTarefaResponsaveis?
+                        .Select(x => x.Usuario?.NomeUsuario)
+                        .Where(x => !string.IsNullOrWhiteSpace(x))
+                        .ToList(),
+
+                    Etiquetas = tarefaAntes.GrupoTarefasEtiquetas?
+                        .Select(x => x.Etiqueta?.Nome)
+                        .Where(x => !string.IsNullOrWhiteSpace(x))
+                        .ToList()
                 };
 
                 // =========================
@@ -574,18 +596,40 @@ namespace DeslandesApp.Domain.Services
                 // =========================
                 // SNAPSHOT DEPOIS
                 // =========================
+                // =========================
+                // SNAPSHOT DEPOIS
+                // =========================
+                var tarefaDepois = await unitOfWork.TarefaRepository
+                    .ConsultarComRelacionamentosAsync(id);
+
                 var dadosDepois = new
                 {
-                    tarefa.Descricao,
-                    tarefa.DataTarefa,
-                    tarefa.StatusGeralKanban,
-                    tarefa.Prioridade,
+                    tarefaDepois.Descricao,
+                    tarefaDepois.DataTarefa,
+                    tarefaDepois.StatusGeralKanban,
+                    tarefaDepois.Prioridade,
 
-                    tarefa.TipoVinculoId,
+                    Processo = tarefaDepois.Processo != null
+                        ? tarefaDepois.Processo.Pasta
+                        : null,
 
-                    tarefa.ProcessoId,
-                    tarefa.CasoId,
-                    tarefa.AtendimentoId
+                    Caso = tarefaDepois.Caso != null
+                        ? tarefaDepois.Caso.Pasta
+                        : null,
+
+                    Atendimento = tarefaDepois.Atendimento != null
+                        ? tarefaDepois.Atendimento.Assunto
+                        : null,
+
+                    Responsaveis = tarefaDepois.GrupoTarefaResponsaveis?
+                        .Select(x => x.Usuario?.NomeUsuario)
+                        .Where(x => !string.IsNullOrWhiteSpace(x))
+                        .ToList(),
+
+                    Etiquetas = tarefaDepois.GrupoTarefasEtiquetas?
+                        .Select(x => x.Etiqueta?.Nome)
+                        .Where(x => !string.IsNullOrWhiteSpace(x))
+                        .ToList()
                 };
 
                 // =========================

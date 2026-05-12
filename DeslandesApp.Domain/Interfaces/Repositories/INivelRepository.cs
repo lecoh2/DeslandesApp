@@ -9,5 +9,6 @@ namespace DeslandesApp.Domain.Interfaces.Repositories
 {
     public interface INivelRepository : IBaseRepository<Niveis, Guid>
     {
+        Task<List<Niveis>> GetNivelPorNomeAsync(string nome);
     }
 }

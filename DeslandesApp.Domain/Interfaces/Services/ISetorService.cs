@@ -14,5 +14,6 @@ namespace DeslandesApp.Domain.Interfaces.Services
     {
         Task RemoverSetorAsync(Guid idUsuario, Guid idSetor);
         Task AdicionarSetorAsync(Guid idUsuario, Guid idSetor);
+        Task<List<SetorResponse>> ConsultarSetoresPorNome(string nomeSetor);
     }
 }

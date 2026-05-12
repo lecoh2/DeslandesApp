@@ -87,5 +87,13 @@ namespace DeslandesApp.API.Controllers.V1
                 message = "Setor removido do usuário com sucesso."
             });
         }
+        [HttpGet("consultar-setores-por-nome/{nomeSetores}")]
+        public async Task<IActionResult> ConsultarSetores(string nomeSetores)
+        {
+            var setores = await setorService
+                .ConsultarSetoresPorNome(nomeSetores);
+
+            return Ok(setores);
+        }
     }
 }

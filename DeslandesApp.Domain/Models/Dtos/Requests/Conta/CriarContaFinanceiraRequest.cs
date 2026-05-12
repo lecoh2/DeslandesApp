@@ -17,12 +17,15 @@ namespace DeslandesApp.Domain.Models.Dtos.Requests.Conta
 
         public string Descricao { get; init; }
 
-        public Guid? ProcessoId { get; init; }
-
-        public Guid? CasoId { get; init; }
-
-        public Guid? AtendimentoId { get; init; }
-
         public Guid ClienteId { get; init; }
+
+        public VinculoFinanceiroRequest? Vinculo { get; init; }
+    }
+
+    public record VinculoFinanceiroRequest
+    {
+        public Guid? ProcessoId { get; init; }
+        public Guid? CasoId { get; init; }
+        public Guid? AtendimentoId { get; init; }
     }
 }

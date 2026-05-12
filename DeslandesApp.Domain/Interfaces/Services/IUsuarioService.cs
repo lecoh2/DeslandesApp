@@ -21,5 +21,6 @@ namespace DeslandesApp.Domain.Interfaces.Services
         Task<UsuariosResponse> ConsultarUsuariosPerfil(Guid id);
 
         Task<List<UsuariosResponse>> ConsultarAsync();
+        Task DesbloquearUsuario(Guid idUsuario);
     }
 }

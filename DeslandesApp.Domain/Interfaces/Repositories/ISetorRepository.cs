@@ -9,6 +9,7 @@ namespace DeslandesApp.Domain.Interfaces.Repositories
 {
     public interface ISetorRepository : IBaseRepository<Setor, Guid>
     {
+        Task<List<Setor>> GetSetoresPorNomeAsync(string nome);
     }
 }
 

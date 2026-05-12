@@ -548,22 +548,30 @@ namespace DeslandesApp.Domain.Services
                     eventoAntes.Modalidade,
                     eventoAntes.StatusGeralKanban,
 
-                    eventoAntes.ProcessoId,
-                    eventoAntes.CasoId,
-                    eventoAntes.AtendimentoId,
-                    eventoAntes.TipoVinculoId,
+                    Processo = eventoAntes.Processo != null
+         ? eventoAntes.Processo.Pasta
+         : null,
+
+                    Caso = eventoAntes.Caso != null
+         ? eventoAntes.Caso.Pasta
+         : null,
+
+                    Atendimento = eventoAntes.Atendimento != null
+         ? eventoAntes.Atendimento.Assunto
+         : null,
+
+                    TipoVinculo = eventoAntes.TipoVinculoId.ToString(),
 
                     Responsaveis = eventoAntes.GrupoEventoResponsaveis?
-                        .Select(r => r.Usuario?.NomeUsuario)
-                        .Where(n => n != null)
-                        .ToList(),
+         .Select(r => r.Usuario?.NomeUsuario)
+         .Where(n => !string.IsNullOrWhiteSpace(n))
+         .ToList(),
 
                     Etiquetas = eventoAntes.GrupoEventoEtiquetas?
-                        .Select(e => e.Etiqueta?.Nome)
-                        .Where(n => n != null)
-                        .ToList()
+         .Select(e => e.Etiqueta?.Nome)
+         .Where(n => !string.IsNullOrWhiteSpace(n))
+         .ToList()
                 };
-
                 // =========================
                 // CAMPOS BÁSICOS
                 // =========================
@@ -740,20 +748,29 @@ namespace DeslandesApp.Domain.Services
                     eventoDepois.Modalidade,
                     eventoDepois.StatusGeralKanban,
 
-                    eventoDepois.ProcessoId,
-                    eventoDepois.CasoId,
-                    eventoDepois.AtendimentoId,
-                    eventoDepois.TipoVinculoId,
+                    Processo = eventoDepois.Processo != null
+         ? eventoDepois.Processo.Pasta
+         : null,
+
+                    Caso = eventoDepois.Caso != null
+         ? eventoDepois.Caso.Pasta
+         : null,
+
+                    Atendimento = eventoDepois.Atendimento != null
+         ? eventoDepois.Atendimento.Assunto
+         : null,
+
+                    TipoVinculo = eventoDepois.TipoVinculoId.ToString(),
 
                     Responsaveis = eventoDepois.GrupoEventoResponsaveis?
-                        .Select(r => r.Usuario?.NomeUsuario)
-                        .Where(n => n != null)
-                        .ToList(),
+         .Select(r => r.Usuario?.NomeUsuario)
+         .Where(n => !string.IsNullOrWhiteSpace(n))
+         .ToList(),
 
                     Etiquetas = eventoDepois.GrupoEventoEtiquetas?
-                        .Select(e => e.Etiqueta?.Nome)
-                        .Where(n => n != null)
-                        .ToList()
+         .Select(e => e.Etiqueta?.Nome)
+         .Where(n => !string.IsNullOrWhiteSpace(n))
+         .ToList()
                 };
 
                 // =========================

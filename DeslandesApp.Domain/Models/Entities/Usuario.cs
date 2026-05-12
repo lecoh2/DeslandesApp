@@ -24,11 +24,18 @@ namespace DeslandesApp.Domain.Models.Entities
         public List<Pessoa>? Pessoa { get; set; }
         public Status? Status { get; set; }
         public ICollection<GrupoSetores> GrupoSetores { get; set; }
+            = new List<GrupoSetores>();
         public ICollection<GrupoNiveis> GrupoNiveis { get; set; }
+            = new List<GrupoNiveis>();
+
         public virtual Fotos? Fotos { get; set; }
         public ValorEmail? ValorEmail { get; set; }
         public ICollection<Processo> ProcessosResponsaveis { get; set; }
-        public ICollection<GrupoTarefaResponsaveis>? GrupoTarefaResponsaveis { get; set; }
+            = new List<Processo>();
+        public ICollection<GrupoTarefaResponsaveis> GrupoTarefaResponsaveis { get; set; }
+            = new List<GrupoTarefaResponsaveis>();
+
+
         #endregion
     }
 }
