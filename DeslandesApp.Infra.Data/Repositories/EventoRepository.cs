@@ -169,19 +169,40 @@ namespace DeslandesApp.Infra.Data.Repositories
                 .Take(quantidade)
                 .ToListAsync();
         }
-        public async Task<List<Evento>> ObterEventosLembreteAsync()
+        public async Task<List<Evento>> ObterEventosLembreteAsync(
+     Guid usuarioId,
+     bool isAdministrador)
         {
             var hoje = DateOnly.FromDateTime(DateTime.Today);
 
-            return await dataContext.Evento
+            var query = dataContext.Evento
+
+                // 🔥 RESPONSÁVEIS
+                .Include(x => x.GrupoEventoResponsaveis)
+
+                    // 🔥 USUÁRIO DO RESPONSÁVEL
+                    .ThenInclude(x => x.Usuario)
+
+                .AsQueryable();
+
+            // 🔥 USUÁRIO NORMAL
+            if (!isAdministrador)
+            {
+                query = query.Where(e =>
+                    e.GrupoEventoResponsaveis
+                        .Any(r => r.UsuarioId == usuarioId)
+                );
+            }
+
+            return await query
                 .Where(e =>
 
-                    // evento futuro
+                    // EVENTOS FUTUROS
                     e.DataInicial >= hoje
 
                     ||
 
-                    // evento recorrente ainda válido
+                    // EVENTOS RECORRENTES
                     (
                         e.DataFimRecorrencia.HasValue &&
                         e.DataFimRecorrencia >= hoje
@@ -189,6 +210,7 @@ namespace DeslandesApp.Infra.Data.Repositories
                 )
                 .OrderBy(e => e.DataInicial)
                 .ThenBy(e => e.HoraInicial)
+                .Take(5)
                 .ToListAsync();
         }
     }

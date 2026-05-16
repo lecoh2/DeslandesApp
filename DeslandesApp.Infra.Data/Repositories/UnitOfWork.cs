@@ -56,6 +56,17 @@ namespace DeslandesApp.Infra.Data.Repositories
         private IGrupoEtiquetasAtendimentoRepository? _grupoEtiquetasAtendimentoRepository;
         private IGrupoEtiquetaCasoRepository? _grupoEtiquetaCasoRepository;
         private IAtendimentoHistoricoRepository? _atendimentoHistoricoRepository;
+        private INotificacaoRepository? _notificacaoRepository;
+        public INotificacaoRepository NotificacaoRepository
+        {
+            get
+            {
+                if (_notificacaoRepository == null)
+                    _notificacaoRepository = new NotificacaoRepository(dataContext);
+
+                return _notificacaoRepository;
+            }
+        }
         private IFotoRepository? _fotosRepository;
         public IFotoRepository FotoRepository
         {

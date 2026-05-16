@@ -18,6 +18,7 @@ namespace DeslandesApp.Domain.Interfaces.Repositories
         Task<Usuario> GetUsuariosComRelacionamentosPerfilAsync(Guid id);
         Task<Usuario?> ObterCompletoPorIdAsync(Guid id);
         Task<Usuario> ConsultarUsuarioCompletoAsync(Guid idUsuario);
+        Task<Usuario> ObterComNiveisAsync(Guid id);
 
     }
 }

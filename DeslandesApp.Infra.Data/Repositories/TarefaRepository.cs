@@ -145,27 +145,25 @@ namespace DeslandesApp.Infra.Data.Repositories
                 .ToListAsync();
         }
         public async Task<List<Tarefa>> ObterTarefasLembreteAsync(
-      Guid? usuarioId,
-      bool ehAdministrador
-  )
+    Guid usuarioId,
+    bool isAdministrador)
         {
             var hoje = DateTime.Today;
 
             var query = dataContext.Tarefas
-                .Include(t => t.GrupoTarefaResponsaveis)
+
+                // 🔥 RESPONSÁVEIS
+                .Include(x => x.GrupoTarefaResponsaveis)
+
+                    // 🔥 USUÁRIO DO RESPONSÁVEL
+                    .ThenInclude(x => x.Usuario)
+
                 .AsQueryable();
 
-            // ADMIN vê tudo
-            if (!ehAdministrador)
+            // 🔥 USUÁRIO NORMAL
+            if (!isAdministrador)
             {
                 query = query.Where(t =>
-
-                    // criador
-                    t.UsuarioCriacaoId == usuarioId
-
-                    ||
-
-                    // responsável
                     t.GrupoTarefaResponsaveis
                         .Any(r => r.UsuarioId == usuarioId)
                 );
@@ -173,19 +171,14 @@ namespace DeslandesApp.Infra.Data.Repositories
 
             return await query
                 .Where(t =>
-
                     t.DataTarefa.HasValue &&
-
                     t.DataTarefa.Value.Date >= hoje
-
-                    &&
-
-                    t.StatusGeralKanban != StatusGeralKanban.Concluido
                 )
                 .OrderBy(t => t.DataTarefa)
+                .Take(5)
                 .ToListAsync();
         }
 
-        
+
     }
 }

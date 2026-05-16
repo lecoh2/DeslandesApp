@@ -26,7 +26,7 @@ namespace DeslandesApp.Domain.Services
     public class TarefaService(IUnitOfWork unitOfWork,
     IMapper mapper,
     IHttpContextAccessor httpContextAccessor,
-    IHistoricoGeralService historicoGeralService
+    IHistoricoGeralService historicoGeralService, INotificacaoService notificacaoService
 ) : BaseService(httpContextAccessor) ,ITarefaService
     {
         public async Task<CriarTarefaResponse> AdicionarAsync(CriarTarefaRequest request)
@@ -251,12 +251,25 @@ namespace DeslandesApp.Domain.Services
                             });
                     }
                 }
+                var responsaveis = request.GrupoTarefaResponsaveis
+    .Select(x => x.UsuarioId)
+    .ToList();
 
                 // =========================
                 // COMMIT
                 // =========================
                 await unitOfWork.CommitAsync();
-
+                // 🔔 disparar notificação
+                foreach (var usuarioId in responsaveis)
+                {
+                    await notificacaoService.CriarNotificacaoAsync(
+                        usuarioId,
+                        "Nova tarefa criada",
+                        tarefa.Descricao,
+                        TipoEntidade.Tarefa,
+                        tarefa.Id
+                    );
+                }
                 return mapper.Map<CriarTarefaResponse>(tarefa);
             }
             catch

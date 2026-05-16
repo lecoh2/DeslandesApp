@@ -24,13 +24,28 @@ namespace DeslandesApp.API.Configurations
                     ValidateIssuer = false,
                     ValidateAudience = false,
                     ValidateLifetime = true,
-
                     IssuerSigningKey = new SymmetricSecurityKey(key),
 
-                    // 🔥 ESSA LINHA RESOLVE
                     NameClaimType = ClaimTypes.NameIdentifier,
-
                     RoleClaimType = "role"
+                };
+
+                // 🔥 ISSO AQUI É O QUE ESTAVA FALTANDO
+                options.Events = new JwtBearerEvents
+                {
+                    OnMessageReceived = context =>
+                    {
+                        var accessToken = context.Request.Query["access_token"];
+                        var path = context.HttpContext.Request.Path;
+
+                        if (!string.IsNullOrEmpty(accessToken) &&
+                            path.StartsWithSegments("/hub/notificacao"))
+                        {
+                            context.Token = accessToken;
+                        }
+
+                        return Task.CompletedTask;
+                    }
                 };
             });
         }

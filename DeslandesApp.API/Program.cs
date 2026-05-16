@@ -1,5 +1,7 @@
 ﻿using DeslandesApp.API.Configurations;
+using DeslandesApp.API.Hubs;
 using DeslandesApp.API.Middlewares;
+using DeslandesApp.API.SignalR;
 using DeslandesApp.Domain.Extensions;
 using DeslandesApp.Domain.Helpers;
 using DeslandesApp.Domain.Interfaces.Services;
@@ -10,6 +12,7 @@ using Hangfire.SqlServer;
 
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc.Authorization;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -182,8 +185,12 @@ builder.Services.AddHangfire(config =>
         )
 );
 
-builder.Services.AddHangfireServer();
 
+
+builder.Services.AddSingleton<IUserIdProvider, CustomUserIdProvider>();
+builder.Services.AddHangfireServer();
+builder.Services.AddSignalR(); 
+builder.Services.AddApiServices();
 //
 // ================================
 // APP
@@ -287,7 +294,8 @@ app.UseAuthorization();
 // ================================
 //
 app.MapControllers();
-
+// 🔥 SIGNALR HUB (AQUI)
+app.MapHub<NotificationHub>("/hub/notificacao");
 //
 // ================================
 // HANGFIRE JOBS
@@ -318,7 +326,7 @@ RecurringJob.AddOrUpdate<ITarefaService>(
 // ================================
 // RUN
 // ================================
-//
+
 app.Run();
 
 //

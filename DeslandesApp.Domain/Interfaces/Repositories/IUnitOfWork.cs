@@ -58,6 +58,7 @@ namespace DeslandesApp.Domain.Interfaces.Repositories
         IGrupoEventoEtiquetasRepository GrupoEventoEtiquetasRepository { get; }
         IComentarioRepository ComentarioRepository { get; }
         IHistoricoGeralRepository HistoricoGeralRepository { get; }
+        INotificacaoRepository NotificacaoRepository { get; }
         #endregion
     }
 }

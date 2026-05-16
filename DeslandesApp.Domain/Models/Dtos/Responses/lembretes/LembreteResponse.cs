@@ -20,6 +20,8 @@ namespace DeslandesApp.Domain.Models.Dtos.Responses.lembretes
         public string Categoria { get; set; } = string.Empty;
         public bool Recorrente { get; set; }
         public bool DiaInteiro { get; set; }
+        public List<string> Responsaveis { get; set; }
+    = new();
         // Hoje / Amanhã / Próximos
     }
 }

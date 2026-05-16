@@ -4,6 +4,7 @@ using DeslandesApp.Infra.Data.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DeslandesApp.Infra.Data.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20260515204938_notificao")]
+    partial class notificao
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1253,19 +1256,9 @@ namespace DeslandesApp.Infra.Data.Migrations
                         .HasColumnType("datetime2")
                         .HasColumnName("DATACRIACAO");
 
-                    b.Property<Guid?>("EntidadeId")
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnName("ENTIDADEID");
-
                     b.Property<bool>("Lida")
                         .HasColumnType("bit")
                         .HasColumnName("LIDA");
-
-                    b.Property<string>("Link")
-                        .HasMaxLength(500)
-                        .IsUnicode(false)
-                        .HasColumnType("varchar(500)")
-                        .HasColumnName("LINK");
 
                     b.Property<string>("Mensagem")
                         .IsRequired()
@@ -1274,9 +1267,15 @@ namespace DeslandesApp.Infra.Data.Migrations
                         .HasColumnType("varchar(500)")
                         .HasColumnName("MENSAGEM");
 
-                    b.Property<int>("Tipo")
-                        .HasMaxLength(50)
-                        .HasColumnType("int")
+                    b.Property<Guid?>("ReferenciaId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("REFERENCIAID");
+
+                    b.Property<string>("Tipo")
+                        .IsRequired()
+                        .HasMaxLength(250)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(250)")
                         .HasColumnName("TIPO");
 
                     b.Property<string>("Titulo")

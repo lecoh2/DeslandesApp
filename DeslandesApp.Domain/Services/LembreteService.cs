@@ -47,33 +47,78 @@ namespace DeslandesApp.Domain.Services
             var hoje = DateTime.Today;
             var amanha = hoje.AddDays(1);
 
-            // usuário logado
+            //
+            // ============================
+            // USUÁRIO LOGADO
+            // ============================
+            //
             var usuarioId = ObterUsuarioId();
 
-            // nível/permissão
-            var isAdministrador =
-                _httpContextAccessor
-                    .HttpContext?
-                    .User?
-                    .IsInRole("Administrador")
-                ?? false;
+            if (!usuarioId.HasValue)
+            {
+                throw new ApplicationException("Usuário não identificado.");
+            }
 
+            //
+            // ============================
+            // BUSCA USUÁRIO NO BANCO (CORRETO)
+            // ============================
+            //
+            var usuario = await unitOfWork.UsuarioRepository
+      .ObterComNiveisAsync(usuarioId.Value);
+
+            if (usuario == null)
+            {
+                throw new ApplicationException("Usuário não encontrado.");
+            }
+
+            //
+            // ============================
+            // ADMINISTRADOR (CORRETO)
+            // ============================
+            //
+            var isAdministrador =
+             usuario.GrupoNiveis
+                 .Any(x =>
+                     x.Niveis != null &&
+                     string.Equals(
+                         x.Niveis.NomeNivel,
+                         "Administrador",
+                         StringComparison.OrdinalIgnoreCase
+                     )
+                 );
+
+            //
+            // ============================
             // TAREFAS
+            // ============================
+            //
             var tarefas =
                 await unitOfWork
                     .TarefaRepository
                     .ObterTarefasLembreteAsync(
-                        usuarioId,
+                        usuarioId.Value,
                         isAdministrador
                     );
 
+            //
+            // ============================
             // EVENTOS
+            // ============================
+            //
             var eventos =
                 await unitOfWork
                     .EventoRepository
-                    .ObterEventosLembreteAsync();
+                    .ObterEventosLembreteAsync(
+                        usuarioId.Value,
+                        isAdministrador
+                    );
 
+            //
+            // ============================
             // MAP TAREFAS
+            // ============================
+            //
             var listaTarefas = tarefas
                 .Where(t => t.DataTarefa.HasValue)
                 .Select(t => new LembreteResponse
@@ -81,37 +126,56 @@ namespace DeslandesApp.Domain.Services
                     Id = t.Id,
                     Titulo = t.Descricao,
                     Data = t.DataTarefa!.Value,
-                    Tipo = "Tarefa"
+                    Tipo = "Tarefa",
+
+                    Responsaveis = t.GrupoTarefaResponsaveis
+                        .Where(r => r.Usuario != null)
+                        .Select(r => r.Usuario!.NomeUsuario)
+                        .Distinct()
+                        .ToList()
                 });
 
+            //
+            // ============================
             // MAP EVENTOS
+            // ============================
+            //
             var listaEventos = eventos
                 .Select(e => new LembreteResponse
                 {
                     Id = e.Id,
-
                     Titulo = e.Titulo,
-
-                    Data = e.DataInicial.ToDateTime(
-                        e.HoraInicial
-                    ),
-
+                    Data = e.DataInicial.ToDateTime(e.HoraInicial),
                     Tipo = "Evento",
 
                     Recorrente =
                         e.TipoRecorrencia != TipoRecorrencia.Nenhuma,
 
-                    DiaInteiro = e.DiaInteiro
+                    DiaInteiro = e.DiaInteiro,
+
+                    Responsaveis = e.GrupoEventoResponsaveis
+                        .Where(r => r.Usuario != null)
+                        .Select(r => r.Usuario!.NomeUsuario)
+                        .Distinct()
+                        .ToList()
                 });
 
-            // JUNTA
+            //
+            // ============================
+            // JUNTA + ORDENA
+            // ============================
+            //
             var resultado = listaTarefas
                 .Concat(listaEventos)
                 .OrderBy(x => x.Data)
                 .Take(5)
                 .ToList();
 
-            // CATEGORIAS
+            //
+            // ============================
+            // CATEGORIA
+            // ============================
+            //
             foreach (var item in resultado)
             {
                 if (item.Data.Date == hoje.Date)

@@ -146,6 +146,13 @@ namespace DeslandesApp.Infra.Data.Repositories
 
                 .FirstOrDefaultAsync(u => u.Id == idUsuario);
         }
+        public async Task<Usuario> ObterComNiveisAsync(Guid id)
+        {
+            return await dataContext.Usuario
+                .Include(x => x.GrupoNiveis)
+                    .ThenInclude(x => x.Niveis)
+                .FirstOrDefaultAsync(x => x.Id == id);
+        }
 
     }
 }

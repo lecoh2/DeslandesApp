@@ -60,6 +60,7 @@ namespace DeslandesApp.Infra.Data.Contexts
         public DbSet<GrupoEventoEtiquetas> GrupoEventoEtiquetas { get; set; }
         public DbSet<Comentario> Comentario { get; set; }
         public DbSet<HistoricoGeral> HistoricoGeral { get; set; }
+        public DbSet<Notificacao> Notificacoes { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
