@@ -28,125 +28,192 @@ namespace DeslandesApp.Domain.Services
     IUnitOfWork unitOfWork,
     IMapper mapper,
     IHttpContextAccessor httpContextAccessor,
-    IHistoricoGeralService historicoGeralService
+    IHistoricoGeralService historicoGeralService, INotificacaoService notificacaoService
 ) : BaseService(httpContextAccessor), IProcessoService
     {
         public async Task<ProcessoResponse> AdicionarAsync(ProcessoRequest request)
         {
             await unitOfWork.BeginTransactionAsync();
 
-            //  DTO -> Entidade
-            var processo = mapper.Map<Processo>(request);
-            processo.UsuarioCadastroId = ObterUsuarioId();
-
-            // 🧹 Normalização segura
-            processo.Pasta = processo.Pasta?.Trim().ToUpper();
-            processo.Titulo = processo.Titulo?.Trim().ToUpper();
-            processo.NumeroProcesso = processo.NumeroProcesso?.Trim();
-            processo.LinkTribunal = processo.LinkTribunal?.Trim();
-            processo.Instancia = request.Instancia.HasValue
-     ? (Instancia?)request.Instancia.Value
-     : null;
-            processo.Acesso = request.Acesso.HasValue
-     ? (Acesso?)request.Acesso.Value : null;
-            processo.DataCadastro = DateTime.Now;
-
-            //  Responsável
-            processo.UsuarioResponsavelId = request.UsuarioResponsavelId;
-
-            //  Validação Fluent
-            var validator = new ProcessoValidator();
-            var result = validator.Validate(processo);
-
-            if (!result.IsValid)
-                throw new ValidationException(result.Errors);
-
-            //  VALIDA VARA
-            if (processo.VaraId == Guid.Empty)
-                throw new InvalidOperationException("Vara é obrigatória.");
-
-            var vara = await unitOfWork.VaraRepository.GetByIdAsync(processo.VaraId);
-
-            if (vara == null)
-                throw new InvalidOperationException("Vara não encontrada.");
-
-            //  VALIDA USUÁRIO RESPONSÁVEL (opcional se for obrigatório)
-            if (processo.UsuarioResponsavelId.HasValue)
+            try
             {
-                var usuario = await unitOfWork.UsuarioRepository
-                    .GetByIdAsync(processo.UsuarioResponsavelId.Value);
+                // =========================
+                // DTO -> ENTIDADE
+                // =========================
+                var processo = mapper.Map<Processo>(request);
+                processo.UsuarioCadastroId = ObterUsuarioId();
 
-                if (usuario == null)
-                    throw new InvalidOperationException("Usuário responsável não encontrado.");
-            }
+                // =========================
+                // 🧹 NORMALIZAÇÃO
+                // =========================
+                processo.Pasta = processo.Pasta?.Trim().ToUpper();
+                processo.Titulo = processo.Titulo?.Trim().ToUpper();
+                processo.NumeroProcesso = processo.NumeroProcesso?.Trim();
+                processo.LinkTribunal = processo.LinkTribunal?.Trim();
 
-            //  Verifica duplicidade
-            var existente = await unitOfWork.ProcessoRepository.GetByAsync(p =>
-                p.Pasta == processo.Pasta ||
-                p.NumeroProcesso == processo.NumeroProcesso);
+                processo.Instancia = request.Instancia.HasValue
+                    ? (Instancia?)request.Instancia.Value
+                    : null;
 
-            if (existente != null)
-            {
-                if (existente.Pasta == processo.Pasta)
-                    throw new InvalidOperationException("Nome de pasta já utilizado por outro processo.");
+                processo.Acesso = request.Acesso.HasValue
+                    ? (Acesso?)request.Acesso.Value
+                    : null;
 
-                if (existente.NumeroProcesso == processo.NumeroProcesso)
-                    throw new InvalidOperationException("Nº do processo já cadastrado no sistema.");
-            }
+                processo.DataCadastro = DateTime.Now;
 
-            //  Salva processo
-            await unitOfWork.ProcessoRepository.AddAsync(processo);
+                // =========================
+                // RESPONSÁVEL
+                // =========================
+                processo.UsuarioResponsavelId = request.UsuarioResponsavelId;
 
-            //  N:N - Clientes
-            if (request.GrupoClienteProcesso != null && request.GrupoClienteProcesso.Any())
-            {
-                foreach (var grupos in request.GrupoClienteProcesso)
+                // =========================
+                // VALIDAÇÃO FLUENT
+                // =========================
+                var validator = new ProcessoValidator();
+                var result = validator.Validate(processo);
+
+                if (!result.IsValid)
+                    throw new ValidationException(result.Errors);
+
+                // =========================
+                // VALIDA VARA
+                // =========================
+                if (processo.VaraId == Guid.Empty)
+                    throw new InvalidOperationException("Vara é obrigatória.");
+
+                var vara = await unitOfWork.VaraRepository.GetByIdAsync(processo.VaraId);
+
+                if (vara == null)
+                    throw new InvalidOperationException("Vara não encontrada.");
+
+                // =========================
+                // VALIDA USUÁRIO RESPONSÁVEL
+                // =========================
+                if (processo.UsuarioResponsavelId.HasValue)
                 {
-                    var grupoClienteProcesso = new GrupoClienteProcesso
-                    {
-                        ProcessoId = processo.Id,
-                        QualificacaoId = grupos.IdQualificacao,
-                        PessoaId = grupos.IdPessoa.Value
-                    };
+                    var usuario = await unitOfWork.UsuarioRepository
+                        .GetByIdAsync(processo.UsuarioResponsavelId.Value);
 
-                    await unitOfWork.GrupoClientesProcessosRepository.AddAsync(grupoClienteProcesso);
+                    if (usuario == null)
+                        throw new InvalidOperationException("Usuário responsável não encontrado.");
                 }
-            }
 
-            //  N:N - Envolvidos
-            if (request.GrupoEnvolvidosProcesso != null && request.GrupoEnvolvidosProcesso.Any())
-            {
-                foreach (var grupos in request.GrupoEnvolvidosProcesso)
+                // =========================
+                // DUPLICIDADE
+                // =========================
+                var existente = await unitOfWork.ProcessoRepository.GetByAsync(p =>
+                    p.Pasta == processo.Pasta ||
+                    p.NumeroProcesso == processo.NumeroProcesso);
+
+                if (existente != null)
                 {
-                    var grupoEnvolvidos = new GrupoEnvolvidosProcesso
-                    {
-                        ProcessoId = processo.Id,
-                        QualificacaoId = grupos.IdQualificacao,
-                        PessoaId = grupos.IdPessoa
-                    };
+                    if (existente.Pasta == processo.Pasta)
+                        throw new InvalidOperationException("Nome de pasta já utilizado por outro processo.");
 
-                    await unitOfWork.GrupoEnvolvidosProcessosRepository.AddAsync(grupoEnvolvidos);
+                    if (existente.NumeroProcesso == processo.NumeroProcesso)
+                        throw new InvalidOperationException("Nº do processo já cadastrado no sistema.");
                 }
-            }
-            if (request.GrupoEtiquetasProcesso != null && request.GrupoEtiquetasProcesso.Any())
-            {
-                foreach (var grupoEtiqueta in request.GrupoEtiquetasProcesso)
+
+                // =========================
+                // SALVAR PROCESSO
+                // =========================
+                await unitOfWork.ProcessoRepository.AddAsync(processo);
+
+                // =========================
+                // N:N CLIENTES
+                // =========================
+                if (request.GrupoClienteProcesso != null && request.GrupoClienteProcesso.Any())
                 {
-                    var etiqueta = await unitOfWork.EtiquetaRepository.GetByIdAsync(grupoEtiqueta.EtiquetaId);
-                    if (etiqueta == null) throw new InvalidOperationException("Etiqueta não encontrada.");
-                    var processoEtiqueta = new GrupoEtiquetasProcessos
+                    foreach (var grupos in request.GrupoClienteProcesso)
                     {
-                        ProcessoId = processo.Id,
-                        EtiquetaId = grupoEtiqueta.EtiquetaId
-                    };
-                    await unitOfWork.GrupoEtiquetasProcessosRepository.AddAsync(processoEtiqueta);
+                        await unitOfWork.GrupoClientesProcessosRepository.AddAsync(
+                            new GrupoClienteProcesso
+                            {
+                                ProcessoId = processo.Id,
+                                QualificacaoId = grupos.IdQualificacao,
+                                PessoaId = grupos.IdPessoa.Value
+                            }
+                        );
+                    }
                 }
-            }
-            //  Commit único
-            await unitOfWork.CommitAsync();
 
-            //  Retorno
-            return mapper.Map<ProcessoResponse>(processo);
+                // =========================
+                // N:N ENVOLVIDOS
+                // =========================
+                if (request.GrupoEnvolvidosProcesso != null && request.GrupoEnvolvidosProcesso.Any())
+                {
+                    foreach (var grupos in request.GrupoEnvolvidosProcesso)
+                    {
+                        await unitOfWork.GrupoEnvolvidosProcessosRepository.AddAsync(
+                            new GrupoEnvolvidosProcesso
+                            {
+                                ProcessoId = processo.Id,
+                                QualificacaoId = grupos.IdQualificacao,
+                                PessoaId = grupos.IdPessoa
+                            }
+                        );
+                    }
+                }
+
+                // =========================
+                // ETIQUETAS
+                // =========================
+                if (request.GrupoEtiquetasProcesso != null && request.GrupoEtiquetasProcesso.Any())
+                {
+                    foreach (var grupoEtiqueta in request.GrupoEtiquetasProcesso)
+                    {
+                        var etiqueta = await unitOfWork.EtiquetaRepository
+                            .GetByIdAsync(grupoEtiqueta.EtiquetaId);
+
+                        if (etiqueta == null)
+                            throw new InvalidOperationException("Etiqueta não encontrada.");
+
+                        await unitOfWork.GrupoEtiquetasProcessosRepository.AddAsync(
+                            new GrupoEtiquetasProcessos
+                            {
+                                ProcessoId = processo.Id,
+                                EtiquetaId = grupoEtiqueta.EtiquetaId
+                            }
+                        );
+                    }
+                }
+
+                // =========================
+                // COMMIT
+                // =========================
+                await unitOfWork.CommitAsync();
+
+                // =========================
+                // 🔔 NOTIFICAÇÃO (PROCESSO)
+                // =========================
+                if (processo.UsuarioResponsavelId.HasValue)
+                {
+                    try
+                    {
+                        await notificacaoService.CriarNotificacaoAsync(
+                            processo.UsuarioResponsavelId.Value,
+                            "Novo processo criado",
+                            processo.Titulo,
+                            TipoEntidade.Processo,
+                            processo.Id
+                        );
+                    }
+                    catch
+                    {
+                        // não quebra fluxo caso notificação falhe
+                    }
+                }
+
+                // =========================
+                // RETORNO
+                // =========================
+                return mapper.Map<ProcessoResponse>(processo);
+            }
+            catch
+            {
+                await unitOfWork.RollbackAsync();
+                throw;
+            }
         }
         public Task<PageResult<ProcessoResponse>> ConsultarAsync(int pageNumber, int pageSize)
         {

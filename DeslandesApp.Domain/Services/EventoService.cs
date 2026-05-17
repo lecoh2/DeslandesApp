@@ -25,7 +25,7 @@ namespace DeslandesApp.Domain.Services
     public class EventoService(IUnitOfWork unitOfWork,
     IMapper mapper,
     IHttpContextAccessor httpContextAccessor,
-    IHistoricoGeralService historicoGeralService
+    IHistoricoGeralService historicoGeralService, INotificacaoService notificacaoService
 ) : BaseService(httpContextAccessor), IEventoService
     {
         public async Task<CriarEventoResponse> AdicionarAsync(CriarEventoRequest request)
@@ -59,23 +59,16 @@ namespace DeslandesApp.Domain.Services
                 // 🧠 STATUS KANBAN
                 // =========================
                 if (request.statusGeralKanban.HasValue)
-                {
                     evento.StatusGeralKanban = request.statusGeralKanban.Value;
-                }
 
-                // 🔥 STATUS AUTOMÁTICO
-                if (evento.DataFinal.HasValue &&
-                    evento.DataFinal.Value < hoje)
+                if (evento.DataFinal.HasValue && evento.DataFinal.Value < hoje)
                 {
                     evento.StatusGeralKanban = StatusGeralKanban.Concluido;
                 }
                 else if (
                     evento.DataInicial == hoje &&
                     evento.HoraInicial <= horaAtual &&
-                    (
-                        evento.HoraFinal == null ||
-                        evento.HoraFinal >= horaAtual
-                    )
+                    (evento.HoraFinal == null || evento.HoraFinal >= horaAtual)
                 )
                 {
                     evento.StatusGeralKanban = StatusGeralKanban.Em_Andamento;
@@ -94,59 +87,32 @@ namespace DeslandesApp.Domain.Services
                 // 🔁 RECORRÊNCIA
                 // =========================
                 if (evento.IntervaloRecorrencia < 1)
-                {
-                    throw new InvalidOperationException(
-                        "Intervalo da recorrência deve ser maior ou igual a 1."
-                    );
-                }
+                    throw new InvalidOperationException("Intervalo da recorrência deve ser maior ou igual a 1.");
 
                 if (evento.TipoRecorrencia != TipoRecorrencia.Nenhuma)
                 {
-                    if (
-                        evento.DataFimRecorrencia.HasValue &&
-                        evento.QuantidadeOcorrencias.HasValue
-                    )
-                    {
-                        throw new InvalidOperationException(
-                            "Informe apenas DataFimRecorrencia ou QuantidadeOcorrencias."
-                        );
-                    }
+                    if (evento.DataFimRecorrencia.HasValue && evento.QuantidadeOcorrencias.HasValue)
+                        throw new InvalidOperationException("Informe apenas DataFimRecorrencia ou QuantidadeOcorrencias.");
 
-                    if (
-                        !evento.DataFimRecorrencia.HasValue &&
-                        !evento.QuantidadeOcorrencias.HasValue
-                    )
-                    {
-                        throw new InvalidOperationException(
-                            "Recorrência precisa de um critério de término."
-                        );
-                    }
+                    if (!evento.DataFimRecorrencia.HasValue && !evento.QuantidadeOcorrencias.HasValue)
+                        throw new InvalidOperationException("Recorrência precisa de um critério de término.");
 
-                    if (
-                        evento.TipoRecorrencia == TipoRecorrencia.Semanal &&
-                        (
-                            evento.DiasSemana == null ||
-                            !evento.DiasSemana.Any()
-                        )
-                    )
+                    if (evento.TipoRecorrencia == TipoRecorrencia.Semanal &&
+                        (evento.DiasSemana == null || !evento.DiasSemana.Any()))
                     {
-                        throw new InvalidOperationException(
-                            "Informe ao menos um dia da semana para recorrência semanal."
-                        );
+                        throw new InvalidOperationException("Informe ao menos um dia da semana para recorrência semanal.");
                     }
                 }
                 else
                 {
                     evento.IntervaloRecorrencia = 1;
-
                     evento.DiasSemana = new List<DayOfWeek>();
-
                     evento.DataFimRecorrencia = null;
                     evento.QuantidadeOcorrencias = null;
                 }
 
                 // =========================
-                // 🔗 DEFINE VÍNCULO
+                // 🔗 VÍNCULO
                 // =========================
                 evento.DefinirVinculo(
                     request.ProcessoId,
@@ -154,137 +120,121 @@ namespace DeslandesApp.Domain.Services
                     request.AtendimentoId
                 );
 
-                // =========================
-                // ✅ VALIDA DOMÍNIO
-                // =========================
                 evento.ValidarVinculo();
 
                 // =========================
-                // ✅ VALIDA EXISTÊNCIA
+                // 🔍 VALIDA EXISTÊNCIA
                 // =========================
                 if (request.ProcessoId.HasValue)
                 {
-                    var processo = await unitOfWork
-                        .ProcessoRepository
-                        .GetByIdAsync(request.ProcessoId.Value);
-
+                    var processo = await unitOfWork.ProcessoRepository.GetByIdAsync(request.ProcessoId.Value);
                     if (processo == null)
-                    {
-                        throw new InvalidOperationException(
-                            "Processo não encontrado."
-                        );
-                    }
+                        throw new InvalidOperationException("Processo não encontrado.");
                 }
 
                 if (request.CasoId.HasValue)
                 {
-                    var caso = await unitOfWork
-                        .CasoRepository
-                        .GetByIdAsync(request.CasoId.Value);
-
+                    var caso = await unitOfWork.CasoRepository.GetByIdAsync(request.CasoId.Value);
                     if (caso == null)
-                    {
-                        throw new InvalidOperationException(
-                            "Caso não encontrado."
-                        );
-                    }
+                        throw new InvalidOperationException("Caso não encontrado.");
                 }
 
                 if (request.AtendimentoId.HasValue)
                 {
-                    var atendimento = await unitOfWork
-                        .AtendimentoRepository
-                        .GetByIdAsync(request.AtendimentoId.Value);
-
+                    var atendimento = await unitOfWork.AtendimentoRepository.GetByIdAsync(request.AtendimentoId.Value);
                     if (atendimento == null)
-                    {
-                        throw new InvalidOperationException(
-                            "Atendimento não encontrado."
-                        );
-                    }
+                        throw new InvalidOperationException("Atendimento não encontrado.");
                 }
 
                 // =========================
-                // ✅ VALIDAÇÃO FLUENT
+                // VALIDAÇÃO FLUENT
                 // =========================
                 var validator = new EventoValidator();
-
                 var result = validator.Validate(evento);
 
                 if (!result.IsValid)
-                {
                     throw new ValidationException(result.Errors);
-                }
 
                 // =========================
                 // 💾 SALVAR EVENTO
                 // =========================
-                await unitOfWork
-                    .EventoRepository
-                    .AddAsync(evento);
+                await unitOfWork.EventoRepository.AddAsync(evento);
 
                 // =========================
-                // 👥 RESPONSÁVEIS (N:N)
+                // 👥 RESPONSÁVEIS
                 // =========================
                 if (request.GrupoEventoResponsaveis?.Any() == true)
                 {
                     foreach (var item in request.GrupoEventoResponsaveis)
                     {
-                        var usuario = await unitOfWork
-                            .UsuarioRepository
-                            .GetByIdAsync(item.UsuarioId);
+                        var usuario = await unitOfWork.UsuarioRepository.GetByIdAsync(item.UsuarioId);
 
                         if (usuario == null)
-                        {
-                            throw new InvalidOperationException(
-                                $"Usuário {item.UsuarioId} não encontrado."
-                            );
-                        }
+                            throw new InvalidOperationException($"Usuário {item.UsuarioId} não encontrado.");
 
-                        var grupo = new GrupoEventoResponsavel
-                        {
-                            EventoId = evento.Id,
-                            UsuarioId = item.UsuarioId
-                        };
-
-                        await unitOfWork
-                            .GrupoEventoResponsavelRepository
-                            .AddAsync(grupo);
+                        await unitOfWork.GrupoEventoResponsavelRepository.AddAsync(
+                            new GrupoEventoResponsavel
+                            {
+                                EventoId = evento.Id,
+                                UsuarioId = item.UsuarioId
+                            }
+                        );
                     }
                 }
 
                 // =========================
-                // 🏷️ ETIQUETAS (N:N)
+                // 🏷️ ETIQUETAS
                 // =========================
                 if (request.GrupoEventoEtiquetas?.Any() == true)
                 {
                     foreach (var grupoEtiqueta in request.GrupoEventoEtiquetas)
                     {
-                        var etiqueta = await unitOfWork
-                            .EtiquetaRepository
+                        var etiqueta = await unitOfWork.EtiquetaRepository
                             .GetByIdAsync(grupoEtiqueta.EtiquetaId);
 
                         if (etiqueta == null)
-                        {
-                            throw new InvalidOperationException(
-                                "Etiqueta não encontrada."
-                            );
-                        }
+                            throw new InvalidOperationException("Etiqueta não encontrada.");
 
-                        await unitOfWork
-                            .GrupoEventoEtiquetasRepository
-                            .AddAsync(new GrupoEventoEtiquetas
+                        await unitOfWork.GrupoEventoEtiquetasRepository.AddAsync(
+                            new GrupoEventoEtiquetas
                             {
                                 EventoId = evento.Id,
                                 EtiquetaId = grupoEtiqueta.EtiquetaId
-                            });
+                            }
+                        );
                     }
                 }
 
                 // =========================
-                // ✅ COMMIT
+                // COMMIT
                 // =========================
                 await unitOfWork.CommitAsync();
+
+                // =========================
+                // 🔔 NOTIFICAÇÃO SEGURA
+                // =========================
+                var responsaveis = request.GrupoEventoResponsaveis?
+                    .Select(x => x.UsuarioId)
+                    .Distinct()
+                    .ToList() ?? new List<Guid>();
+
+                try
+                {
+                    foreach (var usuarioId in responsaveis)
+                    {
+                        await notificacaoService.CriarNotificacaoAsync(
+                            usuarioId,
+                            "Novo evento criado",
+                            evento.Titulo,
+                            TipoEntidade.Evento,
+                            evento.Id
+                        );
+                    }
+                }
+                catch
+                {
+                    // não interrompe fluxo caso notificação falhe
+                }
 
                 return mapper.Map<CriarEventoResponse>(evento);
             }
