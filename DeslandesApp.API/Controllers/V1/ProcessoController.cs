@@ -191,5 +191,13 @@ namespace DeslandesApp.API.Controllers.V1
             var total = await processoService.ContarTotal();
             return Ok(total);
         }
+        [HttpPost("importar-distribuicao")]
+        public async Task<IActionResult> ImportarDistribuicao(IFormFile file)
+        {
+            var result = await processoService
+                .ImportarDistribuicaoAsync(file);
+
+            return Ok(result);
+        }
     }
 }

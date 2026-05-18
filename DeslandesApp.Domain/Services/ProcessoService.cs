@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using ClosedXML.Excel;
 using DeslandesApp.Domain.Helpers;
 using DeslandesApp.Domain.Interfaces.Repositories;
 using DeslandesApp.Domain.Interfaces.Services;
@@ -559,6 +560,308 @@ namespace DeslandesApp.Domain.Services
             catch
             {
                 await unitOfWork.RollbackAsync();
+                throw;
+            }
+        }
+        public async Task<ResultadoImportacaoProcessoResponse> ImportarDistribuicaoAsync(
+     IFormFile file
+ )
+        {
+            if (file == null || file.Length == 0)
+            {
+                throw new InvalidOperationException(
+                    "Arquivo não enviado."
+                );
+            }
+
+            var resultado = new ResultadoImportacaoProcessoResponse
+            {
+                Sucesso = 0,
+                Falhas = 0,
+                Erros = new List<string>()
+            };
+
+            await unitOfWork.BeginTransactionAsync();
+
+            try
+            {
+                using var stream = new MemoryStream();
+
+                await file.CopyToAsync(stream);
+
+                stream.Position = 0;
+
+                using var workbook = new XLWorkbook(stream);
+
+                var worksheet = workbook.Worksheet(1);
+
+                var rows = worksheet.RowsUsed()
+                    .Skip(1)
+                    .ToList();
+
+                if (!rows.Any())
+                {
+                    throw new InvalidOperationException(
+                        "O arquivo não possui registros."
+                    );
+                }
+
+                // =========================
+                // DADOS AUXILIARES
+                // =========================
+                var usuarios = await unitOfWork
+                    .UsuarioRepository
+                    .GetAllAsync();
+
+                var todosProcessos = (await unitOfWork
+       .ProcessoRepository
+       .GetAllAsync())
+       .ToList();
+
+                var varaPadrao = await unitOfWork
+                    .VaraRepository
+                    .GetByAsync(x =>
+                        x.NomeVara == "NÃO INFORMADA"
+                    );
+
+                if (varaPadrao == null)
+                {
+                    throw new InvalidOperationException(
+                        "Vara padrão 'NÃO INFORMADA' não cadastrada."
+                    );
+                }
+
+                // =========================
+                // LOOP EXCEL
+                // =========================
+                foreach (var row in rows)
+                {
+                    try
+                    {
+                        // =========================
+                        // LEITURA
+                        // =========================
+                        var numeroProcesso = row.Cell(1)
+                            .GetString()
+                            ?.Trim();
+
+                        var loginResponsavel = row.Cell(2)
+                            .GetString()
+                            ?.Trim();
+
+                        if (string.IsNullOrWhiteSpace(numeroProcesso))
+                        {
+                            resultado.Falhas++;
+
+                            resultado.Erros.Add(
+                                $"Linha {row.RowNumber()}: Número do processo não informado."
+                            );
+
+                            continue;
+                        }
+
+                        if (string.IsNullOrWhiteSpace(loginResponsavel))
+                        {
+                            resultado.Falhas++;
+
+                            resultado.Erros.Add(
+                                $"Linha {row.RowNumber()}: Responsável não informado."
+                            );
+
+                            continue;
+                        }
+
+                        // =========================
+                        // NORMALIZA NÚMERO
+                        // =========================
+                        var numeroNormalizado =
+                            FunctionsHelper.SomenteNumeros(
+                                numeroProcesso
+                            );
+
+                        // =========================
+                        // BUSCA PROCESSO
+                        // =========================
+                        bool processoNovo = false;
+
+                        var processo = todosProcessos
+                            .FirstOrDefault(x =>
+                                !string.IsNullOrWhiteSpace(
+                                    x.NumeroProcesso
+                                )
+                                &&
+                                FunctionsHelper.SomenteNumeros(
+                                    x.NumeroProcesso
+                                ) == numeroNormalizado
+                            );
+
+                        // =========================
+                        // CRIA PROCESSO
+                        // =========================
+                        if (processo == null)
+                        {
+                            processoNovo = true;
+
+                            processo = new Processo
+                            {
+                                NumeroProcesso =
+                                    numeroProcesso.Trim(),
+
+                                Pasta =
+                                    numeroProcesso.Trim(),
+
+                                Titulo =
+                                    $"PROCESSO {numeroProcesso.Trim()}",
+
+                                VaraId = varaPadrao.Id,
+
+                                DataCadastro =
+                                    DateTime.Now,
+
+                                DataAtualizacao =
+                                    DateTime.Now,
+
+                                UsuarioCadastroId =
+                                    ObterUsuarioId()
+                            };
+
+                            await unitOfWork
+                                .ProcessoRepository
+                                .AddAsync(processo);
+
+                            todosProcessos.Add(processo);
+                        }
+
+                        // =========================
+                        // BUSCA USUÁRIO
+                        // =========================
+                        var loginNormalizado =
+                            loginResponsavel
+                                .Trim()
+                                .ToLower();
+
+                        var usuario = usuarios
+                            .FirstOrDefault(x =>
+                                !string.IsNullOrWhiteSpace(
+                                    x.Login
+                                )
+                                &&
+                                x.Login.Trim().ToLower()
+                                    == loginNormalizado
+                            );
+
+                        // =========================
+                        // FALLBACK NOME
+                        // =========================
+                        if (usuario == null)
+                        {
+                            usuario = usuarios
+                                .FirstOrDefault(x =>
+                                    !string.IsNullOrWhiteSpace(
+                                        x.NomeUsuario
+                                    )
+                                    &&
+                                    x.NomeUsuario.Trim()
+                                        .ToLower()
+                                        == loginNormalizado
+                                );
+                        }
+
+                        // =========================
+                        // USUÁRIO NÃO ENCONTRADO
+                        // =========================
+                        if (usuario == null)
+                        {
+                            resultado.Falhas++;
+
+                            resultado.Erros.Add(
+                                $"Linha {row.RowNumber()}: Usuário '{loginResponsavel}' não encontrado."
+                            );
+
+                            continue;
+                        }
+
+                        // =========================
+                        // RESPONSÁVEL ANTERIOR
+                        // =========================
+                        var responsavelAnterior =
+                            processo.UsuarioResponsavelId;
+
+                        // =========================
+                        // ATUALIZA PROCESSO
+                        // =========================
+                        processo.UsuarioResponsavelId =
+                            usuario.Id;
+
+                        processo.DataAtualizacao =
+                            DateTime.Now;
+
+                        // =========================
+                        // UPDATE SOMENTE SE EXISTIA
+                        // =========================
+                        if (!processoNovo)
+                        {
+                            await unitOfWork
+                                .ProcessoRepository
+                                .UpdateAsync(processo);
+                        }
+
+                        // =========================
+                        // HISTÓRICO
+                        // =========================
+                        await historicoGeralService
+                            .RegistrarAsync(
+                                TipoEntidade.Processo,
+                                processo.Id,
+                                ObterUsuarioId(),
+                                new
+                                {
+                                    ResponsavelAnterior =
+                                        responsavelAnterior
+                                },
+                                new
+                                {
+                                    NovoResponsavel =
+                                        usuario.NomeUsuario
+                                },
+                                "Distribuição automática via importação Excel"
+                            );
+
+                        // =========================
+                        // NOTIFICAÇÃO
+                        // =========================
+                        await notificacaoService
+                            .CriarNotificacaoAsync(
+                                usuario.Id,
+                                "Novo processo distribuído",
+                                processo.Titulo,
+                                TipoEntidade.Processo,
+                                processo.Id
+                            );
+
+                        resultado.Sucesso++;
+                    }
+                    catch (Exception ex)
+                    {
+                        resultado.Falhas++;
+
+                        resultado.Erros.Add(
+                            $"Linha {row.RowNumber()}: {ex.Message}"
+                        );
+                    }
+                }
+
+                // =========================
+                // COMMIT
+                // =========================
+                await unitOfWork.CommitAsync();
+
+                return resultado;
+            }
+            catch
+            {
+                await unitOfWork.RollbackAsync();
+
                 throw;
             }
         }

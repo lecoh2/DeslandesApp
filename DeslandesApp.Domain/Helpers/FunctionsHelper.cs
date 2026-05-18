@@ -262,6 +262,13 @@ namespace DeslandesApp.Domain.Helpers
                 || !string.IsNullOrWhiteSpace(info.Nacionalidade)
                 || !string.IsNullOrWhiteSpace(info.Comentario);
         }
-     
+        public static string SomenteNumeros(string texto)
+        {
+            if (string.IsNullOrWhiteSpace(texto))
+                return string.Empty;
+
+            return new string(texto.Where(char.IsDigit).ToArray());
+        }
+
     }
 }

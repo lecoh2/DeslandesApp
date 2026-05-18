@@ -23,6 +23,7 @@ public class Processo : BaseEntity
 
     public string? Observacao { get; set; }
     public DateTime DataCadastro { get; set; }
+    public DateTime? DataAtualizacao { get; set; }
     public Acao? Acao { get; set; }
    // public List<ProcessoEtiqueta> ProcessoEtiquetas { get; set; } = new();
     public ICollection<GrupoEnvolvidos> GrupoEnvolvidos { get; set; }

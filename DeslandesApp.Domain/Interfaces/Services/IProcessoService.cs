@@ -5,6 +5,7 @@ using DeslandesApp.Domain.Models.Dtos.Responses.Caso;
 using DeslandesApp.Domain.Models.Dtos.Responses.Processo;
 using DeslandesApp.Domain.Models.Dtos.Responses.Usuarios;
 using DeslandesApp.Domain.Utils;
+using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -22,5 +23,7 @@ namespace DeslandesApp.Domain.Interfaces.Services
         Task<List<GraficoProcessoResponse>> ConsultarGraficoProcesso();
         Task<int> ContarProcessoAnoAtual();
         Task<int> ContarTotal();
+   
+        Task<ResultadoImportacaoProcessoResponse> ImportarDistribuicaoAsync(IFormFile file);
     }
 }
