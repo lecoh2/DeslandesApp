@@ -57,6 +57,61 @@ namespace DeslandesApp.Infra.Data.Repositories
         private IGrupoEtiquetaCasoRepository? _grupoEtiquetaCasoRepository;
         private IAtendimentoHistoricoRepository? _atendimentoHistoricoRepository;
         private INotificacaoRepository? _notificacaoRepository;
+        private IContaReceberRepository? _contaReceberRepository;
+        private IContaPagarRepository? _contaPagarRepository;
+        private IBaixaFinanceiraRepository? _baixaFinanceiraRepository;
+        private ICentroCustoRepository? _centroCustoRepository;
+        private IContratoRepository? _contratoRepository;
+        public IContratoRepository ContratoRepository
+        {
+            get
+            {
+                if (_contratoRepository == null)
+                    _contratoRepository = new ContratoRepository(dataContext);
+
+                return _contratoRepository;
+            }
+        }
+        public ICentroCustoRepository CentroCustoRepository
+        {
+            get
+            {
+                if (_centroCustoRepository == null)
+                    _centroCustoRepository = new CentroCustoRepository(dataContext);
+
+                return _centroCustoRepository;
+            }
+        }
+        public IBaixaFinanceiraRepository BaixaFinanceiraRepository
+        {
+            get
+            {
+                if (_baixaFinanceiraRepository == null)
+                    _baixaFinanceiraRepository = new BaixaFinanceiraRepository(dataContext);
+
+                return _baixaFinanceiraRepository;
+            }
+        }
+        public IContaPagarRepository ContaPagarRepository
+        {
+            get
+            {
+                if (_contaPagarRepository == null)
+                    _contaPagarRepository = new ContaPagarRepository(dataContext);
+
+                return _contaPagarRepository;
+            }
+        }
+        public IContaReceberRepository ContaReceberRepository
+        {
+            get
+            {
+                if (_contaReceberRepository == null)
+                    _contaReceberRepository = new ContaReceberRepository(dataContext);
+
+                return _contaReceberRepository;
+            }
+        }
         public INotificacaoRepository NotificacaoRepository
         {
             get

@@ -4,9 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DeslandesApp.Domain.Models.Dtos.Requests.Conta
+namespace DeslandesApp.Domain.Models.Enum
 {
-    public record CriarContaFinanceiraUpdateRequest
+    public enum TipoCategoriaFinanceira
     {
+        Receita = 1,
+        Despesa = 2
     }
 }

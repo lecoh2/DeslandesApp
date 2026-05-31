@@ -16,6 +16,7 @@ namespace DeslandesApp.Infra.Data.Contexts
         //as configurações do banco de dados, como conexão, tipo etc. 
         public DataContext(DbContextOptions<DataContext> options) : base(options) { }
         public DbSet<Usuario> Usuario { get; set; }
+        public DbSet<Contrato> Contrato { get; set; }
         public DbSet<LoginHistory> LoginHistory { get; set; }
         public DbSet<FailedLoginAttempt> FailedLoginAttempt { get; set; }
         public DbSet<Niveis> Niveis { get; set; }
@@ -27,7 +28,7 @@ namespace DeslandesApp.Infra.Data.Contexts
         public DbSet<PessoaFisica> PessoasFisicas { get; set; }
         public DbSet<PessoaJuridica> PessoaJuridica { get; set; }
         public DbSet<Qualificacao> Qualificacao { get; set; }
-        
+        public DbSet<ContaReceber> ContaReceber { get; set; }
         public DbSet<AtendimentoHistorico> AtendimentoHistorico { get; set; }
         public DbSet<InformacoesComplementaresPessoaJuridica> InformacoesComplementaresPessoaJuridicas { get; set; }
         public DbSet<Processo> Processos { get; set; }
@@ -61,6 +62,12 @@ namespace DeslandesApp.Infra.Data.Contexts
         public DbSet<Comentario> Comentario { get; set; }
         public DbSet<HistoricoGeral> HistoricoGeral { get; set; }
         public DbSet<Notificacao> Notificacoes { get; set; }
+     
+        public DbSet<ContaPagar> ContaPagar { get; set; }
+        public DbSet<BaixaFinanceira> BaixaFinanceira { get; set; }
+        public DbSet<FormaPagamento> FormaPagamento { get; set; }
+        public DbSet<CategoriaFinanceira> CategoriaFinanceira { get; set; }
+      
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);

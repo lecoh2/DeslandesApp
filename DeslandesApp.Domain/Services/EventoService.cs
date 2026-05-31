@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using DeslandesApp.Domain.Exceptions;
 using DeslandesApp.Domain.Helpers;
 using DeslandesApp.Domain.Interfaces.Repositories;
 using DeslandesApp.Domain.Interfaces.Services;
@@ -87,20 +88,20 @@ namespace DeslandesApp.Domain.Services
                 // 🔁 RECORRÊNCIA
                 // =========================
                 if (evento.IntervaloRecorrencia < 1)
-                    throw new InvalidOperationException("Intervalo da recorrência deve ser maior ou igual a 1.");
+                    throw new BusinessException("Intervalo da recorrência deve ser maior ou igual a 1.");
 
                 if (evento.TipoRecorrencia != TipoRecorrencia.Nenhuma)
                 {
                     if (evento.DataFimRecorrencia.HasValue && evento.QuantidadeOcorrencias.HasValue)
-                        throw new InvalidOperationException("Informe apenas DataFimRecorrencia ou QuantidadeOcorrencias.");
+                        throw new BusinessException("Informe apenas DataFimRecorrencia ou QuantidadeOcorrencias.");
 
                     if (!evento.DataFimRecorrencia.HasValue && !evento.QuantidadeOcorrencias.HasValue)
-                        throw new InvalidOperationException("Recorrência precisa de um critério de término.");
+                        throw new BusinessException("Recorrência precisa de um critério de término.");
 
                     if (evento.TipoRecorrencia == TipoRecorrencia.Semanal &&
                         (evento.DiasSemana == null || !evento.DiasSemana.Any()))
                     {
-                        throw new InvalidOperationException("Informe ao menos um dia da semana para recorrência semanal.");
+                        throw new BusinessException("Informe ao menos um dia da semana para recorrência semanal.");
                     }
                 }
                 else
@@ -129,21 +130,21 @@ namespace DeslandesApp.Domain.Services
                 {
                     var processo = await unitOfWork.ProcessoRepository.GetByIdAsync(request.ProcessoId.Value);
                     if (processo == null)
-                        throw new InvalidOperationException("Processo não encontrado.");
+                        throw new BusinessException("Processo não encontrado.");
                 }
 
                 if (request.CasoId.HasValue)
                 {
                     var caso = await unitOfWork.CasoRepository.GetByIdAsync(request.CasoId.Value);
                     if (caso == null)
-                        throw new InvalidOperationException("Caso não encontrado.");
+                        throw new BusinessException("Caso não encontrado.");
                 }
 
                 if (request.AtendimentoId.HasValue)
                 {
                     var atendimento = await unitOfWork.AtendimentoRepository.GetByIdAsync(request.AtendimentoId.Value);
                     if (atendimento == null)
-                        throw new InvalidOperationException("Atendimento não encontrado.");
+                        throw new BusinessException("Atendimento não encontrado.");
                 }
 
                 // =========================
@@ -170,7 +171,7 @@ namespace DeslandesApp.Domain.Services
                         var usuario = await unitOfWork.UsuarioRepository.GetByIdAsync(item.UsuarioId);
 
                         if (usuario == null)
-                            throw new InvalidOperationException($"Usuário {item.UsuarioId} não encontrado.");
+                            throw new BusinessException($"Usuário {item.UsuarioId} não encontrado.");
 
                         await unitOfWork.GrupoEventoResponsavelRepository.AddAsync(
                             new GrupoEventoResponsavel
@@ -193,7 +194,7 @@ namespace DeslandesApp.Domain.Services
                             .GetByIdAsync(grupoEtiqueta.EtiquetaId);
 
                         if (etiqueta == null)
-                            throw new InvalidOperationException("Etiqueta não encontrada.");
+                            throw new BusinessException("Etiqueta não encontrada.");
 
                         await unitOfWork.GrupoEventoEtiquetasRepository.AddAsync(
                             new GrupoEventoEtiquetas

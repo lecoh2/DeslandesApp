@@ -12,13 +12,14 @@ namespace DeslandesApp.Domain.Models.Entities
 {
     public abstract class Pessoa : BaseEntity
     {
-        public string? Nome { get; set; } = string.Empty;    
-        public string? Apelido { get; set; } = string.Empty; 
-        public string? Telefone { get; set; } = string.Empty;               
+
+
+
+        public string? Nome { get; set; } = string.Empty;
+        public string? Apelido { get; set; } = string.Empty;
+        public string? Telefone { get; set; } = string.Empty;
         public string? Site { get; set; } = string.Empty;
-        public DateTime? DataCadastro { get; set; }
-        public DateTime? DataAtualizacao { get; set; }       
-      //  public Guid? IdSexo { get; set; }
+        //  public Guid? IdSexo { get; set; }
         public Guid? IdUsuario { get; set; }
         #region Relacionamento
         public Endereco? Endereco { get; set; }
@@ -27,11 +28,11 @@ namespace DeslandesApp.Domain.Models.Entities
         public ICollection<GrupoClienteProcesso>? GrupoClienteProcesso { get; set; }
         public ICollection<GrupoEnvolvidosProcesso>? GrupoEnvolvidosProcesso { get; set; }
         public ICollection<GrupoEnvolvidos>? GrupoEnvolvidos { get; set; }
-       
+
         public ICollection<ContaBancaria>? ContasBancarias { get; set; } = new List<ContaBancaria>();
-       // public Sexo? Sexo { get; set; }
+        // public Sexo? Sexo { get; set; }
         public Usuario? Usuario { get; set; }            // Usuário vinculado
-       // public Usuario? UsuarioCadastro { get; set; }    // Usuário que cadastrou
+                                                         // public Usuario? UsuarioCadastro { get; set; }    // Usuário que cadastrou
         public ValorEmail? ValorEmail { get; set; }              // Email principal vinculado
         #endregion
 

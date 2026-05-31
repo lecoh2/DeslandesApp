@@ -191,6 +191,12 @@ builder.Services.AddSingleton<IUserIdProvider, CustomUserIdProvider>();
 builder.Services.AddHangfireServer();
 builder.Services.AddSignalR(); 
 builder.Services.AddApiServices();
+
+//builder.WebHost.ConfigureKestrel(options =>
+//{
+//    options.ListenAnyIP(300); // qualquer IP da máquina
+//});
+
 //
 // ================================
 // APP
@@ -203,7 +209,12 @@ var app = builder.Build();
 // MIDDLEWARES
 // ================================
 //
-app.UseDeveloperExceptionPage();
+//app.UseDeveloperExceptionPage(); voltar 
+
+if (app.Environment.IsDevelopment())
+{
+    app.UseDeveloperExceptionPage();
+}
 
 app.UseMiddleware<ExceptionMiddleware>();
 

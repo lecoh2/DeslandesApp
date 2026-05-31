@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using DeslandesApp.Domain.Contracts.Security;
+using DeslandesApp.Domain.Exceptions;
 using DeslandesApp.Domain.Helpers;
 using DeslandesApp.Domain.Interfaces.Repositories;
 using DeslandesApp.Domain.Interfaces.Services;
@@ -55,13 +56,13 @@ namespace DeslandesApp.Domain.Services
                 // VALIDAÇÕES
                 // =========================
                 if (string.IsNullOrWhiteSpace(usuario.NomeUsuario))
-                    throw new ApplicationException("Nome do usuário é obrigatório.");
+                    throw new BusinessException("Nome do usuário é obrigatório.");
 
                 if (string.IsNullOrWhiteSpace(usuario.Login))
-                    throw new ApplicationException("Login é obrigatório.");
+                    throw new BusinessException("Login é obrigatório.");
 
                 if (string.IsNullOrWhiteSpace(usuario.Senha))
-                    throw new ApplicationException("Senha é obrigatória.");
+                    throw new BusinessException("Senha é obrigatória.");
 
                 // =========================
                 // NORMALIZAÇÃO
@@ -102,7 +103,7 @@ namespace DeslandesApp.Domain.Services
                         u => u.Login == usuario.Login);
 
                 if (existenteLogin != null)
-                    throw new InvalidOperationException("Login já utilizado.");
+                    throw new BusinessException("Login já utilizado.");
 
                 // =========================
                 // VERIFICAR NOME
@@ -112,7 +113,7 @@ namespace DeslandesApp.Domain.Services
                         u => u.NomeUsuario == usuario.NomeUsuario);
 
                 if (existenteNome != null)
-                    throw new InvalidOperationException("Nome de usuário já utilizado.");
+                    throw new BusinessException("Nome de usuário já utilizado.");
 
                 // =========================
                 // VERIFICAR EMAIL
@@ -133,7 +134,7 @@ namespace DeslandesApp.Domain.Services
                         );
 
                     if (emailExistente != null)
-                        throw new InvalidOperationException("E-mail já utilizado.");
+                        throw new BusinessException("E-mail já utilizado.");
                 }
 
                 // =========================
@@ -214,7 +215,7 @@ namespace DeslandesApp.Domain.Services
                 var usuario = await unitOfWork.UsuarioRepository.GetByIdAsync(id);
 
                 if (usuario == null)
-                    throw new ApplicationException("Usuário não encontrado.");
+                    throw new BusinessException("Usuário não encontrado.");
 
                 var usuarioId = ObterUsuarioId();
 
@@ -430,7 +431,7 @@ namespace DeslandesApp.Domain.Services
         public async Task<AutenticarUsuarioResponse> AutenticarUsuarioAsync(AutenticarUsuarioRequest request, string ip,string userAgent)
         {
             if (request == null)
-                throw new ApplicationException("Requisição inválida.");
+                throw new BusinessException("Requisição inválida.");
 
             // Delay aleatório para reduzir brute force
             var rnd = new Random();
@@ -459,7 +460,7 @@ namespace DeslandesApp.Domain.Services
 
                     await unitOfWork.CommitAsync();
 
-                    throw new ApplicationException("Credenciais inválidas.");
+                    throw new BusinessException("Credenciais inválidas.");
                 }
 
                 // 3️⃣ Conta bloqueada
@@ -478,7 +479,7 @@ namespace DeslandesApp.Domain.Services
 
                     await unitOfWork.CommitAsync();
 
-                    throw new ApplicationException("Conta bloqueada. Contate o administrador.");
+                    throw new BusinessException("Conta bloqueada. Contate o administrador.");
                 }
 
                 // 4️⃣ Validar senha
@@ -537,7 +538,7 @@ namespace DeslandesApp.Domain.Services
                         await unitOfWork.CommitAsync();
                     }
 
-                    throw new ApplicationException("Credenciais inválidas.");
+                    throw new BusinessException("Credenciais inválidas.");
                 }
 
                 // 6️⃣ Login sucesso
@@ -599,7 +600,7 @@ namespace DeslandesApp.Domain.Services
                 .GetUsuariosComRelacionamentosPerfilAsync(id);
 
             if (u == null)
-                throw new ApplicationException("Usuário não encontrado.");
+                throw new BusinessException("Usuário não encontrado.");
 
             var foto = u.Fotos != null
                 ? new FotoResponse
@@ -675,14 +676,14 @@ namespace DeslandesApp.Domain.Services
         public async Task DesbloquearUsuario(Guid id)
         {
             if (id == Guid.Empty)
-                throw new ApplicationException("Id do usuário inválido.");
+                throw new BusinessException("Id do usuário inválido.");
 
             await unitOfWork.BeginTransactionAsync();
 
             var usuario = await unitOfWork.UsuarioRepository.GetByIdAsync(id);
 
             if (usuario == null)
-                throw new ApplicationException("Usuário não encontrado.");
+                throw new BusinessException("Usuário não encontrado.");
 
             // Remove tentativas
             await unitOfWork.FailedLoginAttemptRepository

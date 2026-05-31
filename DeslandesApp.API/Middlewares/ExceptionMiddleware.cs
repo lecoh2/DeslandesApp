@@ -1,4 +1,5 @@
-﻿using FluentValidation;
+﻿using DeslandesApp.Domain.Exceptions;
+using FluentValidation;
 using System.Net;
 using System.Text.Json;
 
@@ -7,6 +8,7 @@ namespace DeslandesApp.API.Middlewares
     public class ExceptionMiddleware
     {
         private readonly RequestDelegate _next;
+
         public ExceptionMiddleware(RequestDelegate next)
         {
             _next = next;
@@ -23,76 +25,111 @@ namespace DeslandesApp.API.Middlewares
                 await HandleExceptionAsync(context, ex);
             }
         }
+
         private static async Task HandleExceptionAsync(HttpContext context, Exception ex)
         {
             context.Response.ContentType = "application/json";
-            var response = context.Response;
 
-            var result = new ErrorResponse();
+            var response = new ErrorResponse();
 
             switch (ex)
             {
+                // =========================
+                // FLUENT VALIDATION
+                // =========================
                 case ValidationException validationEx:
-                    response.StatusCode = (int)HttpStatusCode.BadRequest;
-                    result.StatusCode = response.StatusCode;
-                    result.Message = "Erros de validação encontrados.";
-                    result.Errors = validationEx.Errors
-                        .Select(e => new ValidationError
+                    context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
+
+                    response = new ErrorResponse
+                    {
+                        StatusCode = context.Response.StatusCode,
+                        Message = "Erros de validação encontrados.",
+                        Errors = validationEx.Errors.Select(e => new ValidationError
                         {
                             Campo = e.PropertyName,
                             Erro = e.ErrorMessage
-                        })
-                        .ToList();
+                        }).ToList()
+                    };
+                    break;
+
+                // =========================
+                // BUSINESS RULE (SUA REGRA PRINCIPAL)
+                // =========================
+                case BusinessException businessEx:
+                    context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
+
+                    response = new ErrorResponse
+                    {
+                        StatusCode = context.Response.StatusCode,
+                        Message = businessEx.Message
+                    };
+                    break;
+
+                // =========================
+                // NOT FOUND
+                // =========================
+                case KeyNotFoundException notFoundEx:
+                    context.Response.StatusCode = (int)HttpStatusCode.NotFound;
+
+                    response = new ErrorResponse
+                    {
+                        StatusCode = context.Response.StatusCode,
+                        Message = notFoundEx.Message
+                    };
+                    break;
+
+                // =========================
+                // OUTROS ERROS DE NEGÓCIO GENÉRICOS
+                // =========================
+                case InvalidOperationException invalidEx:
+                    context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
+
+                    response = new ErrorResponse
+                    {
+                        StatusCode = context.Response.StatusCode,
+                        Message = invalidEx.Message
+                    };
                     break;
 
                 case ApplicationException appEx:
-                    response.StatusCode = (int)HttpStatusCode.BadRequest;
-                    result.StatusCode = response.StatusCode;
-                    result.Message = appEx.Message;
+                    context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
+
+                    response = new ErrorResponse
+                    {
+                        StatusCode = context.Response.StatusCode,
+                        Message = appEx.Message
+                    };
                     break;
 
-                case InvalidOperationException invalidOpEx:
-                    response.StatusCode = (int)HttpStatusCode.BadRequest;
-                    result.StatusCode = response.StatusCode;
-                    result.Message = invalidOpEx.Message;
-                    break;
-
-                case KeyNotFoundException keyEx:
-                    response.StatusCode = (int)HttpStatusCode.NotFound;
-                    result.StatusCode = response.StatusCode;
-                    result.Message = keyEx.Message;
-                    break;
-
-                //default:
-                //    response.StatusCode = (int)HttpStatusCode.InternalServerError;
-                //    result.StatusCode = response.StatusCode;
-                //    result.Message = ex.Message; // mostrar erro real
-                //    break;
+                // =========================
+                // ERRO GENÉRICO
+                // =========================
                 default:
-                    response.StatusCode = (int)HttpStatusCode.InternalServerError;
-                    result.StatusCode = response.StatusCode;
-                    result.Message = ex.Message;
+                    context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
 
-                    result.Errors = new List<ValidationError>
-    {
-        new ValidationError
-        {
-            Campo = "InnerException",
-            Erro = ex.InnerException?.Message ?? "Sem inner exception"
-        }
-    };
+                    response = new ErrorResponse
+                    {
+                        StatusCode = context.Response.StatusCode,
+                        Message = "Erro inesperado no servidor."
+                    };
+
+                    Console.WriteLine(ex);
                     break;
             }
 
-            var json = JsonSerializer.Serialize(result, new JsonSerializerOptions
+            var json = JsonSerializer.Serialize(response, new JsonSerializerOptions
             {
                 PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-                WriteIndented = true
+                WriteIndented = false
             });
 
             await context.Response.WriteAsync(json);
         }
     }
+
+    // =========================
+    // RESPONSE PADRÃO
+    // =========================
     public class ErrorResponse
     {
         public int StatusCode { get; set; }
