@@ -1,5 +1,6 @@
 ﻿using DeslandesApp.Domain.Models.Dtos.Requests.CentroCusto;
 using DeslandesApp.Domain.Models.Dtos.Responses.CentroCusto;
+using DeslandesApp.Domain.Models.Dtos.Responses.Processo;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,5 +17,6 @@ namespace DeslandesApp.Domain.Interfaces.Services
             Guid>
     {
         Task<List<CentroCustoResponse>> ConsultarAsync();
+        Task<ObterCentroCustoResponse?> ObterPorIdAsync(Guid id);
     }
 }

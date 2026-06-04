@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace DeslandesApp.Domain.Models.Dtos.Responses.Contrato
 {
-    public class ContratoResponse
+    public class ObterContratoResponse
     {
         public Guid Id { get; set; }
 
@@ -22,6 +22,6 @@ namespace DeslandesApp.Domain.Models.Dtos.Responses.Contrato
         public DateTime DataInicio { get; set; }
 
         public DateTime? DataFim { get; set; }
-        public List<ContratoProcessoResponse> Processos { get; set; }
+        public List<ContratoProcessoResponse> Processos { get; set; } = new();
     }
 }

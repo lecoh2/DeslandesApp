@@ -1,7 +1,11 @@
 ﻿using AutoMapper;
 using DeslandesApp.Domain.Interfaces.Repositories;
+using DeslandesApp.Domain.Interfaces.Services;
+using DeslandesApp.Domain.Models.Dtos.Requests.Conta;
+using DeslandesApp.Domain.Models.Dtos.Responses.Conta;
 using DeslandesApp.Domain.Models.Entities;
 using DeslandesApp.Domain.Models.Enum;
+using DeslandesApp.Domain.Utils;
 using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
@@ -15,7 +19,7 @@ namespace DeslandesApp.Domain.Services
         IUnitOfWork unitOfWork,
         IMapper mapper,
         IHttpContextAccessor httpContextAccessor
-    ) : BaseService(httpContextAccessor)
+    ) : BaseService(httpContextAccessor), IContaPagarService
     {
         public async Task<ContaPagar> AdicionarAsync(ContaPagar conta)
         {
@@ -37,6 +41,11 @@ namespace DeslandesApp.Domain.Services
                 await unitOfWork.RollbackAsync();
                 throw;
             }
+        }
+
+        public Task<ContaPagarResponse> AdicionarAsync(ContaPagarRequest request)
+        {
+            throw new NotImplementedException();
         }
 
         public async Task BaixarAsync(Guid id, decimal valorPago)
@@ -69,6 +78,36 @@ namespace DeslandesApp.Domain.Services
                 await unitOfWork.RollbackAsync();
                 throw;
             }
+        }
+
+        public Task BaixarAsync(Guid id, ContaPagarUpdateRequest request)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<List<ContaPagarResponse>> ConsultarAsync()
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<PageResult<ContaPagarResponse>> ConsultarAsync(int pageNumber, int pageSize)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Dispose()
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<ContaPagarResponse> ExcluirAsync(Guid id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<ContaPagarResponse> ModificarAsync(Guid id, ContaPagarUpdateRequest request)
+        {
+            throw new NotImplementedException();
         }
     }
 }

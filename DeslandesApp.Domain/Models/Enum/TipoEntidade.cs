@@ -16,5 +16,8 @@ namespace DeslandesApp.Domain.Models.Enum
         Cliente = 6,
         Usuario = 7,
         Pessoa = 8,
+        CentroCusto = 9,
+        Contrato = 10,
+        CategoriaFinanceira = 11,
     }
 }

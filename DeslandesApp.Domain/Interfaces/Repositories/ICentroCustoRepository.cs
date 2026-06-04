@@ -10,5 +10,6 @@ namespace DeslandesApp.Domain.Interfaces.Repositories
     public interface ICentroCustoRepository
           : IBaseRepository<CentroCusto, Guid>
     {
+        Task<CentroCusto?> ObterCompletoPorIdAsync(Guid id);
     }
 }

@@ -62,6 +62,30 @@ namespace DeslandesApp.Infra.Data.Repositories
         private IBaixaFinanceiraRepository? _baixaFinanceiraRepository;
         private ICentroCustoRepository? _centroCustoRepository;
         private IContratoRepository? _contratoRepository;
+        private IContratoProcessoRepository? _contratoProcessoRepository;
+        private ICategoriaFinanceiraRepository? _categoriaFinanceiraRepository;
+        public ICategoriaFinanceiraRepository CategoriaFinanceiraRepository
+        {
+            get
+            {
+                if (_categoriaFinanceiraRepository == null)
+                    _categoriaFinanceiraRepository = new CategoriaFinanceiraRepository(dataContext);
+
+                return _categoriaFinanceiraRepository;
+            }
+        }
+        public IContratoProcessoRepository ContratoProcessoRepository
+        {
+            get
+            {
+                if (_contratoProcessoRepository == null)
+                    _contratoProcessoRepository = new ContratoProcessoRepository(dataContext);
+
+                return _contratoProcessoRepository;
+            }
+        }
+
+
         public IContratoRepository ContratoRepository
         {
             get

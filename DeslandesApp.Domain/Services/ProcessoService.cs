@@ -178,7 +178,7 @@ namespace DeslandesApp.Domain.Services
                             .GetByIdAsync(grupoEtiqueta.EtiquetaId);
 
                         if (etiqueta == null)
-                            throw new InvalidOperationException("Etiqueta não encontrada.");
+                            throw new BusinessException("Etiqueta não encontrada.");
 
                         await unitOfWork.GrupoEtiquetasProcessosRepository.AddAsync(
                             new GrupoEtiquetasProcessos
@@ -580,7 +580,7 @@ namespace DeslandesApp.Domain.Services
         {
             if (file == null || file.Length == 0)
             {
-                throw new InvalidOperationException(
+                throw new BusinessException(
                     "Arquivo não enviado."
                 );
             }
@@ -615,7 +615,7 @@ namespace DeslandesApp.Domain.Services
 
                 if (!rows.Any())
                 {
-                    throw new InvalidOperationException(
+                    throw new BusinessException(
                         "O arquivo não possui registros."
                     );
                 }
@@ -640,7 +640,7 @@ namespace DeslandesApp.Domain.Services
 
                 if (varaPadrao == null)
                 {
-                    throw new InvalidOperationException(
+                    throw new BusinessException(
                         "Vara padrão 'NÃO INFORMADA' não cadastrada."
                     );
                 }

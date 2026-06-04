@@ -92,8 +92,8 @@ namespace DeslandesApp.Infra.Data.Repositories
                 termo = termo.Trim();
 
                 query = query.Where(p =>
-                 
-                    p.Pasta.Contains(termo)
+                    (p.Pasta != null && p.Pasta.Contains(termo)) ||
+                    (p.NumeroProcesso != null && p.NumeroProcesso.Contains(termo))
                 );
             }
 
@@ -101,9 +101,8 @@ namespace DeslandesApp.Infra.Data.Repositories
                 .Select(p => new ProcessoAutoComplete
                 {
                     Id = p.Id,
-                   
                     Pasta = p.Pasta,
-     
+                    NumeroProcesso = p.NumeroProcesso
                 })
                 .OrderBy(p => p.Pasta)
                 .Take(20)

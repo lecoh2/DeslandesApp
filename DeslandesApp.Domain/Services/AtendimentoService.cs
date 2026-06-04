@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using DeslandesApp.Domain.Exceptions;
 using DeslandesApp.Domain.Helpers;
 using DeslandesApp.Domain.Interfaces.Repositories;
 using DeslandesApp.Domain.Interfaces.Services;
@@ -206,7 +207,7 @@ namespace DeslandesApp.Domain.Services
                         .GetByIdAsync(request.ProcessoId.Value);
 
                     if (processo == null)
-                        throw new InvalidOperationException("Processo não encontrado.");
+                        throw new BusinessException("Processo não encontrado.");
                 }
 
                 if (request.CasoId.HasValue)
@@ -215,7 +216,7 @@ namespace DeslandesApp.Domain.Services
                         .GetByIdAsync(request.CasoId.Value);
 
                     if (caso == null)
-                        throw new InvalidOperationException("Caso não encontrado.");
+                        throw new BusinessException("Caso não encontrado.");
                 }
 
                 if (request.AtendimentoPaiId.HasValue)
@@ -224,7 +225,7 @@ namespace DeslandesApp.Domain.Services
                         .GetByIdAsync(request.AtendimentoPaiId.Value);
 
                     if (atendimentoPai == null)
-                        throw new InvalidOperationException("Atendimento pai não encontrado.");
+                        throw new BusinessException("Atendimento pai não encontrado.");
                 }
 
                 // =========================
@@ -246,7 +247,7 @@ namespace DeslandesApp.Domain.Services
                         .GetByIdAsync(atendimento.ResponsavelId.Value);
 
                     if (usuario == null)
-                        throw new InvalidOperationException("Responsável não encontrado.");
+                        throw new BusinessException("Responsável não encontrado.");
                 }
 
                 // =========================
@@ -265,7 +266,7 @@ namespace DeslandesApp.Domain.Services
                             .GetByIdAsync(item.PessoaId.Value);
 
                         if (pessoa == null)
-                            throw new InvalidOperationException("Pessoa não encontrada.");
+                            throw new BusinessException("Pessoa não encontrada.");
 
                         await unitOfWork
                             .GrupoAtendimentoClienteRepository
@@ -288,7 +289,7 @@ namespace DeslandesApp.Domain.Services
                             .GetByIdAsync(item.EtiquetaId);
 
                         if (etiqueta == null)
-                            throw new InvalidOperationException("Etiqueta não encontrada.");
+                            throw new BusinessException("Etiqueta não encontrada.");
 
                         await unitOfWork
                             .GrupoEtiquetasAtendimentoRepository
@@ -383,7 +384,7 @@ namespace DeslandesApp.Domain.Services
                 var atendimento = await unitOfWork
                     .AtendimentoRepository
                     .GetByIdAsync(id)
-                    ?? throw new ApplicationException(
+                    ?? throw new BusinessException(
                         "Atendimento não encontrado."
                     );
 
@@ -477,7 +478,7 @@ namespace DeslandesApp.Domain.Services
 
                     if (responsavel == null)
                     {
-                        throw new InvalidOperationException(
+                        throw new BusinessException(
                             "Responsável não encontrado."
                         );
                     }

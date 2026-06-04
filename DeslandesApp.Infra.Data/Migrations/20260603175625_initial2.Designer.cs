@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DeslandesApp.Infra.Data.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20260428131823_initial")]
-    partial class initial
+    [Migration("20260603175625_initial2")]
+    partial class initial2
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -32,6 +32,22 @@ namespace DeslandesApp.Infra.Data.Migrations
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("ID");
 
+                    b.Property<DateTime?>("DataAtualizacao")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("DATAATUALIZACAO");
+
+                    b.Property<DateTime>("DataCadastro")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("DATACADASTRO");
+
+                    b.Property<DateTime?>("DataExclusao")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("DATAEXCLUSAO");
+
+                    b.Property<bool>("Excluido")
+                        .HasColumnType("bit")
+                        .HasColumnName("EXCLUIDO");
+
                     b.Property<string>("NomeAcao")
                         .IsRequired()
                         .HasMaxLength(150)
@@ -39,8 +55,19 @@ namespace DeslandesApp.Infra.Data.Migrations
                         .HasColumnType("varchar(150)")
                         .HasColumnName("NOMEACAO");
 
+                    b.Property<Guid?>("UsuarioCadastroId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("USUARIOCADASTROID");
+
+                    b.Property<Guid?>("UsuarioExclusaoId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("USUARIOEXCLUSAOID");
+
                     b.HasKey("Id")
                         .HasName("PK_ACAO");
+
+                    b.HasIndex("UsuarioCadastroId")
+                        .HasDatabaseName("IX_ACAO_USUARIOCADASTROID");
 
                     b.ToTable("ACAO", (string)null);
                 });
@@ -75,6 +102,14 @@ namespace DeslandesApp.Infra.Data.Migrations
                         .HasColumnType("datetime2")
                         .HasColumnName("DATACADASTRO");
 
+                    b.Property<DateTime?>("DataExclusao")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("DATAEXCLUSAO");
+
+                    b.Property<bool>("Excluido")
+                        .HasColumnType("bit")
+                        .HasColumnName("EXCLUIDO");
+
                     b.Property<Guid?>("ProcessoId")
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("PROCESSOID");
@@ -94,6 +129,14 @@ namespace DeslandesApp.Infra.Data.Migrations
                         .HasColumnType("int")
                         .HasColumnName("TIPOVINCULO");
 
+                    b.Property<Guid?>("UsuarioCadastroId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("USUARIOCADASTROID");
+
+                    b.Property<Guid?>("UsuarioExclusaoId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("USUARIOEXCLUSAOID");
+
                     b.HasKey("Id")
                         .HasName("PK_ATENDIMENTO");
 
@@ -108,6 +151,9 @@ namespace DeslandesApp.Infra.Data.Migrations
 
                     b.HasIndex("ResponsavelId")
                         .HasDatabaseName("IX_ATENDIMENTO_RESPONSAVELID");
+
+                    b.HasIndex("UsuarioCadastroId")
+                        .HasDatabaseName("IX_ATENDIMENTO_USUARIOCADASTROID");
 
                     b.ToTable("ATENDIMENTO", (string)null);
                 });
@@ -139,6 +185,22 @@ namespace DeslandesApp.Infra.Data.Migrations
                         .HasColumnType("datetime2")
                         .HasColumnName("DATAALTERACAO");
 
+                    b.Property<DateTime?>("DataAtualizacao")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("DATAATUALIZACAO");
+
+                    b.Property<DateTime>("DataCadastro")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("DATACADASTRO");
+
+                    b.Property<DateTime?>("DataExclusao")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("DATAEXCLUSAO");
+
+                    b.Property<bool>("Excluido")
+                        .HasColumnType("bit")
+                        .HasColumnName("EXCLUIDO");
+
                     b.Property<Guid?>("IdUsuario")
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("USUARIO_ID");
@@ -149,6 +211,14 @@ namespace DeslandesApp.Infra.Data.Migrations
                         .HasColumnType("VARCHAR(255)")
                         .HasColumnName("OBSERVACAO");
 
+                    b.Property<Guid?>("UsuarioCadastroId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("USUARIOCADASTROID");
+
+                    b.Property<Guid?>("UsuarioExclusaoId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("USUARIOEXCLUSAOID");
+
                     b.HasKey("Id")
                         .HasName("PK_ATENDIMENTOHISTORICO");
 
@@ -158,7 +228,100 @@ namespace DeslandesApp.Infra.Data.Migrations
                     b.HasIndex("IdUsuario")
                         .HasDatabaseName("IX_ATENDIMENTOHISTORICO_USUARIO_ID");
 
+                    b.HasIndex("UsuarioCadastroId")
+                        .HasDatabaseName("IX_ATENDIMENTOHISTORICO_USUARIOCADASTROID");
+
                     b.ToTable("ATENDIMENTOHISTORICO", (string)null);
+                });
+
+            modelBuilder.Entity("DeslandesApp.Domain.Models.Entities.BaixaFinanceira", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("ID");
+
+                    b.Property<Guid?>("ContaBancariaEmpresaId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("CONTABANCARIAEMPRESAID");
+
+                    b.Property<Guid?>("ContaPagarId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("CONTAPAGARID");
+
+                    b.Property<Guid?>("ContaReceberId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("CONTARECEBERID");
+
+                    b.Property<Guid?>("ContaReceberId1")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("CONTARECEBERID1");
+
+                    b.Property<DateTime?>("DataAtualizacao")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("DATAATUALIZACAO");
+
+                    b.Property<DateTime>("DataBaixa")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("DATABAIXA");
+
+                    b.Property<DateTime>("DataCadastro")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("DATACADASTRO");
+
+                    b.Property<DateTime?>("DataExclusao")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("DATAEXCLUSAO");
+
+                    b.Property<bool>("Excluido")
+                        .HasColumnType("bit")
+                        .HasColumnName("EXCLUIDO");
+
+                    b.Property<Guid>("FormaPagamentoId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("FORMAPAGAMENTOID");
+
+                    b.Property<string>("Observacao")
+                        .HasMaxLength(250)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(250)")
+                        .HasColumnName("OBSERVACAO");
+
+                    b.Property<Guid?>("UsuarioCadastroId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("USUARIOCADASTROID");
+
+                    b.Property<Guid?>("UsuarioExclusaoId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("USUARIOEXCLUSAOID");
+
+                    b.Property<decimal>("ValorPago")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)")
+                        .HasColumnName("VALORPAGO");
+
+                    b.HasKey("Id")
+                        .HasName("PK_BAIXA_FINANCEIRA");
+
+                    b.HasIndex("ContaBancariaEmpresaId")
+                        .HasDatabaseName("IX_BAIXA_FINANCEIRA_CONTABANCARIAEMPRESAID");
+
+                    b.HasIndex("ContaPagarId")
+                        .HasDatabaseName("IX_BAIXA_FINANCEIRA_CONTAPAGARID");
+
+                    b.HasIndex("ContaReceberId")
+                        .HasDatabaseName("IX_BAIXA_FINANCEIRA_CONTARECEBERID");
+
+                    b.HasIndex("ContaReceberId1")
+                        .HasDatabaseName("IX_BAIXA_FINANCEIRA_CONTARECEBERID1");
+
+                    b.HasIndex("FormaPagamentoId")
+                        .HasDatabaseName("IX_BAIXA_FINANCEIRA_FORMAPAGAMENTOID");
+
+                    b.HasIndex("UsuarioCadastroId")
+                        .HasDatabaseName("IX_BAIXA_FINANCEIRA_USUARIOCADASTROID");
+
+                    b.ToTable("BAIXA_FINANCEIRA", (string)null);
                 });
 
             modelBuilder.Entity("DeslandesApp.Domain.Models.Entities.Caso", b =>
@@ -172,9 +335,17 @@ namespace DeslandesApp.Infra.Data.Migrations
                         .HasColumnType("int")
                         .HasColumnName("ACESSO");
 
+                    b.Property<DateTime?>("DataAtualizacao")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("DATAATUALIZACAO");
+
                     b.Property<DateTime?>("DataCadastro")
                         .HasColumnType("datetime2")
                         .HasColumnName("DATACADASTRO");
+
+                    b.Property<DateTime?>("DataExclusao")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("DATAEXCLUSAO");
 
                     b.Property<string>("Descricao")
                         .IsRequired()
@@ -182,6 +353,10 @@ namespace DeslandesApp.Infra.Data.Migrations
                         .IsUnicode(false)
                         .HasColumnType("varchar(2000)")
                         .HasColumnName("DESCRICAO");
+
+                    b.Property<bool>("Excluido")
+                        .HasColumnType("bit")
+                        .HasColumnName("EXCLUIDO");
 
                     b.Property<string>("Observacao")
                         .HasMaxLength(2000)
@@ -211,6 +386,10 @@ namespace DeslandesApp.Infra.Data.Migrations
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("USUARIOCADASTROID");
 
+                    b.Property<Guid?>("UsuarioExclusaoId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("USUARIOEXCLUSAOID");
+
                     b.HasKey("Id")
                         .HasName("PK_CASO");
 
@@ -223,53 +402,112 @@ namespace DeslandesApp.Infra.Data.Migrations
                     b.ToTable("CASO", (string)null);
                 });
 
-            modelBuilder.Entity("DeslandesApp.Domain.Models.Entities.CasoHistorico", b =>
+            modelBuilder.Entity("DeslandesApp.Domain.Models.Entities.CategoriaFinanceira", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("ID");
 
-                    b.Property<Guid>("CasoId")
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnName("CASO_ID");
-
-                    b.Property<string>("DadosAntes")
-                        .HasMaxLength(250)
-                        .IsUnicode(false)
-                        .HasColumnType("VARCHAR(MAX)")
-                        .HasColumnName("DADOSANTES");
-
-                    b.Property<string>("DadosDepois")
-                        .HasMaxLength(250)
-                        .IsUnicode(false)
-                        .HasColumnType("VARCHAR(MAX)")
-                        .HasColumnName("DADOSDEPOIS");
-
-                    b.Property<DateTime?>("DataAlteracao")
+                    b.Property<DateTime?>("DataAtualizacao")
                         .HasColumnType("datetime2")
-                        .HasColumnName("DATAALTERACAO");
+                        .HasColumnName("DATAATUALIZACAO");
 
-                    b.Property<Guid?>("IdUsuario")
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnName("USUARIO_ID");
+                    b.Property<DateTime>("DataCadastro")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("DATACADASTRO");
 
-                    b.Property<string>("Observacao")
-                        .HasMaxLength(250)
+                    b.Property<DateTime?>("DataExclusao")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("DATAEXCLUSAO");
+
+                    b.Property<bool>("Excluido")
+                        .HasColumnType("bit")
+                        .HasColumnName("EXCLUIDO");
+
+                    b.Property<string>("Nome")
+                        .IsRequired()
+                        .HasMaxLength(150)
                         .IsUnicode(false)
-                        .HasColumnType("VARCHAR(255)")
-                        .HasColumnName("OBSERVACAO");
+                        .HasColumnType("varchar(150)")
+                        .HasColumnName("NOME");
+
+                    b.Property<int>("Tipo")
+                        .HasColumnType("int")
+                        .HasColumnName("TIPO");
+
+                    b.Property<Guid?>("UsuarioCadastroId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("USUARIOCADASTROID");
+
+                    b.Property<Guid?>("UsuarioExclusaoId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("USUARIOEXCLUSAOID");
 
                     b.HasKey("Id")
-                        .HasName("PK_CASOHISTORICO");
+                        .HasName("PK_CATEGORIA_FINANCEIRA");
 
-                    b.HasIndex("CasoId")
-                        .HasDatabaseName("IX_CASOHISTORICO_CASO_ID");
+                    b.HasIndex("UsuarioCadastroId")
+                        .HasDatabaseName("IX_CATEGORIA_FINANCEIRA_USUARIOCADASTROID");
 
-                    b.HasIndex("IdUsuario")
-                        .HasDatabaseName("IX_CASOHISTORICO_USUARIO_ID");
+                    b.ToTable("CATEGORIA_FINANCEIRA", (string)null);
+                });
 
-                    b.ToTable("CASOHISTORICO", (string)null);
+            modelBuilder.Entity("DeslandesApp.Domain.Models.Entities.CentroCusto", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("ID");
+
+                    b.Property<bool>("Ativo")
+                        .HasColumnType("bit")
+                        .HasColumnName("ATIVO");
+
+                    b.Property<DateTime?>("DataAtualizacao")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("DATAATUALIZACAO");
+
+                    b.Property<DateTime>("DataCadastro")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("DATACADASTRO");
+
+                    b.Property<DateTime?>("DataExclusao")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("DATAEXCLUSAO");
+
+                    b.Property<string>("Descricao")
+                        .HasMaxLength(500)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(500)")
+                        .HasColumnName("DESCRICAO");
+
+                    b.Property<bool>("Excluido")
+                        .HasColumnType("bit")
+                        .HasColumnName("EXCLUIDO");
+
+                    b.Property<string>("Nome")
+                        .IsRequired()
+                        .HasMaxLength(150)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(150)")
+                        .HasColumnName("NOME");
+
+                    b.Property<Guid?>("UsuarioCadastroId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("USUARIOCADASTROID");
+
+                    b.Property<Guid?>("UsuarioExclusaoId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("USUARIOEXCLUSAOID");
+
+                    b.HasKey("Id")
+                        .HasName("PK_CENTRO_CUSTO");
+
+                    b.HasIndex("UsuarioCadastroId")
+                        .HasDatabaseName("IX_CENTRO_CUSTO_USUARIOCADASTROID");
+
+                    b.ToTable("CENTRO_CUSTO", (string)null);
                 });
 
             modelBuilder.Entity("DeslandesApp.Domain.Models.Entities.Comentario", b =>
@@ -279,13 +517,29 @@ namespace DeslandesApp.Infra.Data.Migrations
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("ID");
 
+                    b.Property<DateTime?>("DataAtualizacao")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("DATAATUALIZACAO");
+
+                    b.Property<DateTime>("DataCadastro")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("DATACADASTRO");
+
                     b.Property<DateTime>("DataCriacao")
                         .HasColumnType("datetime2")
                         .HasColumnName("DATACRIACAO");
 
+                    b.Property<DateTime?>("DataExclusao")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("DATAEXCLUSAO");
+
                     b.Property<Guid?>("EventoId")
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("EVENTOID");
+
+                    b.Property<bool>("Excluido")
+                        .HasColumnType("bit")
+                        .HasColumnName("EXCLUIDO");
 
                     b.Property<Guid?>("TarefaId")
                         .HasColumnType("uniqueidentifier")
@@ -297,6 +551,14 @@ namespace DeslandesApp.Infra.Data.Migrations
                         .IsUnicode(false)
                         .HasColumnType("varchar(1000)")
                         .HasColumnName("TEXTO");
+
+                    b.Property<Guid?>("UsuarioCadastroId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("USUARIOCADASTROID");
+
+                    b.Property<Guid?>("UsuarioExclusaoId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("USUARIOEXCLUSAOID");
 
                     b.Property<Guid>("UsuarioId")
                         .HasColumnType("uniqueidentifier")
@@ -310,6 +572,9 @@ namespace DeslandesApp.Infra.Data.Migrations
 
                     b.HasIndex("TarefaId")
                         .HasDatabaseName("IX_COMENTARIOS_TAREFAID");
+
+                    b.HasIndex("UsuarioCadastroId")
+                        .HasDatabaseName("IX_COMENTARIOS_USUARIOCADASTROID");
 
                     b.HasIndex("UsuarioId")
                         .HasDatabaseName("IX_COMENTARIOS_USUARIOID");
@@ -332,6 +597,22 @@ namespace DeslandesApp.Infra.Data.Migrations
                         .IsUnicode(false)
                         .HasColumnType("varchar(20)")
                         .HasColumnName("AGENCIA");
+
+                    b.Property<DateTime?>("DataAtualizacao")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("DATAATUALIZACAO");
+
+                    b.Property<DateTime>("DataCadastro")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("DATACADASTRO");
+
+                    b.Property<DateTime?>("DataExclusao")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("DATAEXCLUSAO");
+
+                    b.Property<bool>("Excluido")
+                        .HasColumnType("bit")
+                        .HasColumnName("EXCLUIDO");
 
                     b.Property<string>("NomeBanco")
                         .HasMaxLength(100)
@@ -359,13 +640,395 @@ namespace DeslandesApp.Infra.Data.Migrations
                         .HasColumnType("int")
                         .HasColumnName("TIPOCONTA");
 
+                    b.Property<Guid?>("UsuarioCadastroId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("USUARIOCADASTROID");
+
+                    b.Property<Guid?>("UsuarioExclusaoId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("USUARIOEXCLUSAOID");
+
                     b.HasKey("Id")
                         .HasName("PK_CONTABANCARIA");
 
                     b.HasIndex("PessoaId")
                         .HasDatabaseName("IX_CONTABANCARIA_PESSOAID");
 
+                    b.HasIndex("UsuarioCadastroId")
+                        .HasDatabaseName("IX_CONTABANCARIA_USUARIOCADASTROID");
+
                     b.ToTable("CONTABANCARIA", (string)null);
+                });
+
+            modelBuilder.Entity("DeslandesApp.Domain.Models.Entities.ContaBancariaEmpresa", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("ID");
+
+                    b.Property<string>("Agencia")
+                        .IsRequired()
+                        .HasMaxLength(250)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(250)")
+                        .HasColumnName("AGENCIA");
+
+                    b.Property<bool>("Ativa")
+                        .HasColumnType("bit")
+                        .HasColumnName("ATIVA");
+
+                    b.Property<string>("Banco")
+                        .IsRequired()
+                        .HasMaxLength(250)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(250)")
+                        .HasColumnName("BANCO");
+
+                    b.Property<string>("Conta")
+                        .IsRequired()
+                        .HasMaxLength(250)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(250)")
+                        .HasColumnName("CONTA");
+
+                    b.Property<DateTime?>("DataAtualizacao")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("DATAATUALIZACAO");
+
+                    b.Property<DateTime>("DataCadastro")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("DATACADASTRO");
+
+                    b.Property<DateTime?>("DataExclusao")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("DATAEXCLUSAO");
+
+                    b.Property<string>("Digito")
+                        .HasMaxLength(250)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(250)")
+                        .HasColumnName("DIGITO");
+
+                    b.Property<bool>("Excluido")
+                        .HasColumnType("bit")
+                        .HasColumnName("EXCLUIDO");
+
+                    b.Property<decimal>("SaldoInicial")
+                        .HasColumnType("decimal(18,2)")
+                        .HasColumnName("SALDOINICIAL");
+
+                    b.Property<Guid?>("UsuarioCadastroId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("USUARIOCADASTROID");
+
+                    b.Property<Guid?>("UsuarioExclusaoId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("USUARIOEXCLUSAOID");
+
+                    b.HasKey("Id")
+                        .HasName("PK_CONTABANCARIAEMPRESA");
+
+                    b.HasIndex("UsuarioCadastroId")
+                        .HasDatabaseName("IX_CONTABANCARIAEMPRESA_USUARIOCADASTROID");
+
+                    b.ToTable("CONTABANCARIAEMPRESA");
+                });
+
+            modelBuilder.Entity("DeslandesApp.Domain.Models.Entities.ContaPagar", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("ID");
+
+                    b.Property<Guid?>("CategoriaFinanceiraId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("CATEGORIAFINANCEIRAID");
+
+                    b.Property<Guid?>("CentroCustoId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("CENTROCUSTOID");
+
+                    b.Property<Guid?>("ContratoId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("CONTRATOID");
+
+                    b.Property<DateTime?>("DataAtualizacao")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("DATAATUALIZACAO");
+
+                    b.Property<DateTime>("DataCadastro")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("DATACADASTRO");
+
+                    b.Property<DateTime?>("DataExclusao")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("DATAEXCLUSAO");
+
+                    b.Property<DateTime>("DataVencimento")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("DATAVENCIMENTO");
+
+                    b.Property<string>("Descricao")
+                        .IsRequired()
+                        .HasMaxLength(300)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(300)")
+                        .HasColumnName("DESCRICAO");
+
+                    b.Property<bool>("Excluido")
+                        .HasColumnType("bit")
+                        .HasColumnName("EXCLUIDO");
+
+                    b.Property<Guid>("PessoaId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("PESSOAID");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int")
+                        .HasColumnName("STATUS");
+
+                    b.Property<Guid?>("UsuarioCadastroId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("USUARIOCADASTROID");
+
+                    b.Property<Guid?>("UsuarioExclusaoId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("USUARIOEXCLUSAOID");
+
+                    b.Property<decimal>("Valor")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)")
+                        .HasColumnName("VALOR");
+
+                    b.Property<decimal>("ValorPago")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)")
+                        .HasColumnName("VALORPAGO");
+
+                    b.HasKey("Id")
+                        .HasName("PK_CONTA_PAGAR");
+
+                    b.HasIndex("CategoriaFinanceiraId")
+                        .HasDatabaseName("IX_CONTA_PAGAR_CATEGORIAFINANCEIRAID");
+
+                    b.HasIndex("CentroCustoId")
+                        .HasDatabaseName("IX_CONTA_PAGAR_CENTROCUSTOID");
+
+                    b.HasIndex("ContratoId")
+                        .HasDatabaseName("IX_CONTA_PAGAR_CONTRATOID");
+
+                    b.HasIndex("PessoaId")
+                        .HasDatabaseName("IX_CONTA_PAGAR_PESSOAID");
+
+                    b.HasIndex("UsuarioCadastroId")
+                        .HasDatabaseName("IX_CONTA_PAGAR_USUARIOCADASTROID");
+
+                    b.ToTable("CONTA_PAGAR", (string)null);
+                });
+
+            modelBuilder.Entity("DeslandesApp.Domain.Models.Entities.ContaReceber", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("ID");
+
+                    b.Property<Guid?>("CategoriaFinanceiraId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("CATEGORIAFINANCEIRAID");
+
+                    b.Property<Guid?>("CentroCustoId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("CENTROCUSTOID");
+
+                    b.Property<Guid>("ContratoId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("CONTRATOID");
+
+                    b.Property<DateTime?>("DataAtualizacao")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("DATAATUALIZACAO");
+
+                    b.Property<DateTime?>("DataBaixa")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("DATABAIXA");
+
+                    b.Property<DateTime>("DataCadastro")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("DATACADASTRO");
+
+                    b.Property<DateTime>("DataEmissao")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("DATAEMISSAO");
+
+                    b.Property<DateTime?>("DataExclusao")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("DATAEXCLUSAO");
+
+                    b.Property<DateTime>("DataVencimento")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("DATA_VENCIMENTO");
+
+                    b.Property<string>("Descricao")
+                        .IsRequired()
+                        .HasMaxLength(300)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(300)")
+                        .HasColumnName("DESCRICAO");
+
+                    b.Property<bool>("Excluido")
+                        .HasColumnType("bit")
+                        .HasColumnName("EXCLUIDO");
+
+                    b.Property<Guid>("PessoaId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("PESSOAID");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int")
+                        .HasColumnName("STATUS");
+
+                    b.Property<Guid?>("UsuarioCadastroId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("USUARIOCADASTROID");
+
+                    b.Property<Guid?>("UsuarioExclusaoId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("USUARIOEXCLUSAOID");
+
+                    b.Property<decimal>("Valor")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)")
+                        .HasColumnName("VALOR");
+
+                    b.Property<decimal>("ValorPago")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)")
+                        .HasColumnName("VALOR_PAGO");
+
+                    b.HasKey("Id")
+                        .HasName("PK_CONTA_RECEBER");
+
+                    b.HasIndex("CategoriaFinanceiraId")
+                        .HasDatabaseName("IX_CONTA_RECEBER_CATEGORIAFINANCEIRAID");
+
+                    b.HasIndex("CentroCustoId")
+                        .HasDatabaseName("IX_CONTA_RECEBER_CENTROCUSTOID");
+
+                    b.HasIndex("ContratoId")
+                        .HasDatabaseName("IX_CONTA_RECEBER_CONTRATOID");
+
+                    b.HasIndex("PessoaId")
+                        .HasDatabaseName("IX_CONTA_RECEBER_PESSOAID");
+
+                    b.HasIndex("UsuarioCadastroId")
+                        .HasDatabaseName("IX_CONTA_RECEBER_USUARIOCADASTROID");
+
+                    b.ToTable("CONTA_RECEBER", (string)null);
+                });
+
+            modelBuilder.Entity("DeslandesApp.Domain.Models.Entities.Contrato", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("ID");
+
+                    b.Property<DateTime?>("DataAtualizacao")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("DATAATUALIZACAO");
+
+                    b.Property<DateTime>("DataCadastro")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("DATACADASTRO");
+
+                    b.Property<DateTime?>("DataExclusao")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("DATAEXCLUSAO");
+
+                    b.Property<DateTime?>("DataFim")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("DATA_FIM");
+
+                    b.Property<DateTime>("DataInicio")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("DATA_INICIO");
+
+                    b.Property<bool>("Excluido")
+                        .HasColumnType("bit")
+                        .HasColumnName("EXCLUIDO");
+
+                    b.Property<string>("Numero")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(50)")
+                        .HasColumnName("NUMERO");
+
+                    b.Property<string>("Objeto")
+                        .HasMaxLength(500)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(500)")
+                        .HasColumnName("OBJETO");
+
+                    b.Property<string>("Observacao")
+                        .HasMaxLength(255)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(255)")
+                        .HasColumnName("OBSERVACAO");
+
+                    b.Property<Guid>("PessoaId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("PESSOAID");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int")
+                        .HasColumnName("STATUS");
+
+                    b.Property<Guid?>("UsuarioCadastroId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("USUARIOCADASTROID");
+
+                    b.Property<Guid?>("UsuarioExclusaoId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("USUARIOEXCLUSAOID");
+
+                    b.Property<decimal?>("ValorTotal")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)")
+                        .HasColumnName("VALOR_TOTAL");
+
+                    b.HasKey("Id")
+                        .HasName("PK_CONTRATO");
+
+                    b.HasIndex("PessoaId")
+                        .HasDatabaseName("IX_CONTRATO_PESSOAID");
+
+                    b.HasIndex("UsuarioCadastroId")
+                        .HasDatabaseName("IX_CONTRATO_USUARIOCADASTROID");
+
+                    b.ToTable("CONTRATO", (string)null);
+                });
+
+            modelBuilder.Entity("DeslandesApp.Domain.Models.Entities.ContratoProcesso", b =>
+                {
+                    b.Property<Guid>("ContratoId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("CONTRATOID");
+
+                    b.Property<Guid>("ProcessoId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("PROCESSOID");
+
+                    b.HasKey("ContratoId", "ProcessoId")
+                        .HasName("PK_CONTRATO_PROCESSO");
+
+                    b.HasIndex("ProcessoId")
+                        .HasDatabaseName("IX_CONTRATO_PROCESSO_PROCESSOID");
+
+                    b.ToTable("CONTRATO_PROCESSO", (string)null);
                 });
 
             modelBuilder.Entity("DeslandesApp.Domain.Models.Entities.Endereco", b =>
@@ -393,12 +1056,27 @@ namespace DeslandesApp.Infra.Data.Migrations
                         .HasColumnType("varchar(250)")
                         .HasColumnName("COMPLEMENTO");
 
-                    b.Property<Guid>("IdPessoa")
+                    b.Property<DateTime?>("DataAtualizacao")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("DATAATUALIZACAO");
+
+                    b.Property<DateTime>("DataCadastro")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("DATACADASTRO");
+
+                    b.Property<DateTime?>("DataExclusao")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("DATAEXCLUSAO");
+
+                    b.Property<bool>("Excluido")
+                        .HasColumnType("bit")
+                        .HasColumnName("EXCLUIDO");
+
+                    b.Property<Guid?>("IdPessoa")
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("PESSOA_ID");
 
                     b.Property<string>("Localidade")
-                        .IsRequired()
                         .HasMaxLength(100)
                         .IsUnicode(false)
                         .HasColumnType("varchar(100)")
@@ -417,18 +1095,29 @@ namespace DeslandesApp.Infra.Data.Migrations
                         .HasColumnName("NUMERO");
 
                     b.Property<string>("Uf")
-                        .IsRequired()
                         .HasMaxLength(2)
                         .IsUnicode(false)
                         .HasColumnType("varchar(2)")
                         .HasColumnName("UF");
+
+                    b.Property<Guid?>("UsuarioCadastroId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("USUARIOCADASTROID");
+
+                    b.Property<Guid?>("UsuarioExclusaoId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("USUARIOEXCLUSAOID");
 
                     b.HasKey("Id")
                         .HasName("PK_ENDERECO");
 
                     b.HasIndex("IdPessoa")
                         .IsUnique()
-                        .HasDatabaseName("IX_ENDERECO_PESSOA_ID");
+                        .HasDatabaseName("IX_ENDERECO_PESSOA_ID")
+                        .HasFilter("[PESSOA_ID] IS NOT NULL");
+
+                    b.HasIndex("UsuarioCadastroId")
+                        .HasDatabaseName("IX_ENDERECO_USUARIOCADASTROID");
 
                     b.ToTable("ENDERECO", (string)null);
                 });
@@ -447,6 +1136,22 @@ namespace DeslandesApp.Infra.Data.Migrations
                         .HasColumnType("varchar(20)")
                         .HasColumnName("COR");
 
+                    b.Property<DateTime?>("DataAtualizacao")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("DATAATUALIZACAO");
+
+                    b.Property<DateTime>("DataCadastro")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("DATACADASTRO");
+
+                    b.Property<DateTime?>("DataExclusao")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("DATAEXCLUSAO");
+
+                    b.Property<bool>("Excluido")
+                        .HasColumnType("bit")
+                        .HasColumnName("EXCLUIDO");
+
                     b.Property<string>("Nome")
                         .IsRequired()
                         .HasMaxLength(200)
@@ -454,8 +1159,19 @@ namespace DeslandesApp.Infra.Data.Migrations
                         .HasColumnType("varchar(200)")
                         .HasColumnName("NOME");
 
+                    b.Property<Guid?>("UsuarioCadastroId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("USUARIOCADASTROID");
+
+                    b.Property<Guid?>("UsuarioExclusaoId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("USUARIOEXCLUSAOID");
+
                     b.HasKey("Id")
                         .HasName("PK_ETIQUETA");
+
+                    b.HasIndex("UsuarioCadastroId")
+                        .HasDatabaseName("IX_ETIQUETA_USUARIOCADASTROID");
 
                     b.ToTable("ETIQUETA", (string)null);
                 });
@@ -483,6 +1199,10 @@ namespace DeslandesApp.Infra.Data.Migrations
                         .HasColumnType("datetime2")
                         .HasColumnName("DATACADASTRO");
 
+                    b.Property<DateTime?>("DataExclusao")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("DATAEXCLUSAO");
+
                     b.Property<DateOnly?>("DataFimRecorrencia")
                         .HasColumnType("date")
                         .HasColumnName("DATAFIMRECORRENCIA");
@@ -509,6 +1229,10 @@ namespace DeslandesApp.Infra.Data.Migrations
                         .IsUnicode(false)
                         .HasColumnType("varchar(250)")
                         .HasColumnName("ENDERECO");
+
+                    b.Property<bool>("Excluido")
+                        .HasColumnType("bit")
+                        .HasColumnName("EXCLUIDO");
 
                     b.Property<TimeOnly?>("HoraFinal")
                         .HasColumnType("time")
@@ -548,9 +1272,9 @@ namespace DeslandesApp.Infra.Data.Migrations
                         .HasColumnType("int")
                         .HasColumnName("TIPORECORRENCIA");
 
-                    b.Property<int?>("TipoVinculo")
+                    b.Property<int?>("TipoVinculoId")
                         .HasColumnType("int")
-                        .HasColumnName("TIPOVINCULO");
+                        .HasColumnName("TIPOVINCULOID");
 
                     b.Property<string>("Titulo")
                         .IsRequired()
@@ -559,9 +1283,17 @@ namespace DeslandesApp.Infra.Data.Migrations
                         .HasColumnType("varchar(250)")
                         .HasColumnName("TITULO");
 
+                    b.Property<Guid?>("UsuarioCadastroId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("USUARIOCADASTROID");
+
                     b.Property<Guid?>("UsuarioCriacaoId")
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("USUARIOCRIACAOID");
+
+                    b.Property<Guid?>("UsuarioExclusaoId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("USUARIOEXCLUSAOID");
 
                     b.HasKey("Id")
                         .HasName("PK_EVENTO");
@@ -575,59 +1307,13 @@ namespace DeslandesApp.Infra.Data.Migrations
                     b.HasIndex("ProcessoId")
                         .HasDatabaseName("IX_EVENTO_PROCESSOID");
 
+                    b.HasIndex("UsuarioCadastroId")
+                        .HasDatabaseName("IX_EVENTO_USUARIOCADASTROID");
+
                     b.HasIndex("UsuarioCriacaoId")
                         .HasDatabaseName("IX_EVENTO_USUARIOCRIACAOID");
 
                     b.ToTable("EVENTO", (string)null);
-                });
-
-            modelBuilder.Entity("DeslandesApp.Domain.Models.Entities.EventoHistorico", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnName("ID");
-
-                    b.Property<string>("DadosAntes")
-                        .HasMaxLength(250)
-                        .IsUnicode(false)
-                        .HasColumnType("VARCHAR(MAX)")
-                        .HasColumnName("DADOSANTES");
-
-                    b.Property<string>("DadosDepois")
-                        .HasMaxLength(250)
-                        .IsUnicode(false)
-                        .HasColumnType("VARCHAR(MAX)")
-                        .HasColumnName("DADOSDEPOIS");
-
-                    b.Property<DateTime?>("DataAlteracao")
-                        .HasColumnType("datetime2")
-                        .HasColumnName("DATAALTERACAO");
-
-                    b.Property<Guid>("EventoId")
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnName("EVENTO_ID");
-
-                    b.Property<string>("Observacao")
-                        .HasMaxLength(250)
-                        .IsUnicode(false)
-                        .HasColumnType("VARCHAR(255)")
-                        .HasColumnName("OBSERVACAO");
-
-                    b.Property<Guid?>("UsuarioId")
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnName("USUARIO_ID");
-
-                    b.HasKey("Id")
-                        .HasName("PK_EVENTOHISTORICO");
-
-                    b.HasIndex("EventoId")
-                        .HasDatabaseName("IX_EVENTOHISTORICO_EVENTO_ID");
-
-                    b.HasIndex("UsuarioId")
-                        .HasDatabaseName("IX_EVENTOHISTORICO_USUARIO_ID");
-
-                    b.ToTable("EVENTOHISTORICO", (string)null);
                 });
 
             modelBuilder.Entity("DeslandesApp.Domain.Models.Entities.FailedLoginAttempt", b =>
@@ -636,9 +1322,25 @@ namespace DeslandesApp.Infra.Data.Migrations
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("IDFAILEDLOGINATTEMPT");
 
+                    b.Property<DateTime?>("DataAtualizacao")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("DATAATUALIZACAO");
+
+                    b.Property<DateTime>("DataCadastro")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("DATACADASTRO");
+
+                    b.Property<DateTime?>("DataExclusao")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("DATAEXCLUSAO");
+
                     b.Property<DateTime>("DataHora")
                         .HasColumnType("datetime2")
                         .HasColumnName("DATAHORA");
+
+                    b.Property<bool>("Excluido")
+                        .HasColumnType("bit")
+                        .HasColumnName("EXCLUIDO");
 
                     b.Property<Guid?>("IdUsuario")
                         .HasColumnType("uniqueidentifier")
@@ -669,13 +1371,71 @@ namespace DeslandesApp.Infra.Data.Migrations
                         .HasColumnType("varchar(300)")
                         .HasColumnName("USERAGENT");
 
+                    b.Property<Guid?>("UsuarioCadastroId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("USUARIOCADASTROID");
+
+                    b.Property<Guid?>("UsuarioExclusaoId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("USUARIOEXCLUSAOID");
+
                     b.HasKey("Id")
                         .HasName("PK_FAILEDLOGINATTEMPTS");
 
                     b.HasIndex("IdUsuario")
                         .HasDatabaseName("IX_FAILEDLOGINATTEMPTS_IDUSUARIO");
 
+                    b.HasIndex("UsuarioCadastroId")
+                        .HasDatabaseName("IX_FAILEDLOGINATTEMPTS_USUARIOCADASTROID");
+
                     b.ToTable("FAILEDLOGINATTEMPTS", (string)null);
+                });
+
+            modelBuilder.Entity("DeslandesApp.Domain.Models.Entities.FormaPagamento", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("ID");
+
+                    b.Property<DateTime?>("DataAtualizacao")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("DATAATUALIZACAO");
+
+                    b.Property<DateTime>("DataCadastro")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("DATACADASTRO");
+
+                    b.Property<DateTime?>("DataExclusao")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("DATAEXCLUSAO");
+
+                    b.Property<bool>("Excluido")
+                        .HasColumnType("bit")
+                        .HasColumnName("EXCLUIDO");
+
+                    b.Property<string>("Nome")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(100)")
+                        .HasColumnName("NOME");
+
+                    b.Property<Guid?>("UsuarioCadastroId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("USUARIOCADASTROID");
+
+                    b.Property<Guid?>("UsuarioExclusaoId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("USUARIOEXCLUSAOID");
+
+                    b.HasKey("Id")
+                        .HasName("PK_FORMA_PAGAMENTO");
+
+                    b.HasIndex("UsuarioCadastroId")
+                        .HasDatabaseName("IX_FORMA_PAGAMENTO_USUARIOCADASTROID");
+
+                    b.ToTable("FORMA_PAGAMENTO", (string)null);
                 });
 
             modelBuilder.Entity("DeslandesApp.Domain.Models.Entities.Foro", b =>
@@ -685,6 +1445,22 @@ namespace DeslandesApp.Infra.Data.Migrations
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("ID");
 
+                    b.Property<DateTime?>("DataAtualizacao")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("DATAATUALIZACAO");
+
+                    b.Property<DateTime>("DataCadastro")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("DATACADASTRO");
+
+                    b.Property<DateTime?>("DataExclusao")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("DATAEXCLUSAO");
+
+                    b.Property<bool>("Excluido")
+                        .HasColumnType("bit")
+                        .HasColumnName("EXCLUIDO");
+
                     b.Property<string>("NomeForo")
                         .IsRequired()
                         .HasMaxLength(200)
@@ -692,12 +1468,23 @@ namespace DeslandesApp.Infra.Data.Migrations
                         .HasColumnType("varchar(200)")
                         .HasColumnName("NOMEFORO");
 
+                    b.Property<Guid?>("UsuarioCadastroId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("USUARIOCADASTROID");
+
+                    b.Property<Guid?>("UsuarioExclusaoId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("USUARIOEXCLUSAOID");
+
                     b.HasKey("Id")
                         .HasName("PK_FORO");
 
                     b.HasIndex("NomeForo")
                         .IsUnique()
                         .HasDatabaseName("IX_FORO_NOMEFORO");
+
+                    b.HasIndex("UsuarioCadastroId")
+                        .HasDatabaseName("IX_FORO_USUARIOCADASTROID");
 
                     b.ToTable("FORO", (string)null);
                 });
@@ -717,6 +1504,14 @@ namespace DeslandesApp.Infra.Data.Migrations
                         .HasColumnType("datetime2")
                         .HasColumnName("DATACADASTRO");
 
+                    b.Property<DateTime?>("DataExclusao")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("DATAEXCLUSAO");
+
+                    b.Property<bool>("Excluido")
+                        .HasColumnType("bit")
+                        .HasColumnName("EXCLUIDO");
+
                     b.Property<string>("FileUrl")
                         .HasMaxLength(250)
                         .IsUnicode(false)
@@ -733,6 +1528,14 @@ namespace DeslandesApp.Infra.Data.Migrations
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("USUARIO_ID");
 
+                    b.Property<Guid?>("UsuarioCadastroId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("USUARIOCADASTROID");
+
+                    b.Property<Guid?>("UsuarioExclusaoId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("USUARIOEXCLUSAOID");
+
                     b.HasKey("Id")
                         .HasName("PK_FOTOS");
 
@@ -740,6 +1543,9 @@ namespace DeslandesApp.Infra.Data.Migrations
                         .IsUnique()
                         .HasDatabaseName("IX_FOTOS_USUARIO_ID")
                         .HasFilter("[USUARIO_ID] IS NOT NULL");
+
+                    b.HasIndex("UsuarioCadastroId")
+                        .HasDatabaseName("IX_FOTOS_USUARIOCADASTROID");
 
                     b.ToTable("FOTOS", (string)null);
                 });
@@ -792,6 +1598,22 @@ namespace DeslandesApp.Infra.Data.Migrations
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("PESSOAID");
 
+                    b.Property<DateTime?>("DataAtualizacao")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("DATAATUALIZACAO");
+
+                    b.Property<DateTime>("DataCadastro")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("DATACADASTRO");
+
+                    b.Property<DateTime?>("DataExclusao")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("DATAEXCLUSAO");
+
+                    b.Property<bool>("Excluido")
+                        .HasColumnType("bit")
+                        .HasColumnName("EXCLUIDO");
+
                     b.Property<Guid>("Id")
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("ID");
@@ -799,6 +1621,14 @@ namespace DeslandesApp.Infra.Data.Migrations
                     b.Property<Guid?>("QualificacaoId")
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("QUALIFICACAOID");
+
+                    b.Property<Guid?>("UsuarioCadastroId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("USUARIOCADASTROID");
+
+                    b.Property<Guid?>("UsuarioExclusaoId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("USUARIOEXCLUSAOID");
 
                     b.HasKey("CasoId", "PessoaId")
                         .HasName("PK_GRUPOCASOENVOLVIDO");
@@ -808,6 +1638,9 @@ namespace DeslandesApp.Infra.Data.Migrations
 
                     b.HasIndex("QualificacaoId")
                         .HasDatabaseName("IX_GRUPOCASOENVOLVIDO_QUALIFICACAOID");
+
+                    b.HasIndex("UsuarioCadastroId")
+                        .HasDatabaseName("IX_GRUPOCASOENVOLVIDO_USUARIOCADASTROID");
 
                     b.ToTable("GRUPOCASOENVOLVIDO", (string)null);
                 });
@@ -1132,6 +1965,18 @@ namespace DeslandesApp.Infra.Data.Migrations
                         .HasColumnType("datetime2")
                         .HasColumnName("DATAALTERACAO");
 
+                    b.Property<DateTime?>("DataAtualizacao")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("DATAATUALIZACAO");
+
+                    b.Property<DateTime>("DataCadastro")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("DATACADASTRO");
+
+                    b.Property<DateTime?>("DataExclusao")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("DATAEXCLUSAO");
+
                     b.Property<int>("Entidade")
                         .HasColumnType("int")
                         .HasColumnName("ENTIDADE");
@@ -1139,6 +1984,10 @@ namespace DeslandesApp.Infra.Data.Migrations
                     b.Property<Guid>("EntidadeId")
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("ENTIDADEID");
+
+                    b.Property<bool>("Excluido")
+                        .HasColumnType("bit")
+                        .HasColumnName("EXCLUIDO");
 
                     b.Property<string>("Ip")
                         .HasMaxLength(50)
@@ -1158,6 +2007,14 @@ namespace DeslandesApp.Infra.Data.Migrations
                         .HasColumnType("varchar(500)")
                         .HasColumnName("USERAGENT");
 
+                    b.Property<Guid?>("UsuarioCadastroId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("USUARIOCADASTROID");
+
+                    b.Property<Guid?>("UsuarioExclusaoId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("USUARIOEXCLUSAOID");
+
                     b.Property<Guid?>("UsuarioId")
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("USUARIOID");
@@ -1173,6 +2030,9 @@ namespace DeslandesApp.Infra.Data.Migrations
 
                     b.HasIndex("EntidadeId")
                         .HasDatabaseName("IX_HISTORICOGERAL_ENTIDADEID");
+
+                    b.HasIndex("UsuarioCadastroId")
+                        .HasDatabaseName("IX_HISTORICOGERAL_USUARIOCADASTROID");
 
                     b.HasIndex("UsuarioId")
                         .HasDatabaseName("IX_HISTORICOGERAL_USUARIOID");
@@ -1202,6 +2062,22 @@ namespace DeslandesApp.Infra.Data.Migrations
                         .HasColumnType("varchar(250)")
                         .HasColumnName("COMENTARIO");
 
+                    b.Property<DateTime?>("DataAtualizacao")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("DATAATUALIZACAO");
+
+                    b.Property<DateTime>("DataCadastro")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("DATACADASTRO");
+
+                    b.Property<DateTime?>("DataExclusao")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("DATAEXCLUSAO");
+
+                    b.Property<bool>("Excluido")
+                        .HasColumnType("bit")
+                        .HasColumnName("EXCLUIDO");
+
                     b.Property<Guid>("IdPessoa")
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("PESSOA_ID");
@@ -1213,12 +2089,23 @@ namespace DeslandesApp.Infra.Data.Migrations
                         .HasColumnType("varchar(250)")
                         .HasColumnName("TIPOPESSOA");
 
+                    b.Property<Guid?>("UsuarioCadastroId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("USUARIOCADASTROID");
+
+                    b.Property<Guid?>("UsuarioExclusaoId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("USUARIOEXCLUSAOID");
+
                     b.HasKey("Id")
                         .HasName("PK_INFORMACOESCOMPLEMENTARES");
 
                     b.HasIndex("IdPessoa")
                         .IsUnique()
                         .HasDatabaseName("IX_INFORMACOESCOMPLEMENTARES_PESSOA_ID");
+
+                    b.HasIndex("UsuarioCadastroId")
+                        .HasDatabaseName("IX_INFORMACOESCOMPLEMENTARES_USUARIOCADASTROID");
 
                     b.ToTable("INFORMACOESCOMPLEMENTARES", (string)null);
 
@@ -1238,9 +2125,21 @@ namespace DeslandesApp.Infra.Data.Migrations
                         .HasColumnType("bit")
                         .HasColumnName("CONCLUIDA");
 
+                    b.Property<DateTime?>("DataAtualizacao")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("DATAATUALIZACAO");
+
+                    b.Property<DateTime>("DataCadastro")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("DATACADASTRO");
+
                     b.Property<DateTime?>("DataConclusao")
                         .HasColumnType("datetime2")
                         .HasColumnName("DATACONCLUSAO");
+
+                    b.Property<DateTime?>("DataExclusao")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("DATAEXCLUSAO");
 
                     b.Property<string>("Descricao")
                         .IsRequired()
@@ -1248,6 +2147,10 @@ namespace DeslandesApp.Infra.Data.Migrations
                         .IsUnicode(false)
                         .HasColumnType("varchar(300)")
                         .HasColumnName("DESCRICAO");
+
+                    b.Property<bool>("Excluido")
+                        .HasColumnType("bit")
+                        .HasColumnName("EXCLUIDO");
 
                     b.Property<int?>("Ordem")
                         .HasColumnType("int")
@@ -1257,11 +2160,22 @@ namespace DeslandesApp.Infra.Data.Migrations
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("TAREFAID");
 
+                    b.Property<Guid?>("UsuarioCadastroId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("USUARIOCADASTROID");
+
+                    b.Property<Guid?>("UsuarioExclusaoId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("USUARIOEXCLUSAOID");
+
                     b.HasKey("Id")
                         .HasName("PK_LISTATAREFA");
 
                     b.HasIndex("TarefaId")
                         .HasDatabaseName("IX_LISTATAREFA_TAREFAID");
+
+                    b.HasIndex("UsuarioCadastroId")
+                        .HasDatabaseName("IX_LISTATAREFA_USUARIOCADASTROID");
 
                     b.ToTable("LISTATAREFA", (string)null);
                 });
@@ -1273,9 +2187,25 @@ namespace DeslandesApp.Infra.Data.Migrations
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("ID");
 
+                    b.Property<DateTime?>("DataAtualizacao")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("DATAATUALIZACAO");
+
+                    b.Property<DateTime>("DataCadastro")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("DATACADASTRO");
+
+                    b.Property<DateTime?>("DataExclusao")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("DATAEXCLUSAO");
+
                     b.Property<DateTime>("DataHoraAcesso")
                         .HasColumnType("datetime2")
                         .HasColumnName("DATAHORAACESSO");
+
+                    b.Property<bool>("Excluido")
+                        .HasColumnType("bit")
+                        .HasColumnName("EXCLUIDO");
 
                     b.Property<Guid>("IdUsuario")
                         .HasColumnType("uniqueidentifier")
@@ -1303,11 +2233,22 @@ namespace DeslandesApp.Infra.Data.Migrations
                         .HasColumnType("varchar(300)")
                         .HasColumnName("USERAGENT");
 
+                    b.Property<Guid?>("UsuarioCadastroId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("USUARIOCADASTROID");
+
+                    b.Property<Guid?>("UsuarioExclusaoId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("USUARIOEXCLUSAOID");
+
                     b.HasKey("Id")
                         .HasName("PK_LOGINHISTORY");
 
                     b.HasIndex("IdUsuario")
                         .HasDatabaseName("IX_LOGINHISTORY_IDUSUARIO");
+
+                    b.HasIndex("UsuarioCadastroId")
+                        .HasDatabaseName("IX_LOGINHISTORY_USUARIOCADASTROID");
 
                     b.ToTable("LOGINHISTORY", (string)null);
                 });
@@ -1319,6 +2260,22 @@ namespace DeslandesApp.Infra.Data.Migrations
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("ID");
 
+                    b.Property<DateTime?>("DataAtualizacao")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("DATAATUALIZACAO");
+
+                    b.Property<DateTime>("DataCadastro")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("DATACADASTRO");
+
+                    b.Property<DateTime?>("DataExclusao")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("DATAEXCLUSAO");
+
+                    b.Property<bool>("Excluido")
+                        .HasColumnType("bit")
+                        .HasColumnName("EXCLUIDO");
+
                     b.Property<string>("NomeNivel")
                         .IsRequired()
                         .HasMaxLength(250)
@@ -1326,10 +2283,78 @@ namespace DeslandesApp.Infra.Data.Migrations
                         .HasColumnType("varchar(250)")
                         .HasColumnName("NOMENIVEL");
 
+                    b.Property<Guid?>("UsuarioCadastroId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("USUARIOCADASTROID");
+
+                    b.Property<Guid?>("UsuarioExclusaoId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("USUARIOEXCLUSAOID");
+
                     b.HasKey("Id")
                         .HasName("PK_NIVEL");
 
+                    b.HasIndex("UsuarioCadastroId")
+                        .HasDatabaseName("IX_NIVEL_USUARIOCADASTROID");
+
                     b.ToTable("NIVEL", (string)null);
+                });
+
+            modelBuilder.Entity("DeslandesApp.Domain.Models.Entities.Notificacao", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("ID");
+
+                    b.Property<DateTime>("DataCriacao")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("DATACRIACAO");
+
+                    b.Property<Guid?>("EntidadeId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("ENTIDADEID");
+
+                    b.Property<bool>("Lida")
+                        .HasColumnType("bit")
+                        .HasColumnName("LIDA");
+
+                    b.Property<string>("Link")
+                        .HasMaxLength(500)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(500)")
+                        .HasColumnName("LINK");
+
+                    b.Property<string>("Mensagem")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(500)")
+                        .HasColumnName("MENSAGEM");
+
+                    b.Property<int>("Tipo")
+                        .HasMaxLength(50)
+                        .HasColumnType("int")
+                        .HasColumnName("TIPO");
+
+                    b.Property<string>("Titulo")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(200)")
+                        .HasColumnName("TITULO");
+
+                    b.Property<Guid>("UsuarioId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("USUARIOID");
+
+                    b.HasKey("Id")
+                        .HasName("PK_NOTIFICACAO");
+
+                    b.HasIndex("UsuarioId")
+                        .HasDatabaseName("IX_NOTIFICACAO_USUARIOID");
+
+                    b.ToTable("NOTIFICACAO", (string)null);
                 });
 
             modelBuilder.Entity("DeslandesApp.Domain.Models.Entities.Pessoa", b =>
@@ -1352,6 +2377,14 @@ namespace DeslandesApp.Infra.Data.Migrations
                     b.Property<DateTime>("DataCadastro")
                         .HasColumnType("datetime2")
                         .HasColumnName("DATACADASTRO");
+
+                    b.Property<DateTime?>("DataExclusao")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("DATAEXCLUSAO");
+
+                    b.Property<bool>("Excluido")
+                        .HasColumnType("bit")
+                        .HasColumnName("EXCLUIDO");
 
                     b.Property<Guid>("IdUsuario")
                         .HasColumnType("uniqueidentifier")
@@ -1387,6 +2420,14 @@ namespace DeslandesApp.Infra.Data.Migrations
                         .HasColumnType("varchar(250)")
                         .HasColumnName("TELEFONE");
 
+                    b.Property<Guid?>("UsuarioCadastroId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("USUARIOCADASTROID");
+
+                    b.Property<Guid?>("UsuarioExclusaoId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("USUARIOEXCLUSAOID");
+
                     b.Property<string>("ValorEmail")
                         .HasMaxLength(150)
                         .HasColumnType("nvarchar(150)")
@@ -1398,60 +2439,14 @@ namespace DeslandesApp.Infra.Data.Migrations
                     b.HasIndex("IdUsuario")
                         .HasDatabaseName("IX_PESSOA_USUARIO_ID");
 
+                    b.HasIndex("UsuarioCadastroId")
+                        .HasDatabaseName("IX_PESSOA_USUARIOCADASTROID");
+
                     b.ToTable("PESSOA", (string)null);
 
                     b.HasDiscriminator<string>("TIPO").HasValue("Pessoa");
 
                     b.UseTphMappingStrategy();
-                });
-
-            modelBuilder.Entity("DeslandesApp.Domain.Models.Entities.PessoaHistorico", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnName("ID");
-
-                    b.Property<string>("DadosAntes")
-                        .HasMaxLength(250)
-                        .IsUnicode(false)
-                        .HasColumnType("VARCHAR(MAX)")
-                        .HasColumnName("DADOSANTES");
-
-                    b.Property<string>("DadosDepois")
-                        .HasMaxLength(250)
-                        .IsUnicode(false)
-                        .HasColumnType("VARCHAR(MAX)")
-                        .HasColumnName("DADOSDEPOIS");
-
-                    b.Property<DateTime?>("DataAlteracao")
-                        .HasColumnType("datetime2")
-                        .HasColumnName("DATAALTERACAO");
-
-                    b.Property<Guid>("IdPessoa")
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnName("PESSOA_ID");
-
-                    b.Property<Guid?>("IdUsuario")
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnName("USUARIO_ID");
-
-                    b.Property<string>("Observacoes")
-                        .HasMaxLength(250)
-                        .IsUnicode(false)
-                        .HasColumnType("VARCHAR(255)")
-                        .HasColumnName("OBSERVACOES");
-
-                    b.HasKey("Id")
-                        .HasName("PK_PESSOAHISTORICO");
-
-                    b.HasIndex("IdPessoa")
-                        .HasDatabaseName("IX_PESSOAHISTORICO_PESSOA_ID");
-
-                    b.HasIndex("IdUsuario")
-                        .HasDatabaseName("IX_PESSOAHISTORICO_USUARIO_ID");
-
-                    b.ToTable("PESSOAHISTORICO", (string)null);
                 });
 
             modelBuilder.Entity("DeslandesApp.Domain.Models.Entities.Qualificacao", b =>
@@ -1461,6 +2456,22 @@ namespace DeslandesApp.Infra.Data.Migrations
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("ID");
 
+                    b.Property<DateTime?>("DataAtualizacao")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("DATAATUALIZACAO");
+
+                    b.Property<DateTime>("DataCadastro")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("DATACADASTRO");
+
+                    b.Property<DateTime?>("DataExclusao")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("DATAEXCLUSAO");
+
+                    b.Property<bool>("Excluido")
+                        .HasColumnType("bit")
+                        .HasColumnName("EXCLUIDO");
+
                     b.Property<string>("NomeQualificacao")
                         .IsRequired()
                         .HasMaxLength(150)
@@ -1468,8 +2479,19 @@ namespace DeslandesApp.Infra.Data.Migrations
                         .HasColumnType("varchar(150)")
                         .HasColumnName("NOMEQUALIFICACAO");
 
+                    b.Property<Guid?>("UsuarioCadastroId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("USUARIOCADASTROID");
+
+                    b.Property<Guid?>("UsuarioExclusaoId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("USUARIOEXCLUSAOID");
+
                     b.HasKey("Id")
                         .HasName("PK_QUALIFICACAO");
+
+                    b.HasIndex("UsuarioCadastroId")
+                        .HasDatabaseName("IX_QUALIFICACAO_USUARIOCADASTROID");
 
                     b.ToTable("QUALIFICACAO", (string)null);
                 });
@@ -1481,6 +2503,22 @@ namespace DeslandesApp.Infra.Data.Migrations
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("ID");
 
+                    b.Property<DateTime?>("DataAtualizacao")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("DATAATUALIZACAO");
+
+                    b.Property<DateTime>("DataCadastro")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("DATACADASTRO");
+
+                    b.Property<DateTime?>("DataExclusao")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("DATAEXCLUSAO");
+
+                    b.Property<bool>("Excluido")
+                        .HasColumnType("bit")
+                        .HasColumnName("EXCLUIDO");
+
                     b.Property<string>("NomeSetor")
                         .IsRequired()
                         .HasMaxLength(255)
@@ -1488,8 +2526,19 @@ namespace DeslandesApp.Infra.Data.Migrations
                         .HasColumnType("varchar(255)")
                         .HasColumnName("NOMESETOR");
 
+                    b.Property<Guid?>("UsuarioCadastroId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("USUARIOCADASTROID");
+
+                    b.Property<Guid?>("UsuarioExclusaoId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("USUARIOEXCLUSAOID");
+
                     b.HasKey("Id")
                         .HasName("PK_SETORES");
+
+                    b.HasIndex("UsuarioCadastroId")
+                        .HasDatabaseName("IX_SETORES_USUARIOCADASTROID");
 
                     b.ToTable("SETORES", (string)null);
                 });
@@ -1517,6 +2566,10 @@ namespace DeslandesApp.Infra.Data.Migrations
                         .HasColumnType("datetime2")
                         .HasColumnName("DATACADASTRO");
 
+                    b.Property<DateTime?>("DataExclusao")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("DATAEXCLUSAO");
+
                     b.Property<DateTime?>("DataTarefa")
                         .HasColumnType("datetime2")
                         .HasColumnName("DATATAREFA");
@@ -1527,6 +2580,10 @@ namespace DeslandesApp.Infra.Data.Migrations
                         .IsUnicode(false)
                         .HasColumnType("varchar(500)")
                         .HasColumnName("DESCRICAO");
+
+                    b.Property<bool>("Excluido")
+                        .HasColumnType("bit")
+                        .HasColumnName("EXCLUIDO");
 
                     b.Property<int>("Prioridade")
                         .HasColumnType("int")
@@ -1544,13 +2601,21 @@ namespace DeslandesApp.Infra.Data.Migrations
                         .HasColumnType("int")
                         .HasColumnName("STATUSKANBAN");
 
-                    b.Property<int?>("TipoVinculo")
+                    b.Property<int?>("TipoVinculoId")
                         .HasColumnType("int")
-                        .HasColumnName("TIPOVINCULO");
+                        .HasColumnName("TIPOVINCULOID");
+
+                    b.Property<Guid?>("UsuarioCadastroId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("USUARIOCADASTROID");
 
                     b.Property<Guid?>("UsuarioCriacaoId")
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("USUARIOCRIACAOID");
+
+                    b.Property<Guid?>("UsuarioExclusaoId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("USUARIOEXCLUSAOID");
 
                     b.HasKey("Id")
                         .HasName("PK_TAREFA");
@@ -1566,6 +2631,9 @@ namespace DeslandesApp.Infra.Data.Migrations
 
                     b.HasIndex("ResponsavelId")
                         .HasDatabaseName("IX_TAREFA_RESPONSAVELID");
+
+                    b.HasIndex("UsuarioCadastroId")
+                        .HasDatabaseName("IX_TAREFA_USUARIOCADASTROID");
 
                     b.HasIndex("UsuarioCriacaoId")
                         .HasDatabaseName("IX_TAREFA_USUARIOCRIACAOID");
@@ -1587,6 +2655,14 @@ namespace DeslandesApp.Infra.Data.Migrations
                     b.Property<DateTime>("DataCadastro")
                         .HasColumnType("datetime2")
                         .HasColumnName("DATACADASTRO");
+
+                    b.Property<DateTime?>("DataExclusao")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("DATAEXCLUSAO");
+
+                    b.Property<bool>("Excluido")
+                        .HasColumnType("bit")
+                        .HasColumnName("EXCLUIDO");
 
                     b.Property<string>("Login")
                         .IsRequired()
@@ -1612,6 +2688,14 @@ namespace DeslandesApp.Infra.Data.Migrations
                         .HasColumnType("int")
                         .HasColumnName("STATUS");
 
+                    b.Property<Guid?>("UsuarioCadastroId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("USUARIOCADASTROID");
+
+                    b.Property<Guid?>("UsuarioExclusaoId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("USUARIOEXCLUSAOID");
+
                     b.Property<string>("ValorEmail")
                         .HasMaxLength(150)
                         .HasColumnType("nvarchar(150)")
@@ -1619,6 +2703,9 @@ namespace DeslandesApp.Infra.Data.Migrations
 
                     b.HasKey("Id")
                         .HasName("PK_USUARIOS");
+
+                    b.HasIndex("UsuarioCadastroId")
+                        .HasDatabaseName("IX_USUARIOS_USUARIOCADASTROID");
 
                     b.ToTable("USUARIOS", (string)null);
                 });
@@ -1629,6 +2716,22 @@ namespace DeslandesApp.Infra.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("ID");
+
+                    b.Property<DateTime?>("DataAtualizacao")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("DATAATUALIZACAO");
+
+                    b.Property<DateTime>("DataCadastro")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("DATACADASTRO");
+
+                    b.Property<DateTime?>("DataExclusao")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("DATAEXCLUSAO");
+
+                    b.Property<bool>("Excluido")
+                        .HasColumnType("bit")
+                        .HasColumnName("EXCLUIDO");
 
                     b.Property<Guid>("ForoId")
                         .HasColumnType("uniqueidentifier")
@@ -1652,11 +2755,22 @@ namespace DeslandesApp.Infra.Data.Migrations
                         .HasColumnType("varchar(100)")
                         .HasColumnName("TIPO");
 
+                    b.Property<Guid?>("UsuarioCadastroId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("USUARIOCADASTROID");
+
+                    b.Property<Guid?>("UsuarioExclusaoId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("USUARIOEXCLUSAOID");
+
                     b.HasKey("Id")
                         .HasName("PK_VARA");
 
                     b.HasIndex("ForoId")
                         .HasDatabaseName("IX_VARA_FOROID");
+
+                    b.HasIndex("UsuarioCadastroId")
+                        .HasDatabaseName("IX_VARA_USUARIOCADASTROID");
 
                     b.HasIndex("Numero", "Tipo", "ForoId")
                         .IsUnique()
@@ -1680,13 +2794,25 @@ namespace DeslandesApp.Infra.Data.Migrations
                         .HasColumnType("int")
                         .HasColumnName("ACESSO");
 
-                    b.Property<DateTime?>("DataCadastro")
+                    b.Property<DateTime?>("DataAtualizacao")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("DATAATUALIZACAO");
+
+                    b.Property<DateTime>("DataCadastro")
                         .HasColumnType("datetime2")
                         .HasColumnName("DATACADASTRO");
+
+                    b.Property<DateTime?>("DataExclusao")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("DATAEXCLUSAO");
 
                     b.Property<DateTime?>("Distribuido")
                         .HasColumnType("datetime2")
                         .HasColumnName("DISTRIBUIDO");
+
+                    b.Property<bool>("Excluido")
+                        .HasColumnType("bit")
+                        .HasColumnName("EXCLUIDO");
 
                     b.Property<int?>("Instancia")
                         .HasColumnType("int")
@@ -1728,6 +2854,14 @@ namespace DeslandesApp.Infra.Data.Migrations
                         .HasColumnType("varchar(250)")
                         .HasColumnName("TITULO");
 
+                    b.Property<Guid?>("UsuarioCadastroId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("USUARIOCADASTROID");
+
+                    b.Property<Guid?>("UsuarioExclusaoId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("USUARIOEXCLUSAOID");
+
                     b.Property<Guid?>("UsuarioResponsavelId")
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("USUARIORESPONSAVELID");
@@ -1749,6 +2883,9 @@ namespace DeslandesApp.Infra.Data.Migrations
 
                     b.HasIndex("AcaoId")
                         .HasDatabaseName("IX_PROCESSOS_ACAOID");
+
+                    b.HasIndex("UsuarioCadastroId")
+                        .HasDatabaseName("IX_PROCESSOS_USUARIOCADASTROID");
 
                     b.HasIndex("UsuarioResponsavelId")
                         .HasDatabaseName("IX_PROCESSOS_USUARIORESPONSAVELID");
@@ -1946,6 +3083,16 @@ namespace DeslandesApp.Infra.Data.Migrations
                     b.HasDiscriminator().HasValue("PESSOAJURIDICA");
                 });
 
+            modelBuilder.Entity("DeslandesApp.Domain.Models.Entities.Acao", b =>
+                {
+                    b.HasOne("DeslandesApp.Domain.Models.Entities.Usuario", "UsuarioCadastro")
+                        .WithMany()
+                        .HasForeignKey("UsuarioCadastroId")
+                        .HasConstraintName("FK_ACAO_USUARIOS_USUARIOCADASTROID");
+
+                    b.Navigation("UsuarioCadastro");
+                });
+
             modelBuilder.Entity("DeslandesApp.Domain.Models.Entities.Atendimento", b =>
                 {
                     b.HasOne("DeslandesApp.Domain.Models.Entities.Atendimento", "AtendimentoPai")
@@ -1969,6 +3116,11 @@ namespace DeslandesApp.Infra.Data.Migrations
                         .HasForeignKey("ResponsavelId")
                         .HasConstraintName("FK_ATENDIMENTO_USUARIOS_RESPONSAVELID");
 
+                    b.HasOne("DeslandesApp.Domain.Models.Entities.Usuario", "UsuarioCadastro")
+                        .WithMany()
+                        .HasForeignKey("UsuarioCadastroId")
+                        .HasConstraintName("FK_ATENDIMENTO_USUARIOS_USUARIOCADASTROID");
+
                     b.Navigation("AtendimentoPai");
 
                     b.Navigation("Caso");
@@ -1976,6 +3128,8 @@ namespace DeslandesApp.Infra.Data.Migrations
                     b.Navigation("Processo");
 
                     b.Navigation("Responsavel");
+
+                    b.Navigation("UsuarioCadastro");
                 });
 
             modelBuilder.Entity("DeslandesApp.Domain.Models.Entities.AtendimentoHistorico", b =>
@@ -1993,9 +3147,63 @@ namespace DeslandesApp.Infra.Data.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .HasConstraintName("FK_ATENDIMENTOHISTORICO_USUARIO");
 
+                    b.HasOne("DeslandesApp.Domain.Models.Entities.Usuario", "UsuarioCadastro")
+                        .WithMany()
+                        .HasForeignKey("UsuarioCadastroId")
+                        .HasConstraintName("FK_ATENDIMENTOHISTORICO_USUARIOS_USUARIOCADASTROID");
+
                     b.Navigation("Atendimento");
 
                     b.Navigation("Usuario");
+
+                    b.Navigation("UsuarioCadastro");
+                });
+
+            modelBuilder.Entity("DeslandesApp.Domain.Models.Entities.BaixaFinanceira", b =>
+                {
+                    b.HasOne("DeslandesApp.Domain.Models.Entities.ContaBancariaEmpresa", "ContaBancariaEmpresa")
+                        .WithMany()
+                        .HasForeignKey("ContaBancariaEmpresaId")
+                        .HasConstraintName("FK_BAIXA_FINANCEIRA_CONTABANCARIAEMPRESA_CONTABANCARIAEMPRESAID");
+
+                    b.HasOne("DeslandesApp.Domain.Models.Entities.ContaPagar", "ContaPagar")
+                        .WithMany()
+                        .HasForeignKey("ContaPagarId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .HasConstraintName("FK_BAIXA_FINANCEIRA_CONTA_PAGAR_CONTAPAGARID");
+
+                    b.HasOne("DeslandesApp.Domain.Models.Entities.ContaReceber", "ContaReceber")
+                        .WithMany()
+                        .HasForeignKey("ContaReceberId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .HasConstraintName("FK_BAIXA_FINANCEIRA_CONTA_RECEBER_CONTARECEBERID");
+
+                    b.HasOne("DeslandesApp.Domain.Models.Entities.ContaReceber", null)
+                        .WithMany("Baixas")
+                        .HasForeignKey("ContaReceberId1")
+                        .HasConstraintName("FK_BAIXA_FINANCEIRA_CONTA_RECEBER_CONTARECEBERID1");
+
+                    b.HasOne("DeslandesApp.Domain.Models.Entities.FormaPagamento", "FormaPagamento")
+                        .WithMany()
+                        .HasForeignKey("FormaPagamentoId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("FK_BAIXA_FINANCEIRA_FORMA_PAGAMENTO_FORMAPAGAMENTOID");
+
+                    b.HasOne("DeslandesApp.Domain.Models.Entities.Usuario", "UsuarioCadastro")
+                        .WithMany()
+                        .HasForeignKey("UsuarioCadastroId")
+                        .HasConstraintName("FK_BAIXA_FINANCEIRA_USUARIOS_USUARIOCADASTROID");
+
+                    b.Navigation("ContaBancariaEmpresa");
+
+                    b.Navigation("ContaPagar");
+
+                    b.Navigation("ContaReceber");
+
+                    b.Navigation("FormaPagamento");
+
+                    b.Navigation("UsuarioCadastro");
                 });
 
             modelBuilder.Entity("DeslandesApp.Domain.Models.Entities.Caso", b =>
@@ -2016,24 +3224,24 @@ namespace DeslandesApp.Infra.Data.Migrations
                     b.Navigation("UsuarioCadastro");
                 });
 
-            modelBuilder.Entity("DeslandesApp.Domain.Models.Entities.CasoHistorico", b =>
+            modelBuilder.Entity("DeslandesApp.Domain.Models.Entities.CategoriaFinanceira", b =>
                 {
-                    b.HasOne("DeslandesApp.Domain.Models.Entities.Caso", "Caso")
+                    b.HasOne("DeslandesApp.Domain.Models.Entities.Usuario", "UsuarioCadastro")
                         .WithMany()
-                        .HasForeignKey("CasoId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired()
-                        .HasConstraintName("FK_CASOHISTORICO_CASO");
+                        .HasForeignKey("UsuarioCadastroId")
+                        .HasConstraintName("FK_CATEGORIA_FINANCEIRA_USUARIOS_USUARIOCADASTROID");
 
-                    b.HasOne("DeslandesApp.Domain.Models.Entities.Usuario", "Usuario")
+                    b.Navigation("UsuarioCadastro");
+                });
+
+            modelBuilder.Entity("DeslandesApp.Domain.Models.Entities.CentroCusto", b =>
+                {
+                    b.HasOne("DeslandesApp.Domain.Models.Entities.Usuario", "UsuarioCadastro")
                         .WithMany()
-                        .HasForeignKey("IdUsuario")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .HasConstraintName("FK_CASOHISTORICO_USUARIO");
+                        .HasForeignKey("UsuarioCadastroId")
+                        .HasConstraintName("FK_CENTRO_CUSTO_USUARIOS_USUARIOCADASTROID");
 
-                    b.Navigation("Caso");
-
-                    b.Navigation("Usuario");
+                    b.Navigation("UsuarioCadastro");
                 });
 
             modelBuilder.Entity("DeslandesApp.Domain.Models.Entities.Comentario", b =>
@@ -2050,6 +3258,11 @@ namespace DeslandesApp.Infra.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .HasConstraintName("FK_COMENTARIOS_TAREFA_TAREFAID");
 
+                    b.HasOne("DeslandesApp.Domain.Models.Entities.Usuario", "UsuarioCadastro")
+                        .WithMany()
+                        .HasForeignKey("UsuarioCadastroId")
+                        .HasConstraintName("FK_COMENTARIOS_USUARIOS_USUARIOCADASTROID");
+
                     b.HasOne("DeslandesApp.Domain.Models.Entities.Usuario", "Usuario")
                         .WithMany()
                         .HasForeignKey("UsuarioId")
@@ -2062,6 +3275,8 @@ namespace DeslandesApp.Infra.Data.Migrations
                     b.Navigation("Tarefa");
 
                     b.Navigation("Usuario");
+
+                    b.Navigation("UsuarioCadastro");
                 });
 
             modelBuilder.Entity("DeslandesApp.Domain.Models.Entities.ContaBancaria", b =>
@@ -2072,7 +3287,149 @@ namespace DeslandesApp.Infra.Data.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .HasConstraintName("FK_CONTABANCARIA_PESSOA_PESSOAID");
 
+                    b.HasOne("DeslandesApp.Domain.Models.Entities.Usuario", "UsuarioCadastro")
+                        .WithMany()
+                        .HasForeignKey("UsuarioCadastroId")
+                        .HasConstraintName("FK_CONTABANCARIA_USUARIOS_USUARIOCADASTROID");
+
                     b.Navigation("Pessoa");
+
+                    b.Navigation("UsuarioCadastro");
+                });
+
+            modelBuilder.Entity("DeslandesApp.Domain.Models.Entities.ContaBancariaEmpresa", b =>
+                {
+                    b.HasOne("DeslandesApp.Domain.Models.Entities.Usuario", "UsuarioCadastro")
+                        .WithMany()
+                        .HasForeignKey("UsuarioCadastroId")
+                        .HasConstraintName("FK_CONTABANCARIAEMPRESA_USUARIOS_USUARIOCADASTROID");
+
+                    b.Navigation("UsuarioCadastro");
+                });
+
+            modelBuilder.Entity("DeslandesApp.Domain.Models.Entities.ContaPagar", b =>
+                {
+                    b.HasOne("DeslandesApp.Domain.Models.Entities.CategoriaFinanceira", "CategoriaFinanceira")
+                        .WithMany()
+                        .HasForeignKey("CategoriaFinanceiraId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .HasConstraintName("FK_CONTA_PAGAR_CATEGORIA_FINANCEIRA_CATEGORIAFINANCEIRAID");
+
+                    b.HasOne("DeslandesApp.Domain.Models.Entities.CentroCusto", "CentroCusto")
+                        .WithMany()
+                        .HasForeignKey("CentroCustoId")
+                        .HasConstraintName("FK_CONTA_PAGAR_CENTRO_CUSTO_CENTROCUSTOID");
+
+                    b.HasOne("DeslandesApp.Domain.Models.Entities.Contrato", "Contrato")
+                        .WithMany()
+                        .HasForeignKey("ContratoId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .HasConstraintName("FK_CONTA_PAGAR_CONTRATO_CONTRATOID");
+
+                    b.HasOne("DeslandesApp.Domain.Models.Entities.Pessoa", "Pessoa")
+                        .WithMany()
+                        .HasForeignKey("PessoaId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("FK_CONTA_PAGAR_PESSOA_PESSOAID");
+
+                    b.HasOne("DeslandesApp.Domain.Models.Entities.Usuario", "UsuarioCadastro")
+                        .WithMany()
+                        .HasForeignKey("UsuarioCadastroId")
+                        .HasConstraintName("FK_CONTA_PAGAR_USUARIOS_USUARIOCADASTROID");
+
+                    b.Navigation("CategoriaFinanceira");
+
+                    b.Navigation("CentroCusto");
+
+                    b.Navigation("Contrato");
+
+                    b.Navigation("Pessoa");
+
+                    b.Navigation("UsuarioCadastro");
+                });
+
+            modelBuilder.Entity("DeslandesApp.Domain.Models.Entities.ContaReceber", b =>
+                {
+                    b.HasOne("DeslandesApp.Domain.Models.Entities.CategoriaFinanceira", "CategoriaFinanceira")
+                        .WithMany()
+                        .HasForeignKey("CategoriaFinanceiraId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .HasConstraintName("FK_CONTA_RECEBER_CATEGORIA_FINANCEIRA_CATEGORIAFINANCEIRAID");
+
+                    b.HasOne("DeslandesApp.Domain.Models.Entities.CentroCusto", "CentroCusto")
+                        .WithMany()
+                        .HasForeignKey("CentroCustoId")
+                        .HasConstraintName("FK_CONTA_RECEBER_CENTRO_CUSTO_CENTROCUSTOID");
+
+                    b.HasOne("DeslandesApp.Domain.Models.Entities.Contrato", "Contrato")
+                        .WithMany("ContasReceber")
+                        .HasForeignKey("ContratoId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("FK_CONTA_RECEBER_CONTRATO_CONTRATOID");
+
+                    b.HasOne("DeslandesApp.Domain.Models.Entities.Pessoa", "Pessoa")
+                        .WithMany()
+                        .HasForeignKey("PessoaId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("FK_CONTA_RECEBER_PESSOA_PESSOAID");
+
+                    b.HasOne("DeslandesApp.Domain.Models.Entities.Usuario", "UsuarioCadastro")
+                        .WithMany()
+                        .HasForeignKey("UsuarioCadastroId")
+                        .HasConstraintName("FK_CONTA_RECEBER_USUARIOS_USUARIOCADASTROID");
+
+                    b.Navigation("CategoriaFinanceira");
+
+                    b.Navigation("CentroCusto");
+
+                    b.Navigation("Contrato");
+
+                    b.Navigation("Pessoa");
+
+                    b.Navigation("UsuarioCadastro");
+                });
+
+            modelBuilder.Entity("DeslandesApp.Domain.Models.Entities.Contrato", b =>
+                {
+                    b.HasOne("DeslandesApp.Domain.Models.Entities.Pessoa", "Pessoa")
+                        .WithMany()
+                        .HasForeignKey("PessoaId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("FK_CONTRATO_PESSOA_PESSOAID");
+
+                    b.HasOne("DeslandesApp.Domain.Models.Entities.Usuario", "UsuarioCadastro")
+                        .WithMany()
+                        .HasForeignKey("UsuarioCadastroId")
+                        .HasConstraintName("FK_CONTRATO_USUARIOS_USUARIOCADASTROID");
+
+                    b.Navigation("Pessoa");
+
+                    b.Navigation("UsuarioCadastro");
+                });
+
+            modelBuilder.Entity("DeslandesApp.Domain.Models.Entities.ContratoProcesso", b =>
+                {
+                    b.HasOne("DeslandesApp.Domain.Models.Entities.Contrato", "Contrato")
+                        .WithMany("ContratoProcessos")
+                        .HasForeignKey("ContratoId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("FK_CONTRATO_PROCESSO_CONTRATO_CONTRATOID");
+
+                    b.HasOne("Processo", "Processo")
+                        .WithMany("ContratoProcessos")
+                        .HasForeignKey("ProcessoId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("FK_CONTRATO_PROCESSO_PROCESSOS_PROCESSOID");
+
+                    b.Navigation("Contrato");
+
+                    b.Navigation("Processo");
                 });
 
             modelBuilder.Entity("DeslandesApp.Domain.Models.Entities.Endereco", b =>
@@ -2081,10 +3438,26 @@ namespace DeslandesApp.Infra.Data.Migrations
                         .WithOne("Endereco")
                         .HasForeignKey("DeslandesApp.Domain.Models.Entities.Endereco", "IdPessoa")
                         .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired()
                         .HasConstraintName("FK_ENDERECO_PESSOA_PESSOA_ID");
 
+                    b.HasOne("DeslandesApp.Domain.Models.Entities.Usuario", "UsuarioCadastro")
+                        .WithMany()
+                        .HasForeignKey("UsuarioCadastroId")
+                        .HasConstraintName("FK_ENDERECO_USUARIOS_USUARIOCADASTROID");
+
                     b.Navigation("Pessoa");
+
+                    b.Navigation("UsuarioCadastro");
+                });
+
+            modelBuilder.Entity("DeslandesApp.Domain.Models.Entities.Etiqueta", b =>
+                {
+                    b.HasOne("DeslandesApp.Domain.Models.Entities.Usuario", "UsuarioCadastro")
+                        .WithMany()
+                        .HasForeignKey("UsuarioCadastroId")
+                        .HasConstraintName("FK_ETIQUETA_USUARIOS_USUARIOCADASTROID");
+
+                    b.Navigation("UsuarioCadastro");
                 });
 
             modelBuilder.Entity("DeslandesApp.Domain.Models.Entities.Evento", b =>
@@ -2107,6 +3480,11 @@ namespace DeslandesApp.Infra.Data.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .HasConstraintName("FK_EVENTO_PROCESSO");
 
+                    b.HasOne("DeslandesApp.Domain.Models.Entities.Usuario", "UsuarioCadastro")
+                        .WithMany()
+                        .HasForeignKey("UsuarioCadastroId")
+                        .HasConstraintName("FK_EVENTO_USUARIOS_USUARIOCADASTROID");
+
                     b.HasOne("DeslandesApp.Domain.Models.Entities.Usuario", "UsuarioCriacao")
                         .WithMany()
                         .HasForeignKey("UsuarioCriacaoId")
@@ -2119,27 +3497,9 @@ namespace DeslandesApp.Infra.Data.Migrations
 
                     b.Navigation("Processo");
 
+                    b.Navigation("UsuarioCadastro");
+
                     b.Navigation("UsuarioCriacao");
-                });
-
-            modelBuilder.Entity("DeslandesApp.Domain.Models.Entities.EventoHistorico", b =>
-                {
-                    b.HasOne("DeslandesApp.Domain.Models.Entities.Evento", "Evento")
-                        .WithMany()
-                        .HasForeignKey("EventoId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired()
-                        .HasConstraintName("FK_EVENTOHISTORICO_EVENTO");
-
-                    b.HasOne("DeslandesApp.Domain.Models.Entities.Usuario", "Usuario")
-                        .WithMany()
-                        .HasForeignKey("UsuarioId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .HasConstraintName("FK_EVENTOHISTORICO_USUARIO");
-
-                    b.Navigation("Evento");
-
-                    b.Navigation("Usuario");
                 });
 
             modelBuilder.Entity("DeslandesApp.Domain.Models.Entities.FailedLoginAttempt", b =>
@@ -2149,6 +3509,33 @@ namespace DeslandesApp.Infra.Data.Migrations
                         .HasForeignKey("IdUsuario")
                         .OnDelete(DeleteBehavior.NoAction)
                         .HasConstraintName("FK_FAILEDLOGINATTEMPTS_USUARIOS_IDUSUARIO");
+
+                    b.HasOne("DeslandesApp.Domain.Models.Entities.Usuario", "UsuarioCadastro")
+                        .WithMany()
+                        .HasForeignKey("UsuarioCadastroId")
+                        .HasConstraintName("FK_FAILEDLOGINATTEMPTS_USUARIOS_USUARIOCADASTROID");
+
+                    b.Navigation("UsuarioCadastro");
+                });
+
+            modelBuilder.Entity("DeslandesApp.Domain.Models.Entities.FormaPagamento", b =>
+                {
+                    b.HasOne("DeslandesApp.Domain.Models.Entities.Usuario", "UsuarioCadastro")
+                        .WithMany()
+                        .HasForeignKey("UsuarioCadastroId")
+                        .HasConstraintName("FK_FORMA_PAGAMENTO_USUARIOS_USUARIOCADASTROID");
+
+                    b.Navigation("UsuarioCadastro");
+                });
+
+            modelBuilder.Entity("DeslandesApp.Domain.Models.Entities.Foro", b =>
+                {
+                    b.HasOne("DeslandesApp.Domain.Models.Entities.Usuario", "UsuarioCadastro")
+                        .WithMany()
+                        .HasForeignKey("UsuarioCadastroId")
+                        .HasConstraintName("FK_FORO_USUARIOS_USUARIOCADASTROID");
+
+                    b.Navigation("UsuarioCadastro");
                 });
 
             modelBuilder.Entity("DeslandesApp.Domain.Models.Entities.Fotos", b =>
@@ -2158,7 +3545,14 @@ namespace DeslandesApp.Infra.Data.Migrations
                         .HasForeignKey("DeslandesApp.Domain.Models.Entities.Fotos", "IdUsuario")
                         .HasConstraintName("FK_FOTOS_USUARIOS_USUARIO_ID");
 
+                    b.HasOne("DeslandesApp.Domain.Models.Entities.Usuario", "UsuarioCadastro")
+                        .WithMany()
+                        .HasForeignKey("UsuarioCadastroId")
+                        .HasConstraintName("FK_FOTOS_USUARIOS_USUARIOCADASTROID");
+
                     b.Navigation("Usuario");
+
+                    b.Navigation("UsuarioCadastro");
                 });
 
             modelBuilder.Entity("DeslandesApp.Domain.Models.Entities.GrupoAtendimentoCliente", b =>
@@ -2225,11 +3619,18 @@ namespace DeslandesApp.Infra.Data.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .HasConstraintName("FK_GRUPOCASOENVOLVIDO_QUALIFICACAO_QUALIFICACAOID");
 
+                    b.HasOne("DeslandesApp.Domain.Models.Entities.Usuario", "UsuarioCadastro")
+                        .WithMany()
+                        .HasForeignKey("UsuarioCadastroId")
+                        .HasConstraintName("FK_GRUPOCASOENVOLVIDO_USUARIOS_USUARIOCADASTROID");
+
                     b.Navigation("Caso");
 
                     b.Navigation("Pessoa");
 
                     b.Navigation("Qualificacao");
+
+                    b.Navigation("UsuarioCadastro");
                 });
 
             modelBuilder.Entity("DeslandesApp.Domain.Models.Entities.GrupoClienteProcesso", b =>
@@ -2564,6 +3965,11 @@ namespace DeslandesApp.Infra.Data.Migrations
 
             modelBuilder.Entity("DeslandesApp.Domain.Models.Entities.HistoricoGeral", b =>
                 {
+                    b.HasOne("DeslandesApp.Domain.Models.Entities.Usuario", "UsuarioCadastro")
+                        .WithMany()
+                        .HasForeignKey("UsuarioCadastroId")
+                        .HasConstraintName("FK_HISTORICOGERAL_USUARIOS_USUARIOCADASTROID");
+
                     b.HasOne("DeslandesApp.Domain.Models.Entities.Usuario", "Usuario")
                         .WithMany()
                         .HasForeignKey("UsuarioId")
@@ -2571,6 +3977,8 @@ namespace DeslandesApp.Infra.Data.Migrations
                         .HasConstraintName("FK_HISTORICOGERAL_USUARIOS_USUARIOID");
 
                     b.Navigation("Usuario");
+
+                    b.Navigation("UsuarioCadastro");
                 });
 
             modelBuilder.Entity("DeslandesApp.Domain.Models.Entities.InformacoesComplementares", b =>
@@ -2582,7 +3990,14 @@ namespace DeslandesApp.Infra.Data.Migrations
                         .IsRequired()
                         .HasConstraintName("FK_INFORMACOESCOMPLEMENTARES_PESSOA_PESSOA_ID");
 
+                    b.HasOne("DeslandesApp.Domain.Models.Entities.Usuario", "UsuarioCadastro")
+                        .WithMany()
+                        .HasForeignKey("UsuarioCadastroId")
+                        .HasConstraintName("FK_INFORMACOESCOMPLEMENTARES_USUARIOS_USUARIOCADASTROID");
+
                     b.Navigation("Pessoa");
+
+                    b.Navigation("UsuarioCadastro");
                 });
 
             modelBuilder.Entity("DeslandesApp.Domain.Models.Entities.ListaTarefa", b =>
@@ -2593,7 +4008,14 @@ namespace DeslandesApp.Infra.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .HasConstraintName("FK_TAREFA_LISTATAREFA");
 
+                    b.HasOne("DeslandesApp.Domain.Models.Entities.Usuario", "UsuarioCadastro")
+                        .WithMany()
+                        .HasForeignKey("UsuarioCadastroId")
+                        .HasConstraintName("FK_LISTATAREFA_USUARIOS_USUARIOCADASTROID");
+
                     b.Navigation("Tarefa");
+
+                    b.Navigation("UsuarioCadastro");
                 });
 
             modelBuilder.Entity("DeslandesApp.Domain.Models.Entities.LoginHistory", b =>
@@ -2604,6 +4026,35 @@ namespace DeslandesApp.Infra.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
                         .HasConstraintName("FK_LOGINHISTORY_USUARIOS_IDUSUARIO");
+
+                    b.HasOne("DeslandesApp.Domain.Models.Entities.Usuario", "UsuarioCadastro")
+                        .WithMany()
+                        .HasForeignKey("UsuarioCadastroId")
+                        .HasConstraintName("FK_LOGINHISTORY_USUARIOS_USUARIOCADASTROID");
+
+                    b.Navigation("Usuario");
+
+                    b.Navigation("UsuarioCadastro");
+                });
+
+            modelBuilder.Entity("DeslandesApp.Domain.Models.Entities.Niveis", b =>
+                {
+                    b.HasOne("DeslandesApp.Domain.Models.Entities.Usuario", "UsuarioCadastro")
+                        .WithMany()
+                        .HasForeignKey("UsuarioCadastroId")
+                        .HasConstraintName("FK_NIVEL_USUARIOS_USUARIOCADASTROID");
+
+                    b.Navigation("UsuarioCadastro");
+                });
+
+            modelBuilder.Entity("DeslandesApp.Domain.Models.Entities.Notificacao", b =>
+                {
+                    b.HasOne("DeslandesApp.Domain.Models.Entities.Usuario", "Usuario")
+                        .WithMany()
+                        .HasForeignKey("UsuarioId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("FK_NOTIFICACAO_USUARIOS_USUARIOID");
 
                     b.Navigation("Usuario");
                 });
@@ -2617,27 +4068,34 @@ namespace DeslandesApp.Infra.Data.Migrations
                         .IsRequired()
                         .HasConstraintName("FK_PESSOA_USUARIOS_USUARIO_ID");
 
+                    b.HasOne("DeslandesApp.Domain.Models.Entities.Usuario", "UsuarioCadastro")
+                        .WithMany()
+                        .HasForeignKey("UsuarioCadastroId")
+                        .HasConstraintName("FK_PESSOA_USUARIOS_USUARIOCADASTROID");
+
                     b.Navigation("Usuario");
+
+                    b.Navigation("UsuarioCadastro");
                 });
 
-            modelBuilder.Entity("DeslandesApp.Domain.Models.Entities.PessoaHistorico", b =>
+            modelBuilder.Entity("DeslandesApp.Domain.Models.Entities.Qualificacao", b =>
                 {
-                    b.HasOne("DeslandesApp.Domain.Models.Entities.Pessoa", "Pessoa")
+                    b.HasOne("DeslandesApp.Domain.Models.Entities.Usuario", "UsuarioCadastro")
                         .WithMany()
-                        .HasForeignKey("IdPessoa")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired()
-                        .HasConstraintName("FK_PESSOAHISTORICO_PESSOA");
+                        .HasForeignKey("UsuarioCadastroId")
+                        .HasConstraintName("FK_QUALIFICACAO_USUARIOS_USUARIOCADASTROID");
 
-                    b.HasOne("DeslandesApp.Domain.Models.Entities.Usuario", "Usuario")
+                    b.Navigation("UsuarioCadastro");
+                });
+
+            modelBuilder.Entity("DeslandesApp.Domain.Models.Entities.Setor", b =>
+                {
+                    b.HasOne("DeslandesApp.Domain.Models.Entities.Usuario", "UsuarioCadastro")
                         .WithMany()
-                        .HasForeignKey("IdUsuario")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .HasConstraintName("FK_PESSOAHISTORICO_USUARIO");
+                        .HasForeignKey("UsuarioCadastroId")
+                        .HasConstraintName("FK_SETORES_USUARIOS_USUARIOCADASTROID");
 
-                    b.Navigation("Pessoa");
-
-                    b.Navigation("Usuario");
+                    b.Navigation("UsuarioCadastro");
                 });
 
             modelBuilder.Entity("DeslandesApp.Domain.Models.Entities.Tarefa", b =>
@@ -2665,6 +4123,11 @@ namespace DeslandesApp.Infra.Data.Migrations
                         .HasForeignKey("ResponsavelId")
                         .HasConstraintName("FK_TAREFA_USUARIOS_RESPONSAVELID");
 
+                    b.HasOne("DeslandesApp.Domain.Models.Entities.Usuario", "UsuarioCadastro")
+                        .WithMany()
+                        .HasForeignKey("UsuarioCadastroId")
+                        .HasConstraintName("FK_TAREFA_USUARIOS_USUARIOCADASTROID");
+
                     b.HasOne("DeslandesApp.Domain.Models.Entities.Usuario", "UsuarioCriacao")
                         .WithMany()
                         .HasForeignKey("UsuarioCriacaoId")
@@ -2679,7 +4142,19 @@ namespace DeslandesApp.Infra.Data.Migrations
 
                     b.Navigation("Responsavel");
 
+                    b.Navigation("UsuarioCadastro");
+
                     b.Navigation("UsuarioCriacao");
+                });
+
+            modelBuilder.Entity("DeslandesApp.Domain.Models.Entities.Usuario", b =>
+                {
+                    b.HasOne("DeslandesApp.Domain.Models.Entities.Usuario", "UsuarioCadastro")
+                        .WithMany()
+                        .HasForeignKey("UsuarioCadastroId")
+                        .HasConstraintName("FK_USUARIOS_USUARIOS_USUARIOCADASTROID");
+
+                    b.Navigation("UsuarioCadastro");
                 });
 
             modelBuilder.Entity("DeslandesApp.Domain.Models.Entities.Vara", b =>
@@ -2691,7 +4166,14 @@ namespace DeslandesApp.Infra.Data.Migrations
                         .IsRequired()
                         .HasConstraintName("FK_VARA_FORO_FOROID");
 
+                    b.HasOne("DeslandesApp.Domain.Models.Entities.Usuario", "UsuarioCadastro")
+                        .WithMany()
+                        .HasForeignKey("UsuarioCadastroId")
+                        .HasConstraintName("FK_VARA_USUARIOS_USUARIOCADASTROID");
+
                     b.Navigation("Foro");
+
+                    b.Navigation("UsuarioCadastro");
                 });
 
             modelBuilder.Entity("Processo", b =>
@@ -2701,6 +4183,11 @@ namespace DeslandesApp.Infra.Data.Migrations
                         .HasForeignKey("AcaoId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .HasConstraintName("FK_PROCESSOS_ACAO_ACAOID");
+
+                    b.HasOne("DeslandesApp.Domain.Models.Entities.Usuario", "UsuarioCadastro")
+                        .WithMany()
+                        .HasForeignKey("UsuarioCadastroId")
+                        .HasConstraintName("FK_PROCESSOS_USUARIOS_USUARIOCADASTROID");
 
                     b.HasOne("DeslandesApp.Domain.Models.Entities.Usuario", "UsuarioResponsavel")
                         .WithMany("ProcessosResponsaveis")
@@ -2716,6 +4203,8 @@ namespace DeslandesApp.Infra.Data.Migrations
                         .HasConstraintName("FK_PROCESSOS_VARA_VARAID");
 
                     b.Navigation("Acao");
+
+                    b.Navigation("UsuarioCadastro");
 
                     b.Navigation("UsuarioResponsavel");
 
@@ -2736,6 +4225,18 @@ namespace DeslandesApp.Infra.Data.Migrations
                     b.Navigation("GrupoCasoEnvolvidos");
 
                     b.Navigation("GrupoEtiquetaCasos");
+                });
+
+            modelBuilder.Entity("DeslandesApp.Domain.Models.Entities.ContaReceber", b =>
+                {
+                    b.Navigation("Baixas");
+                });
+
+            modelBuilder.Entity("DeslandesApp.Domain.Models.Entities.Contrato", b =>
+                {
+                    b.Navigation("ContasReceber");
+
+                    b.Navigation("ContratoProcessos");
                 });
 
             modelBuilder.Entity("DeslandesApp.Domain.Models.Entities.Etiqueta", b =>
@@ -2829,6 +4330,8 @@ namespace DeslandesApp.Infra.Data.Migrations
 
             modelBuilder.Entity("Processo", b =>
                 {
+                    b.Navigation("ContratoProcessos");
+
                     b.Navigation("GrupoClienteProcesso");
 
                     b.Navigation("GrupoEnvolvidos");

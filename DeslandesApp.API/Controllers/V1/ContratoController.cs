@@ -85,5 +85,15 @@ namespace DeslandesApp.API.Controllers.V1
 
             return Ok(proessoPaged);
         }
+        [HttpGet("obter-contrato-por-id/{id:guid}")]
+        public async Task<IActionResult> ObterPorId(Guid id)
+        {
+            var contrato = await contratoService.ObterPorIdAsync(id);
+
+            if (contrato == null)
+                return NotFound("Processo não encontrado.");
+
+            return Ok(contrato);
+        }
     }
 }

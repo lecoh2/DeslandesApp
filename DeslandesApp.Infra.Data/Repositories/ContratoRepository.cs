@@ -59,5 +59,30 @@ namespace DeslandesApp.Infra.Data.Repositories
                 PageSize = pageSize
             };
         }
+
+        public async Task<Contrato?> ObterCompletoPorIdAsync(Guid id)
+        {
+            return await dataContext.Contrato
+                .AsNoTracking()
+                .Where(x => x.Id == id)
+
+                // =========================
+                // CLIENTE
+                // =========================
+                .Include(x => x.Pessoa)
+
+                // =========================
+                // PROCESSOS VINCULADOS
+                // =========================
+                .Include(x => x.ContratoProcessos)
+                    .ThenInclude(pc => pc.Processo)
+
+                // =========================
+                // SE EXISTIR VALORES AUXILIARES
+                // =========================
+                .Include(x => x.UsuarioCadastro)
+
+                .FirstOrDefaultAsync();
+        }
     }
 }

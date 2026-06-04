@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace DeslandesApp.Infra.Data.Mappings
 {
+
     public class ContratoMap : IEntityTypeConfiguration<Contrato>
     {
         public void Configure(EntityTypeBuilder<Contrato> builder)
@@ -12,9 +13,6 @@ namespace DeslandesApp.Infra.Data.Mappings
 
             builder.HasKey(x => x.Id);
 
-            // =========================
-            // CAMPOS
-            // =========================
             builder.Property(x => x.Numero)
                 .HasColumnName("NUMERO")
                 .HasMaxLength(50)
@@ -33,26 +31,24 @@ namespace DeslandesApp.Infra.Data.Mappings
 
             builder.Property(x => x.DataFim)
                 .HasColumnName("DATA_FIM");
+            builder.Property(x => x.Observacao)
+                .HasColumnName("OBSERVACAO").HasMaxLength(255);
+             
 
-            // =========================
-            // CLIENTE (PESSOA)
-            // =========================
+            builder.HasMany(x => x.ContratoProcessos)
+       .WithOne(x => x.Contrato)
+       .HasForeignKey(x => x.ContratoId);
+
             builder.HasOne(x => x.Pessoa)
-                .WithMany()
-                .HasForeignKey(x => x.PessoaId)
-                .OnDelete(DeleteBehavior.Restrict);
+                    .WithMany()
+                    .HasForeignKey(x => x.PessoaId)
+                    .OnDelete(DeleteBehavior.Restrict);
 
-            // =========================
-            // CONTAS RECEBER
-            // =========================
             builder.HasMany(x => x.ContasReceber)
                 .WithOne(x => x.Contrato)
                 .HasForeignKey(x => x.ContratoId)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            // =========================
-            // SOFT DELETE
-            // =========================
             builder.HasQueryFilter(x => !x.Excluido);
         }
     }

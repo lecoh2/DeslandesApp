@@ -1,8 +1,11 @@
 ﻿using AutoMapper;
 using DeslandesApp.Domain.Models.Dtos.Requests.Atendimento;
 using DeslandesApp.Domain.Models.Dtos.Requests.Caso;
+using DeslandesApp.Domain.Models.Dtos.Requests.CategoriaFinanceira;
+using DeslandesApp.Domain.Models.Dtos.Requests.CentroCusto;
 using DeslandesApp.Domain.Models.Dtos.Requests.Comentarios;
 using DeslandesApp.Domain.Models.Dtos.Requests.ContaBancaria;
+using DeslandesApp.Domain.Models.Dtos.Requests.Contrato;
 using DeslandesApp.Domain.Models.Dtos.Requests.EnderecoPessoa;
 using DeslandesApp.Domain.Models.Dtos.Requests.Evento;
 using DeslandesApp.Domain.Models.Dtos.Requests.GrupoCasoCliente;
@@ -24,6 +27,10 @@ using DeslandesApp.Domain.Models.Dtos.Requests.Usuarios;
 using DeslandesApp.Domain.Models.Dtos.Responses.Agenda;
 using DeslandesApp.Domain.Models.Dtos.Responses.Atendimento;
 using DeslandesApp.Domain.Models.Dtos.Responses.Caso;
+using DeslandesApp.Domain.Models.Dtos.Responses.CategoriaFinanceira;
+using DeslandesApp.Domain.Models.Dtos.Responses.CentroCusto;
+using DeslandesApp.Domain.Models.Dtos.Responses.Contrato;
+using DeslandesApp.Domain.Models.Dtos.Responses.contrato_processo;
 using DeslandesApp.Domain.Models.Dtos.Responses.EnderecoEndereco;
 using DeslandesApp.Domain.Models.Dtos.Responses.Etiquetas;
 using DeslandesApp.Domain.Models.Dtos.Responses.Evento;
@@ -861,6 +868,60 @@ namespace DeslandesApp.Domain.Mappings
 
             #region Foto
             CreateMap<Fotos, FotoResponse>();
+            #endregion
+            #region Centro Custo
+            CreateMap<CentroCustoRequest, CentroCusto>();
+
+            CreateMap<CentroCustoUpdateRequest, CentroCusto>();
+
+            CreateMap<CentroCusto, CentroCustoResponse>();
+            CreateMap<CentroCusto, ObterCentroCustoResponse>();
+            #endregion
+            #region Contrato
+            CreateMap<ContratoRequest, Contrato>();
+            CreateMap<ContratoUpdateRequest, Contrato>();
+            CreateMap<Contrato, ObterContratoResponse>()
+
+    .ForMember(dest => dest.Numero, opt => opt.MapFrom(src => src.Numero))
+    .ForMember(dest => dest.ValorTotal, opt => opt.MapFrom(src => src.ValorTotal))
+    .ForMember(dest => dest.PessoaId, opt => opt.MapFrom(src => src.PessoaId))
+    .ForMember(dest => dest.NomePessoa, opt => opt.MapFrom(src => src.Pessoa.Nome))
+
+    // 🔥 ESSENCIAL
+    .ForMember(dest => dest.Processos,
+        opt => opt.MapFrom(src => src.ContratoProcessos));
+            CreateMap<ContratoProcesso, ContratoProcessoResponse>()
+    .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Processo.Id))
+    .ForMember(dest => dest.NumeroProcesso, opt => opt.MapFrom(src => src.Processo.NumeroProcesso))
+    .ForMember(dest => dest.Pasta, opt => opt.MapFrom(src => src.Processo.Pasta));
+
+            CreateMap<Contrato, ContratoResponse>()
+    .ForMember(dest => dest.NomePessoa,
+        opt => opt.MapFrom(src => src.Pessoa.Nome))
+    .ForMember(dest => dest.Processos,
+        opt => opt.MapFrom(src => src.ContratoProcessos));
+            CreateMap<ContratoProcesso, ContratoProcessoResponse>()
+    .ForMember(dest => dest.Id,
+        opt => opt.MapFrom(src => src.Processo.Id))
+    .ForMember(dest => dest.NumeroProcesso,
+        opt => opt.MapFrom(src => src.Processo.NumeroProcesso))
+    .ForMember(dest => dest.Pasta,
+        opt => opt.MapFrom(src => src.Processo.Pasta));
+
+            #endregion
+            #region Categoria Financeira
+            CreateMap<CategoriaFinanceiraRequest, CategoriaFinanceira>();
+
+            CreateMap<CategoriaFinanceiraUpdateRequest, CategoriaFinanceira>();
+
+            // Entity -> Response
+            CreateMap<CategoriaFinanceira, CategoriaFinanceiraResponse>();
+
+            // Entity -> ObterPorId
+            CreateMap<CategoriaFinanceira, ObterCategoriaFinanceiraResponse>();
+
+            // Entity -> Paginação
+            CreateMap<CategoriaFinanceira, CategoriaFinanceiraPaginacaoResponse>();
             #endregion
         }
     }

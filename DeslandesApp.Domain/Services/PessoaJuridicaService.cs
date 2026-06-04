@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using DeslandesApp.Domain.Exceptions;
 using DeslandesApp.Domain.Helpers;
 using DeslandesApp.Domain.Interfaces.Repositories;
 using DeslandesApp.Domain.Interfaces.Services;
@@ -45,11 +46,11 @@ IHistoricoGeralService historicoGeralService
                     throw new ApplicationException("CNPJ inválido.");
 
                 if (await unitOfWork.PessoaRepository.CnpjInUseAsync(cnpj))
-                    throw new InvalidOperationException("CNPJ já cadastrado.");
+                    throw new BusinessException("CNPJ já cadastrado.");
 
                 if (!string.IsNullOrWhiteSpace(inscricaoEstadual) &&
                     await unitOfWork.PessoaRepository.IncricaoEstadualInUseAsync(inscricaoEstadual))
-                    throw new InvalidOperationException("Inscrição Estadual já cadastrada.");
+                    throw new BusinessException("Inscrição Estadual já cadastrada.");
 
                 // ================== MAPEAMENTO ==================
 
@@ -78,7 +79,7 @@ IHistoricoGeralService historicoGeralService
                     if (await unitOfWork.PessoaRepository
                         .EmailInUseAsync(pessoa.ValorEmail.EnderecoEmail))
                     {
-                        throw new InvalidOperationException("Email já cadastrado.");
+                        throw new BusinessException("Email já cadastrado.");
                     }
                 }
                 else
@@ -118,7 +119,7 @@ IHistoricoGeralService historicoGeralService
                         var etiqueta = await unitOfWork.EtiquetaRepository.GetByIdAsync(item.idEtiqueta);
 
                         if (etiqueta == null)
-                            throw new InvalidOperationException("Etiqueta não encontrada.");
+                            throw new BusinessException("Etiqueta não encontrada.");
 
                         var grupoEtiqueta = new GrupoPessoasEtiquetas
                         {
@@ -283,7 +284,7 @@ IHistoricoGeralService historicoGeralService
                 };
 
                 if (request.IdUsuario == null)
-                    throw new ApplicationException("Id do usuário não informado.");
+                    throw new BusinessException("Id do usuário não informado.");
 
                 var usuarioId = ObterUsuarioId();
 

@@ -10,23 +10,27 @@ namespace DeslandesApp.Domain.Models.Entities
 {
     public class Contrato : BaseEntity
     {
-                 public string Numero { get; set; }
+        public string Numero { get; set; }
 
-            // CLIENTE = PESSOA (FISICA OU JURIDICA)
-            public Guid PessoaId { get; set; }
-            public Pessoa Pessoa { get; set; }
+        // CLIENTE = PESSOA (FISICA OU JURIDICA)
+        public Guid PessoaId { get; set; }
+        public Pessoa Pessoa { get; set; }
 
-            public string? Objeto { get; set; }
+        public string? Objeto { get; set; }
 
-            public DateTime DataInicio { get; set; }
-            public DateTime? DataFim { get; set; }
+        public DateTime DataInicio { get; set; }
+        public DateTime? DataFim { get; set; }
 
-            public decimal? ValorTotal { get; set; }
+        public decimal? ValorTotal { get; set; }
 
-            public StatusContrato Status { get; set; }
+        public StatusContrato Status { get; set; }
 
-            // RELAÇÃO FINANCEIRA
-            public ICollection<ContaReceber> ContasReceber { get; set; } = new List<ContaReceber>();
-        }
+        // RELAÇÃO FINANCEIRA
+        public ICollection<ContaReceber> ContasReceber { get; set; } = new List<ContaReceber>();
+        public ICollection<ContratoProcesso> ContratoProcessos { get; set; }
+            = new List<ContratoProcesso>();
+        public string? Observacao { get; set; }
+
     }
+}
 

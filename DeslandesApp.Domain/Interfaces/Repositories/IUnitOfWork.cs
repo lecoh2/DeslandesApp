@@ -30,6 +30,7 @@ namespace DeslandesApp.Domain.Interfaces.Repositories
         IProcessoRepository ProcessoRepository { get; }
         IGrupoClientesRepository GrupoClientesRepository { get; }
         IGrupoClientesProcessosRepository GrupoClientesProcessosRepository { get; }
+        IContratoProcessoRepository ContratoProcessoRepository { get; }
         IGrupoEnvolvidosRepository GrupoEnvolvidosRepository { get; }
         IVaraRepository VaraRepository { get; }
         ITarefaRepository TarefaRepository { get; }
@@ -65,6 +66,7 @@ namespace DeslandesApp.Domain.Interfaces.Repositories
         IBaixaFinanceiraRepository BaixaFinanceiraRepository { get; }
         ICentroCustoRepository CentroCustoRepository { get; }
         IContratoRepository ContratoRepository { get; }
+        ICategoriaFinanceiraRepository CategoriaFinanceiraRepository { get; }   
         #endregion
     }
 }

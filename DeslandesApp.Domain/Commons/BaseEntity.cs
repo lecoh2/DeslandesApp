@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DeslandesApp.Domain.Models.Entities;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -22,5 +23,6 @@ namespace DeslandesApp.Domain.Commons
 
         public Guid? UsuarioExclusaoId { get; set; }
         public Guid? UsuarioCadastroId { get; set; }
+        public Usuario UsuarioCadastro { get; set; }
     }
 }

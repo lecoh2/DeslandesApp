@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using DeslandesApp.Domain.Exceptions;
 using DeslandesApp.Domain.Helpers;
 using DeslandesApp.Domain.Interfaces.Repositories;
 using DeslandesApp.Domain.Interfaces.Services;
@@ -44,16 +45,16 @@ namespace DeslandesApp.Domain.Services
                 throw new ApplicationException("CPF inválido.");
 
             if (await unitOfWork.PessoaRepository.CpfInUseAsync(cpf))
-                throw new InvalidOperationException("CPF já cadastrado.");
+                throw new BusinessException("CPF já cadastrado.");
 
             if (!string.IsNullOrWhiteSpace(rg) &&
                 await unitOfWork.PessoaRepository.RgInUseAsync(rg))
-                throw new InvalidOperationException("RG já cadastrado.");
+                throw new BusinessException("RG já cadastrado.");
             if (request.Perfil.HasValue &&
     !Enum.IsDefined(typeof(Perfil), request.Perfil.Value))
 
             {
-                throw new ApplicationException("Perfil inválido.");
+                throw new BusinessException("Perfil inválido.");
             }
 
             var pessoa = mapper.Map<PessoaFisica>(request);
@@ -76,7 +77,7 @@ namespace DeslandesApp.Domain.Services
                     if (await unitOfWork.PessoaRepository
                         .EmailInUseAsync(pessoa.ValorEmail.EnderecoEmail))
                     {
-                        throw new InvalidOperationException("Email já cadastrado.");
+                        throw new BusinessException("Email já cadastrado.");
                     }
                 }
                 else
@@ -111,7 +112,7 @@ namespace DeslandesApp.Domain.Services
                     var etiqueta = await unitOfWork.EtiquetaRepository.GetByIdAsync(item.idEtiqueta);
 
                     if (etiqueta == null)
-                        throw new InvalidOperationException("Etiqueta não encontrada.");
+                        throw new BusinessException("Etiqueta não encontrada.");
 
                     var grupoEtiqueta = new GrupoPessoasEtiquetas
                     {

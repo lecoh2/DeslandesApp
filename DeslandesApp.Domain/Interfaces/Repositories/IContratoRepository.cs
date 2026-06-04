@@ -11,5 +11,6 @@ namespace DeslandesApp.Domain.Interfaces.Repositories
    int pageNumber,
    int pageSize,
    string? searchTerm = null);
+        Task<Contrato?> ObterCompletoPorIdAsync(Guid id);
     }
 }

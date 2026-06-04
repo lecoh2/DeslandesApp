@@ -63,6 +63,9 @@ namespace DeslandesApp.Infra.Data.Migrations
                     b.HasKey("Id")
                         .HasName("PK_ACAO");
 
+                    b.HasIndex("UsuarioCadastroId")
+                        .HasDatabaseName("IX_ACAO_USUARIOCADASTROID");
+
                     b.ToTable("ACAO", (string)null);
                 });
 
@@ -222,6 +225,9 @@ namespace DeslandesApp.Infra.Data.Migrations
                     b.HasIndex("IdUsuario")
                         .HasDatabaseName("IX_ATENDIMENTOHISTORICO_USUARIO_ID");
 
+                    b.HasIndex("UsuarioCadastroId")
+                        .HasDatabaseName("IX_ATENDIMENTOHISTORICO_USUARIOCADASTROID");
+
                     b.ToTable("ATENDIMENTOHISTORICO", (string)null);
                 });
 
@@ -308,6 +314,9 @@ namespace DeslandesApp.Infra.Data.Migrations
 
                     b.HasIndex("FormaPagamentoId")
                         .HasDatabaseName("IX_BAIXA_FINANCEIRA_FORMAPAGAMENTOID");
+
+                    b.HasIndex("UsuarioCadastroId")
+                        .HasDatabaseName("IX_BAIXA_FINANCEIRA_USUARIOCADASTROID");
 
                     b.ToTable("BAIXA_FINANCEIRA", (string)null);
                 });
@@ -435,6 +444,9 @@ namespace DeslandesApp.Infra.Data.Migrations
                     b.HasKey("Id")
                         .HasName("PK_CATEGORIA_FINANCEIRA");
 
+                    b.HasIndex("UsuarioCadastroId")
+                        .HasDatabaseName("IX_CATEGORIA_FINANCEIRA_USUARIOCADASTROID");
+
                     b.ToTable("CATEGORIA_FINANCEIRA", (string)null);
                 });
 
@@ -488,6 +500,9 @@ namespace DeslandesApp.Infra.Data.Migrations
 
                     b.HasKey("Id")
                         .HasName("PK_CENTRO_CUSTO");
+
+                    b.HasIndex("UsuarioCadastroId")
+                        .HasDatabaseName("IX_CENTRO_CUSTO_USUARIOCADASTROID");
 
                     b.ToTable("CENTRO_CUSTO", (string)null);
                 });
@@ -554,6 +569,9 @@ namespace DeslandesApp.Infra.Data.Migrations
 
                     b.HasIndex("TarefaId")
                         .HasDatabaseName("IX_COMENTARIOS_TAREFAID");
+
+                    b.HasIndex("UsuarioCadastroId")
+                        .HasDatabaseName("IX_COMENTARIOS_USUARIOCADASTROID");
 
                     b.HasIndex("UsuarioId")
                         .HasDatabaseName("IX_COMENTARIOS_USUARIOID");
@@ -633,6 +651,9 @@ namespace DeslandesApp.Infra.Data.Migrations
                     b.HasIndex("PessoaId")
                         .HasDatabaseName("IX_CONTABANCARIA_PESSOAID");
 
+                    b.HasIndex("UsuarioCadastroId")
+                        .HasDatabaseName("IX_CONTABANCARIA_USUARIOCADASTROID");
+
                     b.ToTable("CONTABANCARIA", (string)null);
                 });
 
@@ -704,6 +725,9 @@ namespace DeslandesApp.Infra.Data.Migrations
 
                     b.HasKey("Id")
                         .HasName("PK_CONTABANCARIAEMPRESA");
+
+                    b.HasIndex("UsuarioCadastroId")
+                        .HasDatabaseName("IX_CONTABANCARIAEMPRESA_USUARIOCADASTROID");
 
                     b.ToTable("CONTABANCARIAEMPRESA");
                 });
@@ -794,6 +818,9 @@ namespace DeslandesApp.Infra.Data.Migrations
 
                     b.HasIndex("PessoaId")
                         .HasDatabaseName("IX_CONTA_PAGAR_PESSOAID");
+
+                    b.HasIndex("UsuarioCadastroId")
+                        .HasDatabaseName("IX_CONTA_PAGAR_USUARIOCADASTROID");
 
                     b.ToTable("CONTA_PAGAR", (string)null);
                 });
@@ -893,6 +920,9 @@ namespace DeslandesApp.Infra.Data.Migrations
                     b.HasIndex("PessoaId")
                         .HasDatabaseName("IX_CONTA_RECEBER_PESSOAID");
 
+                    b.HasIndex("UsuarioCadastroId")
+                        .HasDatabaseName("IX_CONTA_RECEBER_USUARIOCADASTROID");
+
                     b.ToTable("CONTA_RECEBER", (string)null);
                 });
 
@@ -940,6 +970,12 @@ namespace DeslandesApp.Infra.Data.Migrations
                         .HasColumnType("varchar(500)")
                         .HasColumnName("OBJETO");
 
+                    b.Property<string>("Observacao")
+                        .HasMaxLength(255)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(255)")
+                        .HasColumnName("OBSERVACAO");
+
                     b.Property<Guid>("PessoaId")
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("PESSOAID");
@@ -967,7 +1003,29 @@ namespace DeslandesApp.Infra.Data.Migrations
                     b.HasIndex("PessoaId")
                         .HasDatabaseName("IX_CONTRATO_PESSOAID");
 
+                    b.HasIndex("UsuarioCadastroId")
+                        .HasDatabaseName("IX_CONTRATO_USUARIOCADASTROID");
+
                     b.ToTable("CONTRATO", (string)null);
+                });
+
+            modelBuilder.Entity("DeslandesApp.Domain.Models.Entities.ContratoProcesso", b =>
+                {
+                    b.Property<Guid>("ContratoId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("CONTRATOID");
+
+                    b.Property<Guid>("ProcessoId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("PROCESSOID");
+
+                    b.HasKey("ContratoId", "ProcessoId")
+                        .HasName("PK_CONTRATO_PROCESSO");
+
+                    b.HasIndex("ProcessoId")
+                        .HasDatabaseName("IX_CONTRATO_PROCESSO_PROCESSOID");
+
+                    b.ToTable("CONTRATO_PROCESSO", (string)null);
                 });
 
             modelBuilder.Entity("DeslandesApp.Domain.Models.Entities.Endereco", b =>
@@ -1055,6 +1113,9 @@ namespace DeslandesApp.Infra.Data.Migrations
                         .HasDatabaseName("IX_ENDERECO_PESSOA_ID")
                         .HasFilter("[PESSOA_ID] IS NOT NULL");
 
+                    b.HasIndex("UsuarioCadastroId")
+                        .HasDatabaseName("IX_ENDERECO_USUARIOCADASTROID");
+
                     b.ToTable("ENDERECO", (string)null);
                 });
 
@@ -1105,6 +1166,9 @@ namespace DeslandesApp.Infra.Data.Migrations
 
                     b.HasKey("Id")
                         .HasName("PK_ETIQUETA");
+
+                    b.HasIndex("UsuarioCadastroId")
+                        .HasDatabaseName("IX_ETIQUETA_USUARIOCADASTROID");
 
                     b.ToTable("ETIQUETA", (string)null);
                 });
@@ -1240,6 +1304,9 @@ namespace DeslandesApp.Infra.Data.Migrations
                     b.HasIndex("ProcessoId")
                         .HasDatabaseName("IX_EVENTO_PROCESSOID");
 
+                    b.HasIndex("UsuarioCadastroId")
+                        .HasDatabaseName("IX_EVENTO_USUARIOCADASTROID");
+
                     b.HasIndex("UsuarioCriacaoId")
                         .HasDatabaseName("IX_EVENTO_USUARIOCRIACAOID");
 
@@ -1315,6 +1382,9 @@ namespace DeslandesApp.Infra.Data.Migrations
                     b.HasIndex("IdUsuario")
                         .HasDatabaseName("IX_FAILEDLOGINATTEMPTS_IDUSUARIO");
 
+                    b.HasIndex("UsuarioCadastroId")
+                        .HasDatabaseName("IX_FAILEDLOGINATTEMPTS_USUARIOCADASTROID");
+
                     b.ToTable("FAILEDLOGINATTEMPTS", (string)null);
                 });
 
@@ -1358,6 +1428,9 @@ namespace DeslandesApp.Infra.Data.Migrations
 
                     b.HasKey("Id")
                         .HasName("PK_FORMA_PAGAMENTO");
+
+                    b.HasIndex("UsuarioCadastroId")
+                        .HasDatabaseName("IX_FORMA_PAGAMENTO_USUARIOCADASTROID");
 
                     b.ToTable("FORMA_PAGAMENTO", (string)null);
                 });
@@ -1406,6 +1479,9 @@ namespace DeslandesApp.Infra.Data.Migrations
                     b.HasIndex("NomeForo")
                         .IsUnique()
                         .HasDatabaseName("IX_FORO_NOMEFORO");
+
+                    b.HasIndex("UsuarioCadastroId")
+                        .HasDatabaseName("IX_FORO_USUARIOCADASTROID");
 
                     b.ToTable("FORO", (string)null);
                 });
@@ -1464,6 +1540,9 @@ namespace DeslandesApp.Infra.Data.Migrations
                         .IsUnique()
                         .HasDatabaseName("IX_FOTOS_USUARIO_ID")
                         .HasFilter("[USUARIO_ID] IS NOT NULL");
+
+                    b.HasIndex("UsuarioCadastroId")
+                        .HasDatabaseName("IX_FOTOS_USUARIOCADASTROID");
 
                     b.ToTable("FOTOS", (string)null);
                 });
@@ -1556,6 +1635,9 @@ namespace DeslandesApp.Infra.Data.Migrations
 
                     b.HasIndex("QualificacaoId")
                         .HasDatabaseName("IX_GRUPOCASOENVOLVIDO_QUALIFICACAOID");
+
+                    b.HasIndex("UsuarioCadastroId")
+                        .HasDatabaseName("IX_GRUPOCASOENVOLVIDO_USUARIOCADASTROID");
 
                     b.ToTable("GRUPOCASOENVOLVIDO", (string)null);
                 });
@@ -1946,6 +2028,9 @@ namespace DeslandesApp.Infra.Data.Migrations
                     b.HasIndex("EntidadeId")
                         .HasDatabaseName("IX_HISTORICOGERAL_ENTIDADEID");
 
+                    b.HasIndex("UsuarioCadastroId")
+                        .HasDatabaseName("IX_HISTORICOGERAL_USUARIOCADASTROID");
+
                     b.HasIndex("UsuarioId")
                         .HasDatabaseName("IX_HISTORICOGERAL_USUARIOID");
 
@@ -2016,6 +2101,9 @@ namespace DeslandesApp.Infra.Data.Migrations
                         .IsUnique()
                         .HasDatabaseName("IX_INFORMACOESCOMPLEMENTARES_PESSOA_ID");
 
+                    b.HasIndex("UsuarioCadastroId")
+                        .HasDatabaseName("IX_INFORMACOESCOMPLEMENTARES_USUARIOCADASTROID");
+
                     b.ToTable("INFORMACOESCOMPLEMENTARES", (string)null);
 
                     b.HasDiscriminator<string>("TIPOPESSOA").HasValue("InformacoesComplementares");
@@ -2082,6 +2170,9 @@ namespace DeslandesApp.Infra.Data.Migrations
 
                     b.HasIndex("TarefaId")
                         .HasDatabaseName("IX_LISTATAREFA_TAREFAID");
+
+                    b.HasIndex("UsuarioCadastroId")
+                        .HasDatabaseName("IX_LISTATAREFA_USUARIOCADASTROID");
 
                     b.ToTable("LISTATAREFA", (string)null);
                 });
@@ -2153,6 +2244,9 @@ namespace DeslandesApp.Infra.Data.Migrations
                     b.HasIndex("IdUsuario")
                         .HasDatabaseName("IX_LOGINHISTORY_IDUSUARIO");
 
+                    b.HasIndex("UsuarioCadastroId")
+                        .HasDatabaseName("IX_LOGINHISTORY_USUARIOCADASTROID");
+
                     b.ToTable("LOGINHISTORY", (string)null);
                 });
 
@@ -2196,6 +2290,9 @@ namespace DeslandesApp.Infra.Data.Migrations
 
                     b.HasKey("Id")
                         .HasName("PK_NIVEL");
+
+                    b.HasIndex("UsuarioCadastroId")
+                        .HasDatabaseName("IX_NIVEL_USUARIOCADASTROID");
 
                     b.ToTable("NIVEL", (string)null);
                 });
@@ -2339,6 +2436,9 @@ namespace DeslandesApp.Infra.Data.Migrations
                     b.HasIndex("IdUsuario")
                         .HasDatabaseName("IX_PESSOA_USUARIO_ID");
 
+                    b.HasIndex("UsuarioCadastroId")
+                        .HasDatabaseName("IX_PESSOA_USUARIOCADASTROID");
+
                     b.ToTable("PESSOA", (string)null);
 
                     b.HasDiscriminator<string>("TIPO").HasValue("Pessoa");
@@ -2387,6 +2487,9 @@ namespace DeslandesApp.Infra.Data.Migrations
                     b.HasKey("Id")
                         .HasName("PK_QUALIFICACAO");
 
+                    b.HasIndex("UsuarioCadastroId")
+                        .HasDatabaseName("IX_QUALIFICACAO_USUARIOCADASTROID");
+
                     b.ToTable("QUALIFICACAO", (string)null);
                 });
 
@@ -2430,6 +2533,9 @@ namespace DeslandesApp.Infra.Data.Migrations
 
                     b.HasKey("Id")
                         .HasName("PK_SETORES");
+
+                    b.HasIndex("UsuarioCadastroId")
+                        .HasDatabaseName("IX_SETORES_USUARIOCADASTROID");
 
                     b.ToTable("SETORES", (string)null);
                 });
@@ -2523,6 +2629,9 @@ namespace DeslandesApp.Infra.Data.Migrations
                     b.HasIndex("ResponsavelId")
                         .HasDatabaseName("IX_TAREFA_RESPONSAVELID");
 
+                    b.HasIndex("UsuarioCadastroId")
+                        .HasDatabaseName("IX_TAREFA_USUARIOCADASTROID");
+
                     b.HasIndex("UsuarioCriacaoId")
                         .HasDatabaseName("IX_TAREFA_USUARIOCRIACAOID");
 
@@ -2592,6 +2701,9 @@ namespace DeslandesApp.Infra.Data.Migrations
                     b.HasKey("Id")
                         .HasName("PK_USUARIOS");
 
+                    b.HasIndex("UsuarioCadastroId")
+                        .HasDatabaseName("IX_USUARIOS_USUARIOCADASTROID");
+
                     b.ToTable("USUARIOS", (string)null);
                 });
 
@@ -2653,6 +2765,9 @@ namespace DeslandesApp.Infra.Data.Migrations
 
                     b.HasIndex("ForoId")
                         .HasDatabaseName("IX_VARA_FOROID");
+
+                    b.HasIndex("UsuarioCadastroId")
+                        .HasDatabaseName("IX_VARA_USUARIOCADASTROID");
 
                     b.HasIndex("Numero", "Tipo", "ForoId")
                         .IsUnique()
@@ -2965,6 +3080,16 @@ namespace DeslandesApp.Infra.Data.Migrations
                     b.HasDiscriminator().HasValue("PESSOAJURIDICA");
                 });
 
+            modelBuilder.Entity("DeslandesApp.Domain.Models.Entities.Acao", b =>
+                {
+                    b.HasOne("DeslandesApp.Domain.Models.Entities.Usuario", "UsuarioCadastro")
+                        .WithMany()
+                        .HasForeignKey("UsuarioCadastroId")
+                        .HasConstraintName("FK_ACAO_USUARIOS_USUARIOCADASTROID");
+
+                    b.Navigation("UsuarioCadastro");
+                });
+
             modelBuilder.Entity("DeslandesApp.Domain.Models.Entities.Atendimento", b =>
                 {
                     b.HasOne("DeslandesApp.Domain.Models.Entities.Atendimento", "AtendimentoPai")
@@ -3019,9 +3144,16 @@ namespace DeslandesApp.Infra.Data.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .HasConstraintName("FK_ATENDIMENTOHISTORICO_USUARIO");
 
+                    b.HasOne("DeslandesApp.Domain.Models.Entities.Usuario", "UsuarioCadastro")
+                        .WithMany()
+                        .HasForeignKey("UsuarioCadastroId")
+                        .HasConstraintName("FK_ATENDIMENTOHISTORICO_USUARIOS_USUARIOCADASTROID");
+
                     b.Navigation("Atendimento");
 
                     b.Navigation("Usuario");
+
+                    b.Navigation("UsuarioCadastro");
                 });
 
             modelBuilder.Entity("DeslandesApp.Domain.Models.Entities.BaixaFinanceira", b =>
@@ -3055,6 +3187,11 @@ namespace DeslandesApp.Infra.Data.Migrations
                         .IsRequired()
                         .HasConstraintName("FK_BAIXA_FINANCEIRA_FORMA_PAGAMENTO_FORMAPAGAMENTOID");
 
+                    b.HasOne("DeslandesApp.Domain.Models.Entities.Usuario", "UsuarioCadastro")
+                        .WithMany()
+                        .HasForeignKey("UsuarioCadastroId")
+                        .HasConstraintName("FK_BAIXA_FINANCEIRA_USUARIOS_USUARIOCADASTROID");
+
                     b.Navigation("ContaBancariaEmpresa");
 
                     b.Navigation("ContaPagar");
@@ -3062,6 +3199,8 @@ namespace DeslandesApp.Infra.Data.Migrations
                     b.Navigation("ContaReceber");
 
                     b.Navigation("FormaPagamento");
+
+                    b.Navigation("UsuarioCadastro");
                 });
 
             modelBuilder.Entity("DeslandesApp.Domain.Models.Entities.Caso", b =>
@@ -3082,6 +3221,26 @@ namespace DeslandesApp.Infra.Data.Migrations
                     b.Navigation("UsuarioCadastro");
                 });
 
+            modelBuilder.Entity("DeslandesApp.Domain.Models.Entities.CategoriaFinanceira", b =>
+                {
+                    b.HasOne("DeslandesApp.Domain.Models.Entities.Usuario", "UsuarioCadastro")
+                        .WithMany()
+                        .HasForeignKey("UsuarioCadastroId")
+                        .HasConstraintName("FK_CATEGORIA_FINANCEIRA_USUARIOS_USUARIOCADASTROID");
+
+                    b.Navigation("UsuarioCadastro");
+                });
+
+            modelBuilder.Entity("DeslandesApp.Domain.Models.Entities.CentroCusto", b =>
+                {
+                    b.HasOne("DeslandesApp.Domain.Models.Entities.Usuario", "UsuarioCadastro")
+                        .WithMany()
+                        .HasForeignKey("UsuarioCadastroId")
+                        .HasConstraintName("FK_CENTRO_CUSTO_USUARIOS_USUARIOCADASTROID");
+
+                    b.Navigation("UsuarioCadastro");
+                });
+
             modelBuilder.Entity("DeslandesApp.Domain.Models.Entities.Comentario", b =>
                 {
                     b.HasOne("DeslandesApp.Domain.Models.Entities.Evento", "Evento")
@@ -3096,6 +3255,11 @@ namespace DeslandesApp.Infra.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .HasConstraintName("FK_COMENTARIOS_TAREFA_TAREFAID");
 
+                    b.HasOne("DeslandesApp.Domain.Models.Entities.Usuario", "UsuarioCadastro")
+                        .WithMany()
+                        .HasForeignKey("UsuarioCadastroId")
+                        .HasConstraintName("FK_COMENTARIOS_USUARIOS_USUARIOCADASTROID");
+
                     b.HasOne("DeslandesApp.Domain.Models.Entities.Usuario", "Usuario")
                         .WithMany()
                         .HasForeignKey("UsuarioId")
@@ -3108,6 +3272,8 @@ namespace DeslandesApp.Infra.Data.Migrations
                     b.Navigation("Tarefa");
 
                     b.Navigation("Usuario");
+
+                    b.Navigation("UsuarioCadastro");
                 });
 
             modelBuilder.Entity("DeslandesApp.Domain.Models.Entities.ContaBancaria", b =>
@@ -3118,7 +3284,24 @@ namespace DeslandesApp.Infra.Data.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .HasConstraintName("FK_CONTABANCARIA_PESSOA_PESSOAID");
 
+                    b.HasOne("DeslandesApp.Domain.Models.Entities.Usuario", "UsuarioCadastro")
+                        .WithMany()
+                        .HasForeignKey("UsuarioCadastroId")
+                        .HasConstraintName("FK_CONTABANCARIA_USUARIOS_USUARIOCADASTROID");
+
                     b.Navigation("Pessoa");
+
+                    b.Navigation("UsuarioCadastro");
+                });
+
+            modelBuilder.Entity("DeslandesApp.Domain.Models.Entities.ContaBancariaEmpresa", b =>
+                {
+                    b.HasOne("DeslandesApp.Domain.Models.Entities.Usuario", "UsuarioCadastro")
+                        .WithMany()
+                        .HasForeignKey("UsuarioCadastroId")
+                        .HasConstraintName("FK_CONTABANCARIAEMPRESA_USUARIOS_USUARIOCADASTROID");
+
+                    b.Navigation("UsuarioCadastro");
                 });
 
             modelBuilder.Entity("DeslandesApp.Domain.Models.Entities.ContaPagar", b =>
@@ -3147,6 +3330,11 @@ namespace DeslandesApp.Infra.Data.Migrations
                         .IsRequired()
                         .HasConstraintName("FK_CONTA_PAGAR_PESSOA_PESSOAID");
 
+                    b.HasOne("DeslandesApp.Domain.Models.Entities.Usuario", "UsuarioCadastro")
+                        .WithMany()
+                        .HasForeignKey("UsuarioCadastroId")
+                        .HasConstraintName("FK_CONTA_PAGAR_USUARIOS_USUARIOCADASTROID");
+
                     b.Navigation("CategoriaFinanceira");
 
                     b.Navigation("CentroCusto");
@@ -3154,6 +3342,8 @@ namespace DeslandesApp.Infra.Data.Migrations
                     b.Navigation("Contrato");
 
                     b.Navigation("Pessoa");
+
+                    b.Navigation("UsuarioCadastro");
                 });
 
             modelBuilder.Entity("DeslandesApp.Domain.Models.Entities.ContaReceber", b =>
@@ -3183,6 +3373,11 @@ namespace DeslandesApp.Infra.Data.Migrations
                         .IsRequired()
                         .HasConstraintName("FK_CONTA_RECEBER_PESSOA_PESSOAID");
 
+                    b.HasOne("DeslandesApp.Domain.Models.Entities.Usuario", "UsuarioCadastro")
+                        .WithMany()
+                        .HasForeignKey("UsuarioCadastroId")
+                        .HasConstraintName("FK_CONTA_RECEBER_USUARIOS_USUARIOCADASTROID");
+
                     b.Navigation("CategoriaFinanceira");
 
                     b.Navigation("CentroCusto");
@@ -3190,6 +3385,8 @@ namespace DeslandesApp.Infra.Data.Migrations
                     b.Navigation("Contrato");
 
                     b.Navigation("Pessoa");
+
+                    b.Navigation("UsuarioCadastro");
                 });
 
             modelBuilder.Entity("DeslandesApp.Domain.Models.Entities.Contrato", b =>
@@ -3201,7 +3398,35 @@ namespace DeslandesApp.Infra.Data.Migrations
                         .IsRequired()
                         .HasConstraintName("FK_CONTRATO_PESSOA_PESSOAID");
 
+                    b.HasOne("DeslandesApp.Domain.Models.Entities.Usuario", "UsuarioCadastro")
+                        .WithMany()
+                        .HasForeignKey("UsuarioCadastroId")
+                        .HasConstraintName("FK_CONTRATO_USUARIOS_USUARIOCADASTROID");
+
                     b.Navigation("Pessoa");
+
+                    b.Navigation("UsuarioCadastro");
+                });
+
+            modelBuilder.Entity("DeslandesApp.Domain.Models.Entities.ContratoProcesso", b =>
+                {
+                    b.HasOne("DeslandesApp.Domain.Models.Entities.Contrato", "Contrato")
+                        .WithMany("ContratoProcessos")
+                        .HasForeignKey("ContratoId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("FK_CONTRATO_PROCESSO_CONTRATO_CONTRATOID");
+
+                    b.HasOne("Processo", "Processo")
+                        .WithMany("ContratoProcessos")
+                        .HasForeignKey("ProcessoId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("FK_CONTRATO_PROCESSO_PROCESSOS_PROCESSOID");
+
+                    b.Navigation("Contrato");
+
+                    b.Navigation("Processo");
                 });
 
             modelBuilder.Entity("DeslandesApp.Domain.Models.Entities.Endereco", b =>
@@ -3212,7 +3437,24 @@ namespace DeslandesApp.Infra.Data.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .HasConstraintName("FK_ENDERECO_PESSOA_PESSOA_ID");
 
+                    b.HasOne("DeslandesApp.Domain.Models.Entities.Usuario", "UsuarioCadastro")
+                        .WithMany()
+                        .HasForeignKey("UsuarioCadastroId")
+                        .HasConstraintName("FK_ENDERECO_USUARIOS_USUARIOCADASTROID");
+
                     b.Navigation("Pessoa");
+
+                    b.Navigation("UsuarioCadastro");
+                });
+
+            modelBuilder.Entity("DeslandesApp.Domain.Models.Entities.Etiqueta", b =>
+                {
+                    b.HasOne("DeslandesApp.Domain.Models.Entities.Usuario", "UsuarioCadastro")
+                        .WithMany()
+                        .HasForeignKey("UsuarioCadastroId")
+                        .HasConstraintName("FK_ETIQUETA_USUARIOS_USUARIOCADASTROID");
+
+                    b.Navigation("UsuarioCadastro");
                 });
 
             modelBuilder.Entity("DeslandesApp.Domain.Models.Entities.Evento", b =>
@@ -3235,6 +3477,11 @@ namespace DeslandesApp.Infra.Data.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .HasConstraintName("FK_EVENTO_PROCESSO");
 
+                    b.HasOne("DeslandesApp.Domain.Models.Entities.Usuario", "UsuarioCadastro")
+                        .WithMany()
+                        .HasForeignKey("UsuarioCadastroId")
+                        .HasConstraintName("FK_EVENTO_USUARIOS_USUARIOCADASTROID");
+
                     b.HasOne("DeslandesApp.Domain.Models.Entities.Usuario", "UsuarioCriacao")
                         .WithMany()
                         .HasForeignKey("UsuarioCriacaoId")
@@ -3247,6 +3494,8 @@ namespace DeslandesApp.Infra.Data.Migrations
 
                     b.Navigation("Processo");
 
+                    b.Navigation("UsuarioCadastro");
+
                     b.Navigation("UsuarioCriacao");
                 });
 
@@ -3257,6 +3506,33 @@ namespace DeslandesApp.Infra.Data.Migrations
                         .HasForeignKey("IdUsuario")
                         .OnDelete(DeleteBehavior.NoAction)
                         .HasConstraintName("FK_FAILEDLOGINATTEMPTS_USUARIOS_IDUSUARIO");
+
+                    b.HasOne("DeslandesApp.Domain.Models.Entities.Usuario", "UsuarioCadastro")
+                        .WithMany()
+                        .HasForeignKey("UsuarioCadastroId")
+                        .HasConstraintName("FK_FAILEDLOGINATTEMPTS_USUARIOS_USUARIOCADASTROID");
+
+                    b.Navigation("UsuarioCadastro");
+                });
+
+            modelBuilder.Entity("DeslandesApp.Domain.Models.Entities.FormaPagamento", b =>
+                {
+                    b.HasOne("DeslandesApp.Domain.Models.Entities.Usuario", "UsuarioCadastro")
+                        .WithMany()
+                        .HasForeignKey("UsuarioCadastroId")
+                        .HasConstraintName("FK_FORMA_PAGAMENTO_USUARIOS_USUARIOCADASTROID");
+
+                    b.Navigation("UsuarioCadastro");
+                });
+
+            modelBuilder.Entity("DeslandesApp.Domain.Models.Entities.Foro", b =>
+                {
+                    b.HasOne("DeslandesApp.Domain.Models.Entities.Usuario", "UsuarioCadastro")
+                        .WithMany()
+                        .HasForeignKey("UsuarioCadastroId")
+                        .HasConstraintName("FK_FORO_USUARIOS_USUARIOCADASTROID");
+
+                    b.Navigation("UsuarioCadastro");
                 });
 
             modelBuilder.Entity("DeslandesApp.Domain.Models.Entities.Fotos", b =>
@@ -3266,7 +3542,14 @@ namespace DeslandesApp.Infra.Data.Migrations
                         .HasForeignKey("DeslandesApp.Domain.Models.Entities.Fotos", "IdUsuario")
                         .HasConstraintName("FK_FOTOS_USUARIOS_USUARIO_ID");
 
+                    b.HasOne("DeslandesApp.Domain.Models.Entities.Usuario", "UsuarioCadastro")
+                        .WithMany()
+                        .HasForeignKey("UsuarioCadastroId")
+                        .HasConstraintName("FK_FOTOS_USUARIOS_USUARIOCADASTROID");
+
                     b.Navigation("Usuario");
+
+                    b.Navigation("UsuarioCadastro");
                 });
 
             modelBuilder.Entity("DeslandesApp.Domain.Models.Entities.GrupoAtendimentoCliente", b =>
@@ -3333,11 +3616,18 @@ namespace DeslandesApp.Infra.Data.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .HasConstraintName("FK_GRUPOCASOENVOLVIDO_QUALIFICACAO_QUALIFICACAOID");
 
+                    b.HasOne("DeslandesApp.Domain.Models.Entities.Usuario", "UsuarioCadastro")
+                        .WithMany()
+                        .HasForeignKey("UsuarioCadastroId")
+                        .HasConstraintName("FK_GRUPOCASOENVOLVIDO_USUARIOS_USUARIOCADASTROID");
+
                     b.Navigation("Caso");
 
                     b.Navigation("Pessoa");
 
                     b.Navigation("Qualificacao");
+
+                    b.Navigation("UsuarioCadastro");
                 });
 
             modelBuilder.Entity("DeslandesApp.Domain.Models.Entities.GrupoClienteProcesso", b =>
@@ -3672,6 +3962,11 @@ namespace DeslandesApp.Infra.Data.Migrations
 
             modelBuilder.Entity("DeslandesApp.Domain.Models.Entities.HistoricoGeral", b =>
                 {
+                    b.HasOne("DeslandesApp.Domain.Models.Entities.Usuario", "UsuarioCadastro")
+                        .WithMany()
+                        .HasForeignKey("UsuarioCadastroId")
+                        .HasConstraintName("FK_HISTORICOGERAL_USUARIOS_USUARIOCADASTROID");
+
                     b.HasOne("DeslandesApp.Domain.Models.Entities.Usuario", "Usuario")
                         .WithMany()
                         .HasForeignKey("UsuarioId")
@@ -3679,6 +3974,8 @@ namespace DeslandesApp.Infra.Data.Migrations
                         .HasConstraintName("FK_HISTORICOGERAL_USUARIOS_USUARIOID");
 
                     b.Navigation("Usuario");
+
+                    b.Navigation("UsuarioCadastro");
                 });
 
             modelBuilder.Entity("DeslandesApp.Domain.Models.Entities.InformacoesComplementares", b =>
@@ -3690,7 +3987,14 @@ namespace DeslandesApp.Infra.Data.Migrations
                         .IsRequired()
                         .HasConstraintName("FK_INFORMACOESCOMPLEMENTARES_PESSOA_PESSOA_ID");
 
+                    b.HasOne("DeslandesApp.Domain.Models.Entities.Usuario", "UsuarioCadastro")
+                        .WithMany()
+                        .HasForeignKey("UsuarioCadastroId")
+                        .HasConstraintName("FK_INFORMACOESCOMPLEMENTARES_USUARIOS_USUARIOCADASTROID");
+
                     b.Navigation("Pessoa");
+
+                    b.Navigation("UsuarioCadastro");
                 });
 
             modelBuilder.Entity("DeslandesApp.Domain.Models.Entities.ListaTarefa", b =>
@@ -3701,7 +4005,14 @@ namespace DeslandesApp.Infra.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .HasConstraintName("FK_TAREFA_LISTATAREFA");
 
+                    b.HasOne("DeslandesApp.Domain.Models.Entities.Usuario", "UsuarioCadastro")
+                        .WithMany()
+                        .HasForeignKey("UsuarioCadastroId")
+                        .HasConstraintName("FK_LISTATAREFA_USUARIOS_USUARIOCADASTROID");
+
                     b.Navigation("Tarefa");
+
+                    b.Navigation("UsuarioCadastro");
                 });
 
             modelBuilder.Entity("DeslandesApp.Domain.Models.Entities.LoginHistory", b =>
@@ -3713,7 +4024,24 @@ namespace DeslandesApp.Infra.Data.Migrations
                         .IsRequired()
                         .HasConstraintName("FK_LOGINHISTORY_USUARIOS_IDUSUARIO");
 
+                    b.HasOne("DeslandesApp.Domain.Models.Entities.Usuario", "UsuarioCadastro")
+                        .WithMany()
+                        .HasForeignKey("UsuarioCadastroId")
+                        .HasConstraintName("FK_LOGINHISTORY_USUARIOS_USUARIOCADASTROID");
+
                     b.Navigation("Usuario");
+
+                    b.Navigation("UsuarioCadastro");
+                });
+
+            modelBuilder.Entity("DeslandesApp.Domain.Models.Entities.Niveis", b =>
+                {
+                    b.HasOne("DeslandesApp.Domain.Models.Entities.Usuario", "UsuarioCadastro")
+                        .WithMany()
+                        .HasForeignKey("UsuarioCadastroId")
+                        .HasConstraintName("FK_NIVEL_USUARIOS_USUARIOCADASTROID");
+
+                    b.Navigation("UsuarioCadastro");
                 });
 
             modelBuilder.Entity("DeslandesApp.Domain.Models.Entities.Notificacao", b =>
@@ -3737,7 +4065,34 @@ namespace DeslandesApp.Infra.Data.Migrations
                         .IsRequired()
                         .HasConstraintName("FK_PESSOA_USUARIOS_USUARIO_ID");
 
+                    b.HasOne("DeslandesApp.Domain.Models.Entities.Usuario", "UsuarioCadastro")
+                        .WithMany()
+                        .HasForeignKey("UsuarioCadastroId")
+                        .HasConstraintName("FK_PESSOA_USUARIOS_USUARIOCADASTROID");
+
                     b.Navigation("Usuario");
+
+                    b.Navigation("UsuarioCadastro");
+                });
+
+            modelBuilder.Entity("DeslandesApp.Domain.Models.Entities.Qualificacao", b =>
+                {
+                    b.HasOne("DeslandesApp.Domain.Models.Entities.Usuario", "UsuarioCadastro")
+                        .WithMany()
+                        .HasForeignKey("UsuarioCadastroId")
+                        .HasConstraintName("FK_QUALIFICACAO_USUARIOS_USUARIOCADASTROID");
+
+                    b.Navigation("UsuarioCadastro");
+                });
+
+            modelBuilder.Entity("DeslandesApp.Domain.Models.Entities.Setor", b =>
+                {
+                    b.HasOne("DeslandesApp.Domain.Models.Entities.Usuario", "UsuarioCadastro")
+                        .WithMany()
+                        .HasForeignKey("UsuarioCadastroId")
+                        .HasConstraintName("FK_SETORES_USUARIOS_USUARIOCADASTROID");
+
+                    b.Navigation("UsuarioCadastro");
                 });
 
             modelBuilder.Entity("DeslandesApp.Domain.Models.Entities.Tarefa", b =>
@@ -3765,6 +4120,11 @@ namespace DeslandesApp.Infra.Data.Migrations
                         .HasForeignKey("ResponsavelId")
                         .HasConstraintName("FK_TAREFA_USUARIOS_RESPONSAVELID");
 
+                    b.HasOne("DeslandesApp.Domain.Models.Entities.Usuario", "UsuarioCadastro")
+                        .WithMany()
+                        .HasForeignKey("UsuarioCadastroId")
+                        .HasConstraintName("FK_TAREFA_USUARIOS_USUARIOCADASTROID");
+
                     b.HasOne("DeslandesApp.Domain.Models.Entities.Usuario", "UsuarioCriacao")
                         .WithMany()
                         .HasForeignKey("UsuarioCriacaoId")
@@ -3779,7 +4139,19 @@ namespace DeslandesApp.Infra.Data.Migrations
 
                     b.Navigation("Responsavel");
 
+                    b.Navigation("UsuarioCadastro");
+
                     b.Navigation("UsuarioCriacao");
+                });
+
+            modelBuilder.Entity("DeslandesApp.Domain.Models.Entities.Usuario", b =>
+                {
+                    b.HasOne("DeslandesApp.Domain.Models.Entities.Usuario", "UsuarioCadastro")
+                        .WithMany()
+                        .HasForeignKey("UsuarioCadastroId")
+                        .HasConstraintName("FK_USUARIOS_USUARIOS_USUARIOCADASTROID");
+
+                    b.Navigation("UsuarioCadastro");
                 });
 
             modelBuilder.Entity("DeslandesApp.Domain.Models.Entities.Vara", b =>
@@ -3791,7 +4163,14 @@ namespace DeslandesApp.Infra.Data.Migrations
                         .IsRequired()
                         .HasConstraintName("FK_VARA_FORO_FOROID");
 
+                    b.HasOne("DeslandesApp.Domain.Models.Entities.Usuario", "UsuarioCadastro")
+                        .WithMany()
+                        .HasForeignKey("UsuarioCadastroId")
+                        .HasConstraintName("FK_VARA_USUARIOS_USUARIOCADASTROID");
+
                     b.Navigation("Foro");
+
+                    b.Navigation("UsuarioCadastro");
                 });
 
             modelBuilder.Entity("Processo", b =>
@@ -3853,6 +4232,8 @@ namespace DeslandesApp.Infra.Data.Migrations
             modelBuilder.Entity("DeslandesApp.Domain.Models.Entities.Contrato", b =>
                 {
                     b.Navigation("ContasReceber");
+
+                    b.Navigation("ContratoProcessos");
                 });
 
             modelBuilder.Entity("DeslandesApp.Domain.Models.Entities.Etiqueta", b =>
@@ -3946,6 +4327,8 @@ namespace DeslandesApp.Infra.Data.Migrations
 
             modelBuilder.Entity("Processo", b =>
                 {
+                    b.Navigation("ContratoProcessos");
+
                     b.Navigation("GrupoClienteProcesso");
 
                     b.Navigation("GrupoEnvolvidos");

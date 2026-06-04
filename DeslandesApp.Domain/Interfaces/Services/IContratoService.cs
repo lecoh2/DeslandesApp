@@ -14,6 +14,8 @@ namespace DeslandesApp.Domain.Interfaces.Services
     {
         Task<List<ContratoResponse>> ConsultarAsync();
         Task<PageResult<ContratoPaginacaoResponse>> ConsultarContratoPaginacaoAsync(int pageNumber, int pageSize, string? searchTerm = null);
-
+        Task<ObterContratoResponse?> ObterPorIdAsync(Guid id);
+       
+     
     }
 }

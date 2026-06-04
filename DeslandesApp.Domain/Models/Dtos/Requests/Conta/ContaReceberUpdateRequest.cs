@@ -19,5 +19,7 @@ namespace DeslandesApp.Domain.Models.Dtos.Requests.Conta
         public Guid? ContratoId { get; set; }
 
         public Guid? CategoriaFinanceiraId { get; set; }
+
+        public Guid? CentroCustoId { get; set; }
     }
 }

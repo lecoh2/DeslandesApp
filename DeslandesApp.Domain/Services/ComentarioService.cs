@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using DeslandesApp.Domain.Exceptions;
 using DeslandesApp.Domain.Interfaces.Repositories;
 using DeslandesApp.Domain.Interfaces.Services;
 using DeslandesApp.Domain.Models.Dtos.Requests.Comentarios;
@@ -33,10 +34,10 @@ namespace DeslandesApp.Domain.Services
             var usuarioId = ObterUsuarioId();
 
             if (!request.TarefaId.HasValue && !request.EventoId.HasValue)
-                throw new InvalidOperationException("Comentário precisa estar vinculado.");
+                throw new BusinessException("Comentário precisa estar vinculado.");
 
             if (request.TarefaId.HasValue && request.EventoId.HasValue)
-                throw new InvalidOperationException("Comentário não pode ter dois vínculos.");
+                throw new BusinessException("Comentário não pode ter dois vínculos.");
 
             var comentario = mapper.Map<Comentario>(request);
 

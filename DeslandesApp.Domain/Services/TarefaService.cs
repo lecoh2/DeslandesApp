@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using DeslandesApp.Domain.Exceptions;
 using DeslandesApp.Domain.Helpers;
 using DeslandesApp.Domain.Interfaces.Repositories;
 using DeslandesApp.Domain.Interfaces.Services;
@@ -63,7 +64,7 @@ namespace DeslandesApp.Domain.Services
 
                 if (count > 1)
                 {
-                    throw new InvalidOperationException(
+                    throw new BusinessException(
                         "A tarefa não pode ter mais de um vínculo."
                     );
                 }
@@ -87,7 +88,7 @@ namespace DeslandesApp.Domain.Services
 
                     if (processo == null)
                     {
-                        throw new InvalidOperationException(
+                        throw new BusinessException(
                             "Processo não encontrado."
                         );
                     }
@@ -100,7 +101,7 @@ namespace DeslandesApp.Domain.Services
 
                     if (caso == null)
                     {
-                        throw new InvalidOperationException(
+                        throw new BusinessException(
                             "Caso não encontrado."
                         );
                     }
@@ -113,7 +114,7 @@ namespace DeslandesApp.Domain.Services
 
                     if (atendimento == null)
                     {
-                        throw new InvalidOperationException(
+                        throw new BusinessException(
                             "Atendimento não encontrado."
                         );
                     }
@@ -146,7 +147,7 @@ namespace DeslandesApp.Domain.Services
 
                     if (usuario == null)
                     {
-                        throw new InvalidOperationException(
+                        throw new BusinessException(
                             "Responsável não encontrado."
                         );
                     }
@@ -157,13 +158,11 @@ namespace DeslandesApp.Domain.Services
                 // =========================
                 await unitOfWork.TarefaRepository.AddAsync(tarefa);
 
+             
                 // =========================
-                // ✅ CHECKLIST
+                //  CHECKLIST (OPCIONAL)
                 // =========================
-                if (
-                    request.ListasTarefa != null &&
-                    request.ListasTarefa.Any()
-                )
+                if (request.ListasTarefa?.Any() == true)
                 {
                     var ultimaOrdem =
                         await unitOfWork.ListaTarefaRepository
@@ -171,26 +170,21 @@ namespace DeslandesApp.Domain.Services
 
                     int incremento = 0;
 
-                    foreach (var item in request.ListasTarefa)
+                    foreach (var item in request.ListasTarefa
+                                 .Where(x => !string.IsNullOrWhiteSpace(x.Descricao)))
                     {
-                        var descricao = item.Descricao?.Trim();
-
-                        if (string.IsNullOrWhiteSpace(descricao))
-                            continue;
-
                         incremento += 10;
 
                         var lista = new ListaTarefa
                         {
                             TarefaId = tarefa.Id,
-                            Descricao = descricao,
+                            Descricao = item.Descricao.Trim(),
                             Ordem = ultimaOrdem + incremento,
                             Concluida = false,
                             DataConclusao = null
                         };
 
-                        await unitOfWork.ListaTarefaRepository
-                            .AddAsync(lista);
+                        await unitOfWork.ListaTarefaRepository.AddAsync(lista);
                     }
                 }
 
@@ -209,7 +203,7 @@ namespace DeslandesApp.Domain.Services
 
                         if (etiqueta == null)
                         {
-                            throw new InvalidOperationException(
+                            throw new BusinessException(
                                 "Etiqueta não encontrada."
                             );
                         }
@@ -238,7 +232,7 @@ namespace DeslandesApp.Domain.Services
 
                         if (usuario == null)
                         {
-                            throw new InvalidOperationException(
+                            throw new BusinessException(
                                 "Usuário não encontrado."
                             );
                         }
@@ -352,7 +346,7 @@ namespace DeslandesApp.Domain.Services
 
                 if (tarefa == null)
                 {
-                    throw new InvalidOperationException(
+                    throw new BusinessException(
                         "Tarefa não encontrada."
                     );
                 }
@@ -441,7 +435,7 @@ namespace DeslandesApp.Domain.Services
 
                 if (count > 1)
                 {
-                    throw new InvalidOperationException(
+                    throw new BusinessException(
                         "A tarefa não pode ter mais de um vínculo."
                     );
                 }
@@ -465,7 +459,7 @@ namespace DeslandesApp.Domain.Services
 
                     if (processo == null)
                     {
-                        throw new InvalidOperationException(
+                        throw new BusinessException(
                             "Processo não encontrado."
                         );
                     }
@@ -478,7 +472,7 @@ namespace DeslandesApp.Domain.Services
 
                     if (caso == null)
                     {
-                        throw new InvalidOperationException(
+                        throw new BusinessException(
                             "Caso não encontrado."
                         );
                     }
@@ -492,7 +486,7 @@ namespace DeslandesApp.Domain.Services
 
                     if (atendimento == null)
                     {
-                        throw new InvalidOperationException(
+                        throw new BusinessException(
                             "Atendimento não encontrado."
                         );
                     }
@@ -551,7 +545,7 @@ namespace DeslandesApp.Domain.Services
 
                         if (etiqueta == null)
                         {
-                            throw new InvalidOperationException(
+                            throw new BusinessException(
                                 "Etiqueta não encontrada."
                             );
                         }
@@ -583,7 +577,7 @@ namespace DeslandesApp.Domain.Services
 
                         if (usuario == null)
                         {
-                            throw new InvalidOperationException(
+                            throw new BusinessException(
                                 "Usuário não encontrado."
                             );
                         }

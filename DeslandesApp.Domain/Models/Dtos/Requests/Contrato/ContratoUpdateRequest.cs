@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DeslandesApp.Domain.Models.Enum;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -13,10 +14,13 @@ namespace DeslandesApp.Domain.Models.Dtos.Requests.Contrato
 
         public Guid PessoaId { get; set; }
 
-        public decimal ValorContrato { get; set; }
+        public decimal ValorTotal { get; set; }
 
         public DateTime DataInicio { get; set; }
 
         public DateTime? DataFim { get; set; }
+        public StatusContrato Status { get; set; }
+        public List<Guid> ProcessosIds { get; set; }
+        public string? Observacao { get; set; }
     }
 }

@@ -12,10 +12,13 @@ namespace DeslandesApp.Domain.Models.Dtos.Requests.Contrato
 
         public Guid PessoaId { get; set; }
 
-        public decimal ValorContrato { get; set; }
+        public decimal ValorTotal { get; set; }
 
         public DateTime DataInicio { get; set; }
 
         public DateTime? DataFim { get; set; }
+        public List<Guid> ProcessosIds { get; set; }
+
+         public string? Observacao { get; set; }
     }
 }

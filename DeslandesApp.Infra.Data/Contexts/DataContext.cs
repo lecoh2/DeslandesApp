@@ -16,7 +16,9 @@ namespace DeslandesApp.Infra.Data.Contexts
         //as configurações do banco de dados, como conexão, tipo etc. 
         public DataContext(DbContextOptions<DataContext> options) : base(options) { }
         public DbSet<Usuario> Usuario { get; set; }
+        public DbSet<CentroCusto> CentroCusto { get; set; }
         public DbSet<Contrato> Contrato { get; set; }
+        public DbSet<ContratoProcesso> ContratoProcesso { get; set; }
         public DbSet<LoginHistory> LoginHistory { get; set; }
         public DbSet<FailedLoginAttempt> FailedLoginAttempt { get; set; }
         public DbSet<Niveis> Niveis { get; set; }

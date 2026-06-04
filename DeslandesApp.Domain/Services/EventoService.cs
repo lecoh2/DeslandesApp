@@ -663,7 +663,7 @@ namespace DeslandesApp.Domain.Services
                 // =========================
                 if (evento.IntervaloRecorrencia < 1)
                 {
-                    throw new InvalidOperationException(
+                    throw new BusinessException(
                         "Intervalo da recorrência deve ser maior ou igual a 1."
                     );
                 }
@@ -675,7 +675,7 @@ namespace DeslandesApp.Domain.Services
                         evento.QuantidadeOcorrencias.HasValue
                     )
                     {
-                        throw new InvalidOperationException(
+                        throw new BusinessException(
                             "Informe apenas DataFimRecorrencia ou QuantidadeOcorrencias."
                         );
                     }
@@ -685,7 +685,7 @@ namespace DeslandesApp.Domain.Services
                         !evento.QuantidadeOcorrencias.HasValue
                     )
                     {
-                        throw new InvalidOperationException(
+                        throw new BusinessException(
                             "Recorrência precisa de um critério de término."
                         );
                     }
@@ -699,7 +699,7 @@ namespace DeslandesApp.Domain.Services
                         )
                     )
                     {
-                        throw new InvalidOperationException(
+                        throw new BusinessException(
                             "Informe ao menos um dia da semana."
                         );
                     }

@@ -87,5 +87,13 @@ namespace DeslandesApp.API.Controllers.V1
 
             return Ok(result);
         }
+        [HttpGet("obter-centro-custo-por-id/{id:guid}")]
+        public async Task<IActionResult> ObterPorId(Guid id)
+        {
+            var result = await centroCustoService.ObterPorIdAsync(id);
+
+            return Ok(result);
+        }
     }
+
 }
