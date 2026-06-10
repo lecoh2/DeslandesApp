@@ -1,5 +1,6 @@
 ﻿using DeslandesApp.Domain.Models.Dtos.Requests.CategoriaFinanceira;
 using DeslandesApp.Domain.Models.Dtos.Responses.CategoriaFinanceira;
+using DeslandesApp.Domain.Models.Dtos.Responses.Vara;
 using DeslandesApp.Domain.Utils;
 using System;
 using System.Collections.Generic;
@@ -17,6 +18,7 @@ namespace DeslandesApp.Domain.Interfaces.Services
             string? searchTerm = null);
         Task<ObterCategoriaFinanceiraResponse?>
            ObterPorIdAsync(Guid id);
+        Task<List<CategoriaFinanceiraResponse>> ConsultarAsync();
 
     }
 }

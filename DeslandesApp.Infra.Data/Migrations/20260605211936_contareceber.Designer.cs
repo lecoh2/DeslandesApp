@@ -4,6 +4,7 @@ using DeslandesApp.Infra.Data.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DeslandesApp.Infra.Data.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20260605211936_contareceber")]
+    partial class contareceber
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -51,10 +54,6 @@ namespace DeslandesApp.Infra.Data.Migrations
                         .IsUnicode(false)
                         .HasColumnType("varchar(150)")
                         .HasColumnName("NOMEACAO");
-
-                    b.Property<Guid?>("UsuarioAtualizacaoId")
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnName("USUARIOATUALIZACAOID");
 
                     b.Property<Guid?>("UsuarioCadastroId")
                         .HasColumnType("uniqueidentifier")
@@ -129,10 +128,6 @@ namespace DeslandesApp.Infra.Data.Migrations
                     b.Property<int?>("TipoVinculoId")
                         .HasColumnType("int")
                         .HasColumnName("TIPOVINCULO");
-
-                    b.Property<Guid?>("UsuarioAtualizacaoId")
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnName("USUARIOATUALIZACAOID");
 
                     b.Property<Guid?>("UsuarioCadastroId")
                         .HasColumnType("uniqueidentifier")
@@ -216,10 +211,6 @@ namespace DeslandesApp.Infra.Data.Migrations
                         .HasColumnType("VARCHAR(255)")
                         .HasColumnName("OBSERVACAO");
 
-                    b.Property<Guid?>("UsuarioAtualizacaoId")
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnName("USUARIOATUALIZACAOID");
-
                     b.Property<Guid?>("UsuarioCadastroId")
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("USUARIOCADASTROID");
@@ -262,6 +253,10 @@ namespace DeslandesApp.Infra.Data.Migrations
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("CONTARECEBERID");
 
+                    b.Property<Guid?>("ContaReceberId1")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("CONTARECEBERID1");
+
                     b.Property<DateTime?>("DataAtualizacao")
                         .HasColumnType("datetime2")
                         .HasColumnName("DATAATUALIZACAO");
@@ -292,10 +287,6 @@ namespace DeslandesApp.Infra.Data.Migrations
                         .HasColumnType("varchar(250)")
                         .HasColumnName("OBSERVACAO");
 
-                    b.Property<Guid?>("UsuarioAtualizacaoId")
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnName("USUARIOATUALIZACAOID");
-
                     b.Property<Guid?>("UsuarioCadastroId")
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("USUARIOCADASTROID");
@@ -320,6 +311,9 @@ namespace DeslandesApp.Infra.Data.Migrations
 
                     b.HasIndex("ContaReceberId")
                         .HasDatabaseName("IX_BAIXA_FINANCEIRA_CONTARECEBERID");
+
+                    b.HasIndex("ContaReceberId1")
+                        .HasDatabaseName("IX_BAIXA_FINANCEIRA_CONTARECEBERID1");
 
                     b.HasIndex("FormaPagamentoId")
                         .HasDatabaseName("IX_BAIXA_FINANCEIRA_FORMAPAGAMENTOID");
@@ -388,10 +382,6 @@ namespace DeslandesApp.Infra.Data.Migrations
                         .HasColumnType("varchar(250)")
                         .HasColumnName("TITULO");
 
-                    b.Property<Guid?>("UsuarioAtualizacaoId")
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnName("USUARIOATUALIZACAOID");
-
                     b.Property<Guid?>("UsuarioCadastroId")
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("USUARIOCADASTROID");
@@ -445,10 +435,6 @@ namespace DeslandesApp.Infra.Data.Migrations
                     b.Property<int>("Tipo")
                         .HasColumnType("int")
                         .HasColumnName("TIPO");
-
-                    b.Property<Guid?>("UsuarioAtualizacaoId")
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnName("USUARIOATUALIZACAOID");
 
                     b.Property<Guid?>("UsuarioCadastroId")
                         .HasColumnType("uniqueidentifier")
@@ -506,10 +492,6 @@ namespace DeslandesApp.Infra.Data.Migrations
                         .IsUnicode(false)
                         .HasColumnType("varchar(150)")
                         .HasColumnName("NOME");
-
-                    b.Property<Guid?>("UsuarioAtualizacaoId")
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnName("USUARIOATUALIZACAOID");
 
                     b.Property<Guid?>("UsuarioCadastroId")
                         .HasColumnType("uniqueidentifier")
@@ -569,10 +551,6 @@ namespace DeslandesApp.Infra.Data.Migrations
                         .IsUnicode(false)
                         .HasColumnType("varchar(1000)")
                         .HasColumnName("TEXTO");
-
-                    b.Property<Guid?>("UsuarioAtualizacaoId")
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnName("USUARIOATUALIZACAOID");
 
                     b.Property<Guid?>("UsuarioCadastroId")
                         .HasColumnType("uniqueidentifier")
@@ -662,10 +640,6 @@ namespace DeslandesApp.Infra.Data.Migrations
                         .HasColumnType("int")
                         .HasColumnName("TIPOCONTA");
 
-                    b.Property<Guid?>("UsuarioAtualizacaoId")
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnName("USUARIOATUALIZACAOID");
-
                     b.Property<Guid?>("UsuarioCadastroId")
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("USUARIOCADASTROID");
@@ -744,10 +718,6 @@ namespace DeslandesApp.Infra.Data.Migrations
                         .HasColumnType("decimal(18,2)")
                         .HasColumnName("SALDOINICIAL");
 
-                    b.Property<Guid?>("UsuarioAtualizacaoId")
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnName("USUARIOATUALIZACAOID");
-
                     b.Property<Guid?>("UsuarioCadastroId")
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("USUARIOCADASTROID");
@@ -818,10 +788,6 @@ namespace DeslandesApp.Infra.Data.Migrations
                     b.Property<int>("Status")
                         .HasColumnType("int")
                         .HasColumnName("STATUS");
-
-                    b.Property<Guid?>("UsuarioAtualizacaoId")
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnName("USUARIOATUALIZACAOID");
 
                     b.Property<Guid?>("UsuarioCadastroId")
                         .HasColumnType("uniqueidentifier")
@@ -905,10 +871,6 @@ namespace DeslandesApp.Infra.Data.Migrations
                         .HasColumnType("datetime2")
                         .HasColumnName("DATAEXCLUSAO");
 
-                    b.Property<DateTime?>("DataQuitacao")
-                        .HasColumnType("datetime2")
-                        .HasColumnName("DATAQUITACAO");
-
                     b.Property<DateTime>("DataVencimento")
                         .HasColumnType("datetime2")
                         .HasColumnName("DATA_VENCIMENTO");
@@ -928,7 +890,7 @@ namespace DeslandesApp.Infra.Data.Migrations
                         .HasColumnType("int")
                         .HasColumnName("FORMARECEBIMENTO");
 
-                    b.Property<int>("NumeroParcela")
+                    b.Property<int?>("NumeroParcela")
                         .HasColumnType("int")
                         .HasColumnName("NUMEROPARCELA");
 
@@ -940,10 +902,6 @@ namespace DeslandesApp.Infra.Data.Migrations
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("PESSOAID");
 
-                    b.Property<bool>("Quitado")
-                        .HasColumnType("bit")
-                        .HasColumnName("QUITADO");
-
                     b.Property<int>("Status")
                         .HasColumnType("int")
                         .HasColumnName("STATUS");
@@ -952,13 +910,9 @@ namespace DeslandesApp.Infra.Data.Migrations
                         .HasColumnType("int")
                         .HasColumnName("TIPOCONTA");
 
-                    b.Property<int>("TotalParcelas")
+                    b.Property<int?>("TotalParcelas")
                         .HasColumnType("int")
                         .HasColumnName("TOTALPARCELAS");
-
-                    b.Property<Guid?>("UsuarioAtualizacaoId")
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnName("USUARIOATUALIZACAOID");
 
                     b.Property<Guid?>("UsuarioCadastroId")
                         .HasColumnType("uniqueidentifier")
@@ -977,10 +931,6 @@ namespace DeslandesApp.Infra.Data.Migrations
                         .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)")
                         .HasColumnName("VALOR_PAGO");
-
-                    b.Property<decimal>("ValorRecebido")
-                        .HasColumnType("decimal(18,2)")
-                        .HasColumnName("VALORRECEBIDO");
 
                     b.HasKey("Id")
                         .HasName("PK_CONTA_RECEBER");
@@ -1004,44 +954,6 @@ namespace DeslandesApp.Infra.Data.Migrations
                         .HasDatabaseName("IX_CONTA_RECEBER_USUARIOCADASTROID");
 
                     b.ToTable("CONTA_RECEBER", (string)null);
-                });
-
-            modelBuilder.Entity("DeslandesApp.Domain.Models.Entities.ContaReceberBaixa", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnName("ID");
-
-                    b.Property<Guid>("ContaReceberId")
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnName("CONTARECEBERID");
-
-                    b.Property<DateTime>("DataBaixa")
-                        .HasColumnType("datetime2")
-                        .HasColumnName("DATABAIXA");
-
-                    b.Property<int>("FormaRecebimento")
-                        .HasColumnType("int")
-                        .HasColumnName("FORMARECEBIMENTO");
-
-                    b.Property<string>("Observacao")
-                        .HasMaxLength(1000)
-                        .IsUnicode(false)
-                        .HasColumnType("varchar(1000)")
-                        .HasColumnName("OBSERVACAO");
-
-                    b.Property<decimal>("ValorPago")
-                        .HasColumnType("decimal(18,2)")
-                        .HasColumnName("VALORPAGO");
-
-                    b.HasKey("Id")
-                        .HasName("PK_CONTARECEBERBAIXA");
-
-                    b.HasIndex("ContaReceberId")
-                        .HasDatabaseName("IX_CONTARECEBERBAIXA_CONTARECEBERID");
-
-                    b.ToTable("CONTARECEBERBAIXA", (string)null);
                 });
 
             modelBuilder.Entity("DeslandesApp.Domain.Models.Entities.Contrato", b =>
@@ -1101,10 +1013,6 @@ namespace DeslandesApp.Infra.Data.Migrations
                     b.Property<int>("Status")
                         .HasColumnType("int")
                         .HasColumnName("STATUS");
-
-                    b.Property<Guid?>("UsuarioAtualizacaoId")
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnName("USUARIOATUALIZACAOID");
 
                     b.Property<Guid?>("UsuarioCadastroId")
                         .HasColumnType("uniqueidentifier")
@@ -1219,10 +1127,6 @@ namespace DeslandesApp.Infra.Data.Migrations
                         .HasColumnType("varchar(2)")
                         .HasColumnName("UF");
 
-                    b.Property<Guid?>("UsuarioAtualizacaoId")
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnName("USUARIOATUALIZACAOID");
-
                     b.Property<Guid?>("UsuarioCadastroId")
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("USUARIOCADASTROID");
@@ -1281,10 +1185,6 @@ namespace DeslandesApp.Infra.Data.Migrations
                         .IsUnicode(false)
                         .HasColumnType("varchar(200)")
                         .HasColumnName("NOME");
-
-                    b.Property<Guid?>("UsuarioAtualizacaoId")
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnName("USUARIOATUALIZACAOID");
 
                     b.Property<Guid?>("UsuarioCadastroId")
                         .HasColumnType("uniqueidentifier")
@@ -1410,10 +1310,6 @@ namespace DeslandesApp.Infra.Data.Migrations
                         .HasColumnType("varchar(250)")
                         .HasColumnName("TITULO");
 
-                    b.Property<Guid?>("UsuarioAtualizacaoId")
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnName("USUARIOATUALIZACAOID");
-
                     b.Property<Guid?>("UsuarioCadastroId")
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("USUARIOCADASTROID");
@@ -1502,10 +1398,6 @@ namespace DeslandesApp.Infra.Data.Migrations
                         .HasColumnType("varchar(300)")
                         .HasColumnName("USERAGENT");
 
-                    b.Property<Guid?>("UsuarioAtualizacaoId")
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnName("USUARIOATUALIZACAOID");
-
                     b.Property<Guid?>("UsuarioCadastroId")
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("USUARIOCADASTROID");
@@ -1556,10 +1448,6 @@ namespace DeslandesApp.Infra.Data.Migrations
                         .HasColumnType("varchar(100)")
                         .HasColumnName("NOME");
 
-                    b.Property<Guid?>("UsuarioAtualizacaoId")
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnName("USUARIOATUALIZACAOID");
-
                     b.Property<Guid?>("UsuarioCadastroId")
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("USUARIOCADASTROID");
@@ -1606,10 +1494,6 @@ namespace DeslandesApp.Infra.Data.Migrations
                         .IsUnicode(false)
                         .HasColumnType("varchar(200)")
                         .HasColumnName("NOMEFORO");
-
-                    b.Property<Guid?>("UsuarioAtualizacaoId")
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnName("USUARIOATUALIZACAOID");
 
                     b.Property<Guid?>("UsuarioCadastroId")
                         .HasColumnType("uniqueidentifier")
@@ -1670,10 +1554,6 @@ namespace DeslandesApp.Infra.Data.Migrations
                     b.Property<Guid?>("IdUsuario")
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("USUARIO_ID");
-
-                    b.Property<Guid?>("UsuarioAtualizacaoId")
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnName("USUARIOATUALIZACAOID");
 
                     b.Property<Guid?>("UsuarioCadastroId")
                         .HasColumnType("uniqueidentifier")
@@ -1768,10 +1648,6 @@ namespace DeslandesApp.Infra.Data.Migrations
                     b.Property<Guid?>("QualificacaoId")
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("QUALIFICACAOID");
-
-                    b.Property<Guid?>("UsuarioAtualizacaoId")
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnName("USUARIOATUALIZACAOID");
 
                     b.Property<Guid?>("UsuarioCadastroId")
                         .HasColumnType("uniqueidentifier")
@@ -2158,10 +2034,6 @@ namespace DeslandesApp.Infra.Data.Migrations
                         .HasColumnType("varchar(500)")
                         .HasColumnName("USERAGENT");
 
-                    b.Property<Guid?>("UsuarioAtualizacaoId")
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnName("USUARIOATUALIZACAOID");
-
                     b.Property<Guid?>("UsuarioCadastroId")
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("USUARIOCADASTROID");
@@ -2244,10 +2116,6 @@ namespace DeslandesApp.Infra.Data.Migrations
                         .HasColumnType("varchar(250)")
                         .HasColumnName("TIPOPESSOA");
 
-                    b.Property<Guid?>("UsuarioAtualizacaoId")
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnName("USUARIOATUALIZACAOID");
-
                     b.Property<Guid?>("UsuarioCadastroId")
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("USUARIOCADASTROID");
@@ -2318,10 +2186,6 @@ namespace DeslandesApp.Infra.Data.Migrations
                     b.Property<Guid?>("TarefaId")
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("TAREFAID");
-
-                    b.Property<Guid?>("UsuarioAtualizacaoId")
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnName("USUARIOATUALIZACAOID");
 
                     b.Property<Guid?>("UsuarioCadastroId")
                         .HasColumnType("uniqueidentifier")
@@ -2396,10 +2260,6 @@ namespace DeslandesApp.Infra.Data.Migrations
                         .HasColumnType("varchar(300)")
                         .HasColumnName("USERAGENT");
 
-                    b.Property<Guid?>("UsuarioAtualizacaoId")
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnName("USUARIOATUALIZACAOID");
-
                     b.Property<Guid?>("UsuarioCadastroId")
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("USUARIOCADASTROID");
@@ -2449,10 +2309,6 @@ namespace DeslandesApp.Infra.Data.Migrations
                         .IsUnicode(false)
                         .HasColumnType("varchar(250)")
                         .HasColumnName("NOMENIVEL");
-
-                    b.Property<Guid?>("UsuarioAtualizacaoId")
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnName("USUARIOATUALIZACAOID");
 
                     b.Property<Guid?>("UsuarioCadastroId")
                         .HasColumnType("uniqueidentifier")
@@ -2591,10 +2447,6 @@ namespace DeslandesApp.Infra.Data.Migrations
                         .HasColumnType("varchar(250)")
                         .HasColumnName("TELEFONE");
 
-                    b.Property<Guid?>("UsuarioAtualizacaoId")
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnName("USUARIOATUALIZACAOID");
-
                     b.Property<Guid?>("UsuarioCadastroId")
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("USUARIOCADASTROID");
@@ -2654,10 +2506,6 @@ namespace DeslandesApp.Infra.Data.Migrations
                         .HasColumnType("varchar(150)")
                         .HasColumnName("NOMEQUALIFICACAO");
 
-                    b.Property<Guid?>("UsuarioAtualizacaoId")
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnName("USUARIOATUALIZACAOID");
-
                     b.Property<Guid?>("UsuarioCadastroId")
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("USUARIOCADASTROID");
@@ -2704,10 +2552,6 @@ namespace DeslandesApp.Infra.Data.Migrations
                         .IsUnicode(false)
                         .HasColumnType("varchar(255)")
                         .HasColumnName("NOMESETOR");
-
-                    b.Property<Guid?>("UsuarioAtualizacaoId")
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnName("USUARIOATUALIZACAOID");
 
                     b.Property<Guid?>("UsuarioCadastroId")
                         .HasColumnType("uniqueidentifier")
@@ -2787,10 +2631,6 @@ namespace DeslandesApp.Infra.Data.Migrations
                     b.Property<int?>("TipoVinculoId")
                         .HasColumnType("int")
                         .HasColumnName("TIPOVINCULOID");
-
-                    b.Property<Guid?>("UsuarioAtualizacaoId")
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnName("USUARIOATUALIZACAOID");
 
                     b.Property<Guid?>("UsuarioCadastroId")
                         .HasColumnType("uniqueidentifier")
@@ -2875,10 +2715,6 @@ namespace DeslandesApp.Infra.Data.Migrations
                         .HasColumnType("int")
                         .HasColumnName("STATUS");
 
-                    b.Property<Guid?>("UsuarioAtualizacaoId")
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnName("USUARIOATUALIZACAOID");
-
                     b.Property<Guid?>("UsuarioCadastroId")
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("USUARIOCADASTROID");
@@ -2945,10 +2781,6 @@ namespace DeslandesApp.Infra.Data.Migrations
                         .IsUnicode(false)
                         .HasColumnType("varchar(100)")
                         .HasColumnName("TIPO");
-
-                    b.Property<Guid?>("UsuarioAtualizacaoId")
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnName("USUARIOATUALIZACAOID");
 
                     b.Property<Guid?>("UsuarioCadastroId")
                         .HasColumnType("uniqueidentifier")
@@ -3048,10 +2880,6 @@ namespace DeslandesApp.Infra.Data.Migrations
                         .IsUnicode(false)
                         .HasColumnType("varchar(250)")
                         .HasColumnName("TITULO");
-
-                    b.Property<Guid?>("UsuarioAtualizacaoId")
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnName("USUARIOATUALIZACAOID");
 
                     b.Property<Guid?>("UsuarioCadastroId")
                         .HasColumnType("uniqueidentifier")
@@ -3377,6 +3205,11 @@ namespace DeslandesApp.Infra.Data.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .HasConstraintName("FK_BAIXA_FINANCEIRA_CONTA_RECEBER_CONTARECEBERID");
 
+                    b.HasOne("DeslandesApp.Domain.Models.Entities.ContaReceber", null)
+                        .WithMany("Baixas")
+                        .HasForeignKey("ContaReceberId1")
+                        .HasConstraintName("FK_BAIXA_FINANCEIRA_CONTA_RECEBER_CONTARECEBERID1");
+
                     b.HasOne("DeslandesApp.Domain.Models.Entities.FormaPagamento", "FormaPagamento")
                         .WithMany()
                         .HasForeignKey("FormaPagamentoId")
@@ -3590,18 +3423,6 @@ namespace DeslandesApp.Infra.Data.Migrations
                     b.Navigation("Pessoa");
 
                     b.Navigation("UsuarioCadastro");
-                });
-
-            modelBuilder.Entity("DeslandesApp.Domain.Models.Entities.ContaReceberBaixa", b =>
-                {
-                    b.HasOne("DeslandesApp.Domain.Models.Entities.ContaReceber", "ContaReceber")
-                        .WithMany("Baixas")
-                        .HasForeignKey("ContaReceberId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("FK_CONTARECEBERBAIXA_CONTA_RECEBER_CONTARECEBERID");
-
-                    b.Navigation("ContaReceber");
                 });
 
             modelBuilder.Entity("DeslandesApp.Domain.Models.Entities.Contrato", b =>

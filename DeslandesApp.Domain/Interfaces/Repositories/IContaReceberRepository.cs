@@ -1,14 +1,15 @@
-﻿using DeslandesApp.Domain.Models.Entities;
+﻿using DeslandesApp.Domain.Models.Dtos.Responses.Conta;
+using DeslandesApp.Domain.Models.Entities;
 using DeslandesApp.Domain.Utils;
 
 namespace DeslandesApp.Domain.Interfaces.Repositories
 {
     public interface IContaReceberRepository : IBaseRepository<ContaReceber, Guid>
     {
-        Task<PageResult<ContaReceber>> GetPaginacaoAsync(
-            int pageNumber,
-            int pageSize,
-            string? searchTerm = null);
+        Task<PageResult<ContaReceberConsultaResponse>> GetPaginacaoAsync(
+           int pageNumber,
+           int pageSize,
+           string? searchTerm = null);
 
         Task<List<ContaReceber>> ConsultarComRelacionamentosAsync();
 
@@ -19,5 +20,6 @@ namespace DeslandesApp.Domain.Interfaces.Repositories
         Task<int> ContarTotalAsync();
 
         Task<int> ContarAnoAtualAsync();
+     
     }
 }

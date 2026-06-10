@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace DeslandesApp.Domain.Models.Dtos.Responses.BaixaFinanceira
 {
-    public class BaixaFinanceiraResponse
+    public class ConsultarBaixaFinanceiraResponse
     {
         public Guid Id { get; set; }
 

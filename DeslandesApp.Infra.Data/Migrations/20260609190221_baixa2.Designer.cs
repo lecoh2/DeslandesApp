@@ -4,6 +4,7 @@ using DeslandesApp.Infra.Data.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DeslandesApp.Infra.Data.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20260609190221_baixa2")]
+    partial class baixa2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1026,9 +1029,9 @@ namespace DeslandesApp.Infra.Data.Migrations
                         .HasColumnName("FORMARECEBIMENTO");
 
                     b.Property<string>("Observacao")
-                        .HasMaxLength(1000)
+                        .HasMaxLength(250)
                         .IsUnicode(false)
-                        .HasColumnType("varchar(1000)")
+                        .HasColumnType("varchar(250)")
                         .HasColumnName("OBSERVACAO");
 
                     b.Property<decimal>("ValorPago")
@@ -1041,7 +1044,7 @@ namespace DeslandesApp.Infra.Data.Migrations
                     b.HasIndex("ContaReceberId")
                         .HasDatabaseName("IX_CONTARECEBERBAIXA_CONTARECEBERID");
 
-                    b.ToTable("CONTARECEBERBAIXA", (string)null);
+                    b.ToTable("CONTARECEBERBAIXA");
                 });
 
             modelBuilder.Entity("DeslandesApp.Domain.Models.Entities.Contrato", b =>

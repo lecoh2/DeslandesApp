@@ -17,5 +17,6 @@ int pageSize,
 string? searchTerm = null);
         Task<List<CategoriaFinanceiraResponse>> ConsultarCategoriaFinanceiraAsync();
         Task<CategoriaFinanceira?> ObterCompletoPorIdAsync(Guid id);
+        Task<List<CategoriaFinanceiraResponse>> ConsultarAsync();
     }
 }

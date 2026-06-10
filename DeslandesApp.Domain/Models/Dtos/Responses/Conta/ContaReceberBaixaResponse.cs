@@ -5,10 +5,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DeslandesApp.Domain.Models.Dtos.Requests.Conta
+namespace DeslandesApp.Domain.Models.Dtos.Responses.Conta
 {
-    public class ContaReceberBaixaRequest
+    public class ContaReceberBaixaResponse
     {
+        public Guid Id { get; set; }
+
         public decimal ValorPago { get; set; }
 
         public DateTime DataBaixa { get; set; }

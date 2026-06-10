@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace DeslandesApp.Domain.Models.Dtos.Responses.BaixaFinanceira
 {
-    public class BaixaFinanceiraResponse
+    public class ObterBaixaFinanceiraResponse
     {
         public Guid Id { get; set; }
 
@@ -20,9 +20,13 @@ namespace DeslandesApp.Domain.Models.Dtos.Responses.BaixaFinanceira
 
         public string? Cliente { get; set; }
 
-        public string? FormaPagamento { get; set; }
+        public string? DescricaoConta { get; set; }
 
-        public Guid? ContaBancariaEmpresaId { get; set; }
+        public decimal ValorConta { get; set; }
+
+        public decimal ValorRecebido { get; set; }
+
+        public string? FormaPagamento { get; set; }
 
         public DateTime DataCadastro { get; set; }
     }

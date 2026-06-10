@@ -1,9 +1,11 @@
 ﻿using AutoMapper;
 using DeslandesApp.Domain.Models.Dtos.Requests.Atendimento;
+using DeslandesApp.Domain.Models.Dtos.Requests.BaixaFinanceira;
 using DeslandesApp.Domain.Models.Dtos.Requests.Caso;
 using DeslandesApp.Domain.Models.Dtos.Requests.CategoriaFinanceira;
 using DeslandesApp.Domain.Models.Dtos.Requests.CentroCusto;
 using DeslandesApp.Domain.Models.Dtos.Requests.Comentarios;
+using DeslandesApp.Domain.Models.Dtos.Requests.Conta;
 using DeslandesApp.Domain.Models.Dtos.Requests.ContaBancaria;
 using DeslandesApp.Domain.Models.Dtos.Requests.Contrato;
 using DeslandesApp.Domain.Models.Dtos.Requests.EnderecoPessoa;
@@ -26,9 +28,11 @@ using DeslandesApp.Domain.Models.Dtos.Requests.Usuarios;
 using DeslandesApp.Domain.Models.Dtos.Requests.Usuarios;
 using DeslandesApp.Domain.Models.Dtos.Responses.Agenda;
 using DeslandesApp.Domain.Models.Dtos.Responses.Atendimento;
+using DeslandesApp.Domain.Models.Dtos.Responses.BaixaFinanceira;
 using DeslandesApp.Domain.Models.Dtos.Responses.Caso;
 using DeslandesApp.Domain.Models.Dtos.Responses.CategoriaFinanceira;
 using DeslandesApp.Domain.Models.Dtos.Responses.CentroCusto;
+using DeslandesApp.Domain.Models.Dtos.Responses.Conta;
 using DeslandesApp.Domain.Models.Dtos.Responses.Contrato;
 using DeslandesApp.Domain.Models.Dtos.Responses.contrato_processo;
 using DeslandesApp.Domain.Models.Dtos.Responses.EnderecoEndereco;
@@ -364,7 +368,6 @@ namespace DeslandesApp.Domain.Mappings
                 .ForMember(d => d.PessoaId, o => o.MapFrom(s => s.IdPessoa))
                 .ForMember(d => d.QualificacaoId, o => o.MapFrom(s => s.IdQualificacao))
                 .ForMember(d => d.ProcessoId, o => o.Ignore());
-
 
             CreateMap<GrupoEnvolvidosProcessoRequest, GrupoEnvolvidosProcesso>()
                 .ForMember(d => d.PessoaId, o => o.MapFrom(s => s.IdPessoa))
@@ -923,6 +926,115 @@ namespace DeslandesApp.Domain.Mappings
             // Entity -> Paginação
             CreateMap<CategoriaFinanceira, CategoriaFinanceiraPaginacaoResponse>();
             #endregion
+            #region Conta Receber
+
+            CreateMap<ContaReceber, ParcelaContaReceberResponse>();
+            CreateMap<ContaReceberBaixa, ContaReceberBaixaResponse>();
+            CreateMap<ContaReceber, ObterContaReceberResponse>()
+                .ForMember(dest => dest.Cliente,
+                    opt => opt.MapFrom(src =>
+                        src.Pessoa != null
+                            ? src.Pessoa.Nome
+                            : null))
+
+                .ForMember(dest => dest.Contrato,
+                    opt => opt.MapFrom(src =>
+                        src.Contrato != null
+                            ? src.Contrato.Numero
+                            : null))
+
+                .ForMember(dest => dest.CategoriaFinanceira,
+                    opt => opt.MapFrom(src =>
+                        src.CategoriaFinanceira != null
+                            ? src.CategoriaFinanceira.Nome
+                            : null))
+
+                .ForMember(dest => dest.CentroCusto,
+                    opt => opt.MapFrom(src =>
+                        src.CentroCusto != null
+                            ? src.CentroCusto.Nome
+                            : null))
+
+                .ForMember(dest => dest.Parcelas,
+                    opt => opt.MapFrom(src => src.Parcelas))
+
+                .ForMember(dest => dest.Baixas,
+                    opt => opt.MapFrom(src => src.Baixas));
+
+            #endregion
+
+
+            #region Baixa Financeira
+
+            CreateMap<BaixaFinanceiraRequest, BaixaFinanceira>();
+
+            CreateMap<BaixaFinanceiraUpdateRequest, BaixaFinanceira>();
+
+            CreateMap<BaixaFinanceira, BaixaFinanceiraResponse>()
+                .ForMember(
+                    dest => dest.Cliente,
+                    opt => opt.MapFrom(src =>
+                        src.ContaReceber != null &&
+                        src.ContaReceber.Pessoa != null
+                            ? src.ContaReceber.Pessoa.Nome
+                            : string.Empty
+                    )
+                )
+                .ForMember(
+                    dest => dest.FormaPagamento,
+                    opt => opt.MapFrom(src =>
+                        src.FormaPagamento != null
+                            ? src.FormaPagamento.Nome
+                            : string.Empty
+                    )
+                );
+
+            CreateMap<BaixaFinanceira, ObterBaixaFinanceiraResponse>()
+                .ForMember(
+                    dest => dest.Cliente,
+                    opt => opt.MapFrom(src =>
+                        src.ContaReceber != null &&
+                        src.ContaReceber.Pessoa != null
+                            ? src.ContaReceber.Pessoa.Nome
+                            : string.Empty
+                    )
+                )
+                .ForMember(
+                    dest => dest.DescricaoConta,
+                    opt => opt.MapFrom(src =>
+                        src.ContaReceber != null
+                            ? src.ContaReceber.Descricao
+                            : string.Empty
+                    )
+                )
+                .ForMember(
+                    dest => dest.ValorConta,
+                    opt => opt.MapFrom(src =>
+                        src.ContaReceber != null
+                            ? src.ContaReceber.Valor
+                            : 0
+                    )
+                )
+                .ForMember(
+                    dest => dest.ValorRecebido,
+                    opt => opt.MapFrom(src =>
+                        src.ContaReceber != null
+                            ? src.ContaReceber.ValorRecebido
+                            : 0
+                    )
+                )
+                .ForMember(
+                    dest => dest.FormaPagamento,
+                    opt => opt.MapFrom(src =>
+                        src.FormaPagamento != null
+                            ? src.FormaPagamento.Nome
+                            : string.Empty
+                    )
+                );
+
+            #endregion
+
+
         }
     }
 }

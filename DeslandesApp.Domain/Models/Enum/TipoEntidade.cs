@@ -19,5 +19,6 @@ namespace DeslandesApp.Domain.Models.Enum
         CentroCusto = 9,
         Contrato = 10,
         CategoriaFinanceira = 11,
+        ContaReceber=12,
     }
 }

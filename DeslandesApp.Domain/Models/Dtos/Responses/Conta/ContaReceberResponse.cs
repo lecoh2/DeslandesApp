@@ -36,5 +36,6 @@ namespace DeslandesApp.Domain.Models.Dtos.Responses.Conta
         public Guid? CentroCustoId { get; set; }
 
         public string? CentroCusto { get; set; }
+        public bool Excluido { get; set; }
     }
 }

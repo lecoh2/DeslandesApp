@@ -4,6 +4,7 @@ using DeslandesApp.Infra.Data.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DeslandesApp.Infra.Data.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20260609151222_baixa")]
+    partial class baixa
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -262,6 +265,10 @@ namespace DeslandesApp.Infra.Data.Migrations
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("CONTARECEBERID");
 
+                    b.Property<Guid?>("ContaReceberId1")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("CONTARECEBERID1");
+
                     b.Property<DateTime?>("DataAtualizacao")
                         .HasColumnType("datetime2")
                         .HasColumnName("DATAATUALIZACAO");
@@ -320,6 +327,9 @@ namespace DeslandesApp.Infra.Data.Migrations
 
                     b.HasIndex("ContaReceberId")
                         .HasDatabaseName("IX_BAIXA_FINANCEIRA_CONTARECEBERID");
+
+                    b.HasIndex("ContaReceberId1")
+                        .HasDatabaseName("IX_BAIXA_FINANCEIRA_CONTARECEBERID1");
 
                     b.HasIndex("FormaPagamentoId")
                         .HasDatabaseName("IX_BAIXA_FINANCEIRA_FORMAPAGAMENTOID");
@@ -1004,44 +1014,6 @@ namespace DeslandesApp.Infra.Data.Migrations
                         .HasDatabaseName("IX_CONTA_RECEBER_USUARIOCADASTROID");
 
                     b.ToTable("CONTA_RECEBER", (string)null);
-                });
-
-            modelBuilder.Entity("DeslandesApp.Domain.Models.Entities.ContaReceberBaixa", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnName("ID");
-
-                    b.Property<Guid>("ContaReceberId")
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnName("CONTARECEBERID");
-
-                    b.Property<DateTime>("DataBaixa")
-                        .HasColumnType("datetime2")
-                        .HasColumnName("DATABAIXA");
-
-                    b.Property<int>("FormaRecebimento")
-                        .HasColumnType("int")
-                        .HasColumnName("FORMARECEBIMENTO");
-
-                    b.Property<string>("Observacao")
-                        .HasMaxLength(1000)
-                        .IsUnicode(false)
-                        .HasColumnType("varchar(1000)")
-                        .HasColumnName("OBSERVACAO");
-
-                    b.Property<decimal>("ValorPago")
-                        .HasColumnType("decimal(18,2)")
-                        .HasColumnName("VALORPAGO");
-
-                    b.HasKey("Id")
-                        .HasName("PK_CONTARECEBERBAIXA");
-
-                    b.HasIndex("ContaReceberId")
-                        .HasDatabaseName("IX_CONTARECEBERBAIXA_CONTARECEBERID");
-
-                    b.ToTable("CONTARECEBERBAIXA", (string)null);
                 });
 
             modelBuilder.Entity("DeslandesApp.Domain.Models.Entities.Contrato", b =>
@@ -3377,6 +3349,11 @@ namespace DeslandesApp.Infra.Data.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .HasConstraintName("FK_BAIXA_FINANCEIRA_CONTA_RECEBER_CONTARECEBERID");
 
+                    b.HasOne("DeslandesApp.Domain.Models.Entities.ContaReceber", null)
+                        .WithMany("Baixas")
+                        .HasForeignKey("ContaReceberId1")
+                        .HasConstraintName("FK_BAIXA_FINANCEIRA_CONTA_RECEBER_CONTARECEBERID1");
+
                     b.HasOne("DeslandesApp.Domain.Models.Entities.FormaPagamento", "FormaPagamento")
                         .WithMany()
                         .HasForeignKey("FormaPagamentoId")
@@ -3590,18 +3567,6 @@ namespace DeslandesApp.Infra.Data.Migrations
                     b.Navigation("Pessoa");
 
                     b.Navigation("UsuarioCadastro");
-                });
-
-            modelBuilder.Entity("DeslandesApp.Domain.Models.Entities.ContaReceberBaixa", b =>
-                {
-                    b.HasOne("DeslandesApp.Domain.Models.Entities.ContaReceber", "ContaReceber")
-                        .WithMany("Baixas")
-                        .HasForeignKey("ContaReceberId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("FK_CONTARECEBERBAIXA_CONTA_RECEBER_CONTARECEBERID");
-
-                    b.Navigation("ContaReceber");
                 });
 
             modelBuilder.Entity("DeslandesApp.Domain.Models.Entities.Contrato", b =>

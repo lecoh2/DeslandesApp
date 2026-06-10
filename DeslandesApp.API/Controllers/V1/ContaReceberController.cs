@@ -1,6 +1,7 @@
 ﻿using DeslandesApp.Domain.Interfaces.Services;
 using DeslandesApp.Domain.Models.Dtos.Requests.Conta;
 using DeslandesApp.Domain.Models.Dtos.Responses.Conta;
+using DeslandesApp.Domain.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DeslandesApp.API.Controllers.V1
@@ -79,7 +80,7 @@ namespace DeslandesApp.API.Controllers.V1
             pageSize = pageSize <= 0 ? 10 : Math.Min(pageSize, 100);
 
             var result = await contaReceberService
-                .ConsultarAsync(pageNumber, pageSize);
+                .ConsultarPaginacaoAsync(pageNumber, pageSize);
 
             return Ok(result);
         }
@@ -99,5 +100,16 @@ namespace DeslandesApp.API.Controllers.V1
                 message = "Baixa realizada com sucesso."
             });
         }
+        [HttpGet("obter-conta-receber-por-id/{id:guid}")]
+        public async Task<IActionResult> ObterPorId(Guid id)
+        {
+            var contaReceber = await contaReceberService.ObterPorIdAsync(id);
+
+            if (contaReceber == null)
+                return NotFound("Conta a Receber não encontrada.");
+
+            return Ok(contaReceber);
+        }
+
     }
 }

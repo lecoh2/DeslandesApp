@@ -66,7 +66,9 @@ namespace DeslandesApp.Domain.Interfaces.Repositories
         IBaixaFinanceiraRepository BaixaFinanceiraRepository { get; }
         ICentroCustoRepository CentroCustoRepository { get; }
         IContratoRepository ContratoRepository { get; }
-        ICategoriaFinanceiraRepository CategoriaFinanceiraRepository { get; }   
+        ICategoriaFinanceiraRepository CategoriaFinanceiraRepository { get; }
+
+           IContaReceberBaixaRepository ContaReceberBaixaRepository { get; }
         #endregion
     }
 }

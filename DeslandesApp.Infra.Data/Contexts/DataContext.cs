@@ -69,7 +69,7 @@ namespace DeslandesApp.Infra.Data.Contexts
         public DbSet<BaixaFinanceira> BaixaFinanceira { get; set; }
         public DbSet<FormaPagamento> FormaPagamento { get; set; }
         public DbSet<CategoriaFinanceira> CategoriaFinanceira { get; set; }
-      
+        public DbSet<ContaReceberBaixa> ContaReceberBaixa { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);

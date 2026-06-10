@@ -1,4 +1,6 @@
-﻿using System;
+﻿using DeslandesApp.Domain.Models.Entities;
+using DeslandesApp.Domain.Models.Enum;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -21,5 +23,13 @@ namespace DeslandesApp.Domain.Models.Dtos.Requests.Conta
         public Guid? CategoriaFinanceiraId { get; set; }
 
         public Guid? CentroCustoId { get; set; }
+
+        public TipoContaReceber TipoConta { get; set; }
+
+        public bool Parcelado { get; set; }
+
+        public int? QuantidadeParcelas { get; set; }
+        public FormaRecebimento FormaRecebimento { get; set; }
+
     }
 }

@@ -4,26 +4,24 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DeslandesApp.Domain.Models.Dtos.Responses.BaixaFinanceira
+namespace DeslandesApp.Domain.Models.Dtos.Requests.BaixaFinanceira
 {
-    public class BaixaFinanceiraResponse
+    public class BaixaFinanceiraUpdateRequest
     {
         public Guid Id { get; set; }
+        public Guid ContaReceberId { get; set; }
+
 
         public decimal ValorPago { get; set; }
+
 
         public DateTime DataBaixa { get; set; }
 
         public string? Observacao { get; set; }
 
-        public Guid ContaReceberId { get; set; }
 
-        public string? Cliente { get; set; }
-
-        public string? FormaPagamento { get; set; }
+        public Guid FormaPagamentoId { get; set; }
 
         public Guid? ContaBancariaEmpresaId { get; set; }
-
-        public DateTime DataCadastro { get; set; }
     }
 }

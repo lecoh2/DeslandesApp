@@ -1,6 +1,7 @@
 ﻿using DeslandesApp.Domain.Interfaces.Services;
 using DeslandesApp.Domain.Models.Dtos.Requests.CategoriaFinanceira;
 using DeslandesApp.Domain.Models.Dtos.Responses.CategoriaFinanceira;
+using DeslandesApp.Domain.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -87,6 +88,12 @@ namespace DeslandesApp.API.Controllers.V1
             var result =
                 await categoriaFinanceiraService.ObterPorIdAsync(id);
 
+            return Ok(result);
+        }
+        [HttpGet("consultar-categoria-financeira")]
+        public async Task<IActionResult> GetAllAsync()
+        {
+            var result = await categoriaFinanceiraService.ConsultarAsync();
             return Ok(result);
         }
     }

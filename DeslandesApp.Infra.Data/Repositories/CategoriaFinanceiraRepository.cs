@@ -86,5 +86,10 @@ namespace DeslandesApp.Infra.Data.Repositories
 
                 .FirstOrDefaultAsync();
         }
+
+        public Task<List<CategoriaFinanceiraResponse>> ConsultarAsync()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

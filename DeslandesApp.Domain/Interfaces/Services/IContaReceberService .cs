@@ -11,5 +11,9 @@ namespace DeslandesApp.Domain.Interfaces.Services
         Task<List<ContaReceberResponse>> ConsultarAsync();
 
         Task BaixarAsync(Guid id, ContaReceberBaixaRequest request);
+        Task<PageResult<ContaReceberConsultaResponse>> ConsultarPaginacaoAsync(int pageNumber, int pageSize);
+
+        Task<ObterContaReceberResponse?> ObterPorIdAsync(Guid id);
+
     }
 }

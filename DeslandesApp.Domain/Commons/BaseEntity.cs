@@ -23,6 +23,7 @@ namespace DeslandesApp.Domain.Commons
 
         public Guid? UsuarioExclusaoId { get; set; }
         public Guid? UsuarioCadastroId { get; set; }
+        public Guid?  UsuarioAtualizacaoId { get; set; }
         public Usuario UsuarioCadastro { get; set; }
     }
 }

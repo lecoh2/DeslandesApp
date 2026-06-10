@@ -64,6 +64,17 @@ namespace DeslandesApp.Infra.Data.Repositories
         private IContratoRepository? _contratoRepository;
         private IContratoProcessoRepository? _contratoProcessoRepository;
         private ICategoriaFinanceiraRepository? _categoriaFinanceiraRepository;
+        private IContaReceberBaixaRepository?      _contaReceberBaixaRepository;
+        public IContaReceberBaixaRepository ContaReceberBaixaRepository
+        {
+            get
+            {
+                if (_contaReceberBaixaRepository == null)
+                    _contaReceberBaixaRepository = new ContaReceberBaixaRepository(dataContext);
+
+                return _contaReceberBaixaRepository;
+            }
+        }
         public ICategoriaFinanceiraRepository CategoriaFinanceiraRepository
         {
             get

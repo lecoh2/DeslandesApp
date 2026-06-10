@@ -1,4 +1,5 @@
 ﻿using DeslandesApp.Domain.Interfaces.Repositories;
+using DeslandesApp.Domain.Models.Dtos.Responses.Conta;
 using DeslandesApp.Domain.Models.Entities;
 using DeslandesApp.Domain.Utils;
 using DeslandesApp.Infra.Data.Contexts;
@@ -9,14 +10,18 @@ namespace DeslandesApp.Infra.Data.Repositories
     public class ContaReceberRepository(DataContext dataContext)
         : BaseRepository<ContaReceber, Guid>(dataContext), IContaReceberRepository
     {
-        public async Task<PageResult<ContaReceber>> GetPaginacaoAsync(
-    int pageNumber,
-    int pageSize,
-    string? searchTerm = null)
+        public async Task<PageResult<ContaReceberConsultaResponse>> GetPaginacaoAsync(
+        int pageNumber,
+        int pageSize,
+        string? searchTerm = null)
         {
             var query = dataContext.ContaReceber
+                .Include(x => x.Pessoa)
+                .Include(x => x.Contrato)
                 .AsNoTracking()
-                .AsQueryable();
+                .Where(x =>
+                    x.NumeroParcela > 0 &&
+                    !x.Excluido);
 
             if (!string.IsNullOrWhiteSpace(searchTerm))
             {
@@ -24,20 +29,41 @@ namespace DeslandesApp.Infra.Data.Repositories
 
                 query = query.Where(x =>
                     x.Descricao.ToLower().Contains(term) ||
-                    x.Pessoa.Nome.ToLower().Contains(term) ||   // 👈 AQUI AJUSTADO
-                    x.Contrato.Numero.ToLower().Contains(term)
-                );
+                    x.Pessoa.Nome.ToLower().Contains(term));
             }
 
-            var totalCount = await query.CountAsync();
+            var agrupado = query
+                .GroupBy(x => x.ContratoId)
+                .Select(g => new ContaReceberConsultaResponse
+                {
+                    Id = g.First().Id,
 
-            var items = await query
-                .OrderByDescending(x => x.DataVencimento)
+                    Cliente = g.First().Pessoa.Nome,
+
+                    Descricao = g.First().Descricao,
+
+                    NumeroContrato = g.First().Contrato != null
+                        ? g.First().Contrato.Numero
+                        : string.Empty,
+
+                    ValorTotal = g.Sum(x => x.Valor),
+
+                    Parcelado = g.First().Parcelado,
+
+                    TotalParcelas = g.First().TotalParcelas,
+
+                    FormaRecebimento = g.First().FormaRecebimento
+                });
+
+            var totalCount = await agrupado.CountAsync();
+
+            var items = await agrupado
+                .OrderBy(x => x.Cliente)
                 .Skip((pageNumber - 1) * pageSize)
                 .Take(pageSize)
                 .ToListAsync();
 
-            return new PageResult<ContaReceber>
+            return new PageResult<ContaReceberConsultaResponse>
             {
                 Items = items,
                 TotalCount = totalCount,
@@ -45,7 +71,6 @@ namespace DeslandesApp.Infra.Data.Repositories
                 PageSize = pageSize
             };
         }
-
         public async Task<List<ContaReceber>> ConsultarComRelacionamentosAsync()
         {
             return await dataContext.ContaReceber
@@ -56,12 +81,24 @@ namespace DeslandesApp.Infra.Data.Repositories
         }
         public async Task<ContaReceber?> ObterCompletoPorIdAsync(Guid id)
         {
-            return await dataContext.ContaReceber
+            var conta = await dataContext.ContaReceber
                 .AsNoTracking()
-                .Where(x => x.Id == id)
-                .Include(x => x.Pessoa)     // 👈 AJUSTADO
-                .Include(x => x.Contrato)
-                .FirstOrDefaultAsync();
+                .FirstOrDefaultAsync(x => x.Id == id);
+
+            if (conta == null)
+                return null;
+
+            var idPrincipal = conta.ContaPaiId ?? conta.Id;
+
+            return await dataContext.ContaReceber
+              .AsNoTracking()
+              .Include(x => x.Pessoa)
+              .Include(x => x.Contrato)
+              .Include(x => x.CategoriaFinanceira)
+              .Include(x => x.CentroCusto)
+              .Include(x => x.Baixas)
+              .Include(x => x.Parcelas.OrderBy(p => p.NumeroParcela))
+              .FirstOrDefaultAsync(x => x.Id == idPrincipal);
         }
         public async Task<List<ContaReceber>> ConsultarUltimasAsync(int quantidade)
         {

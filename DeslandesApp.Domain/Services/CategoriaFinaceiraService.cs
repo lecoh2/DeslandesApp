@@ -4,6 +4,7 @@ using DeslandesApp.Domain.Interfaces.Repositories;
 using DeslandesApp.Domain.Interfaces.Services;
 using DeslandesApp.Domain.Models.Dtos.Requests.CategoriaFinanceira;
 using DeslandesApp.Domain.Models.Dtos.Responses.CategoriaFinanceira;
+using DeslandesApp.Domain.Models.Dtos.Responses.Vara;
 using DeslandesApp.Domain.Models.Entities;
 using DeslandesApp.Domain.Models.Enum;
 using DeslandesApp.Domain.Utils;
@@ -228,6 +229,6 @@ namespace DeslandesApp.Domain.Services
             return paged;
         }
 
-    
+        
     }
 }
