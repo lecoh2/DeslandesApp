@@ -35,6 +35,25 @@ namespace DeslandesApp.Domain.Services
                         throw new BusinessException("Informe uma quantidade válida de parcelas.");
                 }
 
+                // Evita cadastro exatamente igual
+                if (request.ContratoId.HasValue)
+                {
+                    var existeDuplicidade =
+                        await unitOfWork
+                            .ContaReceberRepository
+                            .ExisteDuplicidadeAsync(
+                                request.ContratoId.Value,
+                                request.Descricao,
+                                request.Valor,
+                                request.DataVencimento);
+
+                    if (existeDuplicidade)
+                    {
+                        throw new BusinessException(
+                            "Já existe uma conta a receber com os mesmos dados para este contrato."
+                        );
+                    }
+                }
                 // =========================
                 // CONTA À VISTA
                 // =========================
@@ -350,8 +369,8 @@ namespace DeslandesApp.Domain.Services
             }
         }
         public async Task BaixarAsync(
-    Guid id,
-    ContaReceberBaixaRequest request)
+      Guid id,
+      ContaReceberBaixaRequest request)
         {
             await unitOfWork.BeginTransactionAsync();
 
@@ -368,7 +387,6 @@ namespace DeslandesApp.Domain.Services
                     );
                 }
 
-                // Não permite baixar a conta agrupadora
                 if (conta.Parcelado &&
                     conta.NumeroParcela == 0)
                 {
@@ -431,20 +449,23 @@ namespace DeslandesApp.Domain.Services
                 await unitOfWork
                     .ContaReceberRepository
                     .UpdateAsync(conta);
+
+                // Atualiza a conta agrupadora
                 if (conta.ContaPaiId.HasValue)
                 {
                     var contaPai = await unitOfWork
                         .ContaReceberRepository
-                        .ObterCompletoPorIdAsync(conta.ContaPaiId.Value);
+                        .ObterCompletoPorIdAsync(
+                            conta.ContaPaiId.Value);
 
                     if (contaPai != null)
                     {
                         var parcelas = contaPai.Parcelas.ToList();
 
-                        contaPai.ValorPago =
+                        var valorPagoPai =
                             parcelas.Sum(x => x.ValorPago);
 
-                        contaPai.ValorRecebido =
+                        var valorRecebidoPai =
                             parcelas.Sum(x => x.ValorRecebido);
 
                         var todasPagas = parcelas.All(x =>
@@ -453,28 +474,34 @@ namespace DeslandesApp.Domain.Services
                         var algumaPaga = parcelas.Any(x =>
                             x.ValorPago > 0);
 
+                        var statusPai = StatusConta.Aberta;
+                        var quitadoPai = false;
+                        DateTime? dataQuitacaoPai = null;
+
                         if (todasPagas)
                         {
-                            contaPai.Status = StatusConta.Paga;
-                            contaPai.Quitado = true;
-                            contaPai.DataQuitacao = DateTime.Now;
+                            statusPai = StatusConta.Paga;
+                            quitadoPai = true;
+                            dataQuitacaoPai = DateTime.Now;
                         }
                         else if (algumaPaga)
                         {
-                            contaPai.Status =
-                                StatusConta.ParcialmentePaga;
-                        }
-                        else
-                        {
-                            contaPai.Status =
-                                StatusConta.Aberta;
+                            statusPai = StatusConta.ParcialmentePaga;
                         }
 
                         await unitOfWork
                             .ContaReceberRepository
-                            .UpdateAsync(contaPai);
+                            .AtualizarContaPaiAsync(
+                                contaPai.Id,
+                                valorPagoPai,
+                                valorRecebidoPai,
+                                statusPai,
+                                quitadoPai,
+                                dataQuitacaoPai
+                            );
                     }
                 }
+
                 await unitOfWork.CommitAsync();
             }
             catch

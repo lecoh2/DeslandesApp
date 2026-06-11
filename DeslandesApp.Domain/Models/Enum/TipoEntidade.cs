@@ -20,5 +20,6 @@ namespace DeslandesApp.Domain.Models.Enum
         Contrato = 10,
         CategoriaFinanceira = 11,
         ContaReceber=12,
+        ContaPagar=13
     }
 }

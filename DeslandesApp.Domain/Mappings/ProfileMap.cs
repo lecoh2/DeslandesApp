@@ -927,7 +927,7 @@ namespace DeslandesApp.Domain.Mappings
             CreateMap<CategoriaFinanceira, CategoriaFinanceiraPaginacaoResponse>();
             #endregion
             #region Conta Receber
-
+            CreateMap<ContaReceberRequest, ContaReceber>();
             CreateMap<ContaReceber, ParcelaContaReceberResponse>();
             CreateMap<ContaReceberBaixa, ContaReceberBaixaResponse>();
             CreateMap<ContaReceber, ObterContaReceberResponse>()
@@ -960,6 +960,32 @@ namespace DeslandesApp.Domain.Mappings
 
                 .ForMember(dest => dest.Baixas,
                     opt => opt.MapFrom(src => src.Baixas));
+            CreateMap<ContaReceber, ContaReceberResponse>()
+    .ForMember(
+        dest => dest.NomePessoa,
+        opt => opt.MapFrom(src => src.Pessoa.Nome)
+    )
+    .ForMember(
+        dest => dest.NumeroContrato,
+        opt => opt.MapFrom(src =>
+            src.Contrato != null
+                ? src.Contrato.Numero
+                : null)
+    )
+    .ForMember(
+        dest => dest.CategoriaFinanceira,
+        opt => opt.MapFrom(src =>
+            src.CategoriaFinanceira != null
+                ? src.CategoriaFinanceira.Nome
+                : null)
+    )
+    .ForMember(
+        dest => dest.CentroCusto,
+        opt => opt.MapFrom(src =>
+            src.CentroCusto != null
+                ? src.CentroCusto.Nome
+                : null)
+    );
 
             #endregion
 

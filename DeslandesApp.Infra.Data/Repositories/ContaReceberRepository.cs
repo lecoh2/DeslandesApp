@@ -1,6 +1,7 @@
 ﻿using DeslandesApp.Domain.Interfaces.Repositories;
 using DeslandesApp.Domain.Models.Dtos.Responses.Conta;
 using DeslandesApp.Domain.Models.Entities;
+using DeslandesApp.Domain.Models.Enum;
 using DeslandesApp.Domain.Utils;
 using DeslandesApp.Infra.Data.Contexts;
 using Microsoft.EntityFrameworkCore;
@@ -11,56 +12,55 @@ namespace DeslandesApp.Infra.Data.Repositories
         : BaseRepository<ContaReceber, Guid>(dataContext), IContaReceberRepository
     {
         public async Task<PageResult<ContaReceberConsultaResponse>> GetPaginacaoAsync(
-        int pageNumber,
-        int pageSize,
-        string? searchTerm = null)
+      int pageNumber,
+      int pageSize,
+      string? searchTerm = null)
         {
             var query = dataContext.ContaReceber
-                .Include(x => x.Pessoa)
-                .Include(x => x.Contrato)
                 .AsNoTracking()
                 .Where(x =>
-                    x.NumeroParcela > 0 &&
-                    !x.Excluido);
+                    !x.Excluido &&
+                    (
+                        (!x.Parcelado && x.NumeroParcela == 1)
+                        || (x.Parcelado && x.NumeroParcela == 0)
+                    ));
 
             if (!string.IsNullOrWhiteSpace(searchTerm))
             {
-                var term = searchTerm.ToLower();
-
                 query = query.Where(x =>
-                    x.Descricao.ToLower().Contains(term) ||
-                    x.Pessoa.Nome.ToLower().Contains(term));
+                    EF.Functions.Like(x.Descricao, $"%{searchTerm}%") ||
+                    EF.Functions.Like(x.Pessoa.Nome, $"%{searchTerm}%"));
             }
 
-            var agrupado = query
-                .GroupBy(x => x.ContratoId)
-                .Select(g => new ContaReceberConsultaResponse
-                {
-                    Id = g.First().Id,
+            var totalCount = await query.CountAsync();
 
-                    Cliente = g.First().Pessoa.Nome,
-
-                    Descricao = g.First().Descricao,
-
-                    NumeroContrato = g.First().Contrato != null
-                        ? g.First().Contrato.Numero
-                        : string.Empty,
-
-                    ValorTotal = g.Sum(x => x.Valor),
-
-                    Parcelado = g.First().Parcelado,
-
-                    TotalParcelas = g.First().TotalParcelas,
-
-                    FormaRecebimento = g.First().FormaRecebimento
-                });
-
-            var totalCount = await agrupado.CountAsync();
-
-            var items = await agrupado
-                .OrderBy(x => x.Cliente)
+            var items = await query
+                .OrderByDescending(x => x.DataCadastro)
                 .Skip((pageNumber - 1) * pageSize)
                 .Take(pageSize)
+                .Select(x => new ContaReceberConsultaResponse
+                {
+                    Id = x.Id,
+                    Cliente = x.Pessoa.Nome,
+                    Descricao = x.Descricao,
+
+                    NumeroContrato = x.Contrato != null
+                        ? x.Contrato.Numero
+                        : string.Empty,
+
+                    ValorTotal = x.Valor,
+                    Parcelado = x.Parcelado,
+                    TotalParcelas = x.TotalParcelas,
+                    FormaRecebimento = x.FormaRecebimento,
+                    Status = x.Status,
+
+                    StatusDescricao =
+    x.Status == StatusConta.Aberta ? "Pendente" :
+    x.Status == StatusConta.Paga ? "Paga" :
+    x.Status == StatusConta.Cancelada ? "Cancelada" :
+    x.Status == StatusConta.ParcialmentePaga ? "Parcialmente Paga" :
+    "-"
+                })
                 .ToListAsync();
 
             return new PageResult<ContaReceberConsultaResponse>
@@ -120,6 +120,58 @@ namespace DeslandesApp.Infra.Data.Repositories
             return await dataContext.ContaReceber
                 .Where(x => x.DataVencimento >= inicioAno && x.DataVencimento <= fimAno)
                 .CountAsync();
+        }
+        public async Task AtualizarContaPaiAsync(
+    Guid contaPaiId,
+    decimal valorPago,
+    decimal valorRecebido,
+    StatusConta status,
+    bool quitado,
+    DateTime? dataQuitacao)
+        {
+            var contaPai = await dataContext.ContaReceber
+                .FirstOrDefaultAsync(x => x.Id == contaPaiId);
+
+            if (contaPai == null)
+                return;
+
+            contaPai.ValorPago = valorPago;
+            contaPai.ValorRecebido = valorRecebido;
+            contaPai.Status = status;
+            contaPai.Quitado = quitado;
+            contaPai.DataQuitacao = dataQuitacao;
+
+            await dataContext.SaveChangesAsync();
+        }
+        public async Task<bool> ExistePorContratoAsync(Guid contratoId)
+        {
+            return await dataContext.ContaReceber
+                .AnyAsync(x =>
+                    x.ContratoId == contratoId &&
+                    x.NumeroParcela == 0 &&
+                    !x.Excluido);
+        }
+        public async Task<bool> ExisteContaPrincipalPorContratoAsync(
+    Guid contratoId)
+        {
+            return await dataContext.ContaReceber
+                .AnyAsync(x =>
+                    x.ContratoId == contratoId &&
+                    x.NumeroParcela == 0);
+        }
+        public async Task<bool> ExisteDuplicidadeAsync(
+    Guid contratoId,
+    string descricao,
+    decimal valor,
+    DateTime dataVencimento)
+        {
+            return await dataContext.ContaReceber
+                .AnyAsync(x =>
+                    x.ContratoId == contratoId &&
+                    x.Descricao == descricao &&
+                    x.Valor == valor &&
+                    x.DataVencimento.Date == dataVencimento.Date &&
+                    !x.Excluido);
         }
     }
 }
