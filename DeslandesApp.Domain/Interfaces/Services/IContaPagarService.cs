@@ -1,5 +1,6 @@
 ﻿using DeslandesApp.Domain.Models.Dtos.Requests.Conta;
 using DeslandesApp.Domain.Models.Dtos.Responses.Conta;
+using DeslandesApp.Domain.Models.Dtos.Responses.Conta.DeslandesApp.Domain.Models.Dtos.Responses.Conta;
 using DeslandesApp.Domain.Utils;
 
 namespace DeslandesApp.Domain.Interfaces.Services
@@ -11,11 +12,13 @@ namespace DeslandesApp.Domain.Interfaces.Services
             ContaPagarResponse,
             Guid>
     {
-        Task<List<ContaPagarResponse>> ConsultarAsync();
+        Task<List<ContaReceberConsultaResponse>> ConsultarAsync();
 
         Task BaixarAsync(
             Guid id,
             ContaPagarUpdateRequest request
         );
+
+        Task<PageResult<ContaPagarResponse>> ConsultarAsync(int pageNumber, int pageSize);
     }
 }

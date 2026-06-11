@@ -4,6 +4,7 @@ using DeslandesApp.Domain.Interfaces.Repositories;
 using DeslandesApp.Domain.Interfaces.Services;
 using DeslandesApp.Domain.Models.Dtos.Requests.Conta;
 using DeslandesApp.Domain.Models.Dtos.Responses.Conta;
+using DeslandesApp.Domain.Models.Dtos.Responses.Conta.DeslandesApp.Domain.Models.Dtos.Responses.Conta;
 using DeslandesApp.Domain.Models.Entities;
 using DeslandesApp.Domain.Models.Enum;
 using DeslandesApp.Domain.Utils;
@@ -206,7 +207,7 @@ namespace DeslandesApp.Domain.Services
             throw new NotImplementedException();
         }
 
-        public Task<List<ContaPagarResponse>> ConsultarAsync()
+        public Task<List<ContaReceberConsultaResponse>> ConsultarAsync()
         {
             throw new NotImplementedException();
         }
@@ -318,5 +319,7 @@ namespace DeslandesApp.Domain.Services
                 throw;
             }
         }
+
+    
     }
 }

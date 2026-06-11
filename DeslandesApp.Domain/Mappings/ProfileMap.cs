@@ -33,6 +33,7 @@ using DeslandesApp.Domain.Models.Dtos.Responses.Caso;
 using DeslandesApp.Domain.Models.Dtos.Responses.CategoriaFinanceira;
 using DeslandesApp.Domain.Models.Dtos.Responses.CentroCusto;
 using DeslandesApp.Domain.Models.Dtos.Responses.Conta;
+using DeslandesApp.Domain.Models.Dtos.Responses.Conta.DeslandesApp.Domain.Models.Dtos.Responses.Conta;
 using DeslandesApp.Domain.Models.Dtos.Responses.Contrato;
 using DeslandesApp.Domain.Models.Dtos.Responses.contrato_processo;
 using DeslandesApp.Domain.Models.Dtos.Responses.EnderecoEndereco;
@@ -988,37 +989,44 @@ namespace DeslandesApp.Domain.Mappings
     );
 
             #endregion
-            #region conta paga
+            #region Conta Pagar
+
+            // REQUEST -> ENTITY
             CreateMap<ContaPagarRequest, ContaPagar>()
-          .ForMember(dest => dest.Id, opt => opt.Ignore())
-          .ForMember(dest => dest.Status, opt => opt.Ignore())
-          .ForMember(dest => dest.ValorPago, opt => opt.Ignore())
-          .ForMember(dest => dest.DataCadastro, opt => opt.Ignore())
-          .ForMember(dest => dest.DataAtualizacao, opt => opt.Ignore())
-          .ForMember(dest => dest.Parcelado, opt => opt.Ignore())
-          .ForMember(dest => dest.NumeroParcela, opt => opt.Ignore())
-          .ForMember(dest => dest.TotalParcelas, opt => opt.Ignore())
-          .ForMember(dest => dest.ContaPaiId, opt => opt.Ignore());
+                .ForMember(dest => dest.Id, opt => opt.Ignore())
+                .ForMember(dest => dest.Status, opt => opt.Ignore())
+                .ForMember(dest => dest.ValorPago, opt => opt.Ignore())
+                .ForMember(dest => dest.DataCadastro, opt => opt.Ignore())
+                .ForMember(dest => dest.DataAtualizacao, opt => opt.Ignore())
+                .ForMember(dest => dest.Parcelado, opt => opt.Ignore())
+                .ForMember(dest => dest.NumeroParcela, opt => opt.Ignore())
+                .ForMember(dest => dest.TotalParcelas, opt => opt.Ignore())
+                .ForMember(dest => dest.ContaPaiId, opt => opt.Ignore())
+                .ForMember(dest => dest.Pessoa, opt => opt.Ignore())
+                .ForMember(dest => dest.Contrato, opt => opt.Ignore())
+                .ForMember(dest => dest.CategoriaFinanceira, opt => opt.Ignore())
+                .ForMember(dest => dest.CentroCusto, opt => opt.Ignore());
 
+            // ENTITY -> RESPONSE (DETALHE)
             CreateMap<ContaPagar, ContaPagarResponse>()
                 .ForMember(dest => dest.NomePessoa,
                     opt => opt.MapFrom(src => src.Pessoa.Nome))
-
-                .ForMember(dest => dest.CategoriaFinanceira,
-                    opt => opt.MapFrom(src => src.CategoriaFinanceira != null
-                        ? src.CategoriaFinanceira.Nome
-                        : null));
-            CreateMap<ContaPagarRequest, ContaPagar>();
-
-            CreateMap<ContaPagar, ContaPagarResponse>()
-                .ForMember(dest => dest.NomePessoa,
-                    opt => opt.MapFrom(src => src.Pessoa.Nome))
-
                 .ForMember(dest => dest.CategoriaFinanceira,
                     opt => opt.MapFrom(src =>
                         src.CategoriaFinanceira != null
                             ? src.CategoriaFinanceira.Nome
                             : null));
+
+            // ENTITY -> CONSULTA (GRID)
+            CreateMap<ContaPagar, ContaPagarConsultaResponse>()
+                .ForMember(dest => dest.Fornecedor,
+                    opt => opt.MapFrom(src => src.Pessoa.Nome))
+                .ForMember(dest => dest.NumeroContrato,
+                    opt => opt.MapFrom(src =>
+                        src.Contrato != null ? src.Contrato.Numero : string.Empty))
+                .ForMember(dest => dest.ValorTotal,
+                    opt => opt.MapFrom(src => src.Valor));
+            CreateMap<ContaPagarConsultaResponse, ContaPagarResponse>();
             #endregion
 
 

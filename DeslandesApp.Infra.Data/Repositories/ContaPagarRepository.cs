@@ -1,5 +1,8 @@
 ﻿using DeslandesApp.Domain.Interfaces.Repositories;
+using DeslandesApp.Domain.Models.Dtos.Responses.Conta;
+using DeslandesApp.Domain.Models.Dtos.Responses.Conta.DeslandesApp.Domain.Models.Dtos.Responses.Conta;
 using DeslandesApp.Domain.Models.Entities;
+using DeslandesApp.Domain.Models.Enum;
 using DeslandesApp.Domain.Utils;
 using DeslandesApp.Infra.Data.Contexts;
 using DocumentFormat.OpenXml.Wordprocessing;
@@ -15,36 +18,53 @@ namespace DeslandesApp.Infra.Data.Repositories
     public class ContaPagarRepository(DataContext dataContext)
           : BaseRepository<ContaPagar, Guid>(dataContext), IContaPagarRepository
     {
-        public async Task<PageResult<ContaPagar>> GetPaginacaoAsync(
-             int pageNumber,
-             int pageSize,
-             string? searchTerm = null)
+        public async Task<PageResult<ContaPagarConsultaResponse>> GetPaginacaoAsync(
+    int pageNumber,
+    int pageSize,
+    string? searchTerm = null)
         {
             var query = dataContext.ContaPagar
                 .AsNoTracking()
-                .Include(x => x.Pessoa)
-                .Include(x => x.Contrato)
-                .AsQueryable();
+                .Where(x =>
+                    !x.Excluido &&
+                    (
+                        (!x.Parcelado && x.NumeroParcela == 1)
+                        || (x.Parcelado && x.NumeroParcela == 0)
+                    ));
 
             if (!string.IsNullOrWhiteSpace(searchTerm))
             {
-                var term = searchTerm.ToLower();
-
                 query = query.Where(x =>
-                    x.Descricao.ToLower().Contains(term) ||
-                    x.Pessoa.Nome.ToLower().Contains(term)
-                );
+                    EF.Functions.Like(x.Descricao, $"%{searchTerm}%") ||
+                    EF.Functions.Like(x.Pessoa.Nome, $"%{searchTerm}%"));
             }
 
             var totalCount = await query.CountAsync();
 
             var items = await query
-                .OrderByDescending(x => x.DataVencimento)
+                .OrderByDescending(x => x.DataCadastro)
                 .Skip((pageNumber - 1) * pageSize)
                 .Take(pageSize)
+                .Select(x => new ContaPagarConsultaResponse
+                {
+                    Id = x.Id,
+                    Fornecedor = x.Pessoa.Nome,
+                    Descricao = x.Descricao,
+                    NumeroContrato = x.Contrato != null ? x.Contrato.Numero : string.Empty,
+                    ValorTotal = x.Valor,
+                    Parcelado = x.Parcelado,
+                    TotalParcelas = x.TotalParcelas,
+                    Status = x.Status,
+                    StatusDescricao =
+                        x.Status == StatusConta.Aberta ? "Pendente" :
+                        x.Status == StatusConta.Paga ? "Paga" :
+                        x.Status == StatusConta.Cancelada ? "Cancelada" :
+                        x.Status == StatusConta.ParcialmentePaga ? "Parcialmente Paga" :
+                        "-"
+                })
                 .ToListAsync();
 
-            return new PageResult<ContaPagar>
+            return new PageResult<ContaPagarConsultaResponse>
             {
                 Items = items,
                 TotalCount = totalCount,
@@ -52,7 +72,6 @@ namespace DeslandesApp.Infra.Data.Repositories
                 PageSize = pageSize
             };
         }
-
         public async Task<List<ContaPagar>> ConsultarComRelacionamentosAsync()
         {
             return await dataContext.ContaPagar

@@ -55,6 +55,7 @@ namespace DeslandesApp.Domain.Extensions
             services.AddScoped<IContaPagarService, ContaPagarService>();
             services.AddScoped<IContaReceberService, ContaReceberService>();
             services.AddScoped<IBaixaFinanceiraService, BaixaFinanceiraService>();
+     
 
 
 
