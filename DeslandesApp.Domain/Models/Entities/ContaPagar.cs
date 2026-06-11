@@ -20,21 +20,30 @@ namespace DeslandesApp.Domain.Models.Entities
         public StatusConta Status { get; set; }
 
         // =========================
-        // FORNECEDOR (Pessoa)
+        // FORNECEDOR
         // =========================
         public Guid PessoaId { get; set; }
         public Pessoa Pessoa { get; set; }
 
-        // =========================
-        // OPCIONAL: vínculo com contrato (se fizer sentido)
-        // =========================
         public Guid? ContratoId { get; set; }
         public Contrato? Contrato { get; set; }
+
         public Guid? CategoriaFinanceiraId { get; set; }
-
         public CategoriaFinanceira? CategoriaFinanceira { get; set; }
-        public Guid? CentroCustoId { get; set; }
 
+        public Guid? CentroCustoId { get; set; }
         public CentroCusto? CentroCusto { get; set; }
+
+        // =========================
+        // 🔥 PARCELAMENTO (NOVO)
+        // =========================
+        public bool Parcelado { get; set; }
+
+        public Guid? ContaPaiId { get; set; }
+        public ContaPagar? ContaPai { get; set; }
+
+        public int NumeroParcela { get; set; }
+
+        public int TotalParcelas { get; set; }
     }
 }

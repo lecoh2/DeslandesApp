@@ -988,6 +988,38 @@ namespace DeslandesApp.Domain.Mappings
     );
 
             #endregion
+            #region conta paga
+            CreateMap<ContaPagarRequest, ContaPagar>()
+          .ForMember(dest => dest.Id, opt => opt.Ignore())
+          .ForMember(dest => dest.Status, opt => opt.Ignore())
+          .ForMember(dest => dest.ValorPago, opt => opt.Ignore())
+          .ForMember(dest => dest.DataCadastro, opt => opt.Ignore())
+          .ForMember(dest => dest.DataAtualizacao, opt => opt.Ignore())
+          .ForMember(dest => dest.Parcelado, opt => opt.Ignore())
+          .ForMember(dest => dest.NumeroParcela, opt => opt.Ignore())
+          .ForMember(dest => dest.TotalParcelas, opt => opt.Ignore())
+          .ForMember(dest => dest.ContaPaiId, opt => opt.Ignore());
+
+            CreateMap<ContaPagar, ContaPagarResponse>()
+                .ForMember(dest => dest.NomePessoa,
+                    opt => opt.MapFrom(src => src.Pessoa.Nome))
+
+                .ForMember(dest => dest.CategoriaFinanceira,
+                    opt => opt.MapFrom(src => src.CategoriaFinanceira != null
+                        ? src.CategoriaFinanceira.Nome
+                        : null));
+            CreateMap<ContaPagarRequest, ContaPagar>();
+
+            CreateMap<ContaPagar, ContaPagarResponse>()
+                .ForMember(dest => dest.NomePessoa,
+                    opt => opt.MapFrom(src => src.Pessoa.Nome))
+
+                .ForMember(dest => dest.CategoriaFinanceira,
+                    opt => opt.MapFrom(src =>
+                        src.CategoriaFinanceira != null
+                            ? src.CategoriaFinanceira.Nome
+                            : null));
+            #endregion
 
 
             #region Baixa Financeira

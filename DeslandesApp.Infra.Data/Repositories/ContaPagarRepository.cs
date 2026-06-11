@@ -54,47 +54,62 @@ namespace DeslandesApp.Infra.Data.Repositories
         }
 
         public async Task<List<ContaPagar>> ConsultarComRelacionamentosAsync()
-{
-    return await dataContext.ContaPagar
-        .AsNoTracking()
-        .Include(x => x.Pessoa)
-        .Include(x => x.Contrato)
-        .Include(x => x.CategoriaFinanceira)
-        .ToListAsync();
-}
+        {
+            return await dataContext.ContaPagar
+                .AsNoTracking()
+                .Include(x => x.Pessoa)
+                .Include(x => x.Contrato)
+                .Include(x => x.CategoriaFinanceira)
+                .ToListAsync();
+        }
 
-public async Task<ContaPagar?> ObterCompletoPorIdAsync(Guid id)
-{
-    return await dataContext.ContaPagar
-        .AsNoTracking()
-        .Where(x => x.Id == id)
-        .Include(x => x.Pessoa)
-        .Include(x => x.Contrato)
-        .Include(x => x.CategoriaFinanceira)
-        .FirstOrDefaultAsync();
-}
+        public async Task<ContaPagar?> ObterCompletoPorIdAsync(Guid id)
+        {
+            return await dataContext.ContaPagar
+                .AsNoTracking()
+                .Where(x => x.Id == id)
+                .Include(x => x.Pessoa)
+                .Include(x => x.Contrato)
+                .Include(x => x.CategoriaFinanceira)
+                .FirstOrDefaultAsync();
+        }
 
-public async Task<List<ContaPagar>> ConsultarUltimasAsync(int quantidade)
-{
-    return await dataContext.ContaPagar
-        .OrderByDescending(x => x.DataVencimento)
-        .Take(quantidade)
-        .ToListAsync();
-}
+        public async Task<List<ContaPagar>> ConsultarUltimasAsync(int quantidade)
+        {
+            return await dataContext.ContaPagar
+                .OrderByDescending(x => x.DataVencimento)
+                .Take(quantidade)
+                .ToListAsync();
+        }
 
-public async Task<int> ContarTotalAsync()
-{
-    return await dataContext.ContaPagar.CountAsync();
-}
+        public async Task<int> ContarTotalAsync()
+        {
+            return await dataContext.ContaPagar.CountAsync();
+        }
 
-public async Task<int> ContarAnoAtualAsync()
-{
-    var inicioAno = new DateTime(DateTime.Now.Year, 1, 1);
-    var fimAno = new DateTime(DateTime.Now.Year, 12, 31, 23, 59, 59);
+        public async Task<int> ContarAnoAtualAsync()
+        {
+            var inicioAno = new DateTime(DateTime.Now.Year, 1, 1);
+            var fimAno = new DateTime(DateTime.Now.Year, 12, 31, 23, 59, 59);
 
-    return await dataContext.ContaPagar
-        .Where(x => x.DataVencimento >= inicioAno && x.DataVencimento <= fimAno)
-        .CountAsync();
-}
+            return await dataContext.ContaPagar
+                .Where(x => x.DataVencimento >= inicioAno && x.DataVencimento <= fimAno)
+                .CountAsync();
+        }
+
+        public async Task<bool> ExisteDuplicidadeAsync(
+         Guid? contratoId,
+         string descricao,
+         decimal valor,
+         DateTime dataVencimento)
+        {
+            return await dataContext.ContaPagar
+                .AnyAsync(x =>
+                    x.ContratoId == contratoId &&
+                    x.Descricao == descricao &&
+                    Math.Abs(x.Valor - valor) < 0.01m &&
+                    x.DataVencimento.Date == dataVencimento.Date &&
+                    !x.Excluido);
+        }
     }
 }

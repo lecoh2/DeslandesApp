@@ -18,5 +18,10 @@ namespace DeslandesApp.Domain.Interfaces.Repositories
         Task<List<ContaPagar>> ConsultarUltimasAsync(int quantidade);
         Task<int> ContarTotalAsync();
         Task<int> ContarAnoAtualAsync();
+        Task<bool> ExisteDuplicidadeAsync(
+                 Guid? contratoId,
+                 string descricao,
+                 decimal valor,
+                 DateTime dataVencimento);
     }
 }

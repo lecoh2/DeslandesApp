@@ -29,7 +29,7 @@ namespace DeslandesApp.Domain.Services
             try
             {
                 // =========================
-                // VALIDAÇÕES (IGUAL RECEBER)
+                // VALIDAÇÕES
                 // =========================
                 if (request.Valor <= 0)
                     throw new BusinessException("O valor deve ser maior que zero.");
@@ -40,26 +40,117 @@ namespace DeslandesApp.Domain.Services
                 if (request.PessoaId == Guid.Empty)
                     throw new BusinessException("Fornecedor inválido.");
 
-                // =========================
-                // MAPEAMENTO
-                // =========================
-                var conta = mapper.Map<ContaPagar>(request);
+                if (request.ContratoId.HasValue)
+                {
+                    var duplicado = await unitOfWork.ContaPagarRepository
+                        .ExisteDuplicidadeAsync(
+                            request.ContratoId.Value,
+                            request.Descricao,
+                            request.Valor,
+                            request.DataVencimento);
+
+                    if (duplicado)
+                        throw new BusinessException("Conta já cadastrada com esses dados.");
+                }
 
                 // =========================
-                // PADRÃO DE CRIAÇÃO
+                // 🟢 CONTA À VISTA
                 // =========================
-                conta.Status = StatusConta.Aberta;
-                conta.ValorPago = 0;
-                conta.DataCadastro = DateTime.Now;
-                conta.DataAtualizacao = DateTime.Now;
-                // =========================
-                // SALVAR
-                // =========================
-                await unitOfWork.ContaPagarRepository.AddAsync(conta);
+                if (!request.Parcelado)
+                {
+                    var conta = mapper.Map<ContaPagar>(request);
 
+                    conta.Status = StatusConta.Aberta;
+                    conta.ValorPago = 0;
+                    conta.DataCadastro = DateTime.Now;
+                    conta.DataAtualizacao = DateTime.Now;
+
+                    conta.Parcelado = false;
+                    conta.NumeroParcela = 1;
+                    conta.TotalParcelas = 1;
+                    conta.ContaPaiId = null;
+
+                    await unitOfWork.ContaPagarRepository.AddAsync(conta);
+
+                    await unitOfWork.CommitAsync();
+
+                    return mapper.Map<ContaPagarResponse>(conta);
+                }
+
+                // =========================
+                // 🔵 CONTA PARCELADA
+                // =========================
+                int totalParcelas = request.QuantidadeParcelas!.Value;
+
+                decimal valorParcela = Math.Round(
+                    request.Valor / totalParcelas,
+                    2,
+                    MidpointRounding.AwayFromZero
+                );
+
+                decimal valorRestante = request.Valor;
+
+                // =========================
+                // 1. CONTA PAI
+                // =========================
+                var contaPai = mapper.Map<ContaPagar>(request);
+
+                contaPai.Status = StatusConta.Aberta;
+                contaPai.ValorPago = 0;
+                contaPai.DataCadastro = DateTime.Now;
+                contaPai.DataAtualizacao = DateTime.Now;
+
+                contaPai.Parcelado = true;
+                contaPai.NumeroParcela = 0;
+                contaPai.TotalParcelas = totalParcelas;
+                contaPai.ContaPaiId = null;
+
+                await unitOfWork.ContaPagarRepository.AddAsync(contaPai);
+
+                Guid grupoId = contaPai.Id;
+
+                // =========================
+                // 2. PARCELAS
+                // =========================
+                ContaPagar? primeiraParcela = null;
+
+                for (int i = 1; i <= totalParcelas; i++)
+                {
+                    var parcela = mapper.Map<ContaPagar>(request);
+
+                    parcela.Status = StatusConta.Aberta;
+                    parcela.ValorPago = 0;
+                    parcela.DataCadastro = DateTime.Now;
+                    parcela.DataAtualizacao = DateTime.Now;
+
+                    parcela.Parcelado = true;
+                    parcela.NumeroParcela = i;
+                    parcela.TotalParcelas = totalParcelas;
+                    parcela.ContaPaiId = grupoId;
+
+                    parcela.DataVencimento =
+                        request.DataVencimento.AddMonths(i - 1);
+
+                    if (i == totalParcelas)
+                        parcela.Valor = valorRestante;
+                    else
+                    {
+                        parcela.Valor = valorParcela;
+                        valorRestante -= valorParcela;
+                    }
+
+                    await unitOfWork.ContaPagarRepository.AddAsync(parcela);
+
+                    if (i == 1)
+                        primeiraParcela = parcela;
+                }
+
+                // =========================
+                // COMMIT FINAL (ÚNICO)
+                // =========================
                 await unitOfWork.CommitAsync();
 
-                return mapper.Map<ContaPagarResponse>(conta);
+                return mapper.Map<ContaPagarResponse>(contaPai);
             }
             catch
             {
@@ -67,8 +158,6 @@ namespace DeslandesApp.Domain.Services
                 throw;
             }
         }
-
-
 
         public async Task BaixarAsync(Guid id, decimal valorPago)
         {
