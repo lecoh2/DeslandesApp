@@ -159,67 +159,40 @@ namespace DeslandesApp.Domain.Services
                 throw;
             }
         }
+       
 
-        public async Task BaixarAsync(Guid id, decimal valorPago)
+        public Task BaixarAsync(Guid id, ContaPagarBaixaRequest request)
         {
-            await unitOfWork.BeginTransactionAsync();
+            throw new NotImplementedException();
+        }    
 
-            try
-            {
-                var conta = await unitOfWork.ContaPagarRepository.GetByIdAsync(id);
+        public async Task<List<ContaPagarResponse>> ConsultarAsync()
+        {
+            var list = await unitOfWork.ContaReceberRepository
+                .ConsultarComRelacionamentosAsync();
 
-                if (conta == null)
-                    throw new BusinessException("Conta não encontrada.");
+            return mapper.Map<List<ContaPagarResponse>>(list);       }
 
-                if (valorPago <= 0)
-                    throw new BusinessException("Valor inválido.");
-
-                var saldo = conta.Valor - conta.ValorPago;
-
-                if (valorPago > saldo)
-                    throw new BusinessException($"Valor maior que o saldo. Saldo: {saldo:C2}");
-
-                conta.ValorPago += valorPago;
-                conta.DataAtualizacao = DateTime.Now;
-                // =========================
-                // STATUS PADRÃO IGUAL RECEBER
-                // =========================
-                if (conta.ValorPago >= conta.Valor)
-                    conta.Status = StatusConta.Paga;
-                else if (conta.ValorPago > 0)
-                    conta.Status = StatusConta.ParcialmentePaga;
-                else
-                    conta.Status = StatusConta.Aberta;
-
-                await unitOfWork.ContaPagarRepository.UpdateAsync(conta);
-
-                await unitOfWork.CommitAsync();
-            }
-            catch
-            {
-                await unitOfWork.RollbackAsync();
-                throw;
-            }
-        }
-
-        public Task BaixarAsync(Guid id, ContaPagarUpdateRequest request)
+        public Task<PageResult<ContaPagarResponse>> ConsultarAsync(int pageNumber, int pageSize)
         {
             throw new NotImplementedException();
         }
 
-        public Task<List<ContaReceberConsultaResponse>> ConsultarAsync()
+        public async Task<PageResult<ContaPagarConsultaResponse>>
+        ConsultarPaginacaoAsync(
+            int pageNumber,
+            int pageSize)
         {
-            throw new NotImplementedException();
-        }
+            var result = await unitOfWork
+                .ContaPagarRepository
+                .GetPaginacaoAsync(
+                    pageNumber,
+                    pageSize
+                );
 
-        public async Task<PageResult<ContaPagarResponse>> ConsultarAsync(int pageNumber, int pageSize)
-        {
-            var result = await unitOfWork.ContaPagarRepository
-                .GetPaginacaoAsync(pageNumber, pageSize);
-
-            return new PageResult<ContaPagarResponse>
+            return new PageResult<ContaPagarConsultaResponse>
             {
-                Items = mapper.Map<List<ContaPagarResponse>>(result.Items),
+                Items = result.Items,
                 TotalCount = result.TotalCount,
                 PageNumber = result.PageNumber,
                 PageSize = result.PageSize
@@ -320,6 +293,9 @@ namespace DeslandesApp.Domain.Services
             }
         }
 
-    
+        public Task<ObterContaPagarResponse?> ObterPorIdAsync(Guid id)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

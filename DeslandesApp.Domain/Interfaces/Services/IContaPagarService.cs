@@ -5,20 +5,13 @@ using DeslandesApp.Domain.Utils;
 
 namespace DeslandesApp.Domain.Interfaces.Services
 {
-    public interface IContaPagarService :
-        IBaseService<
-            ContaPagarRequest,
-            ContaPagarUpdateRequest,
-            ContaPagarResponse,
-            Guid>
+    public interface IContaPagarService : IBaseService<ContaPagarRequest,ContaPagarUpdateRequest,ContaPagarResponse,Guid>
     {
-        Task<List<ContaReceberConsultaResponse>> ConsultarAsync();
+        Task<List<ContaPagarResponse>> ConsultarAsync();
 
-        Task BaixarAsync(
-            Guid id,
-            ContaPagarUpdateRequest request
-        );
+        Task BaixarAsync(Guid id, ContaPagarBaixaRequest request);
+        Task<PageResult<ContaPagarConsultaResponse>> ConsultarPaginacaoAsync(int pageNumber, int pageSize);
 
-        Task<PageResult<ContaPagarResponse>> ConsultarAsync(int pageNumber, int pageSize);
+        Task<ObterContaPagarResponse?> ObterPorIdAsync(Guid id);
     }
 }

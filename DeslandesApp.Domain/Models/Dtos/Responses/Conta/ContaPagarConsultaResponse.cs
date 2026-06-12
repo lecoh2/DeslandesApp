@@ -1,4 +1,5 @@
-﻿using DeslandesApp.Domain.Models.Enum;
+﻿using DeslandesApp.Domain.Models.Entities;
+using DeslandesApp.Domain.Models.Enum;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -28,6 +29,7 @@ namespace DeslandesApp.Domain.Models.Dtos.Responses.Conta
             public StatusConta Status { get; set; }
 
             public string StatusDescricao { get; set; }
+            public FormaRecebimento FormaRecebimento { get; set; }
         }
     }
 }

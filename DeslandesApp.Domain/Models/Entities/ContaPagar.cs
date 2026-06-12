@@ -45,5 +45,6 @@ namespace DeslandesApp.Domain.Models.Entities
         public int NumeroParcela { get; set; }
 
         public int TotalParcelas { get; set; }
+        public FormaRecebimento FormaRecebimento { get; set; }
     }
 }

@@ -49,9 +49,9 @@ namespace DeslandesApp.Infra.Data.Repositories
                 {
                     Id = x.Id,
                     Fornecedor = x.Pessoa.Nome,
-                    Descricao = x.Descricao,
-                    NumeroContrato = x.Contrato != null ? x.Contrato.Numero : string.Empty,
+                    Descricao = x.Descricao,                   
                     ValorTotal = x.Valor,
+                    FormaRecebimento = x.FormaRecebimento,
                     Parcelado = x.Parcelado,
                     TotalParcelas = x.TotalParcelas,
                     Status = x.Status,

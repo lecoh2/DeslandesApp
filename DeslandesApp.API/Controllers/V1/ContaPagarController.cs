@@ -80,7 +80,7 @@ namespace DeslandesApp.API.Controllers.V1
             pageSize = pageSize <= 0 ? 10 : Math.Min(pageSize, 100);
 
             var result = await contaPagarService
-                .ConsultarAsync(pageNumber, pageSize);
+                .ConsultarPaginacaoAsync(pageNumber, pageSize);
 
             return Ok(result);
         }
@@ -89,7 +89,7 @@ namespace DeslandesApp.API.Controllers.V1
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<IActionResult> BaixarConta(
             Guid id,
-            [FromBody] ContaPagarUpdateRequest request)
+            [FromBody] ContaPagarBaixaRequest request)
         {
             await contaPagarService
                 .BaixarAsync(id, request);
