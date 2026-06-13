@@ -82,15 +82,36 @@ namespace DeslandesApp.Infra.Data.Repositories
                 .ToListAsync();
         }
 
+        //public async Task<ContaPagar?> ObterCompletoPorIdAsync(Guid id)
+        //{
+        //    return await dataContext.ContaPagar
+        //        .AsNoTracking()
+        //        .Where(x => x.Id == id)
+        //        .Include(x => x.Pessoa)
+        //        .Include(x => x.Contrato)
+        //        .Include(x => x.CategoriaFinanceira)
+        //        .FirstOrDefaultAsync();
+        //}
         public async Task<ContaPagar?> ObterCompletoPorIdAsync(Guid id)
         {
+            var conta = await dataContext.ContaPagar
+                .AsNoTracking()
+                .FirstOrDefaultAsync(x => x.Id == id);
+
+            if (conta == null)
+                return null;
+
+            var idPrincipal = conta.ContaPaiId ?? conta.Id;
+
             return await dataContext.ContaPagar
                 .AsNoTracking()
-                .Where(x => x.Id == id)
                 .Include(x => x.Pessoa)
                 .Include(x => x.Contrato)
                 .Include(x => x.CategoriaFinanceira)
-                .FirstOrDefaultAsync();
+                .Include(x => x.CentroCusto)
+                .Include(x => x.Baixas)
+                .Include(x => x.Parcelas.OrderBy(p => p.NumeroParcela))
+                .FirstOrDefaultAsync(x => x.Id == idPrincipal);
         }
 
         public async Task<List<ContaPagar>> ConsultarUltimasAsync(int quantidade)
@@ -129,6 +150,27 @@ namespace DeslandesApp.Infra.Data.Repositories
                     Math.Abs(x.Valor - valor) < 0.01m &&
                     x.DataVencimento.Date == dataVencimento.Date &&
                     !x.Excluido);
+        }
+        public async Task AtualizarContaPaiAsync(
+    Guid contaPaiId,
+    decimal valorPago,
+    StatusConta status,
+    bool quitado,
+    DateTime? dataQuitacao)
+        {
+            var contaPai = await dataContext.ContaPagar
+                .FirstOrDefaultAsync(x => x.Id == contaPaiId);
+
+            if (contaPai == null)
+                return;
+
+            contaPai.ValorPago = valorPago;
+            contaPai.Status = status;
+            contaPai.Quitado = quitado;
+            contaPai.DataQuitacao = dataQuitacao;
+            contaPai.DataAtualizacao = DateTime.Now;
+
+            await dataContext.SaveChangesAsync();
         }
     }
 }

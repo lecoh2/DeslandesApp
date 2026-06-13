@@ -121,26 +121,17 @@ namespace DeslandesApp.Infra.Data.Repositories
                 .Where(x => x.DataVencimento >= inicioAno && x.DataVencimento <= fimAno)
                 .CountAsync();
         }
-        public async Task AtualizarContaPaiAsync(
-    Guid contaPaiId,
-    decimal valorPago,
-    decimal valorRecebido,
-    StatusConta status,
-    bool quitado,
-    DateTime? dataQuitacao)
+        public async Task AtualizarContaPaiAsync(Guid contaPaiId, decimal valorPago, decimal valorRecebido,
+            StatusConta status, bool quitado, DateTime? dataQuitacao)
         {
-            var contaPai = await dataContext.ContaReceber
-                .FirstOrDefaultAsync(x => x.Id == contaPaiId);
-
+            var contaPai = await dataContext.ContaReceber.FirstOrDefaultAsync(x => x.Id == contaPaiId);
             if (contaPai == null)
                 return;
-
             contaPai.ValorPago = valorPago;
             contaPai.ValorRecebido = valorRecebido;
             contaPai.Status = status;
             contaPai.Quitado = quitado;
             contaPai.DataQuitacao = dataQuitacao;
-
             await dataContext.SaveChangesAsync();
         }
         public async Task<bool> ExistePorContratoAsync(Guid contratoId)

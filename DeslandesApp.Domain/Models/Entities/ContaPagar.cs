@@ -46,5 +46,17 @@ namespace DeslandesApp.Domain.Models.Entities
 
         public int TotalParcelas { get; set; }
         public FormaRecebimento FormaRecebimento { get; set; }
+      
+
+
+        public bool Quitado { get; set; }
+
+        public DateTime? DataQuitacao { get; set; }
+
+        public ICollection<BaixaFinanceira> Baixas { get; set; }
+            = new List<BaixaFinanceira>();
+
+        public ICollection<ContaPagar> Parcelas { get; set; }
+            = new List<ContaPagar>();
     }
 }

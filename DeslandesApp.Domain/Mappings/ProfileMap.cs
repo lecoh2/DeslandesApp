@@ -1027,6 +1027,18 @@ namespace DeslandesApp.Domain.Mappings
                 .ForMember(dest => dest.ValorTotal,
                     opt => opt.MapFrom(src => src.Valor));
             CreateMap<ContaPagarConsultaResponse, ContaPagarResponse>();
+
+            //OBTER
+            CreateMap<ContaPagar, ParcelaContaPagarResponse>();
+
+            CreateMap<ContaPagar, ObterContaPagarResponse>()
+                .ForMember(dest => dest.NomePessoa,
+                    opt => opt.MapFrom(src => src.Pessoa.Nome))
+                .ForMember(dest => dest.CategoriaFinanceira,
+                    opt => opt.MapFrom(src =>
+                        src.CategoriaFinanceira != null
+                            ? src.CategoriaFinanceira.Nome
+                            : null));
             #endregion
 
 
@@ -1037,23 +1049,21 @@ namespace DeslandesApp.Domain.Mappings
             CreateMap<BaixaFinanceiraUpdateRequest, BaixaFinanceira>();
 
             CreateMap<BaixaFinanceira, BaixaFinanceiraResponse>()
-                .ForMember(
-                    dest => dest.Cliente,
-                    opt => opt.MapFrom(src =>
-                        src.ContaReceber != null &&
-                        src.ContaReceber.Pessoa != null
-                            ? src.ContaReceber.Pessoa.Nome
-                            : string.Empty
-                    )
-                )
-                .ForMember(
-                    dest => dest.FormaPagamento,
-                    opt => opt.MapFrom(src =>
-                        src.FormaPagamento != null
-                            ? src.FormaPagamento.Nome
-                            : string.Empty
-                    )
-                );
+      .ForMember(
+          dest => dest.Cliente,
+          opt => opt.MapFrom(src =>
+              src.ContaReceber != null &&
+              src.ContaReceber.Pessoa != null
+                  ? src.ContaReceber.Pessoa.Nome
+                  : string.Empty
+          )
+      )
+      .ForMember(
+          dest => dest.FormaPagamento,
+          opt => opt.MapFrom(src =>
+              src.FormaRecebimento.ToString()
+          )
+      );
 
             CreateMap<BaixaFinanceira, ObterBaixaFinanceiraResponse>()
                 .ForMember(
@@ -1089,14 +1099,12 @@ namespace DeslandesApp.Domain.Mappings
                             : 0
                     )
                 )
-                .ForMember(
-                    dest => dest.FormaPagamento,
-                    opt => opt.MapFrom(src =>
-                        src.FormaPagamento != null
-                            ? src.FormaPagamento.Nome
-                            : string.Empty
-                    )
-                );
+             .ForMember(
+    dest => dest.FormaPagamento,
+    opt => opt.MapFrom(src =>
+        src.FormaRecebimento.ToString()
+    )
+);
 
             #endregion
 

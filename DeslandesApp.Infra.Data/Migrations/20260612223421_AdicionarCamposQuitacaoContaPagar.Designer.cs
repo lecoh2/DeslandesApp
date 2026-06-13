@@ -4,6 +4,7 @@ using DeslandesApp.Infra.Data.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DeslandesApp.Infra.Data.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20260612223421_AdicionarCamposQuitacaoContaPagar")]
+    partial class AdicionarCamposQuitacaoContaPagar
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -351,9 +354,9 @@ namespace DeslandesApp.Infra.Data.Migrations
                         .HasColumnType("bit")
                         .HasColumnName("EXCLUIDO");
 
-                    b.Property<int>("FormaRecebimento")
-                        .HasColumnType("int")
-                        .HasColumnName("FORMARECEBIMENTO");
+                    b.Property<Guid>("FormaPagamentoId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("FORMAPAGAMENTOID");
 
                     b.Property<string>("Observacao")
                         .HasMaxLength(250)
@@ -389,6 +392,9 @@ namespace DeslandesApp.Infra.Data.Migrations
 
                     b.HasIndex("ContaReceberId")
                         .HasDatabaseName("IX_BAIXA_FINANCEIRA_CONTARECEBERID");
+
+                    b.HasIndex("FormaPagamentoId")
+                        .HasDatabaseName("IX_BAIXA_FINANCEIRA_FORMAPAGAMENTOID");
 
                     b.HasIndex("UsuarioCadastroId")
                         .HasDatabaseName("IX_BAIXA_FINANCEIRA_USUARIOCADASTROID");
@@ -1621,6 +1627,57 @@ namespace DeslandesApp.Infra.Data.Migrations
                         .HasDatabaseName("IX_FAILEDLOGINATTEMPTS_USUARIOCADASTROID");
 
                     b.ToTable("FAILEDLOGINATTEMPTS", (string)null);
+                });
+
+            modelBuilder.Entity("DeslandesApp.Domain.Models.Entities.FormaPagamento", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("ID");
+
+                    b.Property<DateTime?>("DataAtualizacao")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("DATAATUALIZACAO");
+
+                    b.Property<DateTime>("DataCadastro")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("DATACADASTRO");
+
+                    b.Property<DateTime?>("DataExclusao")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("DATAEXCLUSAO");
+
+                    b.Property<bool>("Excluido")
+                        .HasColumnType("bit")
+                        .HasColumnName("EXCLUIDO");
+
+                    b.Property<string>("Nome")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(100)")
+                        .HasColumnName("NOME");
+
+                    b.Property<Guid?>("UsuarioAtualizacaoId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("USUARIOATUALIZACAOID");
+
+                    b.Property<Guid?>("UsuarioCadastroId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("USUARIOCADASTROID");
+
+                    b.Property<Guid?>("UsuarioExclusaoId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("USUARIOEXCLUSAOID");
+
+                    b.HasKey("Id")
+                        .HasName("PK_FORMA_PAGAMENTO");
+
+                    b.HasIndex("UsuarioCadastroId")
+                        .HasDatabaseName("IX_FORMA_PAGAMENTO_USUARIOCADASTROID");
+
+                    b.ToTable("FORMA_PAGAMENTO", (string)null);
                 });
 
             modelBuilder.Entity("DeslandesApp.Domain.Models.Entities.Foro", b =>
@@ -3442,6 +3499,13 @@ namespace DeslandesApp.Infra.Data.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .HasConstraintName("FK_BAIXA_FINANCEIRA_CONTA_RECEBER_CONTARECEBERID");
 
+                    b.HasOne("DeslandesApp.Domain.Models.Entities.FormaPagamento", "FormaPagamento")
+                        .WithMany()
+                        .HasForeignKey("FormaPagamentoId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("FK_BAIXA_FINANCEIRA_FORMA_PAGAMENTO_FORMAPAGAMENTOID");
+
                     b.HasOne("DeslandesApp.Domain.Models.Entities.Usuario", "UsuarioCadastro")
                         .WithMany()
                         .HasForeignKey("UsuarioCadastroId")
@@ -3452,6 +3516,8 @@ namespace DeslandesApp.Infra.Data.Migrations
                     b.Navigation("ContaPagar");
 
                     b.Navigation("ContaReceber");
+
+                    b.Navigation("FormaPagamento");
 
                     b.Navigation("UsuarioCadastro");
                 });
@@ -3790,6 +3856,16 @@ namespace DeslandesApp.Infra.Data.Migrations
                         .WithMany()
                         .HasForeignKey("UsuarioCadastroId")
                         .HasConstraintName("FK_FAILEDLOGINATTEMPTS_USUARIOS_USUARIOCADASTROID");
+
+                    b.Navigation("UsuarioCadastro");
+                });
+
+            modelBuilder.Entity("DeslandesApp.Domain.Models.Entities.FormaPagamento", b =>
+                {
+                    b.HasOne("DeslandesApp.Domain.Models.Entities.Usuario", "UsuarioCadastro")
+                        .WithMany()
+                        .HasForeignKey("UsuarioCadastroId")
+                        .HasConstraintName("FK_FORMA_PAGAMENTO_USUARIOS_USUARIOCADASTROID");
 
                     b.Navigation("UsuarioCadastro");
                 });

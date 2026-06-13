@@ -159,12 +159,149 @@ namespace DeslandesApp.Domain.Services
                 throw;
             }
         }
-       
 
-        public Task BaixarAsync(Guid id, ContaPagarBaixaRequest request)
+
+        public async Task BaixarAsync(
+          Guid id,
+          ContaPagarBaixaRequest request)
         {
-            throw new NotImplementedException();
-        }    
+            await unitOfWork.BeginTransactionAsync();
+
+            try
+            {
+                var conta = await unitOfWork
+                    .ContaPagarRepository
+                    .GetByIdAsync(id);
+
+                if (conta == null)
+                {
+                    throw new BusinessException(
+                        "Conta não encontrada."
+                    );
+                }
+
+                if (conta.Parcelado &&
+                    conta.NumeroParcela == 0)
+                {
+                    throw new BusinessException(
+                        "Realize a baixa diretamente na parcela."
+                    );
+                }
+
+                if (request.ValorPago <= 0)
+                {
+                    throw new BusinessException(
+                        "O valor da baixa deve ser maior que zero."
+                    );
+                }
+
+                var saldo = conta.Valor - conta.ValorPago;
+
+                if (request.ValorPago > saldo)
+                {
+                    throw new BusinessException(
+                        $"O valor informado é maior que o saldo da conta. Saldo atual: {saldo:C2}"
+                    );
+                }
+
+                var baixa = new BaixaFinanceira
+                {
+                    Id = Guid.NewGuid(),
+                    ContaPagarId = conta.Id,
+                    ValorPago = request.ValorPago,
+                    DataBaixa = request.DataBaixa,
+                    Observacao = request.Observacao,
+                    FormaRecebimento = request.FormaRecebimento,
+                    ContaBancariaEmpresaId = request.ContaBancariaEmpresaId
+                };
+
+                await unitOfWork
+                    .BaixaFinanceiraRepository
+                    .AddAsync(baixa);
+
+                conta.ValorPago += request.ValorPago;
+
+                if (conta.ValorPago >= conta.Valor)
+                {
+                    conta.Status = StatusConta.Paga;
+                    conta.Quitado = true;
+                    conta.DataQuitacao = DateTime.Now;
+                }
+                else if (conta.ValorPago > 0)
+                {
+                    conta.Status = StatusConta.ParcialmentePaga;
+                    conta.Quitado = false;
+                    conta.DataQuitacao = null;
+                }
+                else
+                {
+                    conta.Status = StatusConta.Aberta;
+                    conta.Quitado = false;
+                    conta.DataQuitacao = null;
+                }
+
+                conta.DataAtualizacao = DateTime.Now;
+
+                await unitOfWork
+                    .ContaPagarRepository
+                    .UpdateAsync(conta);
+
+                // Atualiza conta agrupadora
+                if (conta.ContaPaiId.HasValue)
+                {
+                    var contaPai = await unitOfWork
+                        .ContaPagarRepository
+                        .ObterCompletoPorIdAsync(
+                            conta.ContaPaiId.Value);
+
+                    if (contaPai != null)
+                    {
+                        var parcelas = contaPai.Parcelas.ToList();
+
+                        var valorPagoPai =
+                            parcelas.Sum(x => x.ValorPago);
+
+                        var todasPagas = parcelas.All(x =>
+                            x.Status == StatusConta.Paga);
+
+                        var algumaPaga = parcelas.Any(x =>
+                            x.ValorPago > 0);
+
+                        var statusPai = StatusConta.Aberta;
+                        var quitadoPai = false;
+                        DateTime? dataQuitacaoPai = null;
+
+                        if (todasPagas)
+                        {
+                            statusPai = StatusConta.Paga;
+                            quitadoPai = true;
+                            dataQuitacaoPai = DateTime.Now;
+                        }
+                        else if (algumaPaga)
+                        {
+                            statusPai = StatusConta.ParcialmentePaga;
+                        }
+
+                        await unitOfWork
+                            .ContaPagarRepository
+                            .AtualizarContaPaiAsync(
+                                contaPai.Id,
+                                valorPagoPai,
+                                statusPai,
+                                quitadoPai,
+                                dataQuitacaoPai
+                            );
+                    }
+                }
+
+                await unitOfWork.CommitAsync();
+            }
+            catch
+            {
+                await unitOfWork.RollbackAsync();
+                throw;
+            }
+        }
 
         public async Task<List<ContaPagarResponse>> ConsultarAsync()
         {
@@ -293,9 +430,16 @@ namespace DeslandesApp.Domain.Services
             }
         }
 
-        public Task<ObterContaPagarResponse?> ObterPorIdAsync(Guid id)
+        public async Task<ObterContaPagarResponse?> ObterPorIdAsync(Guid id)
         {
-            throw new NotImplementedException();
+            var contaPagar = await unitOfWork
+                .ContaPagarRepository
+                .ObterCompletoPorIdAsync(id);
+
+            if (contaPagar == null)
+                return null;
+
+            return mapper.Map<ObterContaPagarResponse>(contaPagar);
         }
     }
 }

@@ -1,4 +1,6 @@
-﻿using System;
+﻿using DeslandesApp.Domain.Models.Entities;
+using DeslandesApp.Domain.Models.Enum;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,5 +10,14 @@ namespace DeslandesApp.Domain.Models.Dtos.Requests.Conta
 {
     public class ContaPagarBaixaRequest
     {
+        public decimal ValorPago { get; set; }
+
+        public DateTime DataBaixa { get; set; }
+
+        public FormaRecebimento FormaRecebimento { get; set; }
+
+        public Guid? ContaBancariaEmpresaId { get; set; }
+
+        public string? Observacao { get; set; }
     }
 }

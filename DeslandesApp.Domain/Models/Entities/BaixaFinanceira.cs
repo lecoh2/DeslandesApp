@@ -1,4 +1,5 @@
 ﻿using DeslandesApp.Domain.Commons;
+using DeslandesApp.Domain.Models.Enum;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -28,10 +29,7 @@ namespace DeslandesApp.Domain.Models.Entities
         public ContaPagar? ContaPagar { get; set; }
 
 
-
-        public Guid FormaPagamentoId { get; set; }
-        public FormaPagamento FormaPagamento { get; set; }
-
+        public FormaRecebimento FormaRecebimento { get; set; }
         public Guid? ContaBancariaEmpresaId { get; set; }
 
         public ContaBancariaEmpresa? ContaBancariaEmpresa { get; set; }

@@ -57,7 +57,7 @@ namespace DeslandesApp.Domain.Models.Dtos.Responses.Conta
         public int TotalParcelas { get; set; }
 
         public ICollection<ParcelaContaReceberResponse> Parcelas { get; set; }
-            = new List<ParcelaContaReceberResponse>();
+          = new List<ParcelaContaReceberResponse>();
 
         // ============================
         // RELACIONAMENTOS

@@ -1,5 +1,6 @@
 ﻿using DeslandesApp.Domain.Models.Dtos.Responses.Conta.DeslandesApp.Domain.Models.Dtos.Responses.Conta;
 using DeslandesApp.Domain.Models.Entities;
+using DeslandesApp.Domain.Models.Enum;
 using DeslandesApp.Domain.Utils;
 using System;
 using System.Collections.Generic;
@@ -24,6 +25,13 @@ namespace DeslandesApp.Domain.Interfaces.Repositories
                  string descricao,
                  decimal valor,
                  DateTime dataVencimento);
-      
+        Task AtualizarContaPaiAsync(
+    Guid contaPaiId,
+    decimal valorPago,
+    StatusConta status,
+    bool quitado,
+    DateTime? dataQuitacao);
+
+
     }
 }

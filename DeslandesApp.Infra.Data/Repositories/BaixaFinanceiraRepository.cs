@@ -16,12 +16,11 @@ namespace DeslandesApp.Infra.Data.Repositories
           : BaseRepository<BaixaFinanceira, Guid>(dataContext), IBaixaFinanceiraRepository
     {
         public async Task<List<BaixaFinanceira>> ConsultarPorPeriodoAsync(
-              DateTime dataInicio,
-              DateTime dataFim)
+        DateTime dataInicio,
+        DateTime dataFim)
         {
             return await dataContext.BaixaFinanceira
                 .AsNoTracking()
-                .Include(x => x.FormaPagamento)
                 .Include(x => x.ContaReceber)
                 .Include(x => x.ContaPagar)
                 .Where(x =>
@@ -36,7 +35,7 @@ namespace DeslandesApp.Infra.Data.Repositories
         {
             return await dataContext.BaixaFinanceira
                 .AsNoTracking()
-                .Include(x => x.FormaPagamento)
+                .Include(x => x.ContaReceber)
                 .Where(x => x.ContaReceberId == contaReceberId)
                 .OrderByDescending(x => x.DataBaixa)
                 .ToListAsync();
@@ -47,7 +46,7 @@ namespace DeslandesApp.Infra.Data.Repositories
         {
             return await dataContext.BaixaFinanceira
                 .AsNoTracking()
-                .Include(x => x.FormaPagamento)
+                .Include(x => x.ContaPagar)
                 .Where(x => x.ContaPagarId == contaPagarId)
                 .OrderByDescending(x => x.DataBaixa)
                 .ToListAsync();
@@ -58,15 +57,17 @@ namespace DeslandesApp.Infra.Data.Repositories
         {
             return await dataContext.BaixaFinanceira
                 .AsNoTracking()
-                .Include(x => x.FormaPagamento)
                 .Include(x => x.ContaReceber)
+                .ThenInclude(x => x.Pessoa)
                 .Include(x => x.ContaPagar)
+                .ThenInclude(x => x.Pessoa)
                 .Include(x => x.ContaBancariaEmpresa)
                 .FirstOrDefaultAsync(x => x.Id == id);
         }
-
-
-
-
     }
+
+
+
+
 }
+

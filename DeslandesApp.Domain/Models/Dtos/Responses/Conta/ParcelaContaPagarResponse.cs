@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace DeslandesApp.Domain.Models.Dtos.Responses.Conta
 {
-    public class  ParcelaContaReceberResponse
+    public class ParcelaContaPagarResponse
     {
         public Guid Id { get; set; }
 
@@ -16,6 +16,8 @@ namespace DeslandesApp.Domain.Models.Dtos.Responses.Conta
         public int TotalParcelas { get; set; }
 
         public decimal Valor { get; set; }
+
+        public decimal ValorPago { get; set; }
 
         public DateTime DataVencimento { get; set; }
 

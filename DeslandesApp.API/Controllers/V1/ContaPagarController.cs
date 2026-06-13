@@ -100,5 +100,15 @@ namespace DeslandesApp.API.Controllers.V1
                 message = "Baixa realizada com sucesso."
             });
         }
+        [HttpGet("obter-conta-pagar-por-id/{id:guid}")]
+        public async Task<IActionResult> ObterPorId(Guid id)
+        {
+            var contaPagar = await contaPagarService.ObterPorIdAsync(id);
+
+            if (contaPagar == null)
+                return NotFound("Conta a Pagar não encontrada.");
+
+            return Ok(contaPagar);
+        }
     }
 }

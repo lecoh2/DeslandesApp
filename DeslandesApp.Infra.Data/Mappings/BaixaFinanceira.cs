@@ -13,9 +13,6 @@ namespace DeslandesApp.Infra.Data.Mappings
 
             builder.HasKey(x => x.Id);
 
-            // =========================
-            // VALORES
-            // =========================
             builder.Property(x => x.ValorPago)
                 .HasPrecision(18, 2)
                 .IsRequired();
@@ -23,33 +20,18 @@ namespace DeslandesApp.Infra.Data.Mappings
             builder.Property(x => x.DataBaixa)
                 .IsRequired();
 
-            // =========================
-            // FORMA PAGAMENTO (NOVO)
-            // =========================
-            builder.HasOne(x => x.FormaPagamento)
-                .WithMany()
-                .HasForeignKey(x => x.FormaPagamentoId)
-                .OnDelete(DeleteBehavior.Restrict);
-
-            // =========================
-            // CONTA RECEBER
-            // =========================
+            builder.Property(x => x.FormaRecebimento)
+            .IsRequired();
             builder.HasOne(x => x.ContaReceber)
                 .WithMany()
                 .HasForeignKey(x => x.ContaReceberId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            // =========================
-            // CONTA PAGAR
-            // =========================
             builder.HasOne(x => x.ContaPagar)
                 .WithMany()
                 .HasForeignKey(x => x.ContaPagarId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            // =========================
-            // SOFT DELETE
-            // =========================
             builder.HasQueryFilter(x => !x.Excluido);
         }
     }

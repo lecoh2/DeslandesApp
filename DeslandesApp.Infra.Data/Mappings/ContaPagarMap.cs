@@ -47,6 +47,26 @@ namespace DeslandesApp.Infra.Data.Mappings
     .WithMany()
     .HasForeignKey(x => x.CategoriaFinanceiraId)
     .OnDelete(DeleteBehavior.Restrict);
+            builder
+    .HasOne(x => x.ContaPai)
+    .WithMany(x => x.Parcelas)
+    .HasForeignKey(x => x.ContaPaiId)
+    .OnDelete(DeleteBehavior.Restrict);
+            builder
+    .HasOne(x => x.ContaPai)
+    .WithMany(x => x.Parcelas)
+    .HasForeignKey(x => x.ContaPaiId)
+    .OnDelete(DeleteBehavior.Restrict);
+            builder
+    .HasOne(x => x.ContaPai)
+    .WithMany(x => x.Parcelas)
+    .HasForeignKey(x => x.ContaPaiId)
+    .OnDelete(DeleteBehavior.Restrict);
+            builder
+    .HasMany(x => x.Baixas)
+    .WithOne(x => x.ContaPagar)
+    .HasForeignKey(x => x.ContaPagarId)
+    .OnDelete(DeleteBehavior.Cascade);
 
         }
     }

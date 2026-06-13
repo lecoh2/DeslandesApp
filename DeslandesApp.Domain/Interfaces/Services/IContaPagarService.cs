@@ -1,6 +1,7 @@
 ﻿using DeslandesApp.Domain.Models.Dtos.Requests.Conta;
 using DeslandesApp.Domain.Models.Dtos.Responses.Conta;
 using DeslandesApp.Domain.Models.Dtos.Responses.Conta.DeslandesApp.Domain.Models.Dtos.Responses.Conta;
+using DeslandesApp.Domain.Models.Enum;
 using DeslandesApp.Domain.Utils;
 
 namespace DeslandesApp.Domain.Interfaces.Services
@@ -13,5 +14,6 @@ namespace DeslandesApp.Domain.Interfaces.Services
         Task<PageResult<ContaPagarConsultaResponse>> ConsultarPaginacaoAsync(int pageNumber, int pageSize);
 
         Task<ObterContaPagarResponse?> ObterPorIdAsync(Guid id);
+
     }
 }
