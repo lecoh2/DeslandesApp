@@ -28,8 +28,11 @@ namespace DeslandesApp.Domain.Services
 
             try
             {
+                var numeroContrato = request.Numero?
+    .Trim()
+    .Replace("-", "");
 
-                if (!Regex.IsMatch(request.Numero, @"^\d+$"))
+                if (!Regex.IsMatch(numeroContrato, @"^\d+$"))
                 {
                     throw new BusinessException("O número do contrato deve conter apenas números.");
                 }
@@ -75,7 +78,6 @@ namespace DeslandesApp.Domain.Services
                 }
 
                 var contrato = mapper.Map<Contrato>(request);
-                contrato.ValorTotal = request.ValorTotal;
                 contrato.DataCadastro = DateTime.Now;
 
                 await unitOfWork.ContratoRepository
@@ -115,7 +117,7 @@ namespace DeslandesApp.Domain.Services
                     ?? throw new BusinessException(
                         "Contrato não encontrado."
                     );
-                contrato.ValorTotal = request.ValorTotal;
+               
                 var usuarioId = ObterUsuarioId();
 
                 // =========================
@@ -130,7 +132,7 @@ namespace DeslandesApp.Domain.Services
                     contratoAntes.Numero,
                     contratoAntes.PessoaId,
                     NomePessoa = contratoAntes.Pessoa?.Nome,
-                    contratoAntes.ValorTotal,
+                 
                     contratoAntes.DataInicio,
                     contratoAntes.DataFim,
 
@@ -227,7 +229,7 @@ namespace DeslandesApp.Domain.Services
                     contratoDepois.Numero,
                     contratoDepois.PessoaId,
                     NomePessoa = contratoDepois.Pessoa?.Nome,
-                    contratoDepois.ValorTotal,
+                
                     contratoDepois.DataInicio,
                     contratoDepois.DataFim,
 

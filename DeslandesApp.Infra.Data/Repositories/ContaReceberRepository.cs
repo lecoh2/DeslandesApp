@@ -1,5 +1,6 @@
 ﻿using DeslandesApp.Domain.Interfaces.Repositories;
 using DeslandesApp.Domain.Models.Dtos.Responses.Conta;
+using DeslandesApp.Domain.Models.Dtos.Responses.DashboardFinanceiro;
 using DeslandesApp.Domain.Models.Entities;
 using DeslandesApp.Domain.Models.Enum;
 using DeslandesApp.Domain.Utils;
@@ -111,7 +112,6 @@ namespace DeslandesApp.Infra.Data.Repositories
         {
             return await dataContext.ContaReceber.CountAsync();
         }
-
         public async Task<int> ContarAnoAtualAsync()
         {
             var inicioAno = new DateTime(DateTime.Now.Year, 1, 1);
@@ -163,6 +163,191 @@ namespace DeslandesApp.Infra.Data.Repositories
                     x.Valor == valor &&
                     x.DataVencimento.Date == dataVencimento.Date &&
                     !x.Excluido);
+        }
+        public async Task<decimal> ObterTotalReceberMesAsync(
+      int ano,
+      int mes)
+        {
+            return await dataContext.ContaReceber
+                .Where(x =>
+                    x.DataVencimento.Year == ano &&
+                    x.DataVencimento.Month == mes &&
+                    (!x.Parcelado || x.NumeroParcela > 0))
+                .SumAsync(x => (decimal?)x.Valor) ?? 0;
+        }
+        public async Task<decimal> ObterTotalRecebidoMesAsync(
+    int ano,
+    int mes)
+        {
+            return await dataContext.ContaReceber
+                .Where(x =>
+                    x.DataVencimento.Year == ano &&
+                    x.DataVencimento.Month == mes &&
+                    (!x.Parcelado || x.NumeroParcela > 0))
+                .SumAsync(x => (decimal?)x.ValorRecebido) ?? 0;
+        }
+        public async Task<decimal> ObterInadimplenciaAsync()
+        {
+            return await dataContext.ContaReceber
+                .Where(x =>
+                    x.Status == StatusConta.Vencida)
+                .SumAsync(x =>
+                    (decimal?)(x.Valor - x.ValorRecebido))
+                ?? 0;
+        }
+    
+        public async Task<List<GraficoCategoriaResponse>>
+    ObterGraficoCategoriaAsync(int ano)
+        {
+            return await dataContext.ContaReceber
+                .AsNoTracking()
+                .Where(x =>
+                    x.DataVencimento.Year == ano &&
+                    x.CategoriaFinanceira != null &&
+                    (!x.Parcelado || x.NumeroParcela > 0))
+                .GroupBy(x => x.CategoriaFinanceira!.Nome)
+                .Select(g => new GraficoCategoriaResponse
+                {
+                    Categoria = g.Key,
+                    Valor = g.Sum(x => x.ValorRecebido)
+                })
+                .OrderByDescending(x => x.Valor)
+                .ToListAsync();
+        }
+        public async Task<Dictionary<int, decimal>>
+    ObterReceitasPorMesAsync(int ano)
+        {
+            return await dataContext.ContaReceber
+                .AsNoTracking()
+                .Where(x =>
+                    x.DataVencimento.Year == ano &&
+                    (!x.Parcelado || x.NumeroParcela > 0))
+                .GroupBy(x => x.DataVencimento.Month)
+                .Select(g => new
+                {
+                    Mes = g.Key,
+                    Valor = g.Sum(x => x.ValorRecebido)
+                })
+                .ToDictionaryAsync(
+                    x => x.Mes,
+                    x => x.Valor);
+        }
+
+
+        //public async Task<decimal>
+        //ObterMediaRecebimentoUltimos6MesesAsync()
+        //    {
+        //        var dataInicial =
+        //            DateTime.Today.AddMonths(-6);
+
+        //        var totalRecebido =
+        //            await dataContext.ContaReceber
+        //                .Where(x =>
+        //                    x.Status == StatusConta.Paga &&
+        //                    x.DataQuitacao >= dataInicial)
+        //                .SumAsync(x => x.ValorRecebido);
+
+        //        return totalRecebido / 6;
+        //    }
+        public async Task<decimal>
+        ObterMetaMensalInteligenteAsync()
+        {
+            var dataInicial =
+                new DateTime(
+                    DateTime.Today.Year,
+                    DateTime.Today.Month,
+                    1)
+                .AddMonths(-6);
+
+            var recebimentos =
+                await dataContext.ContaReceber
+                    .Where(x =>
+                        x.Status == StatusConta.Paga &&
+                        x.DataQuitacao >= dataInicial)
+                    .GroupBy(x => new
+                    {
+                        x.DataQuitacao!.Value.Year,
+                        x.DataQuitacao!.Value.Month
+                    })
+                    .Select(g => new
+                    {
+                        Total = g.Sum(x => x.ValorRecebido)
+                    })
+                    .ToListAsync();
+
+            if (!recebimentos.Any())
+                return 0;
+
+            var media =
+                recebimentos.Average(x => x.Total);
+
+            var meta =
+                media * 1.15m;
+
+            return Math.Round(meta, 2);
+        }
+        public async Task<Dictionary<int, decimal>>
+    ObterPrevistoPorMesAsync(int ano)
+        {
+            return await dataContext
+                .ContaReceber
+                .Where(x =>
+                    !x.Excluido &&
+                    x.DataVencimento.Year == ano)
+                .GroupBy(x => x.DataVencimento.Month)
+                .Select(g => new
+                {
+                    Mes = g.Key,
+                    Valor = g.Sum(x => x.Valor)
+                })
+                .ToDictionaryAsync(
+                    x => x.Mes,
+                    x => x.Valor);
+        }
+        public async Task<Dictionary<int, decimal>>
+    ObterRealizadoPorMesAsync(int ano)
+        {
+            return await dataContext
+                .ContaReceber
+                .Where(x =>
+                    !x.Excluido &&
+                    x.DataQuitacao.HasValue &&
+                    x.DataQuitacao.Value.Year == ano)
+                .GroupBy(x => x.DataQuitacao!.Value.Month)
+                .Select(g => new
+                {
+                    Mes = g.Key,
+                    Valor = g.Sum(x => x.ValorRecebido)
+                })
+                .ToDictionaryAsync(
+                    x => x.Mes,
+                    x => x.Valor);
+        }
+        public async Task<decimal>
+    ObterEntradasAteDataAsync(
+        DateTime dataLimite)
+        {
+            return await dataContext
+                .ContaReceber
+                .Where(x =>
+                    !x.Excluido &&
+                    !x.Quitado &&
+                    x.DataVencimento <= dataLimite)
+                .SumAsync(x =>
+                    (decimal?)x.Valor)
+                ?? 0;
+        }
+        public async Task<decimal> ObterEntradasDoDiaAsync(DateTime data)
+        {
+            return await dataContext.ContaReceber
+                .Where(x =>
+                    !x.Excluido &&
+                    x.DataVencimento.Date == data.Date &&
+                    x.Status != StatusConta.Cancelada &&
+                    x.Status != StatusConta.Paga)
+                .SumAsync(x =>
+                    (decimal?)(x.Valor - x.ValorRecebido)
+                ) ?? 0;
         }
     }
 }

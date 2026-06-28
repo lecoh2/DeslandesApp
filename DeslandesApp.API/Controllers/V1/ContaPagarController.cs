@@ -73,17 +73,19 @@ namespace DeslandesApp.API.Controllers.V1
         [HttpGet("consultar-conta-pagar-paginacao")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<IActionResult> ConsultarPaginacao(
-            [FromQuery] int pageNumber = 1,
-            [FromQuery] int pageSize = 10)
+         [FromQuery] int pageNumber = 1,
+         [FromQuery] int pageSize = 10,
+         [FromQuery] string? searchTerm = null)
         {
             pageNumber = pageNumber <= 0 ? 1 : pageNumber;
             pageSize = pageSize <= 0 ? 10 : Math.Min(pageSize, 100);
 
             var result = await contaPagarService
-                .ConsultarPaginacaoAsync(pageNumber, pageSize);
+                .ConsultarPaginacaoAsync(pageNumber, pageSize, searchTerm);
 
             return Ok(result);
         }
+ 
 
         [HttpPost("baixar-conta-pagar/{id:guid}")]
         [ProducesResponseType(StatusCodes.Status200OK)]

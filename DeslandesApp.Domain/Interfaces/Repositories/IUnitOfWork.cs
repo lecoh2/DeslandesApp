@@ -16,6 +16,8 @@ namespace DeslandesApp.Domain.Interfaces.Repositories
         #endregion
 
         #region Acessos aos repositórios
+        IWebJurPublicacaoRepository WebJurPublicacaoRepository { get; }
+        IWebJurSincronizacaoLogRepository WebJurSincronizacaoLogRepository { get; }
         IUsuarioRepository UsuarioRepository { get; }
         IPessoaRepository PessoaRepository { get; }
         INivelRepository NivelRepository { get; }
@@ -46,7 +48,7 @@ namespace DeslandesApp.Domain.Interfaces.Repositories
         IGrupoTarefasEtiquetasRepository GrupoTarefasEtiquetasRepository { get; }
         IGrupoEventoResponsavelRepository GrupoEventoResponsavelRepository { get; }
         IEventoRepository EventoRepository { get; }
-            
+            IAndamentoProcessoRepository AndamentoProcessoRepository { get; }
         IGrupoEnvolvidosProcessoRepository GrupoEnvolvidosProcessosRepository { get; }
         IGrupoEtiquetasProcessosRepository GrupoEtiquetasProcessosRepository { get; }
         IGrupoEtiquetasAtendimentoRepository GrupoEtiquetasAtendimentoRepository { get;  }
@@ -69,7 +71,17 @@ namespace DeslandesApp.Domain.Interfaces.Repositories
         ICategoriaFinanceiraRepository CategoriaFinanceiraRepository { get; }
 
            IContaReceberBaixaRepository ContaReceberBaixaRepository { get; }
- 
+        IConfiguracaoFinanceiraRepository ConfiguracaoFinanceiraRepository { get; }
+        IWebJurComentarioRepository WebJurComentarioRepository { get; }
+
+        IWebJurMovimentacaoRepository WebJurMovimentacaoRepository { get; }
+
+        IWebJurArquivoRepository WebJurArquivoRepository { get; }
+
+        IWebJurVisualizacaoRepository WebJurVisualizacaoRepository { get; }
+
+        IWebJurSincronizacaoRepository WebJurSincronizacaoRepository { get; }
+
         #endregion
     }
 }

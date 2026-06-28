@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DeslandesApp.Domain.Commons;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,7 +7,8 @@ using System.Threading.Tasks;
 
 namespace DeslandesApp.Domain.Models.Entities
 {
-    internal class Tribunal
+    public class Tribunal : BaseEntity
     {
+        public string Nome { get; set; } = string.Empty;
     }
 }

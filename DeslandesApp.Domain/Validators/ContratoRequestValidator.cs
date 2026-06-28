@@ -21,9 +21,7 @@ namespace DeslandesApp.Domain.Validators
                 .NotEmpty()
                 .WithMessage("O cliente é obrigatório.");
 
-            RuleFor(x => x.ValorTotal)
-                .GreaterThan(0)
-                .WithMessage("O valor do contrato deve ser maior que zero.");
+           
 
             RuleFor(x => x.DataInicio)
                 .NotEmpty()

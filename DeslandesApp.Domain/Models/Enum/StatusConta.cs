@@ -11,6 +11,7 @@ namespace DeslandesApp.Domain.Models.Enum
         Aberta = 1,
         Paga = 2,
         Cancelada = 3,
-        ParcialmentePaga = 4
+        ParcialmentePaga = 4,
+            Vencida=5
     }
 }

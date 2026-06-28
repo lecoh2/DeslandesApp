@@ -65,6 +65,110 @@ namespace DeslandesApp.Infra.Data.Repositories
         private IContratoProcessoRepository? _contratoProcessoRepository;
         private ICategoriaFinanceiraRepository? _categoriaFinanceiraRepository;
         private IContaReceberBaixaRepository?      _contaReceberBaixaRepository;
+        private IConfiguracaoFinanceiraRepository? _configuracaoFinanceiraRepository;
+        private IAndamentoProcessoRepository? _andamentoProcessoRepository;
+        private IWebJurPublicacaoRepository? _webJurPublicacaoRepository;
+        private IWebJurSincronizacaoLogRepository? _webJurSincronizacaoLogRepository;
+        private IWebJurComentarioRepository _webJurComentarioRepository;
+
+
+
+        private IWebJurMovimentacaoRepository _webJurMovimentacaoRepository;
+        private IWebJurArquivoRepository _webJurArquivoRepository;
+        private IWebJurSincronizacaoRepository _webJurSincronizacaoRepository;
+        public IWebJurSincronizacaoRepository WebJurSincronizacaoRepository
+        {
+            get
+            {
+                if (_webJurSincronizacaoRepository == null)
+                    _webJurSincronizacaoRepository = new WebJurSincronizacaoRepository(dataContext);
+
+                return _webJurSincronizacaoRepository;
+            }
+        }
+
+        private IWebJurVisualizacaoRepository _webJurVisualizacaoRepository;
+        public IWebJurVisualizacaoRepository WebJurVisualizacaoRepository
+        {
+            get
+            {
+                if (_webJurVisualizacaoRepository == null)
+                    _webJurVisualizacaoRepository = new WebJurVisualizacaoRepository(dataContext);
+
+                return _webJurVisualizacaoRepository;
+            }
+        }
+        public IWebJurArquivoRepository WebJurArquivoRepository
+        {
+            get
+            {
+                if (_webJurArquivoRepository == null)
+                    _webJurArquivoRepository = new WebJurArquivoRepository(dataContext);
+
+                return _webJurArquivoRepository;
+            }
+        }
+        public IWebJurMovimentacaoRepository WebJurMovimentacaoRepository
+        {
+            get
+            {
+                if (_webJurMovimentacaoRepository == null)
+                    _webJurMovimentacaoRepository = new WebJurMovimentacaoRepository(dataContext);
+
+                return _webJurMovimentacaoRepository;
+            }
+        }
+        public IWebJurComentarioRepository WebJurComentarioRepository
+        {
+            get
+            {
+                if (_webJurComentarioRepository == null)
+                    _webJurComentarioRepository = new WebJurComentarioRepository(dataContext);
+
+                return _webJurComentarioRepository;
+            }
+        }
+        public IWebJurSincronizacaoLogRepository WebJurSincronizacaoLogRepository
+        {
+            get
+            {
+                if (_webJurSincronizacaoLogRepository == null)
+                    _webJurSincronizacaoLogRepository = new WebJurSincronizacaoLogRepository(dataContext);
+
+                return _webJurSincronizacaoLogRepository;
+            }
+        }
+        public IWebJurPublicacaoRepository WebJurPublicacaoRepository
+        {
+            get
+            {
+                if (_webJurPublicacaoRepository == null)
+                    _webJurPublicacaoRepository = new WebJurPublicacaoRepository(dataContext);
+
+                return _webJurPublicacaoRepository;
+            }
+        }
+
+        public IAndamentoProcessoRepository AndamentoProcessoRepository
+        {
+            get
+            {
+                if (_andamentoProcessoRepository == null)
+                    _andamentoProcessoRepository = new AndamentoProcessoRepository(dataContext);
+
+                return _andamentoProcessoRepository;
+            }
+        }
+        public IConfiguracaoFinanceiraRepository ConfiguracaoFinanceiraRepository
+        {
+            get
+            {
+                if (_configuracaoFinanceiraRepository == null)
+                    _configuracaoFinanceiraRepository = new ConfiguracaoFinanceiraRepository(dataContext);
+
+                return _configuracaoFinanceiraRepository;
+            }
+        }
         public IContaReceberBaixaRepository ContaReceberBaixaRepository
         {
             get
@@ -579,6 +683,8 @@ namespace DeslandesApp.Infra.Data.Repositories
                 return _grupoNiveisRepository;
             }
         }
+
+        
 
         #endregion
         #region Transaçoes

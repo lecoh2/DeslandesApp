@@ -44,6 +44,15 @@ namespace DeslandesApp.Infra.Data.Mappings
     .WithMany(u => u.ProcessosResponsaveis) // se tiver coleção no Usuario
     .HasForeignKey(x => x.UsuarioResponsavelId)
     .OnDelete(DeleteBehavior.SetNull);
+            builder.HasOne(p => p.UsuarioAtualizacao)
+           .WithMany()
+           .HasForeignKey(p => p.UsuarioAtualizacaoId)
+           .OnDelete(DeleteBehavior.Restrict);
+            builder.HasOne(p => p.UsuarioCadastro)
+    .WithMany()
+    .HasForeignKey(p => p.UsuarioCadastroId)
+    .OnDelete(DeleteBehavior.Restrict);
+
             // 💡 DATEONLY
             builder.Property(x => x.Distribuido)
                 .HasConversion<NullableDateOnlyConverter, NullableDateOnlyComparer>();

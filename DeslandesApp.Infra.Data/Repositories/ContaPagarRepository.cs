@@ -1,6 +1,7 @@
 ﻿using DeslandesApp.Domain.Interfaces.Repositories;
 using DeslandesApp.Domain.Models.Dtos.Responses.Conta;
 using DeslandesApp.Domain.Models.Dtos.Responses.Conta.DeslandesApp.Domain.Models.Dtos.Responses.Conta;
+using DeslandesApp.Domain.Models.Dtos.Responses.DashboardFinanceiro;
 using DeslandesApp.Domain.Models.Entities;
 using DeslandesApp.Domain.Models.Enum;
 using DeslandesApp.Domain.Utils;
@@ -113,7 +114,6 @@ namespace DeslandesApp.Infra.Data.Repositories
                 .Include(x => x.Parcelas.OrderBy(p => p.NumeroParcela))
                 .FirstOrDefaultAsync(x => x.Id == idPrincipal);
         }
-
         public async Task<List<ContaPagar>> ConsultarUltimasAsync(int quantidade)
         {
             return await dataContext.ContaPagar
@@ -121,12 +121,10 @@ namespace DeslandesApp.Infra.Data.Repositories
                 .Take(quantidade)
                 .ToListAsync();
         }
-
         public async Task<int> ContarTotalAsync()
         {
             return await dataContext.ContaPagar.CountAsync();
         }
-
         public async Task<int> ContarAnoAtualAsync()
         {
             var inicioAno = new DateTime(DateTime.Now.Year, 1, 1);
@@ -136,7 +134,6 @@ namespace DeslandesApp.Infra.Data.Repositories
                 .Where(x => x.DataVencimento >= inicioAno && x.DataVencimento <= fimAno)
                 .CountAsync();
         }
-
         public async Task<bool> ExisteDuplicidadeAsync(
          Guid? contratoId,
          string descricao,
@@ -171,6 +168,90 @@ namespace DeslandesApp.Infra.Data.Repositories
             contaPai.DataAtualizacao = DateTime.Now;
 
             await dataContext.SaveChangesAsync();
+        }
+        public async Task<decimal> ObterTotalPagarMesAsync(
+            int ano,
+            int mes)
+        {
+            return await dataContext.ContaPagar
+                .Where(x =>
+                    x.DataVencimento.Year == ano &&
+                    x.DataVencimento.Month == mes &&
+                    (!x.Parcelado || x.NumeroParcela > 0))
+                .SumAsync(x => (decimal?)x.Valor) ?? 0;
+        }
+        public async Task<decimal> ObterTotalPagoMesAsync(
+    int ano,
+    int mes)
+        {
+            return await dataContext.ContaPagar
+                .Where(x =>
+                    x.DataVencimento.Year == ano &&
+                    x.DataVencimento.Month == mes &&
+                    (!x.Parcelado || x.NumeroParcela > 0))
+                .SumAsync(x => (decimal?)x.ValorPago) ?? 0;
+        }
+        public async Task<List<GraficoCategoriaResponse>>
+    ObterGraficoCategoriaDespesaAsync(int ano)
+        {
+            return await dataContext.ContaPagar
+                .AsNoTracking()
+                .Where(x =>
+                    x.DataVencimento.Year == ano &&
+                    x.CategoriaFinanceira != null &&
+                    (!x.Parcelado || x.NumeroParcela > 0))
+                .GroupBy(x => x.CategoriaFinanceira.Nome)
+                .Select(g => new GraficoCategoriaResponse
+                {
+                    Categoria = g.Key,
+                    Valor = g.Sum(x => x.Valor)
+                })
+                .OrderByDescending(x => x.Valor)
+                .ToListAsync();
+        }
+        public async Task<Dictionary<int, decimal>>
+    ObterDespesasPorMesAsync(int ano)
+        {
+            return await dataContext.ContaPagar
+                .AsNoTracking()
+                .Where(x =>
+                    x.DataVencimento.Year == ano &&
+                    (!x.Parcelado || x.NumeroParcela > 0))
+                .GroupBy(x => x.DataVencimento.Month)
+                .Select(g => new
+                {
+                    Mes = g.Key,
+                    Valor = g.Sum(x => x.ValorPago)
+                })
+                .ToDictionaryAsync(
+                    x => x.Mes,
+                    x => x.Valor);
+        }
+        public async Task<decimal>
+    ObterSaidasAteDataAsync(
+        DateTime dataLimite)
+        {
+            return await dataContext
+                .ContaPagar
+                .Where(x =>
+                    !x.Excluido &&
+                    !x.Quitado &&
+                    x.DataVencimento <= dataLimite)
+                .SumAsync(x =>
+                    (decimal?)x.Valor)
+                ?? 0;
+        }
+        public async Task<decimal> ObterSaidasDoDiaAsync(DateTime data)
+        {
+            return await dataContext.ContaPagar
+                .Where(x =>
+                    !x.Excluido &&
+                    x.DataVencimento.Date == data.Date &&
+                    x.Status != StatusConta.Cancelada &&
+                    x.Status != StatusConta.Paga)
+                .SumAsync(x =>
+                    (decimal?)(x.Valor - x.ValorPago)
+                ) ?? 0;
         }
     }
 }

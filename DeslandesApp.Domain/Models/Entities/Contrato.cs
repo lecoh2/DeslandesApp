@@ -21,8 +21,6 @@ namespace DeslandesApp.Domain.Models.Entities
         public DateTime DataInicio { get; set; }
         public DateTime? DataFim { get; set; }
 
-        public decimal? ValorTotal { get; set; }
-
         public StatusContrato Status { get; set; }
 
         // RELAÇÃO FINANCEIRA

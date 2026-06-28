@@ -16,6 +16,8 @@ namespace DeslandesApp.Infra.Data.Contexts
         //as configurações do banco de dados, como conexão, tipo etc. 
         public DataContext(DbContextOptions<DataContext> options) : base(options) { }
         public DbSet<Usuario> Usuario { get; set; }
+        public DbSet<WebJurPublicacao> WebJurPublicacoes { get; set; }
+        public DbSet<AndamentoProcesso> AndamentosProcesso { get; set; }
         public DbSet<CentroCusto> CentroCusto { get; set; }
         public DbSet<Contrato> Contrato { get; set; }
         public DbSet<ContratoProcesso> ContratoProcesso { get; set; }
@@ -70,6 +72,12 @@ namespace DeslandesApp.Infra.Data.Contexts
         public DbSet<CategoriaFinanceira> CategoriaFinanceira { get; set; }
         public DbSet<ContaReceberBaixa> ContaReceberBaixa { get; set; }
         public DbSet<BaixaContaPagar> BaixaContaPagar { get; set; }
+        public DbSet<ConfiguracaoFinanceira> ConfiguracaoFinanceira { get; set; }
+        public DbSet<WebJurComentario> WebJurComentario { get; set; }
+        public DbSet<WebJurMovimentacao> WebJurMovimentacao { get; set; }
+        public DbSet<WebJurArquivo> WebJurArquivo { get; set; }
+        public DbSet<WebJurVisualizacao> WebJurVisualizacao { get; set; }
+        public DbSet<WebJurSincronizacao> WebJurSincronizacao { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);

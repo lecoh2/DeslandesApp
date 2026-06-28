@@ -25,5 +25,6 @@ namespace DeslandesApp.Domain.Interfaces.Services
         Task<int> ContarTotal();
    
         Task<ResultadoImportacaoProcessoResponse> ImportarDistribuicaoAsync(IFormFile file);
+    
     }
 }

@@ -10,6 +10,7 @@ using DeslandesApp.Domain.Models.Entities;
 using DeslandesApp.Domain.Models.Enum;
 using DeslandesApp.Domain.Utils;
 using DeslandesApp.Infra.Data.Contexts;
+using DocumentFormat.OpenXml.InkML;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -207,7 +208,29 @@ namespace DeslandesApp.Infra.Data.Repositories
         {
             return dataContext.Processos.CountAsync();
         }
+        public async Task<List<Processo>> ObterMonitoradosAsync()
+        {
+            return await dataContext.Processos
+                .Where(x => x.MonitorarAndamentos)
+                .ToListAsync();
+        }
+        public async Task<Processo?> ObterPorIdAsync(Guid id)
+        {
+            return await dataContext.Processos
+                .FirstOrDefaultAsync(x => x.Id == id);
+        }
 
+        public async Task<List<Processo>> ObterTodosAsync()
+        {
+            return await dataContext.Processos.ToListAsync();
+        }
 
+        public async Task<Processo?> ObterPorNumeroAsync(string numeroProcesso)
+        {
+            return await dataContext.Processos
+                .FirstOrDefaultAsync(x =>
+                    x.NumeroProcesso == numeroProcesso &&
+                    !x.Excluido);
+        }
     }
 }

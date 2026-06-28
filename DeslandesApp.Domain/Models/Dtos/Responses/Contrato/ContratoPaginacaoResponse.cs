@@ -16,7 +16,6 @@ namespace DeslandesApp.Domain.Models.Dtos.Responses.Contrato
 
         public string NomePessoa { get; set; }
 
-        public decimal ValorContrato { get; set; }
 
         public DateTime DataInicio { get; set; }
 

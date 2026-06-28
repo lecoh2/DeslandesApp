@@ -1,0 +1,17 @@
+{
+  "ExtendedData": {
+    "inputs": [
+      "https://ws.webjur.com.br/wsPublicacao?wsdl"
+    ],
+    "collectionTypes": [
+      "System.Array",
+      "System.Collections.Generic.Dictionary`2"
+    ],
+    "messageContract": true,
+    "namespaceMappings": [
+      "*, ServiceReference1"
+    ],
+    "targetFramework": "net9.0",
+    "typeReuseMode": "Specified"
+  }
+}

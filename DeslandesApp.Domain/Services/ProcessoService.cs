@@ -1009,5 +1009,6 @@ namespace DeslandesApp.Domain.Services
             return await unitOfWork.ProcessoRepository.ContarTotal();
         }
 
+     
     }
 }

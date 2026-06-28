@@ -22,9 +22,6 @@ namespace DeslandesApp.Infra.Data.Mappings
                 .HasColumnName("OBJETO")
                 .HasMaxLength(500);
 
-            builder.Property(x => x.ValorTotal)
-                .HasColumnName("VALOR_TOTAL")
-                .HasPrecision(18, 2);
 
             builder.Property(x => x.DataInicio)
                 .HasColumnName("DATA_INICIO");

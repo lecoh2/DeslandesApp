@@ -1,5 +1,6 @@
 ﻿using DeslandesApp.Domain.Models.Dtos.Requests.BaixaFinanceira;
 using DeslandesApp.Domain.Models.Dtos.Responses.BaixaFinanceira;
+using DeslandesApp.Domain.Models.Dtos.Responses.DashboardFinanceiro;
 using DeslandesApp.Domain.Utils;
 using System;
 using System.Collections.Generic;
@@ -21,5 +22,8 @@ namespace DeslandesApp.Domain.Interfaces.Services
 
         Task<List<BaixaFinanceiraResponse>> ConsultarPorContaPagarAsync(
             Guid contaPagarId);
+        Task<List<MovimentacaoFinanceiraResponse>>
+    ObterUltimasMovimentacoesAsync(
+        int quantidade = 10);
     }
 }

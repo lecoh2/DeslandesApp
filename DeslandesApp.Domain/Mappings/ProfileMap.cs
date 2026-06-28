@@ -5,6 +5,7 @@ using DeslandesApp.Domain.Models.Dtos.Requests.Caso;
 using DeslandesApp.Domain.Models.Dtos.Requests.CategoriaFinanceira;
 using DeslandesApp.Domain.Models.Dtos.Requests.CentroCusto;
 using DeslandesApp.Domain.Models.Dtos.Requests.Comentarios;
+using DeslandesApp.Domain.Models.Dtos.Requests.ConfiguracaoFinanceira;
 using DeslandesApp.Domain.Models.Dtos.Requests.Conta;
 using DeslandesApp.Domain.Models.Dtos.Requests.ContaBancaria;
 using DeslandesApp.Domain.Models.Dtos.Requests.Contrato;
@@ -27,11 +28,13 @@ using DeslandesApp.Domain.Models.Dtos.Requests.Tarefa;
 using DeslandesApp.Domain.Models.Dtos.Requests.Usuarios;
 using DeslandesApp.Domain.Models.Dtos.Requests.Usuarios;
 using DeslandesApp.Domain.Models.Dtos.Responses.Agenda;
+using DeslandesApp.Domain.Models.Dtos.Responses.Andamento;
 using DeslandesApp.Domain.Models.Dtos.Responses.Atendimento;
 using DeslandesApp.Domain.Models.Dtos.Responses.BaixaFinanceira;
 using DeslandesApp.Domain.Models.Dtos.Responses.Caso;
 using DeslandesApp.Domain.Models.Dtos.Responses.CategoriaFinanceira;
 using DeslandesApp.Domain.Models.Dtos.Responses.CentroCusto;
+using DeslandesApp.Domain.Models.Dtos.Responses.ConfiguracaoFinanceira;
 using DeslandesApp.Domain.Models.Dtos.Responses.Conta;
 using DeslandesApp.Domain.Models.Dtos.Responses.Conta.DeslandesApp.Domain.Models.Dtos.Responses.Conta;
 using DeslandesApp.Domain.Models.Dtos.Responses.Contrato;
@@ -65,6 +68,7 @@ using DeslandesApp.Domain.Models.Dtos.Responses.Tarefa;
 using DeslandesApp.Domain.Models.Dtos.Responses.Usuarios;
 using DeslandesApp.Domain.Models.Dtos.Responses.Usuarios.DeslandesApp.Domain.Models.Dtos.Responses.Usuarios;
 using DeslandesApp.Domain.Models.Dtos.Responses.Vara;
+using DeslandesApp.Domain.Models.Dtos.Responses.WebJur;
 using DeslandesApp.Domain.Models.Entities;
 using DeslandesApp.Domain.Models.Enum;
 using DeslandesApp.Domain.ValueObjects;
@@ -887,7 +891,6 @@ namespace DeslandesApp.Domain.Mappings
             CreateMap<Contrato, ObterContratoResponse>()
 
     .ForMember(dest => dest.Numero, opt => opt.MapFrom(src => src.Numero))
-    .ForMember(dest => dest.ValorTotal, opt => opt.MapFrom(src => src.ValorTotal))
     .ForMember(dest => dest.PessoaId, opt => opt.MapFrom(src => src.PessoaId))
     .ForMember(dest => dest.NomePessoa, opt => opt.MapFrom(src => src.Pessoa.Nome))
 
@@ -1106,9 +1109,33 @@ namespace DeslandesApp.Domain.Mappings
     )
 );
 
+
+            #endregion
+            #region ConfiguracaoFinanceira
+            CreateMap<ConfiguracaoFinanceiraRequest, ConfiguracaoFinanceira>();
+
+            CreateMap<ConfiguracaoFinanceira, ConfiguracaoFinanceiraResponse>();
             #endregion
 
+            #region WebJur
+            CreateMap<AndamentoProcesso, AndamentoProcessoResponse>();
 
+
+            CreateMap<WebJurPublicacao, WebJurPublicacaoDetalheResponse>()
+    .ForMember(dest => dest.TextoPublicacao,
+        opt => opt.MapFrom(src => src.DespachoPublicacao))
+
+    .ForMember(dest => dest.TipoPublicacao,
+        opt => opt.MapFrom(src => "WEBJUR"));
+         
+            CreateMap<WebJurPublicacao, WebJurPublicacaoResponse>();
+            //CreateMap<ProcessoInterno, ProcessoInternoResponse>();
+            CreateMap<WebJurComentario, WebJurComentarioResponse>();
+            CreateMap<WebJurMovimentacao, WebJurMovimentacaoResponse>();
+            CreateMap<WebJurArquivo, WebJurArquivoResponse>();
+            CreateMap<WebJurVisualizacao, WebJurVisualizacaoResponse>();
+            CreateMap<WebJurSincronizacao, WebJurSincronizacaoResponse>();
+            #endregion
         }
     }
 }

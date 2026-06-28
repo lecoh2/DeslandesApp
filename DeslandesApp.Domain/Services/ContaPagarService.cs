@@ -5,6 +5,7 @@ using DeslandesApp.Domain.Interfaces.Services;
 using DeslandesApp.Domain.Models.Dtos.Requests.Conta;
 using DeslandesApp.Domain.Models.Dtos.Responses.Conta;
 using DeslandesApp.Domain.Models.Dtos.Responses.Conta.DeslandesApp.Domain.Models.Dtos.Responses.Conta;
+using DeslandesApp.Domain.Models.Dtos.Responses.Processo;
 using DeslandesApp.Domain.Models.Entities;
 using DeslandesApp.Domain.Models.Enum;
 using DeslandesApp.Domain.Utils;
@@ -315,27 +316,48 @@ namespace DeslandesApp.Domain.Services
             throw new NotImplementedException();
         }
 
-        public async Task<PageResult<ContaPagarConsultaResponse>>
-        ConsultarPaginacaoAsync(
-            int pageNumber,
-            int pageSize)
+        public async Task<PageResult<ContaPagarConsultaResponse>>ConsultarPaginacaoAsync(
+           int pageNumber,
+int pageSize,
+string? searchTerm = null)
         {
-            var result = await unitOfWork
-                .ContaPagarRepository
-                .GetPaginacaoAsync(
-                    pageNumber,
-                    pageSize
-                );
+            var paged = await unitOfWork.ContaPagarRepository
+                .GetPaginacaoAsync(pageNumber, pageSize, searchTerm);
 
-            return new PageResult<ContaPagarConsultaResponse>
+            if (paged == null || !paged.Items.Any())
             {
-                Items = result.Items,
-                TotalCount = result.TotalCount,
-                PageNumber = result.PageNumber,
-                PageSize = result.PageSize
-            };
-        }
+                return new PageResult<ContaPagarConsultaResponse>
+                {
+                    Items = new List<ContaPagarConsultaResponse>(),
+                    TotalCount = 0,
+                    PageNumber = pageNumber,
+                    PageSize = pageSize
+                };
+            }
 
+            return paged;
+        }
+////        public async Task<PageResult<ProcessoPaginacaoResponse>> ConsultarProcessoPaginacaoAsync(
+////int pageNumber,
+////int pageSize,
+////string? searchTerm = null)
+////        {
+////            var paged = await unitOfWork.ProcessoRepository
+////                .GetProcessoPaginacaoAsync(pageNumber, pageSize, searchTerm);
+
+////            if (paged == null || !paged.Items.Any())
+////            {
+////                return new PageResult<ProcessoPaginacaoResponse>
+////                {
+////                    Items = new List<ProcessoPaginacaoResponse>(),
+////                    TotalCount = 0,
+////                    PageNumber = pageNumber,
+////                    PageSize = pageSize
+////                };
+////            }
+
+////            return paged;
+       // }
         public void Dispose()
         {
             unitOfWork.Dispose();

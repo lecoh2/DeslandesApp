@@ -1,4 +1,5 @@
 ﻿using DeslandesApp.Domain.Models.Dtos.Responses.Conta.DeslandesApp.Domain.Models.Dtos.Responses.Conta;
+using DeslandesApp.Domain.Models.Dtos.Responses.DashboardFinanceiro;
 using DeslandesApp.Domain.Models.Entities;
 using DeslandesApp.Domain.Models.Enum;
 using DeslandesApp.Domain.Utils;
@@ -31,7 +32,27 @@ namespace DeslandesApp.Domain.Interfaces.Repositories
     StatusConta status,
     bool quitado,
     DateTime? dataQuitacao);
+        // DASHBOARD
 
+        Task<decimal> ObterTotalPagarMesAsync(
+            int ano,
+            int mes);
 
+        Task<decimal> ObterTotalPagoMesAsync(
+            int ano,
+            int mes);
+
+        Task<List<GraficoCategoriaResponse>>
+            ObterGraficoCategoriaDespesaAsync(
+                int ano);
+        Task<Dictionary<int, decimal>>
+    ObterDespesasPorMesAsync(int ano);
+        Task<decimal>
+    ObterSaidasAteDataAsync(
+        DateTime dataLimite);
+        Task<decimal> ObterSaidasDoDiaAsync(DateTime data);
     }
+
+
 }
+

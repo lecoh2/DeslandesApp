@@ -44,8 +44,7 @@ namespace DeslandesApp.Infra.Data.Repositories
                     Id = c.Id,
                     Numero = c.Numero,
                     PessoaId = c.PessoaId,
-                    NomePessoa = c.Pessoa.Nome,
-                    ValorContrato = c.ValorTotal ?? 0,
+                    NomePessoa = c.Pessoa.Nome,                   
                     DataInicio = c.DataInicio,
                     DataFim = c.DataFim
                 })

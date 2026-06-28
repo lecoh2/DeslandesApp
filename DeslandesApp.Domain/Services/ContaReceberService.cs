@@ -4,6 +4,7 @@ using DeslandesApp.Domain.Interfaces.Repositories;
 using DeslandesApp.Domain.Interfaces.Services;
 using DeslandesApp.Domain.Models.Dtos.Requests.Conta;
 using DeslandesApp.Domain.Models.Dtos.Responses.Conta;
+using DeslandesApp.Domain.Models.Dtos.Responses.Conta.DeslandesApp.Domain.Models.Dtos.Responses.Conta;
 using DeslandesApp.Domain.Models.Entities;
 using DeslandesApp.Domain.Models.Enum;
 using DeslandesApp.Domain.Utils;
@@ -341,22 +342,74 @@ namespace DeslandesApp.Domain.Services
 
             try
             {
-                var conta = await unitOfWork.ContaReceberRepository.GetByIdAsync(id);
+                var conta =
+                    await unitOfWork
+                        .ContaReceberRepository
+                        .ObterCompletoPorIdAsync(id);
 
                 if (conta == null)
-                    throw new ApplicationException("Conta não encontrada.");
-                if (conta.ValorPago > 0)
+                    throw new BusinessException("Conta não encontrada.");
+
+                if (conta.Excluido)
+                    throw new BusinessException("A conta já foi excluída.");
+
+                // 🔒 Proteção: conta principal já teve movimentação financeira
+                var contaPrincipalTemMovimento =
+                    conta.ValorRecebido > 0 ||
+                    conta.ValorPago > 0 ||
+                    conta.Status == StatusConta.Paga ||
+                    conta.Status == StatusConta.ParcialmentePaga;
+
+                if (contaPrincipalTemMovimento)
                 {
-                    throw new ApplicationException(
-                        "Não é possível excluir uma conta que possui recebimentos."
+                    throw new BusinessException(
+                        "Não é possível excluir uma conta que já possui movimentação financeira."
                     );
                 }
 
+                // 🔒 Proteção: parcelas com movimentação
+                var possuiParcelasComMovimento =
+                    conta.Parcelas != null &&
+                    conta.Parcelas.Any(p =>
+                        !p.Excluido &&
+                        (
+                            p.ValorRecebido > 0 ||
+                            p.ValorPago > 0 ||
+                            p.Status == StatusConta.Paga ||
+                            p.Status == StatusConta.ParcialmentePaga
+                        )
+                    );
+
+                if (possuiParcelasComMovimento)
+                {
+                    throw new BusinessException(
+                        "Não é possível excluir esta conta porque existem parcelas com movimentação financeira. Realize estorno antes da exclusão."
+                    );
+                }
+
+                // 🧹 Soft delete das parcelas (somente abertas)
+                if (conta.Parcelas != null && conta.Parcelas.Any())
+                {
+                    foreach (var parcela in conta.Parcelas.Where(p => !p.Excluido))
+                    {
+                        parcela.Excluido = true;
+                        parcela.DataExclusao = DateTime.Now;
+                        parcela.UsuarioExclusaoId = ObterUsuarioId();
+
+                        await unitOfWork
+                            .ContaReceberRepository
+                            .UpdateAsync(parcela);
+                    }
+                }
+
+                // 🧹 Soft delete da conta principal
                 conta.Excluido = true;
                 conta.DataExclusao = DateTime.Now;
                 conta.UsuarioExclusaoId = ObterUsuarioId();
 
-                await unitOfWork.ContaReceberRepository.UpdateAsync(conta);
+                await unitOfWork
+                    .ContaReceberRepository
+                    .UpdateAsync(conta);
 
                 await unitOfWork.CommitAsync();
 
@@ -510,20 +563,45 @@ namespace DeslandesApp.Domain.Services
                 throw;
             }
         }
-        public async Task<PageResult<ContaReceberConsultaResponse>> ConsultarPaginacaoAsync(int pageNumber, int pageSize)
+        public async Task<PageResult<ContaReceberConsultaResponse>> ConsultarPaginacaoAsync(int pageNumber,
+int pageSize,
+string? searchTerm = null)
         {
-            var result = await unitOfWork.ContaReceberRepository
-                .GetPaginacaoAsync(pageNumber, pageSize);
-
-            return new PageResult<ContaReceberConsultaResponse>
+            var paged = await unitOfWork.ContaReceberRepository
+                .GetPaginacaoAsync(pageNumber, pageSize, searchTerm);
+            if (paged == null || !paged.Items.Any())
             {
-                Items = mapper.Map<List<ContaReceberConsultaResponse>>(result.Items),
-                TotalCount = result.TotalCount,
-                PageNumber = result.PageNumber,
-                PageSize = result.PageSize
-            };
+                return new PageResult<ContaReceberConsultaResponse>
+                {
+                    Items = new List<ContaReceberConsultaResponse>(),
+                    TotalCount = 0,
+                    PageNumber = pageNumber,
+                    PageSize = pageSize
+                };
+            }
+            return paged;
         }
+//        public async Task<PageResult<ContaPagarConsultaResponse>> ConsultarPaginacaoAsync(
+//   int pageNumber,
+//int pageSize,
+//string? searchTerm = null)
+//        {
+//            var paged = await unitOfWork.ContaPagarRepository
+//                .GetPaginacaoAsync(pageNumber, pageSize, searchTerm);
 
+//            if (paged == null || !paged.Items.Any())
+//            {
+//                return new PageResult<ContaPagarConsultaResponse>
+//                {
+//                    Items = new List<ContaPagarConsultaResponse>(),
+//                    TotalCount = 0,
+//                    PageNumber = pageNumber,
+//                    PageSize = pageSize
+//                };
+//            }
+
+//            return paged;
+//        }
         public async Task<List<ContaReceberResponse>> ConsultarAsync()
         {
             var list = await unitOfWork.ContaReceberRepository

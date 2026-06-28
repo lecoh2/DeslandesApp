@@ -6,7 +6,8 @@ using DeslandesApp.Domain.Extensions;
 using DeslandesApp.Domain.Helpers;
 using DeslandesApp.Domain.Interfaces.Services;
 using DeslandesApp.Infra.Data.Extensions;
-
+using DeslandesApp.Infra.Data.InfrastructureExtension;
+using DeslandesApp.Infra.Data.Jobs;
 using Hangfire;
 using Hangfire.SqlServer;
 
@@ -51,7 +52,8 @@ Console.WriteLine(
 // ================================
 //
 builder.Services.AddHttpContextAccessor();
-
+builder.Services.AddInfrastructure();
+builder.Services.AddDomainService();
 //
 // ================================
 // CONTROLLERS
@@ -191,7 +193,7 @@ builder.Services.AddSingleton<IUserIdProvider, CustomUserIdProvider>();
 builder.Services.AddHangfireServer();
 builder.Services.AddSignalR(); 
 builder.Services.AddApiServices();
-
+builder.Services.AddScoped<WebJurJob>();
 //builder.WebHost.ConfigureKestrel(options =>
 //{
 //    options.ListenAnyIP(300); // qualquer IP da máquina
@@ -323,7 +325,26 @@ RecurringJob.AddOrUpdate<ITarefaService>(
     x => x.AtualizarStatusTarefasAutomatico(),
     Cron.Hourly
 );
-
+//RecurringJob.AddOrUpdate<IWebJurService>(
+//    "webjur-sync-monitorados",
+//    x => x.SincronizarProcessosMonitoradosAsync(),
+//    Cron.Minutely
+//);
+RecurringJob.AddOrUpdate<IWebJurService>(
+    "webjur-sync-monitorados",
+    x => x.SincronizarProcessosMonitoradosAsync(),
+    Cron.Hourly
+);
+RecurringJob.AddOrUpdate<WebJurJob>(
+    "webjur-importar-publicacoes",
+    job => job.ImportarPublicacoes(),
+    "*/10 * * * *"
+);
+RecurringJob.AddOrUpdate<IWebJurService>(
+    "webjur-import-publicacoes",
+    x => x.ImportarPublicacoesAsync(),
+    Cron.Minutely
+);
 //
 // ================================
 // SPA FALLBACK (Angular)

@@ -5,6 +5,7 @@ using DeslandesApp.Domain.Interfaces.Services;
 using DeslandesApp.Domain.Models.Dtos.Requests.BaixaFinanceira;
 using DeslandesApp.Domain.Models.Dtos.Responses.BaixaFinanceira;
 using DeslandesApp.Domain.Models.Dtos.Responses.Conta;
+using DeslandesApp.Domain.Models.Dtos.Responses.DashboardFinanceiro;
 using DeslandesApp.Domain.Models.Entities;
 using DeslandesApp.Domain.Models.Enum;
 using DeslandesApp.Domain.Utils;
@@ -308,7 +309,15 @@ namespace DeslandesApp.Domain.Services
                 throw;
             }
         }
-
+        public async Task<List<MovimentacaoFinanceiraResponse>>
+        ObterUltimasMovimentacoesAsync(
+            int quantidade = 10)
+        {
+            return await unitOfWork
+                .BaixaFinanceiraRepository
+                .ObterUltimasMovimentacoesAsync(
+                    quantidade);
+        }
         public async Task<BaixaFinanceiraResponse> ModificarAsync(
             Guid id,
             BaixaFinanceiraUpdateRequest request)

@@ -20,6 +20,13 @@ namespace DeslandesApp.Domain.Interfaces.Repositories
         Task<List<ProcessoAgrupado>> GetGraficoProcessoAsync();
         Task<int> ContarProcessoAnoAtual();
         Task<int> ContarTotal();
+        Task<List<Processo>> ObterMonitoradosAsync();
+
+        Task<Processo?> ObterPorIdAsync(Guid id);
+
+        Task<List<Processo>> ObterTodosAsync();
+        Task<Processo?> ObterPorNumeroAsync(string numeroProcesso);
+
 
 
     }

@@ -1,5 +1,6 @@
 ﻿using DeslandesApp.Domain.Interfaces.Repositories;
 using DeslandesApp.Domain.Models.Dtos.Responses.Conta;
+using DeslandesApp.Domain.Models.Dtos.Responses.DashboardFinanceiro;
 using DeslandesApp.Domain.Models.Entities;
 using DeslandesApp.Domain.Utils;
 using DeslandesApp.Infra.Data.Contexts;
@@ -63,6 +64,41 @@ namespace DeslandesApp.Infra.Data.Repositories
                 .ThenInclude(x => x.Pessoa)
                 .Include(x => x.ContaBancariaEmpresa)
                 .FirstOrDefaultAsync(x => x.Id == id);
+        }
+        public async Task<List<MovimentacaoFinanceiraResponse>>
+      ObterUltimasMovimentacoesAsync(
+          int quantidade = 10)
+        {
+            return await dataContext.BaixaFinanceira
+                .AsNoTracking()
+                .Include(x => x.ContaReceber)
+                    .ThenInclude(x => x.Pessoa)
+                .Include(x => x.ContaPagar)
+                    .ThenInclude(x => x.Pessoa)
+                .OrderByDescending(x => x.DataBaixa)
+                .Take(quantidade)
+                .Select(x => new MovimentacaoFinanceiraResponse
+                {
+                    Data = x.DataBaixa,
+
+                    Descricao =
+                        x.ContaReceber != null
+                            ? x.ContaReceber.Descricao
+                            : x.ContaPagar!.Descricao,
+
+                    Pessoa =
+                        x.ContaReceber != null
+                            ? x.ContaReceber.Pessoa.Nome
+                            : x.ContaPagar!.Pessoa.Nome,
+
+                    Valor = x.ValorPago,
+
+                    Tipo =
+                        x.ContaReceberId != null
+                            ? "Receita"
+                            : "Despesa"
+                })
+                .ToListAsync();
         }
     }
 
