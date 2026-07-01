@@ -36,21 +36,44 @@ namespace DeslandesApp.Infra.Data.ExternalServices
 
             return lista.Select(x =>
             {
-          
+
                 DateTime.TryParse(x.dataPublicacao, out var dataPublicacao);
                 DateTime.TryParse(x.dataCadastro, out var dataCadastro);
+                DateTime.TryParse(x.dataDivulgacao, out var dataDivulgacao);
 
                 return new WebJurPublicacaoResponse
                 {
                     CodPublicacao = (int)x.codPublicacao,
                     NumeroProcesso = x.numeroProcesso,
+
+                    AnoPublicacao = x.anoPublicacao,
+                    EdicaoDiario = x.edicaoDiario,
+                    DescricaoDiario = x.descricaoDiario,
+                    PaginaInicial = x.paginaInicial,
+                    PaginaFinal = x.paginaFinal,
+
                     DataPublicacao = dataPublicacao,
+                    DataDivulgacao = dataDivulgacao,
                     DataCadastro = dataCadastro,
+
+                    UfPublicacao = x.ufPublicacao,
+                    CidadePublicacao = x.cidadePublicacao,
+
+                    OrgaoDescricao = x.orgaoDescricao,
+                    VaraDescricao = x.varaDescricao,
+
                     DespachoPublicacao = x.despachoPublicacao,
                     ProcessoPublicacao = x.processoPublicacao,
-                    VaraDescricao = x.varaDescricao,
-                    OrgaoDescricao = x.orgaoDescricao,
-                    PublicacaoCorrigida = x.publicacaoCorrigida == 1
+
+                    PublicacaoCorrigida = x.publicacaoCorrigida == 1,
+
+                    CodVinculo = x.codVinculo,
+                    NomeVinculo = x.nomeVinculo,
+                    OABNumero = x.OABNumero,
+                    OABEstado = x.OABEstado,
+                    CodIntegracao = x.codIntegracao,
+                    PublicacaoExportada = x.publicacaoExportada == 1,
+                    CodGrupo = x.codGrupo
                 };
             }).ToList();
         }

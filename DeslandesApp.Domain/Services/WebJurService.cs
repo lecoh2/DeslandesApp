@@ -150,12 +150,32 @@ namespace DeslandesApp.Domain.Services
                         {
                             CodPublicacao = publicacao.CodPublicacao,
                             NumeroProcesso = publicacao.NumeroProcesso,
+
+                            AnoPublicacao = publicacao.AnoPublicacao,
+                            EdicaoDiario = publicacao.EdicaoDiario,
+                            DescricaoDiario = publicacao.DescricaoDiario,
+                            PaginaInicial = publicacao.PaginaInicial,
+                            PaginaFinal = publicacao.PaginaFinal,
+                            DataDivulgacao = publicacao.DataDivulgacao,
+                            UfPublicacao = publicacao.UfPublicacao,
+                            CidadePublicacao = publicacao.CidadePublicacao,
+                            CodVinculo = publicacao.CodVinculo,
+                            NomeVinculo = publicacao.NomeVinculo,
+                            OABNumero = publicacao.OABNumero,
+                            OABEstado = publicacao.OABEstado,
+                            CodIntegracao = publicacao.CodIntegracao,
+                            PublicacaoExportada = publicacao.PublicacaoExportada,
+                            CodGrupo = publicacao.CodGrupo,
+
                             DataPublicacao = publicacao.DataPublicacao,
                             DataCadastroWebJur = publicacao.DataCadastro,
+
                             DespachoPublicacao = publicacao.DespachoPublicacao,
                             ProcessoPublicacao = publicacao.ProcessoPublicacao,
+
                             VaraDescricao = publicacao.VaraDescricao,
                             OrgaoDescricao = publicacao.OrgaoDescricao,
+
                             PublicacaoCorrigida = publicacao.PublicacaoCorrigida,
                             Importada = true,
                             ProcessoId = processo?.Id
@@ -314,9 +334,40 @@ namespace DeslandesApp.Domain.Services
             return (bytes, $"publicacao-{id}.pdf");
         }
 
-        public Task AdicionarComentarioAsync(Guid publicacaoId, WebJurComentarioResponse request)
+    
+        public async Task<PageResult<WebJurComentarioResponse>> ObterComentariosAsync(
+    Guid publicacaoId,
+    int pageNumber,
+    int pageSize)
         {
-            throw new NotImplementedException();
+            var query = await unitOfWork.WebJurComentarioRepository
+                .ObterPaginadoAsync(publicacaoId, pageNumber, pageSize);
+
+            var total = query.Count;
+
+            var result = query.Select(x => new WebJurComentarioResponse
+            {
+                Id = x.Id,
+                Usuario = x.Usuario?.NomeUsuario ?? "Sistema",
+                Comentario = x.Comentario,
+                DataCadastro = x.DataCadastro
+            }).ToList();
+
+            return new PageResult<WebJurComentarioResponse>
+            {
+                Items = result,
+                TotalCount = total,
+                PageNumber = pageNumber,
+                PageSize = pageSize
+            };
+        }
+        public async Task<PageResult<WebJurVisualizacaoResponse>> ObterVisualizacoesAsync(
+    Guid publicacaoId,
+    int pageNumber,
+    int pageSize)
+        {
+            return await unitOfWork.WebJurVisualizacaoRepository
+                .GetPaginacaoAsync(publicacaoId, pageNumber, pageSize);
         }
     }
 }

@@ -107,17 +107,51 @@ namespace DeslandesApp.Infra.Data.Repositories
                 .Include(x => x.Comentarios)
                     .ThenInclude(x => x.Usuario)
 
-                .Include(x => x.Movimentacoes)
+                .Include(x => x.Visualizacoes)
+                    .ThenInclude(x => x.Usuario)
 
                 .Include(x => x.Arquivos)
 
-                .Include(x => x.Visualizacoes)
-                    .ThenInclude(x => x.Usuario)
+                .Include(x => x.Movimentacoes)
 
                 .Include(x => x.Sincronizacoes)
                     .ThenInclude(x => x.Usuario)
 
                 .FirstOrDefaultAsync(x => x.Id == id);
+        }
+        public async Task<List<WebJurComentario>> ObterComentariosAsync(Guid id)
+        {
+            return await dataContext.WebJurComentario
+                .AsNoTracking()
+                .Where(x => x.WebJurPublicacaoId == id)
+                .OrderByDescending(x => x.DataCadastro)
+                .Include(x => x.Usuario)
+                .ToListAsync();
+        }
+        public async Task<List<WebJurVisualizacao>> ObterVisualizacoesAsync(Guid id)
+        {
+            return await dataContext.WebJurVisualizacao
+                .AsNoTracking()
+                .Where(x => x.WebJurPublicacaoId == id)
+                .OrderByDescending(x => x.DataVisualizacao)
+                .Include(x => x.Usuario)
+                .ToListAsync();
+        }
+        public async Task<List<WebJurArquivo>> ObterArquivosAsync(Guid id)
+        {
+            return await dataContext.WebJurArquivo
+                .AsNoTracking()
+                .Where(x => x.WebJurPublicacaoId == id)
+                .ToListAsync();
+        }
+        public async Task<List<WebJurSincronizacao>> ObterSincronizacoesAsync(Guid id)
+        {
+            return await dataContext.WebJurSincronizacao
+                .AsNoTracking()
+                .Where(x => x.WebJurPublicacaoId == id)
+                .Include(x => x.Usuario)
+                .OrderByDescending(x => x.Inicio)
+                .ToListAsync();
         }
     }
 }

@@ -4,6 +4,7 @@ using DeslandesApp.Domain.Models.Dtos.Responses.Atendimento;
 using DeslandesApp.Domain.Models.Dtos.Responses.Caso;
 using DeslandesApp.Domain.Models.Dtos.Responses.Processo;
 using DeslandesApp.Domain.Models.Dtos.Responses.Usuarios;
+using DeslandesApp.Domain.Models.Dtos.Responses.WebJur;
 using DeslandesApp.Domain.Utils;
 using Microsoft.AspNetCore.Http;
 using System;
@@ -25,6 +26,9 @@ namespace DeslandesApp.Domain.Interfaces.Services
         Task<int> ContarTotal();
    
         Task<ResultadoImportacaoProcessoResponse> ImportarDistribuicaoAsync(IFormFile file);
-    
+        Task<ProcessoResponse> SincronizarProcessoAsync(Guid id);
+        Task<ProcessoResponse> CopiarProcessoAsync(Guid id);
+        Task<ProcessoWebJurResumoResponse?> ObterResumoProcessoAsync(Guid id);
+
     }
 }

@@ -199,5 +199,41 @@ namespace DeslandesApp.API.Controllers.V1
 
             return Ok(result);
         }
+        [HttpPost("sincronizar-processo/{id:guid}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<IActionResult> SincronizarProcesso(Guid id)
+        {
+            var response = await processoService.SincronizarProcessoAsync(id);
+
+            return Ok(new
+            {
+                success = true,
+                message = "Processo sincronizado com sucesso.",
+                data = response
+            });
+        }
+        [HttpPost("copiar-processo/{id:guid}")]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        public async Task<IActionResult> CopiarProcesso(Guid id)
+        {
+            var response = await processoService.CopiarProcessoAsync(id);
+
+            return StatusCode(StatusCodes.Status201Created, new
+            {
+                success = true,
+                message = "Processo copiado com sucesso.",
+                data = response
+            });
+        }
+        [HttpGet("obter-resumo-processo/{id:guid}")]
+        public async Task<IActionResult> ObterResumoProcesso(Guid id)
+        {
+            var processo = await processoService.ObterResumoProcessoAsync(id);
+
+            if (processo == null)
+                return NotFound("Processo não encontrado.");
+
+            return Ok(processo);
+        }
     }
 }

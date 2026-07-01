@@ -1,4 +1,6 @@
-﻿using DeslandesApp.Domain.Models.Entities;
+﻿using DeslandesApp.Domain.Models.Dtos.Responses.WebJur;
+using DeslandesApp.Domain.Models.Entities;
+using DeslandesApp.Domain.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,5 +14,10 @@ namespace DeslandesApp.Domain.Interfaces.Repositories
         Task AdicionarAsync(WebJurVisualizacao visualizacao);
 
         Task<List<WebJurVisualizacao>> ObterPorPublicacaoAsync(Guid publicacaoId);
+        Task<PageResult<WebJurVisualizacaoResponse>> GetPaginacaoAsync(
+                    Guid publicacaoId,
+                    int pageNumber,
+                    int pageSize);
+
     }
 }

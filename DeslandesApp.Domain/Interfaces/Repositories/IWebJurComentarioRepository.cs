@@ -12,5 +12,6 @@ namespace DeslandesApp.Domain.Interfaces.Repositories
         Task AdicionarAsync(WebJurComentario comentario);
 
         Task<List<WebJurComentario>> ObterPorPublicacaoAsync(Guid publicacaoId);
+        Task<List<WebJurComentario>> ObterPaginadoAsync(Guid publicacaoId, int pageNumber, int pageSize);
     }
 }

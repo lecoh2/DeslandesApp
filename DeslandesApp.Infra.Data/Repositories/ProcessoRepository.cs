@@ -6,6 +6,7 @@ using DeslandesApp.Domain.Models.Dtos.Responses.GrupoNiveis;
 using DeslandesApp.Domain.Models.Dtos.Responses.GrupoSetores;
 using DeslandesApp.Domain.Models.Dtos.Responses.Processo;
 using DeslandesApp.Domain.Models.Dtos.Responses.Usuarios;
+using DeslandesApp.Domain.Models.Dtos.Responses.WebJur;
 using DeslandesApp.Domain.Models.Entities;
 using DeslandesApp.Domain.Models.Enum;
 using DeslandesApp.Domain.Utils;
@@ -231,6 +232,20 @@ namespace DeslandesApp.Infra.Data.Repositories
                 .FirstOrDefaultAsync(x =>
                     x.NumeroProcesso == numeroProcesso &&
                     !x.Excluido);
+        }
+        public async Task<ProcessoWebJurResumoResponse?> ObterResumoProcessoAsync(Guid id)
+        {
+            return await dataContext.Processos
+                .AsNoTracking()
+                .Where(x => x.Id == id)
+                .Select(x => new ProcessoWebJurResumoResponse
+                {
+                    Id = x.Id,
+                    Pasta = x.Pasta,
+                    NumeroProcesso = x.NumeroProcesso,
+                    Titulo = x.Titulo
+                })
+                .FirstOrDefaultAsync();
         }
     }
 }

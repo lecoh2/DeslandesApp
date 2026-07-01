@@ -1,4 +1,5 @@
-﻿using DeslandesApp.Domain.Models.Dtos.Responses.Andamento;
+﻿using DeslandesApp.Domain.Models.Dtos.Requests.WebJur;
+using DeslandesApp.Domain.Models.Dtos.Responses.Andamento;
 using DeslandesApp.Domain.Models.Dtos.Responses.WebJur;
 using DeslandesApp.Domain.Models.Entities;
 using DeslandesApp.Domain.Utils;
@@ -48,11 +49,18 @@ namespace DeslandesApp.Domain.Interfaces.Services
         Task<WebJurPublicacaoDetalheResponse> ObterDetalheAsync(Guid id);
         Task SincronizarPublicacaoAsync(Guid id);
 
-        Task AdicionarComentarioAsync(Guid publicacaoId, WebJurComentarioResponse request);
+        Task AdicionarComentarioAsync(Guid publicacaoId, WebJurComentarioRequest request);
 
         Task RegistrarVisualizacaoAsync(Guid publicacaoId);
 
         Task<(byte[] Conteudo, string NomeArquivo)> ObterPdfAsync(Guid id);
+        Task<PageResult<WebJurComentarioResponse>> ObterComentariosAsync(Guid publicacaoId, int pageNumber, int pageSize);
+
+        Task<PageResult<WebJurVisualizacaoResponse>> ObterVisualizacoesAsync(
+     Guid publicacaoId,
+     int pageNumber,
+     int pageSize);
+
 
     }
 }

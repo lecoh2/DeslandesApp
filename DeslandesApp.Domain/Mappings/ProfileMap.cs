@@ -310,6 +310,8 @@ namespace DeslandesApp.Domain.Mappings
                 .ForMember(d => d.Acesso, o => o.MapFrom(s => s.Acesso));
 
 
+            CreateMap<Processo, ProcessoWebJurResumoResponse>();
+
             // =========================
             // ENTITY -> RESPONSE COMPLETO
             // =========================
@@ -417,6 +419,8 @@ namespace DeslandesApp.Domain.Mappings
 
     .ForMember(d => d.GrupoEtiquetasProcesso,
         o => o.MapFrom(s => s.GrupoEtiquetasProcessos));
+
+
             #endregion
 
 
@@ -1118,23 +1122,35 @@ namespace DeslandesApp.Domain.Mappings
             #endregion
 
             #region WebJur
+
             CreateMap<AndamentoProcesso, AndamentoProcessoResponse>();
 
-
             CreateMap<WebJurPublicacao, WebJurPublicacaoDetalheResponse>()
-    .ForMember(dest => dest.TextoPublicacao,
-        opt => opt.MapFrom(src => src.DespachoPublicacao))
+      .ForMember(dest => dest.TextoPublicacao,
+          opt => opt.MapFrom(src => src.DespachoPublicacao))
 
-    .ForMember(dest => dest.TipoPublicacao,
-        opt => opt.MapFrom(src => "WEBJUR"));
-         
+      .ForMember(dest => dest.TipoPublicacao,
+          opt => opt.MapFrom(src => "WEBJUR"))
+
+      .ForMember(dest => dest.Processo,
+          opt => opt.MapFrom(src => src.Processo));
+
             CreateMap<WebJurPublicacao, WebJurPublicacaoResponse>();
-            //CreateMap<ProcessoInterno, ProcessoInternoResponse>();
-            CreateMap<WebJurComentario, WebJurComentarioResponse>();
+
+            CreateMap<WebJurComentario, WebJurComentarioResponse>()
+                .ForMember(dest => dest.Usuario,
+                    opt => opt.MapFrom(src => src.Usuario.NomeUsuario));
+
             CreateMap<WebJurMovimentacao, WebJurMovimentacaoResponse>();
+
             CreateMap<WebJurArquivo, WebJurArquivoResponse>();
-            CreateMap<WebJurVisualizacao, WebJurVisualizacaoResponse>();
+
+            CreateMap<WebJurVisualizacao, WebJurVisualizacaoResponse>()
+                .ForMember(dest => dest.Usuario,
+                    opt => opt.MapFrom(src => src.Usuario.NomeUsuario));
+
             CreateMap<WebJurSincronizacao, WebJurSincronizacaoResponse>();
+
             #endregion
         }
     }

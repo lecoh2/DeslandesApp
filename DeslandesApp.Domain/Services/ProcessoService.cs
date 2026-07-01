@@ -11,6 +11,7 @@ using DeslandesApp.Domain.Models.Dtos.Responses.Conta;
 using DeslandesApp.Domain.Models.Dtos.Responses.Pessoas;
 using DeslandesApp.Domain.Models.Dtos.Responses.Processo;
 using DeslandesApp.Domain.Models.Dtos.Responses.Usuarios;
+using DeslandesApp.Domain.Models.Dtos.Responses.WebJur;
 using DeslandesApp.Domain.Models.Entities;
 using DeslandesApp.Domain.Models.Enum;
 using DeslandesApp.Domain.Utils;
@@ -31,7 +32,8 @@ namespace DeslandesApp.Domain.Services
     IUnitOfWork unitOfWork,
     IMapper mapper,
     IHttpContextAccessor httpContextAccessor,
-    IHistoricoGeralService historicoGeralService, INotificacaoService notificacaoService
+    IHistoricoGeralService historicoGeralService,
+    INotificacaoService notificacaoService, IWebJurService webJurService
 ) : BaseService(httpContextAccessor), IProcessoService
     {
         private static readonly Guid QUALIFICACAO_PADRAO_ID =
@@ -1008,7 +1010,210 @@ namespace DeslandesApp.Domain.Services
         {
             return await unitOfWork.ProcessoRepository.ContarTotal();
         }
+        public async Task<ProcessoResponse> SincronizarProcessoAsync(Guid id)
+        {
+            await unitOfWork.BeginTransactionAsync();
 
-     
+            try
+            {
+                var processo = await unitOfWork.ProcessoRepository.ObterPorIdAsync(id);
+
+                if (processo == null)
+                    throw new BusinessException("Processo não encontrado.");
+
+                var usuarioId = ObterUsuarioId();
+
+                // =========================
+                // SNAPSHOT ANTES
+                // =========================
+                var dadosAntes = new
+                {
+                    processo.UltimaConsultaTribunal,
+                    processo.UltimoAndamentoCapturado,
+                    processo.ErroUltimaConsulta
+                };
+
+                // =========================
+                // CONSULTA WEBJUR (CORRETO)
+                // =========================
+                var andamentosExternos =
+                    await webJurService.ConsultarAndamentosAsync(id);
+
+                if (andamentosExternos == null || !andamentosExternos.Any())
+                {
+                    processo.ErroUltimaConsulta = "Nenhum andamento retornado pelo WebJur";
+                    processo.UltimaConsultaTribunal = DateTime.Now;
+
+                    await unitOfWork.ProcessoRepository.UpdateAsync(processo);
+                    await unitOfWork.CommitAsync();
+
+                    return mapper.Map<ProcessoResponse>(processo);
+                }
+
+                // =========================
+                // ANDAMENTOS
+                // =========================
+                foreach (var andamento in andamentosExternos)
+                {
+                    var existe = processo.Andamentos.Any(x =>
+     x.Descricao == andamento.Descricao &&
+     x.DataMovimentacao == andamento.DataMovimentacao
+ );
+
+                    processo.Andamentos.Add(new AndamentoProcesso
+                    {
+                        Descricao = andamento.Descricao,
+                        DataMovimentacao = andamento.DataMovimentacao,
+                        ProcessoId = processo.Id,
+                        CapturadoAutomaticamente = true
+                    });
+                }
+
+                // =========================
+                // ATUALIZA CONTROLES
+                // =========================
+                processo.UltimaConsultaTribunal = DateTime.Now;
+                processo.UltimoAndamentoCapturado = DateTime.Now;
+                processo.ErroUltimaConsulta = null;
+
+                await unitOfWork.ProcessoRepository.UpdateAsync(processo);
+
+                // =========================
+                // SNAPSHOT DEPOIS
+                // =========================
+                var dadosDepois = new
+                {
+                    processo.UltimaConsultaTribunal,
+                    processo.UltimoAndamentoCapturado,
+                    TotalAndamentos = processo.Andamentos.Count
+                };
+
+                // =========================
+                // HISTÓRICO
+                // =========================
+                await historicoGeralService.RegistrarAsync(
+                    TipoEntidade.Processo,
+                    processo.Id,
+                    usuarioId,
+                    dadosAntes,
+                    dadosDepois,
+                    "Sincronização WebJur (Andamentos)"
+                );
+
+                await unitOfWork.CommitAsync();
+
+                return mapper.Map<ProcessoResponse>(processo);
+            }
+            catch
+            {
+                await unitOfWork.RollbackAsync();
+                throw;
+            }
+        }
+        public async Task<ProcessoResponse> CopiarProcessoAsync(Guid id)
+        {
+            await unitOfWork.BeginTransactionAsync();
+
+            try
+            {
+                var original = await unitOfWork.ProcessoRepository.ObterPorIdAsync(id);
+
+                if (original == null)
+                    throw new BusinessException("Processo não encontrado.");
+
+                var usuarioId = ObterUsuarioId();
+
+                // =========================
+                // SNAPSHOT ANTES (COMPLETO)
+                // =========================
+                var dadosAntes = new
+                {
+                    original.Pasta,
+                    original.Titulo,
+                    original.NumeroProcesso,
+                    original.Objeto,
+                    original.Observacao,
+                    original.ValorCausa,
+                    original.VaraId,
+                    original.ClasseProcessualId,
+                    original.AcaoId,
+                    original.TribunalId,
+                    original.InstanciaId,
+                    original.AcessoId,
+                    original.UsuarioResponsavelId
+                };
+
+                // =========================
+                // NOVO PROCESSO
+                // =========================
+                var novo = new Processo
+                {
+                    Id = Guid.NewGuid(),
+
+                    Pasta = original.Pasta,
+                    Titulo = original.Titulo + " (CÓPIA)",
+                    NumeroProcesso = null,
+                    Objeto = original.Objeto,
+                    Observacao = original.Observacao,
+                    ValorCausa = original.ValorCausa,
+                    ValorCondenacao = original.ValorCondenacao,
+                    Distribuido = original.Distribuido,
+
+                    VaraId = original.VaraId,
+                    ClasseProcessualId = original.ClasseProcessualId,
+                    AcaoId = original.AcaoId,
+                    TribunalId = original.TribunalId,
+                    InstanciaId = original.InstanciaId,
+                    AcessoId = original.AcessoId,
+
+                    UsuarioResponsavelId = original.UsuarioResponsavelId,
+                    UsuarioCadastroId = usuarioId,
+
+                    Situacao = SituacaoProcesso.Ativo,
+                    DataCadastro = DateTime.Now
+                };
+
+                await unitOfWork.ProcessoRepository.AddAsync(novo);
+
+                // =========================
+                // SNAPSHOT DEPOIS
+                // =========================
+                var dadosDepois = new
+                {
+                    novo.Pasta,
+                    novo.Titulo,
+                    novo.NumeroProcesso,
+                    novo.VaraId,
+                    novo.UsuarioResponsavelId,
+                    novo.Situacao
+                };
+
+                // =========================
+                // HISTÓRICO
+                // =========================
+                await historicoGeralService.RegistrarAsync(
+                    TipoEntidade.Processo,
+                    novo.Id,
+                    usuarioId,
+                    dadosAntes,
+                    dadosDepois,
+                    "Cópia de processo"
+                );
+
+                await unitOfWork.CommitAsync();
+
+                return mapper.Map<ProcessoResponse>(novo);
+            }
+            catch
+            {
+                await unitOfWork.RollbackAsync();
+                throw;
+            }
+        }
+        public async Task<ProcessoWebJurResumoResponse?> ObterResumoProcessoAsync(Guid id)
+        {
+            return await unitOfWork.ProcessoRepository
+                .ObterResumoProcessoAsync(id);
+        }
     }
 }

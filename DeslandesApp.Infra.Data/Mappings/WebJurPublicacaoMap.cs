@@ -47,6 +47,42 @@ namespace DeslandesApp.Infra.Data.Mappings
 
             builder.Property(x => x.Importada)
                 .HasDefaultValue(false);
+            builder.Property(x => x.AnoPublicacao);
+
+            builder.Property(x => x.EdicaoDiario);
+
+            builder.Property(x => x.DescricaoDiario)
+                .HasMaxLength(200);
+
+            builder.Property(x => x.PaginaInicial);
+
+            builder.Property(x => x.PaginaFinal);
+
+            builder.Property(x => x.DataDivulgacao);
+
+            builder.Property(x => x.UfPublicacao)
+                .HasMaxLength(2);
+
+            builder.Property(x => x.CidadePublicacao)
+                .HasMaxLength(100);
+
+            builder.Property(x => x.CodVinculo);
+
+            builder.Property(x => x.NomeVinculo)
+                .HasMaxLength(200);
+
+            builder.Property(x => x.OABNumero);
+
+            builder.Property(x => x.OABEstado)
+                .HasMaxLength(10);
+
+            builder.Property(x => x.CodIntegracao)
+                .HasMaxLength(100);
+
+            builder.Property(x => x.PublicacaoExportada)
+                .HasDefaultValue(false);
+
+            builder.Property(x => x.CodGrupo);
 
             // Relacionamento opcional com Processo
             builder.HasOne(x => x.Processo)

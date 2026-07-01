@@ -1,5 +1,6 @@
 ﻿using DeslandesApp.Domain.Models.Dtos.Responses.Processo;
 using DeslandesApp.Domain.Models.Dtos.Responses.Usuarios;
+using DeslandesApp.Domain.Models.Dtos.Responses.WebJur;
 using DeslandesApp.Domain.Models.Entities;
 using DeslandesApp.Domain.Utils;
 using System;
@@ -26,6 +27,7 @@ namespace DeslandesApp.Domain.Interfaces.Repositories
 
         Task<List<Processo>> ObterTodosAsync();
         Task<Processo?> ObterPorNumeroAsync(string numeroProcesso);
+        Task<ProcessoWebJurResumoResponse?> ObterResumoProcessoAsync(Guid id);
 
 
 

@@ -92,8 +92,8 @@ namespace DeslandesApp.API.Controllers.V1
 
         [HttpPost("publicacoes/{id:guid}/comentarios")]
         public async Task<IActionResult> AdicionarComentario(
-            Guid id,
-            [FromBody] WebJurComentarioResponse request)
+       Guid id,
+       [FromBody] WebJurComentarioRequest request)
         {
             await webJurService.AdicionarComentarioAsync(id, request);
 
@@ -154,6 +154,29 @@ namespace DeslandesApp.API.Controllers.V1
         {
             var result = await webJurService.VerificarProcessoExisteAsync(numeroProcesso);
             return Ok(new { existe = result });
+        }
+        [HttpGet("publicacoes/{id:guid}/comentarios")]
+        public async Task<IActionResult> ObterComentarios(
+    Guid id,
+    [FromQuery] int pageNumber = 1,
+    [FromQuery] int pageSize = 10)
+        {
+            var result = await webJurService.ObterComentariosAsync(id, pageNumber, pageSize);
+            return Ok(result);
+        }
+        [HttpGet("publicacoes/{id:guid}/visualizacoes")]
+        public async Task<IActionResult> ObterVisualizacoes(
+         Guid id,
+         [FromQuery] int pageNumber = 1,
+         [FromQuery] int pageSize = 10)
+        {
+            pageNumber = pageNumber <= 0 ? 1 : pageNumber;
+            pageSize = pageSize <= 0 ? 10 : System.Math.Min(pageSize, 100);
+
+            var result = await webJurService
+                .ObterVisualizacoesAsync(id, pageNumber, pageSize);
+
+            return Ok(result);
         }
     }
 }
